@@ -33,13 +33,10 @@ jobs:
           cd business
           npm install
 
-      # Step 4: Ensure input.tailwindcss.css exists
-      - name: Create input.tailwindcss.css if it doesn't exist
+      # Step 4: Ensure the styles directory exists
+      - name: Create styles directory
         run: |
-          mkdir -p business
-          echo "@tailwind base;" > business/input.tailwindcss.css
-          echo "@tailwind components;" >> business/input.tailwindcss.css
-          echo "@tailwind utilities;" >> business/input.tailwindcss.css
+          mkdir -p business/styles
 
       # Step 5: Build Tailwind CSS
       - name: Build Tailwind CSS
