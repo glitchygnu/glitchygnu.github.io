@@ -2,7 +2,7 @@
   "name": "business",
   "version": "1.0.0",
   "scripts": {
-  "build:css": "tailwindcss build -i business/input.tailwindcss.css -o business/styles/tailwind.css"
+  "build:css": "tailwindcss build -i ./input.tailwindcss.css -o ./styles/tailwind.css"
   },
   "dependencies": {
     "tailwindcss": "^3.0.0",
