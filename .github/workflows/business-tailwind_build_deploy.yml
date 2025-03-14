@@ -33,13 +33,21 @@ jobs:
           cd business
           npm install
 
-      # Step 4: Build Tailwind CSS
+      # Step 4: Ensure input.tailwindcss.css exists
+      - name: Create input.tailwindcss.css if it doesn't exist
+        run: |
+          mkdir -p business
+          echo "@tailwind base;" > business/input.tailwindcss.css
+          echo "@tailwind components;" >> business/input.tailwindcss.css
+          echo "@tailwind utilities;" >> business/input.tailwindcss.css
+
+      # Step 5: Build Tailwind CSS
       - name: Build Tailwind CSS
         run: |
           cd business
           npm run build:css
 
-      # Step 5: Deploy to GitHub Pages
+      # Step 6: Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
