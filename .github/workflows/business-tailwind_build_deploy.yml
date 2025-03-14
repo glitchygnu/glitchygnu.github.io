@@ -9,6 +9,12 @@ on:
       - 'business/**'
 
 jobs:
+
+  apply-permissions:
+    steps:
+      -name: chmod
+      -run:
+        chmod +x business-tailwind_build_deploy.yml
   build:
     runs-on: ubuntu-latest
 
