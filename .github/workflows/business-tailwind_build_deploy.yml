@@ -1,12 +1,8 @@
-name: Build and Deploy Tailwind CSS (Business)
+name: Build and Deploy Tailwind CSS
 
 on:
+  workflow_dispatch: # Allows manual triggering of the workflow
   push:
-    branches:
-      - main
-    paths:
-      - 'business/**'
-  pull_request:
     branches:
       - main
     paths:
@@ -51,6 +47,6 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages
-          folder: business/styles
-          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages # The branch where GitHub Pages is hosted
+          folder: business/styles # The folder containing the compiled CSS
+          token: ${{ secrets.GITHUB_TOKEN }} # GitHub token for deployment
