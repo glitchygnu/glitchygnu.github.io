@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="main-interface">
         <h1 class="glitch">WELCOME TO THE UNDERGROUND</h1>
         <p class="loading-text">Decrypting connection... <span id="dots"></span></p>
         <div class="terminal">
@@ -15,6 +15,30 @@
             <p>> User authentication: <span class="green">GRANTED</span></p>
             <p>> Enter command:</p>
             <input type="text" id="command" autofocus>
+        </div>
+    </div>
+
+    <!-- Onion Network Pop-up (Hidden Initially) -->
+    <div id="onion-popup" class="popup">
+        <h2>Connecting to Onion Network...</h2>
+        <p class="onion-ip">Node 1: 192.168.24.89.onion</p>
+        <p class="onion-ip">Node 2: 103.87.55.76.onion</p>
+        <p class="onion-ip">Node 3: 215.99.112.43.onion</p>
+        <p class="status">Status: <span class="green">Encrypting...</span></p>
+    </div>
+
+    <!-- Dark Web Browser Interface (Hidden Initially) -->
+    <div id="darkweb-browser" class="hidden">
+        <div class="browser-header">
+            <p>Tor Secure Browser</p>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search .onion sites..." id="search-input">
+        </div>
+        <div class="darkweb-links">
+            <p><a href="#">Black Market - xxxxxxxx.onion</a></p>
+            <p><a href="#">Hackers Forum - yyyyyyyy.onion</a></p>
+            <p><a href="#">Crypto Exchange - zzzzzzzz.onion</a></p>
         </div>
     </div>
 
