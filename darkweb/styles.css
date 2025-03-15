@@ -42,25 +42,7 @@ h1 {
     box-shadow: 0 0 10px #00ff00;
 }
 
-.terminal p {
-    margin: 5px 0;
-}
-
-.green {
-    color: #00ff00;
-}
-
-input {
-    background: black;
-    border: none;
-    color: #00ff00;
-    font-size: 1.2em;
-    width: 90%;
-    font-family: 'VT323', monospace;
-    outline: none;
-}
-
-/* Onion Pop-up */
+/* Onion Connection Pop-up */
 .popup {
     display: none;
     position: fixed;
@@ -74,20 +56,25 @@ input {
     box-shadow: 0 0 10px #00ff00;
 }
 
-.onion-ip {
-    color: red;
+.progress-bar {
+    width: 100%;
+    background: #222;
+    height: 10px;
+    margin: 10px 0;
 }
 
-.status {
-    margin-top: 10px;
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    background: #00ff00;
+    transition: width 5s ease-in-out;
 }
 
-/* Hidden Browser */
+/* Fake Dark Web Browser */
 .hidden {
     display: none;
 }
 
-/* Dark Web Browser */
 .browser-header {
     background: #222;
     padding: 10px;
@@ -96,32 +83,40 @@ input {
     font-size: 1.5em;
 }
 
-.search-bar {
-    margin: 20px;
-    text-align: center;
+.browser-bar {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    background: #333;
 }
 
-.search-bar input {
-    width: 80%;
-    padding: 10px;
+.browser-bar input {
+    width: 60%;
+    padding: 5px;
     font-size: 1em;
     background: black;
     color: #00ff00;
     border: 1px solid #00ff00;
-}
-
-.darkweb-links {
-    margin: 20px;
     text-align: center;
 }
 
-.darkweb-links a {
+.browser-bar button {
+    padding: 5px 10px;
+    margin-left: 5px;
+    background: #00ff00;
+    border: none;
+    color: black;
+}
+
+.lock-icon {
+    font-size: 1.2em;
+    color: lime;
+    margin-right: 5px;
+}
+
+.darkweb-content a {
     color: red;
     text-decoration: none;
     display: block;
     margin: 10px;
-}
-
-.darkweb-links a:hover {
-    color: #00ff00;
 }
