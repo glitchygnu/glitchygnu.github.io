@@ -3,22 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚠ WARNING - DARK WEB DETECTED ⚠</title>
+    <title>WARNING: DARK WEB DETECTED</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
+    <audio id="background-sound" loop>
+        <source src="assets/sounds/eerie.mp3" type="audio/mpeg">
+    </audio>
+
     <div class="container">
-        <div class="warning">
-            <h1 class="glitch">⚠ WARNING ⚠</h1>
-            <p class="glitch">THIS WEBSITE IS PART OF A RESTRICTED NETWORK</p>
-            <p class="glitch">YOUR IP HAS BEEN LOGGED: <span id="ip-address">Fetching...</span></p>
-            <p class="glitch">LEAVE NOW OR RISK DETECTION</p>
-        </div>
-        <div class="terminal">
-            <pre id="terminal-text"></pre>
-        </div>
-        <a href="deepweb.html" class="proceed">PROCEED AT YOUR OWN RISK</a>
+        <h1 class="glitch">WARNING: DARK WEB DETECTED</h1>
+        <p id="ip-address">IP Address: Retrieving...</p>
+        <p class="warning">Your activity is being monitored. Do not proceed if unauthorized.</p>
+
+        <ul class="dark-links">
+            <li><a href="loading.html" onclick="return initiateConnection(event);">Enter the Network</a></li>
+            <li><a href="warnings.html">⚠ FBI ALERT ⚠</a></li>
+        </ul>
     </div>
-    <script src="script.js"></script>
 </body>
 </html>
