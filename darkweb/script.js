@@ -11,11 +11,19 @@ document.addEventListener("DOMContentLoaded", function () {
             let newLine = document.createElement("p");
 
             if (cmd === "help") {
-                newLine.innerHTML = "> Commands: <span class='green'>help, exit, hack</span>";
+                newLine.innerHTML = "> Commands: <span class='green'>help, exit, hack, /connect</span>";
             } else if (cmd === "hack") {
                 newLine.innerHTML = "> Initiating attack... <span class='green'>[ACCESS GRANTED]</span>";
             } else if (cmd === "exit") {
                 newLine.innerHTML = "> Disconnecting... Goodbye.";
+            } else if (cmd === "/connect") {
+                newLine.innerHTML = "> Establishing encrypted connection...";
+                document.getElementById("onion-popup").style.display = "block";
+                setTimeout(() => {
+                    document.getElementById("onion-popup").style.display = "none";
+                    document.getElementById("main-interface").style.display = "none";
+                    document.getElementById("darkweb-browser").style.display = "block";
+                }, 5000);
             } else {
                 newLine.innerHTML = "> Unknown command.";
             }
