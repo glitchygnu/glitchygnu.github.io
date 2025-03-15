@@ -1,1 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacking Terminal</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body class="hacking-terminal">
+    <h1>Anonymous Hacking Terminal</h1>
+    <pre id="hacking-log"></pre>
+    <script>
+        let log = document.getElementById("hacking-log");
+        let hackSteps = [
+            "Initializing...",
+            "Bypassing firewall...",
+            "Gaining access to encrypted files...",
+            "Extracting hidden data...",
+            "Deploying malware...",
+            "Complete."
+        ];
 
+        let i = 0;
+        function runHacking() {
+            if (i < hackSteps.length) {
+                log.innerHTML += hackSteps[i] + "\n";
+                i++;
+                setTimeout(runHacking, 1200);
+            } else {
+                document.body.innerHTML += `<p class="warning">⚠ ALERT: You have been detected!</p>`;
+            }
+        }
+
+        setTimeout(runHacking, 2000);
+    </script>
+</body>
+</html>
