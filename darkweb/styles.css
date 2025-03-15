@@ -1,66 +1,62 @@
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
-    background-color: #000;
-    color: #0f0;
-    font-family: 'Share Tech Mono', monospace;
+    background-color: black;
+    color: #33ff33;
+    font-family: 'Courier New', monospace;
     text-align: center;
-    overflow: hidden;
-}
-
-.container {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.warning {
-    color: red;
-    text-shadow: 0 0 10px red;
 }
 
 .glitch {
-    animation: glitch 1s infinite alternate;
+    color: red;
+    text-shadow: 2px 2px 5px black;
+    animation: flicker 1s infinite alternate;
 }
 
-@keyframes glitch {
-    0% { text-shadow: 2px 2px red, -2px -2px cyan; }
-    100% { text-shadow: -2px -2px red, 2px 2px cyan; }
+@keyframes flicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 1; }
 }
 
-.terminal {
-    background-color: black;
-    border: 2px solid green;
-    padding: 20px;
-    width: 80%;
-    max-width: 600px;
-    height: 300px;
-    text-align: left;
-    box-shadow: 0 0 10px green;
+.dark-links {
+    list-style: none;
+    padding: 0;
 }
 
 .dark-links li {
-    list-style: none;
+    margin: 15px;
 }
 
 .dark-links a {
     color: red;
     text-decoration: none;
-    font-size: 20px;
-    text-shadow: 0 0 5px red;
+    font-size: 1.2em;
 }
 
-.proceed {
+.dark-links a:hover {
+    text-shadow: 0 0 10px red;
+}
+
+.warning {
+    border: 2px solid red;
+    padding: 15px;
+    background: rgba(255, 0, 0, 0.1);
+}
+
+.price {
+    color: red;
+    font-weight: bold;
+}
+
+.buy-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-top: 10px;
+    border: 1px solid red;
     color: red;
     text-decoration: none;
-    font-size: 20px;
+}
+
+.buy-btn:hover {
+    background-color: red;
+    color: black;
 }
