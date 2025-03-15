@@ -3,20 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚠ WARNING - DARK WEB ACCESS ⚠</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>OnionGate v3.2</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="warning">
-            <h1 class="glitch">⚠ WARNING ⚠</h1>
-            <p class="glitch">YOU HAVE ACCESSED A RESTRICTED DARK WEB DOMAIN</p>
-            <p class="glitch">LEAVE IMMEDIATELY OR PROCEED AT YOUR OWN RISK</p>
-        </div>
-        <div class="terminal">
-            <pre id="terminal-text"></pre>
+    <div class="warning-overlay" id="warningOverlay">
+        <div class="warning-content">
+            <pre class="glitch">
+▓█████▄  ▒█████   ███▄ ▄███▓ ██▓███   ███▄ ▄███▓ ▄▄▄       ███▄    █ 
+▒██▀ ██▌▒██▒  ██▒▓██▒▀█▀ ██▒▓██░  ██▒▓██▒▀█▀ ██▒▒████▄     ██ ▀█   █ 
+░██   █▌▒██░  ██▒▓██    ▓██░▓██░ ██▓▒▓██    ▓██░▒██  ▀█▄  ▓██  ▀█ ██▒
+░▓█▄   ▌▒██   ██░▒██    ▒██ ▒██▄█▓▒ ▒▒██    ▒██ ░██▄▄▄▄██ ▓██▒  ▐▌██▒
+░▒████▓ ░ ████▓▒░▒██▒   ░██▒▒██▒ ░  ░▒██▒   ░██▒ ▓█   ▓██▒▒██░   ▓██░
+ ▒▒▓  ▒ ░ ▒░▒░▒░ ░ ▒░   ░  ░▒▓▒░ ░  ░░ ▒░   ░  ░ ▒▒   ▓▒█░░ ▒░   ▒ ▒ 
+ ░ ▒  ▒   ░ ▒ ▒░ ░  ░      ░░▒ ░     ░  ░      ░  ▒   ▒▒ ░░ ░░   ░ ▒░
+ ░ ░  ░ ░ ░ ░ ▒  ░      ░   ░░       ░      ░     ░   ▒      ░   ░ ░ 
+   ░        ░ ░         ░                    ░         ░  ░         ░ 
+            </pre>
+            <p class="typing-effect">WARNING: THIS NETWORK IS UNDER SURVEILLANCE</p>
+            <button id="accessButton" class="blink">CLICK TO ENTER</button>
         </div>
     </div>
+
+    <div class="container hidden" id="mainContent">
+        <div class="header glitch" data-text="ShadowMarket v3.2.1">
+            ShadowMarket v3.2.1
+        </div>
+        
+        <div class="terminal">
+            <div class="terminal-header">
+                <span class="red-btn"></span>
+                <span class="yellow-btn"></span>
+                <span class="green-btn"></span>
+                oniongate://secured_connection_established
+            </div>
+            <div class="terminal-body">
+                <p>> Initializing TOR layers...</p>
+                <p>> Routing through 7 nodes...</p>
+                <p>> Connection secured: <span class="onion-address">dreadytofatroptsdj6io7l3xptbet6onoyno2yv7jicoxknyazubrad.onion</span></p>
+                <div class="market-link" onclick="redirectToMarketplace()">
+                    [!!!] ACCESS BLACK MARKET VENDORS (CLICK HERE)
+                </div>
+                <div class="btc-price">
+                    BTC/USD: <span id="btcPrice">₿1 = $</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
