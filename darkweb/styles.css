@@ -59,3 +59,69 @@ input {
     font-family: 'VT323', monospace;
     outline: none;
 }
+
+/* Onion Pop-up */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: black;
+    border: 2px solid #00ff00;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 0 10px #00ff00;
+}
+
+.onion-ip {
+    color: red;
+}
+
+.status {
+    margin-top: 10px;
+}
+
+/* Hidden Browser */
+.hidden {
+    display: none;
+}
+
+/* Dark Web Browser */
+.browser-header {
+    background: #222;
+    padding: 10px;
+    color: white;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.search-bar {
+    margin: 20px;
+    text-align: center;
+}
+
+.search-bar input {
+    width: 80%;
+    padding: 10px;
+    font-size: 1em;
+    background: black;
+    color: #00ff00;
+    border: 1px solid #00ff00;
+}
+
+.darkweb-links {
+    margin: 20px;
+    text-align: center;
+}
+
+.darkweb-links a {
+    color: red;
+    text-decoration: none;
+    display: block;
+    margin: 10px;
+}
+
+.darkweb-links a:hover {
+    color: #00ff00;
+}
