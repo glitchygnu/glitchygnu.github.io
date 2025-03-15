@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dark Web Interface</title>
+    <title>Dark Web Gateway</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+    <!-- Terminal Interface -->
     <div class="container" id="main-interface">
         <h1 class="glitch">WELCOME TO THE UNDERGROUND</h1>
         <p class="loading-text">Decrypting connection... <span id="dots"></span></p>
@@ -18,27 +20,33 @@
         </div>
     </div>
 
-    <!-- Onion Network Pop-up (Hidden Initially) -->
+    <!-- Onion Network Pop-up -->
     <div id="onion-popup" class="popup">
         <h2>Connecting to Onion Network...</h2>
-        <p class="onion-ip">Node 1: 192.168.24.89.onion</p>
-        <p class="onion-ip">Node 2: 103.87.55.76.onion</p>
-        <p class="onion-ip">Node 3: 215.99.112.43.onion</p>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+        <p class="onion-ip">Node 1: <span class="changing-ip">192.168.24.89</span>.onion</p>
+        <p class="onion-ip">Node 2: <span class="changing-ip">103.87.55.76</span>.onion</p>
+        <p class="onion-ip">Node 3: <span class="changing-ip">215.99.112.43</span>.onion</p>
         <p class="status">Status: <span class="green">Encrypting...</span></p>
     </div>
 
-    <!-- Dark Web Browser Interface (Hidden Initially) -->
+    <!-- Fake Dark Web Browser -->
     <div id="darkweb-browser" class="hidden">
         <div class="browser-header">
-            <p>Tor Secure Browser</p>
+            <p>Tor Secure Browser - Anonymous</p>
         </div>
-        <div class="search-bar">
-            <input type="text" placeholder="Search .onion sites..." id="search-input">
+        <div class="browser-bar">
+            <span class="lock-icon">🔒</span>
+            <input type="text" value="http://blackmarketxxxx.onion" id="address-bar">
+            <button id="go-button">Go</button>
         </div>
-        <div class="darkweb-links">
-            <p><a href="#">Black Market - xxxxxxxx.onion</a></p>
-            <p><a href="#">Hackers Forum - yyyyyyyy.onion</a></p>
-            <p><a href="#">Crypto Exchange - zzzzzzzz.onion</a></p>
+        <div class="darkweb-content">
+            <p>Welcome to the underground marketplace.</p>
+            <p><a href="#">Buy BTC - blackbitcoinmarket.onion</a></p>
+            <p><a href="#">Illegal Docs - fakeidcards.onion</a></p>
+            <p><a href="#">Dark Web Forum - anonymouschat.onion</a></p>
         </div>
     </div>
 
