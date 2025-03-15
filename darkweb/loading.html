@@ -1,1 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connecting to Tor...</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body class="loading-screen">
+    <h1>Establishing Secure Connection...</h1>
+    <img src="assets/images/tor_loading.gif" alt="Loading">
+    <p>Routing through nodes: <span id="node"></span></p>
 
+    <script>
+        const nodes = ["Russia", "Germany", "Netherlands", "Sweden", "Hong Kong", "Unknown Location"];
+        let index = 0;
+        function updateNode() {
+            document.getElementById("node").textContent = nodes[index];
+            index = (index + 1) % nodes.length;
+        }
+        setInterval(updateNode, 1500);
+        setTimeout(() => { window.location.href = 'marketplace.html'; }, 8000);
+    </script>
+</body>
+</html>
