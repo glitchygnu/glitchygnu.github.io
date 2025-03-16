@@ -1,44 +1,55 @@
-const chatHistory = document.getElementById('chat-history');
-const messageInput = document.getElementById('message-input');
-const sendButton = document.getElementById('send-button');
+const chatHistory = document.getElementById("chatHistory");
+const messageInput = document.getElementById("messageInput");
+const sendButton = document.getElementById("sendButton");
 
-const MAX_MESSAGES = 100000;
+const maxMessages = 100000; // Max messages allowed
+let messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
 
-// Load messages from local storage
-function loadMessages() {
-    let messages = JSON.parse(localStorage.getItem('chatMessages')) || [];
-    messages.forEach(msg => addMessageToChat(msg));
+function displayMessages() {
+    chatHistory.innerHTML = "";
+    messages.forEach(msgObj => {
+        let div = document.createElement("div");
+        div.classList.add("chat-message");
+
+        let timeSpan = document.createElement("span");
+        timeSpan.classList.add("message-time");
+        timeSpan.textContent = `[${msgObj.time}] `; // Time in [HH:MM] format
+
+        let textSpan = document.createElement("span");
+        textSpan.textContent = msgObj.text;
+
+        div.appendChild(timeSpan);
+        div.appendChild(textSpan);
+
+        chatHistory.appendChild(div);
+    });
+
+    chatHistory.scrollTop = chatHistory.scrollHeight; // Auto-scroll to latest message
 }
 
-// Save messages to local storage
-function saveMessages(messages) {
-    if (messages.length > MAX_MESSAGES) {
-        messages = messages.slice(messages.length - MAX_MESSAGES); // Keep last 100,000
+function saveMessage() {
+    const messageText = messageInput.value.trim();
+    if (messageText !== "") {
+        const now = new Date();
+        const time = now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0"); // Format HH:MM
+
+        const messageObj = { time: time, text: messageText };
+
+        messages.push(messageObj);
+        if (messages.length > maxMessages) {
+            messages.shift(); // Remove oldest message if limit is reached
+        }
+        localStorage.setItem("chatMessages", JSON.stringify(messages));
+        displayMessages();
+        messageInput.value = "";
     }
-    localStorage.setItem('chatMessages', JSON.stringify(messages));
 }
 
-// Add message to chat history
-function addMessageToChat(message) {
-    let messageElement = document.createElement('div');
-    messageElement.classList.add('chat-message');
-    messageElement.textContent = message;
-    chatHistory.appendChild(messageElement);
-    chatHistory.scrollTop = chatHistory.scrollHeight;
-}
-
-// Send message
-sendButton.addEventListener('click', () => {
-    let message = messageInput.value.trim();
-    if (message.length === 0 || message.length > 1000) return; // Limit to 1000 words
-
-    let messages = JSON.parse(localStorage.getItem('chatMessages')) || [];
-    messages.push(message);
-    saveMessages(messages);
-
-    addMessageToChat(message);
-    messageInput.value = '';
+sendButton.addEventListener("click", saveMessage);
+messageInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+        saveMessage();
+    }
 });
 
-// Load stored messages on page load
-window.onload = loadMessages;
+displayMessages();
