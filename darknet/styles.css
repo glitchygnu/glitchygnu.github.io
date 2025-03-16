@@ -1,1 +1,57 @@
+body {
+    background-color: #000;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+}
 
+.container {
+    margin: 50px auto;
+    width: 80%;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: #00ff00;
+    text-decoration: none;
+}
+
+.chat-box {
+    width: 80%;
+    height: 300px;
+    border: 1px solid #00ff00;
+    background-color: #111;
+    overflow-y: scroll;
+    margin: 20px auto;
+    padding: 10px;
+    text-align: left;
+}
+
+input {
+    width: 60%;
+    padding: 10px;
+    background-color: #222;
+    color: #00ff00;
+    border: 1px solid #00ff00;
+}
+
+button {
+    padding: 10px;
+    background-color: #00ff00;
+    color: #000;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #007700;
+}
