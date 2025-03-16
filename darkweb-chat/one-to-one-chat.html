@@ -5,14 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>One-to-One Chat</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="chat.js" defer></script>
+    <script defer src="chat.js"></script>
 </head>
 <body>
-    <h1 class="glow-pink">One-to-One Chat</h1>
     <div class="chat-container">
-        <div id="chat-box" class="chat-box"></div>
-        <input type="text" id="message" placeholder="Type a message...">
+        <h2>Encrypted One-to-One Chat</h2>
+        <p class="encrypted-text">Establishing a secure connection...</p>
+        <div class="chat-box" id="chat-box"></div>
+        <input type="text" id="message" placeholder="Type your message...">
         <button onclick="sendMessage()">Send</button>
     </div>
+
+    <script>
+        let chatBox = document.getElementById("chat-box");
+
+        function sendMessage() {
+            let input = document.getElementById("message");
+            let messageText = input.value;
+            if (messageText.trim() !== "") {
+                let userMessage = document.createElement("p");
+                userMessage.innerHTML = `<span class="username">You:</span> ${messageText}`;
+                chatBox.appendChild(userMessage);
+                chatBox.scrollTop = chatBox.scrollHeight;
+                input.value = "";
+            }
+        }
+    </script>
 </body>
 </html>
