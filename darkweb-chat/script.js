@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const chatInput = document.getElementById("chatInput");
     const sendButton = document.getElementById("sendButton");
     const ipDisplay = document.getElementById("ipDisplay");
+    const matrixDisplay = document.getElementById("matrixDisplay");
+    const codeContent = document.getElementById("codeContent");
 
     function sendMessage() {
         const messageText = chatInput.value.trim();
@@ -25,19 +27,20 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Fake IP Generator
-    function generateFakeIP() {
-        return (
-            Math.floor(Math.random() * 255) + "." +
-            Math.floor(Math.random() * 255) + "." +
-            Math.floor(Math.random() * 255) + "." +
-            Math.floor(Math.random() * 255)
-        );
+    function updateIP() {
+        let fakeIP = "";
+        for (let i = 0; i < 4; i++) {
+            fakeIP += Math.floor(Math.random() * 256) + " ";
+        }
+        ipDisplay.textContent = `[TRACING] IP: ` + fakeIP.trim();
     }
 
-    function updateIP() {
-        ipDisplay.textContent = `[TRACING] IP: ` + generateFakeIP();
+    function updateCode() {
+        let fakeCode = `0x${Math.random().toString(16).substring(2, 8)} EXECUTE\n`;
+        codeContent.textContent += fakeCode;
+        codeContent.scrollTop = codeContent.scrollHeight;
     }
 
     setInterval(updateIP, 20);
+    setInterval(updateCode, 100);
 });
