@@ -4,9 +4,10 @@ body {
     color: #00ff00;
     font-family: 'Courier New', monospace;
     text-align: center;
+    padding-top: 50px;
 }
 
-/* Container Styling */
+/* Container */
 .container {
     margin: 50px auto;
     width: 80%;
@@ -14,79 +15,50 @@ body {
 
 /* Glowing Text */
 h1, p {
-    text-shadow: 0 0 8px #00ff00, 0 0 12px #00ff00;
+    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
 }
 
-/* Navigation Styling */
+/* Navigation Menu (Stacked Links) */
 nav ul {
     list-style: none;
     padding: 0;
 }
 
 nav ul li {
-    display: inline;
-    margin: 0 15px;
+    display: block; /* Stacks links vertically */
+    margin: 15px 0; /* Space between links */
 }
 
-/* Individual Link Colors */
+/* Individual Link Colors & Glow */
 nav ul li a {
     text-decoration: none;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
+    display: inline-block;
+    padding: 10px;
     transition: text-shadow 0.3s ease-in-out;
 }
 
-/* Glow Effects for Links */
-nav ul li a:nth-child(1) {
-    color: #ff0000; /* Red */
-    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff3333;
+/* One-to-One Chat (Blue Glow) */
+nav ul li:nth-child(1) a {
+    color: #0099ff; /* Blue */
+    text-shadow: 0 0 8px #0099ff, 0 0 15px #33ccff;
 }
 
-nav ul li a:nth-child(2) {
-    color: #00ffff; /* Cyan */
-    text-shadow: 0 0 5px #00ffff, 0 0 10px #33ffff;
+/* Group Chat (Yellow Glow) */
+nav ul li:nth-child(2) a {
+    color: #ffff00; /* Yellow */
+    text-shadow: 0 0 8px #ffff00, 0 0 15px #ffcc00;
 }
 
-nav ul li a:nth-child(3) {
-    color: #ff00ff; /* Magenta */
-    text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff33ff;
+/* About Us (Pink Glow) */
+nav ul li:nth-child(3) a {
+    color: #ff00ff; /* Pink */
+    text-shadow: 0 0 8px #ff00ff, 0 0 15px #ff66ff;
 }
 
 /* Prevent Link Color Change on Click */
-nav ul li a:visited, 
+nav ul li a:visited,
 nav ul li a:active {
     color: inherit;
-}
-
-/* Chat Box Styling */
-.chat-box {
-    width: 80%;
-    height: 300px;
-    border: 1px solid #00ff00;
-    background-color: #111;
-    overflow-y: scroll;
-    margin: 20px auto;
-    padding: 10px;
-    text-align: left;
-}
-
-/* Input and Button */
-input {
-    width: 60%;
-    padding: 10px;
-    background-color: #222;
-    color: #00ff00;
-    border: 1px solid #00ff00;
-}
-
-button {
-    padding: 10px;
-    background-color: #00ff00;
-    color: #000;
-    border: none;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #007700;
 }
