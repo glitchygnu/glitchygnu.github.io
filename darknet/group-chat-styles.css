@@ -1,1 +1,86 @@
+/* General Chat Page Styling */
+body {
+    background: rgba(180, 190, 140, 0.4); /* Pale green-yellow transparent */
+    font-family: 'Courier New', monospace;
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
+/* Chat Container */
+.chat-container {
+    width: 80%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: white; /* White background for the chat section */
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Chat History */
+.chat-history {
+    flex: 1;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    overflow-y: hidden; /* Disable vertical scrolling */
+    display: flex;
+    flex-direction: column;
+    white-space: nowrap; /* Ensures messages stay in one line */
+}
+
+/* Alternating Message Stripes */
+.chat-message:nth-child(odd) {
+    background: rgba(170, 180, 130, 0.4); /* Lighter stripe */
+}
+
+.chat-message:nth-child(even) {
+    background: rgba(160, 170, 120, 0.6); /* Darker stripe */
+}
+
+/* Individual Messages */
+.chat-message {
+    padding: 10px;
+    text-align: left;
+    font-size: 16px;
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Input Section (Top) */
+.chat-input-container {
+    display: flex;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Message Input Field */
+#message-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    background: rgba(255, 255, 255, 0.3);
+    color: black;
+    outline: none;
+}
+
+/* Red Send Button */
+#send-button {
+    background: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#send-button:hover {
+    background: darkred;
+}
