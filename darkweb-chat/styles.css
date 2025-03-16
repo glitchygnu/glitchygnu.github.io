@@ -1,1 +1,79 @@
+/* Allgemeiner Dark-Web-Stil */
+body {
+    background: radial-gradient(circle at center, rgba(20, 30, 20, 0.9), rgba(10, 10, 10, 0.9));
+    background-blend-mode: multiply;
+    color: #33ff66;
+    font-family: 'Courier New', monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+}
 
+/* Chat-Container */
+.chat-container {
+    width: 80%;
+    max-width: 600px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 255, 150, 0.5);
+    text-align: center;
+}
+
+/* Nachrichtenbereich */
+.chat-messages {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid rgba(0, 255, 150, 0.3);
+    padding: 5px;
+    background: rgba(10, 20, 10, 0.8);
+}
+
+/* Nachrichten */
+.message {
+    white-space: nowrap; /* Keine Zeilenumbrüche */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Falls zu lang, wird abgeschnitten */
+    padding: 5px;
+    font-size: 14px;
+}
+
+/* Streifenmuster */
+.message:nth-child(even) {
+    background: rgba(50, 255, 100, 0.2);
+}
+.message:nth-child(odd) {
+    background: rgba(20, 100, 50, 0.3);
+}
+
+/* Eingabefeld & Button */
+input, button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 3px;
+    font-size: 16px;
+    outline: none;
+}
+
+input {
+    background: #111;
+    color: #33ff66;
+    border: 1px solid rgba(0, 255, 150, 0.5);
+}
+
+button {
+    background: #33ff66;
+    color: #111;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #00cc44;
+}
