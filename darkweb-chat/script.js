@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const chatMessages = document.getElementById("chatMessages");
     const chatInput = document.getElementById("chatInput");
     const sendButton = document.getElementById("sendButton");
+    const ipDisplay = document.getElementById("ipDisplay");
 
     function sendMessage() {
         const messageText = chatInput.value.trim();
@@ -23,4 +24,20 @@ document.addEventListener("DOMContentLoaded", function () {
             sendMessage();
         }
     });
+
+    // Fake IP Generator
+    function generateFakeIP() {
+        return (
+            Math.floor(Math.random() * 255) + "." +
+            Math.floor(Math.random() * 255) + "." +
+            Math.floor(Math.random() * 255) + "." +
+            Math.floor(Math.random() * 255)
+        );
+    }
+
+    function updateIP() {
+        ipDisplay.textContent = `[TRACING] IP: ` + generateFakeIP();
+    }
+
+    setInterval(updateIP, 20);
 });
