@@ -1,155 +1,145 @@
-/* General Dark Web Styling */
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap'); /* Hacker-style font */
+/* DARK WEB HACKER THEME - ABLEONION STYLE */
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');  /* Hacker-style font */
 
 body {
-    background-color: #0a0a0a;
-    color: #00ff00; /* Green text like a terminal */
+    background-color: #0a0a0a;  /* Deep black background */
+    color: #0f0;  /* Hacker green text */
     font-family: 'VT323', monospace;
-    text-shadow: 0 0 5px #00ff00; /* Glowing effect */
+    text-shadow: 0 0 5px #00ff00;
     margin: 0;
     padding: 0;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
-/* Glitch Effect for a Realistic Hacker Vibe */
-@keyframes glitch {
-    0% { text-shadow: 1px 1px 2px #00ff00, -1px -1px 2px #ff0000; }
-    20% { text-shadow: -1px -1px 2px #00ff00, 1px 1px 2px #ff0000; }
-    40% { text-shadow: 2px 2px 4px #00ff00, -2px -2px 4px #ff0000; }
-    60% { text-shadow: -2px -2px 4px #00ff00, 2px 2px 4px #ff0000; }
-    80% { text-shadow: 1px 1px 2px #00ff00, -1px -1px 2px #ff0000; }
-    100% { text-shadow: 0px 0px 3px #00ff00; }
+/* Subtle Scanline Effect */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(transparent, rgba(0, 0, 0, 0.1) 1px, transparent 2px);
+    pointer-events: none;
+    z-index: 1000;
 }
 
-h1, h2, h3 {
-    text-align: center;
-    font-size: 2rem;
-    animation: glitch 0.5s infinite alternate;
+/* Hacker-style text */
+h1, h2, h3, p, a {
+    color: #0f0;
+    text-shadow: 0 0 8px #00ff00;
 }
 
-/* Navigation Menu */
-nav {
-    background: rgba(10, 10, 10, 0.9);
-    padding: 15px 0;
-    text-align: center;
-    border-bottom: 2px solid #00ff00;
-}
-
-nav a {
-    color: #00ff00;
+/* NEON GLOW LINKS */
+a {
     text-decoration: none;
-    font-size: 20px;
-    margin: 0 20px;
+    font-size: 1.5rem;
     transition: 0.3s;
+    display: block;
 }
 
-nav a:hover {
-    color: #ff0000;
-    text-shadow: 0px 0px 5px #ff0000;
+a:hover {
+    color: #ff0000;  /* Red glitch effect */
+    text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+    transform: scale(1.1);
 }
 
-/* Chat Box */
+/* Chat Background - Realistic Olive-Yellow */
 .chat-container {
-    background-color: rgba(15, 15, 15, 0.95);
-    border: 1px solid #00ff00;
-    padding: 15px;
-    max-width: 800px;
-    margin: 20px auto;
-    height: 500px;
+    background-color: #6b705c;  
+    color: #222;
+    padding: 10px;
+    border-radius: 5px;
+    width: 80%;
+    height: 90vh;
     overflow-y: auto;
-    box-shadow: 0px 0px 10px #00ff00;
+    margin: auto;
+    border: 2px solid #222;
 }
 
-/* Message Style */
-.message {
-    margin-bottom: 10px;
+/* Chat Messages - Looks like Real Ableonion */
+.chat-message {
     padding: 5px;
-    font-size: 1.2rem;
+    border-bottom: 1px dashed #444;
+    color: #0f0;
 }
 
-.message .username {
-    color: #00ff00;
-    font-weight: bold;
+.chat-message:nth-child(even) {
+    color: #ffcc00;
 }
 
-.message .timestamp {
-    color: #808080;
-    font-size: 12px;
-}
-
-/* Input Box */
-.input-container {
-    display: flex;
-    padding: 15px;
-    background-color: #0a0a0a;
-    border-top: 1px solid #00ff00;
+/* Creepy Cursor Effect */
+@keyframes blink {
+    50% {
+        border-color: transparent;
+    }
 }
 
 input[type="text"] {
-    flex: 1;
-    padding: 10px;
-    background-color: #101010;
-    color: #00ff00;
-    border: 1px solid #00ff00;
+    background: black;
+    color: #0f0;
+    border: 1px solid #0f0;
+    padding: 5px;
     font-family: 'VT323', monospace;
     font-size: 1.2rem;
+    width: 100%;
+    animation: blink 1s step-end infinite;
 }
 
+/* SCARY LOADING SCREEN */
+.loading-screen {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: black;
+    color: #0f0;
+    text-align: center;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Typewriter Effect */
+@keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+.typing-text {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typing 2s steps(40, end);
+}
+
+/* BUTTONS - Glitchy Hacker Look */
 button {
+    background: #222;
+    color: #0f0;
+    font-family: 'VT323', monospace;
+    font-size: 1.5rem;
+    border: 2px solid #0f0;
     padding: 10px 20px;
-    background-color: #00ff00;
-    color: #0a0a0a;
-    border: none;
     cursor: pointer;
-    font-size: 1.2rem;
+    transition: 0.3s;
 }
 
 button:hover {
-    background-color: #ff0000;
-    color: #ffffff;
+    background: #ff0000;
+    color: white;
+    text-shadow: 0 0 10px white;
+    border-color: white;
 }
 
-/* Terminal-Like Footer */
-footer {
-    text-align: center;
+/* CHATBOX LOOK */
+#chatbox {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #0f0;
     padding: 10px;
-    font-size: 0.9rem;
-    color: #808080;
-    border-top: 1px solid #00ff00;
-}
-
-/* Flickering Text Effect */
-@keyframes flicker {
-    0% { opacity: 1; }
-    50% { opacity: 0.8; }
-    100% { opacity: 1; }
-}
-
-.flicker {
-    animation: flicker 1s infinite alternate;
-}
-
-/* "UNFINISHED" LOOK - Some Elements Look Like They are Broken */
-.broken {
-    color: rgba(255, 0, 0, 0.8);
-    text-decoration: line-through;
-    opacity: 0.7;
-}
-
-/* Glitchy Screen Lines */
-@keyframes scanline {
-    0% { background: rgba(0, 0, 0, 0.1); }
-    50% { background: rgba(0, 255, 0, 0.03); }
-    100% { background: rgba(0, 0, 0, 0.1); }
-}
-
-.scanline {
-    position: fixed;
+    color: #0f0;
+    font-size: 1.2rem;
     width: 100%;
-    height: 2px;
-    background: rgba(0, 255, 0, 0.1);
-    top: 50%;
-    left: 0;
-    z-index: 999;
-    animation: scanline 3s infinite;
+    height: 300px;
+    overflow-y: scroll;
 }
