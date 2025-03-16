@@ -99,6 +99,40 @@ body {
     background: rgba(20, 100, 50, 0.3);
 }
 
+/* Eingabefeld */
+.input-container input {
+    width: 80%;
+    padding: 8px;
+    background: rgba(10, 50, 10, 0.8);
+    color: #33ff66;
+    border: 1px solid #33ff66;
+    font-family: 'VT323', monospace;
+    font-size: 16px;
+    outline: none;
+    text-shadow: 0 0 5px #33ff66;
+}
+
+/* Eingabefeld-Fokus */
+.input-container input:focus {
+    background: rgba(15, 80, 15, 0.9);
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+}
+
+/* Senden-Button */
+.input-container button {
+    background: rgba(0, 50, 0, 0.8);
+    border: 1px solid #33ff66;
+    color: #33ff66;
+    padding: 8px;
+    cursor: pointer;
+    text-shadow: 0 0 5px #33ff66;
+}
+
+.input-container button:hover {
+    background: rgba(0, 80, 0, 1);
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.8);
+}
+
 /* Fake Code Box */
 .code-box {
     width: 80%;
