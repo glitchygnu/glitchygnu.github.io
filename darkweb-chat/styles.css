@@ -1,48 +1,19 @@
-/* General dark web styling */
 body {
     background-color: black;
-    color: #00ff00; /* Classic hacker green */
-    font-family: 'Courier New', Courier, monospace;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
     text-align: center;
     margin: 0;
     padding: 0;
 }
 
-/* Creepy flickering text effect */
-@keyframes flicker {
-    0% { opacity: 1; }
-    50% { opacity: 0.8; }
-    100% { opacity: 1; }
-}
+/* Glow Effects */
+.glow-green { color: #00ff00; text-shadow: 0px 0px 10px #00ff00; }
+.glow-pink { color: #ff00ff; text-shadow: 0px 0px 10px #ff00ff; }
+.glow-blue { color: #00ffff; text-shadow: 0px 0px 10px #00ffff; }
+.glow-yellow { color: #ffff00; text-shadow: 0px 0px 10px #ffff00; }
 
-h1, h2 {
-    text-shadow: 0px 0px 10px #00ff00;
-    animation: flicker 1.5s infinite alternate;
-}
-
-/* Navigation menu */
-nav ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-nav ul li {
-    margin: 20px;
-}
-
-nav ul li a {
-    color: #00ff00;
-    text-decoration: none;
-    font-size: 20px;
-    text-shadow: 0px 0px 5px #00ff00;
-}
-
-nav ul li a:hover {
-    color: red;
-    text-shadow: 0px 0px 15px red;
-}
-
-/* Creepy chat box */
+/* Chat Styling */
 .chat-container {
     background: rgba(0, 0, 0, 0.8);
     padding: 20px;
@@ -62,7 +33,6 @@ nav ul li a:hover {
     text-align: left;
 }
 
-/* Message input */
 input[type="text"] {
     width: 80%;
     background: black;
@@ -77,38 +47,4 @@ button {
     border: 1px solid #00ff00;
     padding: 5px;
     cursor: pointer;
-}
-
-button:hover {
-    background: red;
-    color: black;
-    border: 1px solid red;
-    text-shadow: 0px 0px 10px red;
-}
-
-/* Group chat links */
-.container ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.container ul li {
-    margin: 20px;
-}
-
-.container ul li a {
-    color: #00ff00;
-    text-decoration: none;
-    font-size: 18px;
-}
-
-.container ul li a:hover {
-    color: red;
-    text-shadow: 0px 0px 15px red;
-}
-
-/* About Us page creepy effect */
-.container p {
-    font-size: 18px;
-    animation: flicker 2s infinite alternate;
 }
