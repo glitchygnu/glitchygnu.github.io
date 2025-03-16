@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const terminalOutput = document.getElementById("terminalOutput");
 
-    // Messages for connection process
     const messages = [
         "Initializing secure connection...",
         "ACCESS GRANTED...",
@@ -70,9 +69,9 @@ document.addEventListener("DOMContentLoaded", function () {
             let line = messages[index].replace(/\[XXX\.XXX\.XXX\.XXX\]/g, `[${getRandomIP()}]`);
             terminalOutput.textContent += line + "\n";
             index++;
+            terminalOutput.scrollTop = terminalOutput.scrollHeight; // Auto-scroll effect
             setTimeout(displayNextLine, Math.random() * 150 + 50); // Random delay for realism
         } else {
-            // Continue generating IPs and random data streams after connection messages
             let count = 0;
             let interval = setInterval(() => {
                 terminalOutput.textContent += `${getRandomIP()} | ${getRandomNumbers()} | ${getRandomNumbers()} | ${getRandomNumbers()}\n`;
@@ -82,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (count > 20) { // Show this effect for a while before redirecting
                     clearInterval(interval);
                     setTimeout(() => {
-                        window.location.href = "chat.html"; // Redirect to chat page
+                        window.location.href = "index.html"; // Redirect to the actual chat page
                     }, 1500);
                 }
             }, 100);
