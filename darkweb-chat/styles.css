@@ -1,88 +1,155 @@
-/* General Styles */
+/* General Dark Web Styling */
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap'); /* Hacker-style font */
+
 body {
+    background-color: #0a0a0a;
+    color: #00ff00; /* Green text like a terminal */
+    font-family: 'VT323', monospace;
+    text-shadow: 0 0 5px #00ff00; /* Glowing effect */
     margin: 0;
     padding: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #1a1a1a; /* Dark background */
-    color: #e0e0e0;
+    overflow-x: hidden;
 }
 
-/* Chat Container */
-.chat-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh; /* Full viewport height */
-    width: 100vw; /* Full viewport width */
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #5a5e2d; /* Muted olive green */
+/* Glitch Effect for a Realistic Hacker Vibe */
+@keyframes glitch {
+    0% { text-shadow: 1px 1px 2px #00ff00, -1px -1px 2px #ff0000; }
+    20% { text-shadow: -1px -1px 2px #00ff00, 1px 1px 2px #ff0000; }
+    40% { text-shadow: 2px 2px 4px #00ff00, -2px -2px 4px #ff0000; }
+    60% { text-shadow: -2px -2px 4px #00ff00, 2px 2px 4px #ff0000; }
+    80% { text-shadow: 1px 1px 2px #00ff00, -1px -1px 2px #ff0000; }
+    100% { text-shadow: 0px 0px 3px #00ff00; }
+}
+
+h1, h2, h3 {
+    text-align: center;
+    font-size: 2rem;
+    animation: glitch 0.5s infinite alternate;
+}
+
+/* Navigation Menu */
+nav {
+    background: rgba(10, 10, 10, 0.9);
+    padding: 15px 0;
+    text-align: center;
+    border-bottom: 2px solid #00ff00;
+}
+
+nav a {
+    color: #00ff00;
+    text-decoration: none;
+    font-size: 20px;
+    margin: 0 20px;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: #ff0000;
+    text-shadow: 0px 0px 5px #ff0000;
 }
 
 /* Chat Box */
-.chat-box {
-    flex-grow: 1;
-    background-color: #6b6e3b; /* Slightly darker olive green */
-    border: 2px solid #45492a; /* Darker green for contrast */
-    border-radius: 5px;
+.chat-container {
+    background-color: rgba(15, 15, 15, 0.95);
+    border: 1px solid #00ff00;
     padding: 15px;
+    max-width: 800px;
+    margin: 20px auto;
+    height: 500px;
     overflow-y: auto;
+    box-shadow: 0px 0px 10px #00ff00;
+}
+
+/* Message Style */
+.message {
     margin-bottom: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    color: #f0e6c8; /* Beige text */
+    padding: 5px;
+    font-size: 1.2rem;
 }
 
-/* Chat Messages */
-.chat-box p {
-    margin: 5px 0;
-}
-
-/* Username Colors */
-.username {
+.message .username {
+    color: #00ff00;
     font-weight: bold;
-    color: #e6d57a; /* Yellowish beige */
 }
 
-/* Input Field */
+.message .timestamp {
+    color: #808080;
+    font-size: 12px;
+}
+
+/* Input Box */
+.input-container {
+    display: flex;
+    padding: 15px;
+    background-color: #0a0a0a;
+    border-top: 1px solid #00ff00;
+}
+
 input[type="text"] {
-    width: calc(100% - 100px);
+    flex: 1;
     padding: 10px;
-    border: 1px solid #45492a;
-    border-radius: 5px;
-    background-color: #5a5e2d;
-    color: #f0e6c8;
-    margin-right: 10px;
+    background-color: #101010;
+    color: #00ff00;
+    border: 1px solid #00ff00;
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
 }
 
-/* Send Button */
 button {
     padding: 10px 20px;
-    border: 1px solid #45492a;
-    border-radius: 5px;
-    background-color: #e6d57a;
-    color: #5a5e2d;
+    background-color: #00ff00;
+    color: #0a0a0a;
+    border: none;
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-size: 1.2rem;
 }
 
 button:hover {
-    background-color: #c4b464;
+    background-color: #ff0000;
+    color: #ffffff;
 }
 
-/* Glitch Effect */
-.glitch-text {
-    font-size: 2em;
-    color: #e6d57a;
-    animation: glitch 1s infinite;
+/* Terminal-Like Footer */
+footer {
+    text-align: center;
+    padding: 10px;
+    font-size: 0.9rem;
+    color: #808080;
+    border-top: 1px solid #00ff00;
 }
 
-@keyframes glitch {
-    0% { text-shadow: 2px 2px #ff0000; }
-    50% { text-shadow: -2px -2px #00ff00; }
-    100% { text-shadow: 2px 2px #ff0000; }
+/* Flickering Text Effect */
+@keyframes flicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 1; }
 }
 
-/* Encrypted Text */
-.encrypted-text {
-    font-family: 'Courier New', monospace;
-    color: #c4b464;
+.flicker {
+    animation: flicker 1s infinite alternate;
+}
+
+/* "UNFINISHED" LOOK - Some Elements Look Like They are Broken */
+.broken {
+    color: rgba(255, 0, 0, 0.8);
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+/* Glitchy Screen Lines */
+@keyframes scanline {
+    0% { background: rgba(0, 0, 0, 0.1); }
+    50% { background: rgba(0, 255, 0, 0.03); }
+    100% { background: rgba(0, 0, 0, 0.1); }
+}
+
+.scanline {
+    position: fixed;
+    width: 100%;
+    height: 2px;
+    background: rgba(0, 255, 0, 0.1);
+    top: 50%;
+    left: 0;
+    z-index: 999;
+    animation: scanline 3s infinite;
 }
