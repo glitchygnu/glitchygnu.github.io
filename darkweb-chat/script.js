@@ -35,8 +35,23 @@ document.addEventListener("DOMContentLoaded", function () {
         ipDisplay.textContent = `[TRACING] IP: ` + fakeIP.trim();
     }
 
+    function generateRandomCode() {
+        const codeSnippets = [
+            `ACCESS_GRANTED();`,
+            `ENCRYPTING_PACKET();`,
+            `0x${Math.random().toString(16).substring(2, 8)} EXECUTE();`,
+            `LOAD_MODULE("/core/kernel.bin");`,
+            `TRACE_ROUTE(${Math.floor(Math.random() * 999999)});`,
+            `SYS_CALL(0x${Math.random().toString(16).substring(2, 6)});`,
+            `DECRYPT_FILE("/etc/shadow");`,
+            `BYPASS_FIREWALL(${Math.random().toFixed(4)}s);`,
+            `0x${Math.random().toString(16).substring(2, 10)} WRITE();`
+        ];
+        return codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
+    }
+
     function updateCode() {
-        let fakeCode = `0x${Math.random().toString(16).substring(2, 8)} EXECUTE\n`;
+        let fakeCode = generateRandomCode() + `\n`;
         codeContent.textContent += fakeCode;
         codeContent.scrollTop = codeContent.scrollHeight;
     }
