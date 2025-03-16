@@ -1,9 +1,7 @@
-/* DARK WEB Style: Düster, glitchy, gefährlich */
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 body {
     background: radial-gradient(circle, rgba(10, 20, 10, 0.9), rgba(0, 0, 0, 1));
-    background-size: cover;
     color: #33ff66;
     font-family: 'VT323', monospace;
     display: flex;
@@ -15,17 +13,18 @@ body {
     text-shadow: 0 0 5px #33ff66, 0 0 10px #0f0;
 }
 
-/* Blurry Glitch-Effekt */
-body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('https://i.imgur.com/9bQQCnY.png'); /* Füge ein Scanline-Muster hinzu */
-    opacity: 0.03;
-    pointer-events: none;
+/* Fake IP-Display */
+.ip-display {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 16px;
+    color: #33ff66;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 5px 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+    border: 1px solid rgba(0, 255, 0, 0.5);
 }
 
 /* Chat-Container */
@@ -81,16 +80,6 @@ body::before {
     background: rgba(20, 100, 50, 0.3);
 }
 
-/* Glitch-Animation für Nachrichten */
-.message::before {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 255, 0, 0.1);
-    animation: glitch 0.2s infinite alternate;
-}
-
 /* Eingabezeile */
 .input-container {
     display: flex;
@@ -122,17 +111,4 @@ button {
 
 button:hover {
     background: #00cc44;
-}
-
-/* Keyframes für Glitch */
-@keyframes glitch {
-    0% {
-        transform: translateX(0);
-    }
-    50% {
-        transform: translateX(2px);
-    }
-    100% {
-        transform: translateX(-2px);
-    }
 }
