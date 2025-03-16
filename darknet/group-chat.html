@@ -1,1 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Ableonion</title>
+    <link rel="stylesheet" href="chat-styles.css">
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Input Section (At the Top) -->
+        <div class="chat-input-container">
+            <input type="text" id="message-input" placeholder="Type your message...">
+            <button id="send-button" onclick="sendMessage()">Send</button>
+        </div>
+        
+        <!-- Chat History (Most of the Screen) -->
+        <div class="chat-history" id="chat-history">
+            <div class="chat-message">User1: Hello, is this secure?</div>
+            <div class="chat-message">User2: Yes, fully encrypted.</div>
+        </div>
+    </div>
 
+    <script src="script.js"></script>
+</body>
+</html>
