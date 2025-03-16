@@ -1,15 +1,23 @@
+/* Dark Web Background */
 body {
-    background-color: #000;
+    background: radial-gradient(circle, rgba(0, 50, 0, 0.9) 0%, black 100%);
     color: #00ff00;
     font-family: 'Courier New', monospace;
     text-align: center;
 }
 
+/* Container Styling */
 .container {
     margin: 50px auto;
     width: 80%;
 }
 
+/* Glowing Text */
+h1, p {
+    text-shadow: 0 0 8px #00ff00, 0 0 12px #00ff00;
+}
+
+/* Navigation Styling */
 nav ul {
     list-style: none;
     padding: 0;
@@ -20,11 +28,37 @@ nav ul li {
     margin: 0 15px;
 }
 
+/* Individual Link Colors */
 nav ul li a {
-    color: #00ff00;
     text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    transition: text-shadow 0.3s ease-in-out;
 }
 
+/* Glow Effects for Links */
+nav ul li a:nth-child(1) {
+    color: #ff0000; /* Red */
+    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff3333;
+}
+
+nav ul li a:nth-child(2) {
+    color: #00ffff; /* Cyan */
+    text-shadow: 0 0 5px #00ffff, 0 0 10px #33ffff;
+}
+
+nav ul li a:nth-child(3) {
+    color: #ff00ff; /* Magenta */
+    text-shadow: 0 0 5px #ff00ff, 0 0 10px #ff33ff;
+}
+
+/* Prevent Link Color Change on Click */
+nav ul li a:visited, 
+nav ul li a:active {
+    color: inherit;
+}
+
+/* Chat Box Styling */
 .chat-box {
     width: 80%;
     height: 300px;
@@ -36,6 +70,7 @@ nav ul li a {
     text-align: left;
 }
 
+/* Input and Button */
 input {
     width: 60%;
     padding: 10px;
