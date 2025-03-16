@@ -1,31 +1,55 @@
-// Function to handle sending messages in one-to-one chat
+// Send message with 'Enter' key
+document.getElementById("message").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        sendMessage();
+    }
+});
+
+document.getElementById("group-message").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        sendGroupMessage();
+    }
+});
+
+// Simulated dark web responses
+const oneToOneResponses = [
+    "Anonymous: Who are you?",
+    "Anonymous: Are you alone?",
+    "Anonymous: I see you."
+];
+
+const groupResponses = [
+    "Unknown User: Be careful what you ask.",
+    "Anonymous: Trust no one.",
+    "Unknown User: Leave while you can."
+];
+
 function sendMessage() {
     let messageBox = document.getElementById("chat-box");
     let input = document.getElementById("message");
-    
+
     if (input.value.trim() === "") return;
 
     let newMessage = document.createElement("p");
     newMessage.textContent = `You: ${input.value}`;
-    newMessage.style.color = "#00ff00"; // Hacker-style green
+    newMessage.style.color = "#ff00ff";
 
     messageBox.appendChild(newMessage);
     messageBox.scrollTop = messageBox.scrollHeight;
     
     input.value = "";
-    
-    // Simulated dark web bot response (eerie effect)
+
     setTimeout(() => {
         let botMessage = document.createElement("p");
-        botMessage.textContent = "Anonymous: Do you know what you're searching for?";
+        botMessage.textContent = oneToOneResponses[Math.floor(Math.random() * oneToOneResponses.length)];
         botMessage.style.color = "red";
         botMessage.style.textShadow = "0px 0px 10px red";
+
         messageBox.appendChild(botMessage);
         messageBox.scrollTop = messageBox.scrollHeight;
-    }, 2000);
+    }, Math.random() * 3000 + 1000);
 }
 
-// Function to handle sending messages in group chat
 function sendGroupMessage() {
     let messageBox = document.getElementById("group-chat-box");
     let input = document.getElementById("group-message");
@@ -34,23 +58,16 @@ function sendGroupMessage() {
 
     let newMessage = document.createElement("p");
     newMessage.textContent = `You: ${input.value}`;
-    newMessage.style.color = "#00ff00";
+    newMessage.style.color = "#00ffff";
 
     messageBox.appendChild(newMessage);
     messageBox.scrollTop = messageBox.scrollHeight;
 
     input.value = "";
 
-    // Randomized eerie group response
     setTimeout(() => {
-        let responses = [
-            "Unknown User: You shouldn't be here...",
-            "Anonymous: They are watching...",
-            "Unknown User: You don’t know what’s hidden in the shadows.",
-            "Anonymous: Leave. Now."
-        ];
         let botMessage = document.createElement("p");
-        botMessage.textContent = responses[Math.floor(Math.random() * responses.length)];
+        botMessage.textContent = groupResponses[Math.floor(Math.random() * groupResponses.length)];
         botMessage.style.color = "red";
         botMessage.style.textShadow = "0px 0px 10px red";
 
