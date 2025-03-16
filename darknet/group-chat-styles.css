@@ -1,97 +1,73 @@
-/* Apply the hacker-style font and ensure the correct background color */
 @font-face {
     font-family: 'HackerFont';
-    src: url('hacker-font.woff2') format('woff2'); /* Ensure you have this font */
+    src: url('hacker-font.woff2') format('woff2');
 }
 
 body {
-    background: rgba(180, 190, 140, 0.6); /* Stronger green-yellow transparent color */
-    font-family: 'HackerFont', monospace;
+    background-color: rgba(200, 255, 170, 0.1); /* Green-yellow pale transparent */
     color: white;
+    font-family: 'HackerFont', monospace;
     margin: 0;
     padding: 0;
+}
+
+#chat-container {
+    width: 100%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    height: 100vh;
 }
 
-/* Message Input Bar at the Top */
-.chat-input-container {
+#input-container {
     width: 100%;
-    display: flex;
+    background-color: rgba(50, 50, 50, 0.8); /* Dark transparent background */
     padding: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
 }
 
-/* Message Input Field */
 #message-input {
-    flex: 1;
-    padding: 15px;
+    flex-grow: 1;
+    padding: 10px;
     font-size: 16px;
-    border: none;
-    background: rgba(255, 255, 255, 0.2);
-    color: black;
+    background: black;
+    color: white;
+    border: 1px solid #00ff00;
     outline: none;
-    font-family: 'HackerFont', monospace;
 }
 
-/* Red Send Button */
 #send-button {
-    background: red;
+    padding: 10px 20px;
+    background-color: red;
     color: white;
     border: none;
-    padding: 15px 20px;
     cursor: pointer;
-    font-weight: bold;
-    font-family: 'HackerFont', monospace;
 }
 
 #send-button:hover {
-    background: darkred;
+    background-color: darkred;
 }
 
-/* Chat Container */
-.chat-container {
-    width: 80%;
-    height: 85%;
-    display: flex;
-    flex-direction: column;
-    background: rgba(180, 190, 140, 0.4); /* Ensuring background is visible */
-    border-radius: 8px;
-    overflow: hidden;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+#chat-history {
+    margin-top: 50px; /* Push below input field */
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
 }
 
-/* Chat History */
-.chat-history {
-    flex: 1;
-    overflow-x: auto; /* Enable horizontal scrolling */
-    overflow-y: hidden; /* Disable vertical scrolling */
-    display: flex;
-    flex-direction: column;
-    white-space: nowrap; /* Prevent messages from wrapping */
-    background: rgba(180, 190, 140, 0.3); /* Default background */
-}
-
-/* Alternating Message Colors */
-.chat-message:nth-child(odd) {
-    background: rgba(170, 180, 130, 0.5); /* Lighter stripe */
+.chat-message {
+    white-space: nowrap; /* Ensures text doesn't wrap */
+    overflow-x: auto;
+    padding: 5px;
+    font-size: 16px;
 }
 
 .chat-message:nth-child(even) {
-    background: rgba(160, 170, 120, 0.7); /* Darker stripe */
+    background-color: rgba(200, 255, 170, 0.3); /* Light green-yellow */
 }
 
-/* Individual Chat Messages */
-.chat-message {
-    padding: 10px;
-    text-align: left;
-    font-size: 16px;
-    color: white;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    white-space: nowrap; /* Ensures messages stay on one line */
-    overflow-x: auto; /* Enable horizontal scrolling for long messages */
-    font-family: 'HackerFont', monospace;
+.chat-message:nth-child(odd) {
+    background-color: rgba(180, 235, 150, 0.3); /* Darker green-yellow */
 }
