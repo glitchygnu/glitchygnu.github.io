@@ -1,7 +1,6 @@
 /* Allgemeiner Dark-Web-Stil */
 body {
     background: radial-gradient(circle at center, rgba(20, 30, 20, 0.9), rgba(10, 10, 10, 0.9));
-    background-blend-mode: multiply;
     color: #33ff66;
     font-family: 'Courier New', monospace;
     display: flex;
@@ -30,6 +29,8 @@ body {
     border: 1px solid rgba(0, 255, 150, 0.3);
     padding: 5px;
     background: rgba(10, 20, 10, 0.8);
+    display: flex;
+    flex-direction: column;
 }
 
 /* Nachrichten */
