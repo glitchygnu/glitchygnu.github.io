@@ -1,7 +1,7 @@
 /* Dark Web Background */
 body {
-    background: radial-gradient(circle, rgba(0, 50, 0, 0.9) 0%, black 100%);
-    color: #00ff00;
+    background: radial-gradient(circle, rgba(30, 30, 30, 0.9) 0%, black 100%);
+    color: #d0d0d0; /* Soft white/grey text */
     font-family: 'Courier New', monospace;
     text-align: center;
     padding-top: 50px;
@@ -15,7 +15,7 @@ body {
 
 /* Glowing Text */
 h1, p {
-    text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+    text-shadow: 0 0 10px #ffffff, 0 0 20px #aaaaaa;
 }
 
 /* Navigation Menu (Stacked Links) */
@@ -39,23 +39,22 @@ nav ul li a {
     transition: text-shadow 0.3s ease-in-out;
 }
 
-/* Individual Link Colors & Glow */
-/* One-to-One Chat (Blue Glow) */
+/* One-to-One Chat (Blue Text & Glow) */
 .link-blue {
-    color: #0099ff; /* Blue */
-    text-shadow: 0 0 10px #0099ff, 0 0 20px #33ccff;
+    color: #b0dfff; /* Light blue text */
+    text-shadow: 0 0 5px #0099ff, 0 0 15px #33ccff;
 }
 
-/* Group Chat (Yellow Glow) */
+/* Group Chat (Yellow Text & Glow) */
 .link-yellow {
-    color: #ffff00; /* Yellow */
-    text-shadow: 0 0 10px #ffff00, 0 0 20px #ffcc00;
+    color: #fff7b0; /* Light yellow text */
+    text-shadow: 0 0 5px #ffff00, 0 0 15px #ffcc00;
 }
 
-/* About Us (Pink Glow) */
+/* About Us (Pink Text & Glow) */
 .link-pink {
-    color: #ff00ff; /* Pink */
-    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff66ff;
+    color: #ffb0ff; /* Light pink text */
+    text-shadow: 0 0 5px #ff00ff, 0 0 15px #ff66ff;
 }
 
 /* Prevent Link Color Change on Click */
