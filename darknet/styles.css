@@ -29,32 +29,33 @@ nav ul li {
     margin: 15px 0; /* Space between links */
 }
 
-/* Individual Link Colors & Glow */
+/* General Link Styling */
 nav ul li a {
     text-decoration: none;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
+    padding: 10px 20px;
     display: inline-block;
-    padding: 10px;
     transition: text-shadow 0.3s ease-in-out;
 }
 
+/* Individual Link Colors & Glow */
 /* One-to-One Chat (Blue Glow) */
-nav ul li:nth-child(1) a {
+.link-blue {
     color: #0099ff; /* Blue */
-    text-shadow: 0 0 8px #0099ff, 0 0 15px #33ccff;
+    text-shadow: 0 0 10px #0099ff, 0 0 20px #33ccff;
 }
 
 /* Group Chat (Yellow Glow) */
-nav ul li:nth-child(2) a {
+.link-yellow {
     color: #ffff00; /* Yellow */
-    text-shadow: 0 0 8px #ffff00, 0 0 15px #ffcc00;
+    text-shadow: 0 0 10px #ffff00, 0 0 20px #ffcc00;
 }
 
 /* About Us (Pink Glow) */
-nav ul li:nth-child(3) a {
+.link-pink {
     color: #ff00ff; /* Pink */
-    text-shadow: 0 0 8px #ff00ff, 0 0 15px #ff66ff;
+    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff66ff;
 }
 
 /* Prevent Link Color Change on Click */
