@@ -1,11 +1,11 @@
-/* Apply the hacker-style font and green-yellow transparent background */
+/* Apply the hacker-style font and ensure the correct background color */
 @font-face {
     font-family: 'HackerFont';
     src: url('hacker-font.woff2') format('woff2'); /* Ensure you have this font */
 }
 
 body {
-    background: rgba(180, 190, 140, 0.4); /* Pale green-yellow transparent */
+    background: rgba(180, 190, 140, 0.6); /* Stronger green-yellow transparent color */
     font-family: 'HackerFont', monospace;
     color: white;
     margin: 0;
@@ -52,19 +52,19 @@ body {
     background: darkred;
 }
 
-/* Chat Container (Main Section) */
+/* Chat Container */
 .chat-container {
     width: 80%;
     height: 85%;
     display: flex;
     flex-direction: column;
-    background: rgba(180, 190, 140, 0.2); /* Green-yellow transparent */
+    background: rgba(180, 190, 140, 0.4); /* Ensuring background is visible */
     border-radius: 8px;
     overflow: hidden;
     border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Chat History - Most of the Screen */
+/* Chat History */
 .chat-history {
     flex: 1;
     overflow-x: auto; /* Enable horizontal scrolling */
@@ -72,16 +72,16 @@ body {
     display: flex;
     flex-direction: column;
     white-space: nowrap; /* Prevent messages from wrapping */
-    background: rgba(180, 190, 140, 0.2); /* Default background */
+    background: rgba(180, 190, 140, 0.3); /* Default background */
 }
 
 /* Alternating Message Colors */
 .chat-message:nth-child(odd) {
-    background: rgba(170, 180, 130, 0.4); /* Lighter stripe */
+    background: rgba(170, 180, 130, 0.5); /* Lighter stripe */
 }
 
 .chat-message:nth-child(even) {
-    background: rgba(160, 170, 120, 0.6); /* Darker stripe */
+    background: rgba(160, 170, 120, 0.7); /* Darker stripe */
 }
 
 /* Individual Chat Messages */
