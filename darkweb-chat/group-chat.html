@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Group Chat</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="chat.js" defer></script>
 </head>
 <body>
+    <h1 class="glow-blue">Group Chat</h1>
     <div class="chat-container">
-        <h2>Dark Conversations</h2>
-        <div class="chat-box" id="group-chat-box"></div>
+        <div id="group-chat-box" class="chat-box"></div>
         <input type="text" id="group-message" placeholder="Type a message...">
         <button onclick="sendGroupMessage()">Send</button>
     </div>
-    <script src="chat.js"></script>
 </body>
 </html>
