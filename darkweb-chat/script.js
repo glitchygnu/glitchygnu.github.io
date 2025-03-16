@@ -1,61 +1,39 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const chatMessages = document.getElementById("chatMessages");
-    const chatInput = document.getElementById("chatInput");
-    const sendButton = document.getElementById("sendButton");
-    const ipDisplay = document.getElementById("ipDisplay");
-    const matrixDisplay = document.getElementById("matrixDisplay");
-    const codeContent = document.getElementById("codeContent");
-
-    function sendMessage() {
-        const messageText = chatInput.value.trim();
-        if (messageText === "") return;
-
-        const messageElement = document.createElement("div");
-        messageElement.classList.add("message");
-        messageElement.textContent = `[USER-REDACTED]: ${messageText}`;
-
-        chatMessages.appendChild(messageElement);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-
-        chatInput.value = "";
-    }
-
-    sendButton.addEventListener("click", sendMessage);
-    chatInput.addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-            sendMessage();
-        }
+// Glitch effect on hover for all links
+document.querySelectorAll("a").forEach(link => {
+    link.addEventListener("mouseover", () => {
+        link.style.textShadow = "0px 0px 15px red";
+        link.style.color = "red";
     });
+    link.addEventListener("mouseout", () => {
+        link.style.textShadow = "0px 0px 5px #00ff00";
+        link.style.color = "#00ff00";
+    });
+});
 
-    function updateIP() {
-        let fakeIP = "";
-        for (let i = 0; i < 4; i++) {
-            fakeIP += Math.floor(Math.random() * 256) + " ";
+// Simulated encrypted loading text effect
+function simulateEncryptionText(element, text, speed = 50) {
+    let encryptedText = "";
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()";
+    
+    for (let i = 0; i < text.length; i++) {
+        encryptedText += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    
+    element.innerText = encryptedText;
+    let i = 0;
+    
+    let interval = setInterval(() => {
+        if (i < text.length) {
+            encryptedText = encryptedText.substring(0, i) + text[i] + encryptedText.substring(i + 1);
+            element.innerText = encryptedText;
+            i++;
+        } else {
+            clearInterval(interval);
         }
-        ipDisplay.textContent = `[TRACING] IP: ` + fakeIP.trim();
-    }
+    }, speed);
+}
 
-    function generateRandomCode() {
-        const codeSnippets = [
-            `ACCESS_GRANTED();`,
-            `ENCRYPTING_PACKET();`,
-            `0x${Math.random().toString(16).substring(2, 8)} EXECUTE();`,
-            `LOAD_MODULE("/core/kernel.bin");`,
-            `TRACE_ROUTE(${Math.floor(Math.random() * 999999)});`,
-            `SYS_CALL(0x${Math.random().toString(16).substring(2, 6)});`,
-            `DECRYPT_FILE("/etc/shadow");`,
-            `BYPASS_FIREWALL(${Math.random().toFixed(4)}s);`,
-            `0x${Math.random().toString(16).substring(2, 10)} WRITE();`
-        ];
-        return codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
-    }
-
-    function updateCode() {
-        let fakeCode = generateRandomCode() + `\n`;
-        codeContent.textContent += fakeCode;
-        codeContent.scrollTop = codeContent.scrollHeight;
-    }
-
-    setInterval(updateIP, 20);
-    setInterval(updateCode, 100);
+document.addEventListener("DOMContentLoaded", () => {
+    const heading = document.querySelector("h1");
+    if (heading) simulateEncryptionText(heading, heading.innerText);
 });
