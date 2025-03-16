@@ -7,7 +7,11 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="ip-display" id="ipDisplay">[Calculating IP...]</div>
+    <div class="ip-container">
+        <div class="ip-display" id="ipDisplay">[TRACING] IP: 0.0.0.0</div>
+        <div class="matrix-display" id="matrixDisplay">Initializing...</div>
+    </div>
+
     <div class="chat-container">
         <div class="chat-header">⚠️ [ENCRYPTED CHAT ACTIVE] ⚠️</div>
         <div class="chat-messages" id="chatMessages"></div>
@@ -16,6 +20,13 @@
             <button id="sendButton">↵</button>
         </div>
     </div>
+
+    <!-- Fake Code Running Box -->
+    <div class="code-box">
+        <div class="code-header">⚠ SYSTEM LOG ⚠</div>
+        <div class="code-content" id="codeContent">Initializing...</div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
