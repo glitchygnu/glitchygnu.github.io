@@ -3,17 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat</title>
+    <title>Group Chat - Ableonion</title>
+    
+    <!-- Link to External CSS -->
     <link rel="stylesheet" href="chat-style.css">
+
+    <!-- Fallback Inline CSS in Case External File Doesn't Load -->
+    <style>
+        body {
+            background-color: rgba(200, 255, 170, 0.1) !important;
+            font-family: "Courier New", monospace;
+            color: white;
+        }
+        
+        #chat-container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 20px auto;
+            border: 2px solid white;
+            background-color: rgba(200, 255, 170, 0.2);
+            padding: 10px;
+            overflow-y: auto;
+            height: 500px;
+        }
+
+        .message {
+            padding: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+
+        .message:nth-child(even) {
+            background-color: rgba(200, 255, 170, 0.3);
+        }
+
+        .message:nth-child(odd) {
+            background-color: rgba(200, 255, 170, 0.5);
+        }
+
+        #message-input {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        #send-button {
+            width: 15%;
+            padding: 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
-    <div id="chat-container">
-        <div id="input-container">
-            <input type="text" id="message-input" placeholder="Type your message...">
-            <button id="send-button">Send</button>
-        </div>
-        <div id="chat-history"></div>
+
+    <div id="chat-container"></div>
+
+    <div id="input-container">
+        <input type="text" id="message-input" placeholder="Type your message...">
+        <button id="send-button">Send</button>
     </div>
+
     <script src="chat-script.js"></script>
+
 </body>
 </html>
