@@ -3,80 +3,55 @@ document.addEventListener("DOMContentLoaded", function () {
     const messageInput = document.getElementById("message-input");
     const sendButton = document.getElementById("send-button");
 
-    // Random Users
     const users = ["Anonymous", "TheCreep", "nick", "Tut", "Persesu", "Omen", "meow", "Shadow", "RedKnight", "Cipher", "Unknown", "Watcher"];
     
-    // Memory for past messages
     let chatHistory = [];
 
-    // Large list of possible bot messages (context-based)
+    // Expanded bot responses (natural-sounding variations)
     const botMessages = {
         greetings: [
-            "Hey.",
-            "Yo.",
-            "Good to see you again.",
-            "What do you want?",
-            "Sup?",
-            "You're back?",
-            "You again?"
+            "yo.", "hey.", "sup?", "whats up", "back again?", "y u here", "ugh not u again", "who dis", "u serious?", 
+            "hm.", "hmm..", "weird seein u here", "lol wut", "wtf u doin here", "huh.", "figured u’d show up", "didnt expect u back"
         ],
         questions: [
-            "What are you looking for?",
-            "Why are you here?",
-            "Tell me something interesting.",
-            "Got any new info?",
-            "What’s your plan?",
-            "You really think you should be here?"
+            "wut u want", "what’s ur deal", "why u askin?", "so u just gonna sit there", "u got somethin to say or nah", "who sent u", 
+            "y tho?", "hmm.. not sure u wanna know", "y do u care", "u lost or what", "who u lookin for", "speak or gtfo", 
+            "damn u quiet", "aight, ask.", "depends, wut u wanna know"
         ],
         dark: [
-            "Some things shouldn't be asked.",
-            "Not everything is for you to know.",
-            "You’re in too deep.",
-            "Do you even know what you're doing?",
-            "You can’t trust anyone here.",
-            "Someone is always watching."
+            "shh", "dont talk bout that here", "tf u askin that for?", "watch ur mouth", "bad idea askin that", "lmao u crazy", 
+            "nah man dont.", "not here", "rly? u wanna go there?", "u tryna get watched?", "lol u clueless huh", "lil too deep for u bro", 
+            "nah we dont talk bout that", "u sound like a cop", "careful wut u say", "u sound too new for this"
         ],
         tech: [
-            "Tor is acting weird today.",
-            "I had to switch VPNs twice already.",
-            "Anyone else having connection issues?",
-            "My PGP keys got leaked, had to generate new ones.",
-            "Servers are slow today.",
-            "DNS spoofing is getting out of control."
+            "dns down?", "vpn actin up for anyone else?", "wtf tor too slow today", "u tryna stay safe or nah", "u usin pgp?", 
+            "proxies or nah?", "whos got a better vpn", "server laggin asf", "gotta switch nodes", "bruh tor so slow rn", "anyone else see weird traffic", 
+            "someone spoofin packets?", "whos got a clean mirror?", "yall need to encrypt better", "who got solid OpSec?"
         ],
         threats: [
-            "Careful what you say.",
-            "You're being watched.",
-            "This isn’t a game.",
-            "You might not like what you find.",
-            "If you don’t know what you’re doing, leave."
+            "who tf u think u r", "lol u sure u wanna be here", "u actin real sus", "bruh u done goofed", "u better hope nobody noticed that", 
+            "why u even here bro", "this aint a game lmao", "u sure bout that?", "watch ur step", "say less", "u sound desperate", 
+            "not a good idea my dude", "u really tryna do this?", "ppl dont last long talkin like that", "u might wanna rethink this"
         ],
         misc: [
-            "I don't know.",
-            "Try asking someone else.",
-            "Not my problem.",
-            "Figure it out yourself.",
-            "Why would I tell you?",
-            "That’s classified.",
-            "I’ve heard rumors, but nothing confirmed."
+            "idk lol", "lmao no idea", "tf would i know", "not my problem", "ehhh maybe", "possibly, but doubtful", "ask someone else", 
+            "lil too risky to talk bout", "who even cares", "yea... nah", "not my concern", "u wanna take that risk?", "lmao good luck wit that", 
+            "pffft.", "hahahaha no.", "u wish", "could be.. could not be", "man idk wut to tell u"
         ]
     };
 
-    // Function to get a random message from a category
     function getRandomMessage(category) {
         return botMessages[category][Math.floor(Math.random() * botMessages[category].length)];
     }
 
-    // Function to get a user from the list
     function getRandomUser() {
         return users[Math.floor(Math.random() * users.length)];
     }
 
-    // Function to analyze user message and generate a relevant response
     function generateBotResponse(userMessage) {
         userMessage = userMessage.toLowerCase();
 
-        if (userMessage.includes("hello") || userMessage.includes("hi")) {
+        if (userMessage.includes("hello") || userMessage.includes("hi") || userMessage.includes("sup")) {
             return getRandomMessage("greetings");
         } 
         if (userMessage.includes("who are you") || userMessage.includes("what is this")) {
@@ -92,16 +67,15 @@ document.addEventListener("DOMContentLoaded", function () {
             return getRandomMessage("misc");
         } 
         if (userMessage.includes("help") || userMessage.includes("advice")) {
-            return "No one helps here.";
+            return "lol no one helps here.";
         } 
         if (userMessage.includes("leave") || userMessage.includes("goodbye")) {
-            return "Don’t come back.";
+            return "dont come back.";
         }
 
-        return getRandomMessage("misc"); // Default response
+        return getRandomMessage("misc");
     }
 
-    // Function to add a message to the chat
     function addMessage(username, text, isUser = false) {
         const messageDiv = document.createElement("div");
         messageDiv.classList.add("chat-message");
@@ -109,17 +83,16 @@ document.addEventListener("DOMContentLoaded", function () {
         if (isUser) {
             messageDiv.style.color = "blue";
             username = "You";
-            chatHistory.push(text); // Save message in history
+            chatHistory.push(text);
         } else {
             messageDiv.style.color = "#222";
         }
 
         messageDiv.innerHTML = `<span class="username">${username}:</span> ${text}`;
         chatBox.appendChild(messageDiv);
-        chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // Handle user sending a message
     sendButton.addEventListener("click", function () {
         const text = messageInput.value.trim();
         if (text !== "") {
@@ -130,22 +103,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 const botUser = getRandomUser();
                 const botResponse = generateBotResponse(text);
                 addMessage(botUser, botResponse);
-            }, Math.random() * 3000 + 1000); // Random delay
+            }, Math.random() * 3000 + 1000);
         }
     });
 
-    // Send message with Enter key
     messageInput.addEventListener("keypress", function (event) {
         if (event.key === "Enter") {
             sendButton.click();
         }
     });
 
-    // Simulate random bot messages every 10-30 seconds
     setInterval(() => {
         const randomUser = getRandomUser();
         const randomCategory = Object.keys(botMessages)[Math.floor(Math.random() * Object.keys(botMessages).length)];
         const randomMessage = getRandomMessage(randomCategory);
         addMessage(randomUser, randomMessage);
-    }, Math.random() * 20000 + 10000); // Every 10-30 seconds
+    }, Math.random() * 20000 + 10000);
 });
