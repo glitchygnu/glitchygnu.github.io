@@ -7,6 +7,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const ipDisplay = document.getElementById("ipDisplay");
     const matrixDisplay = document.getElementById("matrixDisplay");
     const codeContent = document.getElementById("codeContent");
+    const inputContainer = document.querySelector(".input-container");
+
+    // Verstecke den Chat-Bereich zu Beginn
+    chatContainer.style.display = "none";
+    inputContainer.style.display = "none";
 
     // Fake Boot-Up Code
     const bootMessages = [
@@ -33,12 +38,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 setTimeout(() => {
                     bootScreen.style.display = "none";
                     chatContainer.style.display = "block";
-                }, 1000); // Kurze Verzögerung, bevor Chat erscheint
+                    inputContainer.style.display = "flex";
+                }, 1000);
             }
-        }, 500); // Jede Nachricht wird in 500ms Intervallen hinzugefügt
+        }, 500);
     }
 
-    startBootSequence(); // Startet die Boot-Sequenz
+    startBootSequence();
 
     // Chat-Funktion
     function sendMessage() {
