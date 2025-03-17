@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dark Web Chat</title>
+    <title>Real-Time Dark Web Chat</title>
     <style>
         body {
-            background-color: rgba(200, 220, 180, 0.8); /* Greenish-yellow background */
+            background-color: rgba(200, 220, 180, 0.8);
             font-family: 'Courier New', monospace;
             color: white;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Prevent scrolling */
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -33,17 +33,17 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: auto;
-            white-space: nowrap; /* Ensures messages continue horizontally */
+            white-space: nowrap;
             padding: 10px;
             background: linear-gradient(to bottom, rgba(190, 210, 170, 0.8), rgba(180, 200, 160, 0.8));
         }
 
         .chat-message:nth-child(odd) {
-            background-color: rgba(180, 200, 150, 0.7); /* Slightly darker greenish-yellow */
+            background-color: rgba(180, 200, 150, 0.7);
         }
 
         .chat-message:nth-child(even) {
-            background-color: rgba(190, 210, 160, 0.7); /* Slightly lighter greenish-yellow */
+            background-color: rgba(190, 210, 160, 0.7);
         }
 
         .chat-message {
@@ -78,14 +78,134 @@
             border: none;
             cursor: pointer;
         }
+
+        .username-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        #usernameInput {
+            padding: 5px;
+            font-size: 14px;
+            border: none;
+            background-color: rgba(200, 220, 180, 0.8);
+            color: black;
+        }
+
+        #setUsernameButton {
+            padding: 5px 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-
     <div class="chat-container">
+        <div class="username-container">
+            <input type="text" id="usernameInput" placeholder="Set username">
+            <button id="setUsernameButton">Set</button>
+        </div>
         <div class="chat-history" id="chatHistory"></div>
         <div class="input-container">
             <input type="text" id="messageInput" placeholder="Type your message...">
             <button id="sendButton">Send</button>
         </div>
     </div>
+
+    <script>
+        // Client-Side JavaScript
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatHistory = document.getElementById('chatHistory');
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            const usernameInput = document.getElementById('usernameInput');
+            const setUsernameButton = document.getElementById('setUsernameButton');
+
+            let username = 'Anonymous'; // Default username
+
+            // WebSocket connection
+            const socket = new WebSocket('ws://localhost:8080');
+
+            // Set username
+            setUsernameButton.addEventListener('click', () => {
+                const newUsername = usernameInput.value.trim();
+                if (newUsername) {
+                    username = newUsername;
+                    usernameInput.value = '';
+                    alert(`Username set to: ${username}`);
+                }
+            });
+
+            // Send message
+            sendButton.addEventListener('click', () => {
+                const message = messageInput.value.trim();
+                if (message) {
+                    const timestamp = getCurrentTime();
+                    const data = {
+                        username,
+                        message,
+                        timestamp,
+                    };
+                    socket.send(JSON.stringify(data)); // Send message to server
+                    messageInput.value = ''; // Clear input
+                }
+            });
+
+            // Receive messages
+            socket.addEventListener('message', (event) => {
+                const data = JSON.parse(event.data);
+                const messageElement = document.createElement('div');
+                messageElement.className = 'chat-message';
+                messageElement.textContent = `${data.username} [${data.timestamp}]: ${data.message}`;
+                chatHistory.appendChild(messageElement);
+                chatHistory.scrollTop = chatHistory.scrollHeight; // Scroll to bottom
+            });
+
+            // Get current time in HH:MM:SS format
+            function getCurrentTime() {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                return `${hours}:${minutes}:${seconds}`;
+            }
+        });
+
+        // Server-Side JavaScript (Node.js)
+        // To run the server, save this part in a separate file (e.g., server.js) and run it using Node.js.
+        /*
+        const WebSocket = require('ws');
+
+        // Create a WebSocket server
+        const wss = new WebSocket.Server({ port: 8080 });
+
+        // Handle connections
+        wss.on('connection', (ws) => {
+            console.log('New client connected');
+
+            // Broadcast messages to all clients
+            ws.on('message', (message) => {
+                console.log(`Received: ${message}`);
+                wss.clients.forEach((client) => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(message); // Broadcast the message
+                    }
+                });
+            });
+
+            // Handle client disconnection
+            ws.on('close', () => {
+                console.log('Client disconnected');
+            });
+        });
+
+        console.log('WebSocket server is running on ws://localhost:8080');
+        */
+    </script>
+</body>
+</html>
