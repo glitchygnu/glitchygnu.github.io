@@ -7,7 +7,7 @@
     <style>
         body {
             background-color: rgba(200, 220, 180, 0.8);
-            font-family: 'Courier New', monospace;
+            font-family: 'Courier New', monospace; /* Monospace font */
             color: white;
             margin: 0;
             padding: 0;
@@ -36,6 +36,7 @@
             white-space: nowrap;
             padding: 10px;
             background: linear-gradient(to bottom, rgba(190, 210, 170, 0.8), rgba(180, 200, 160, 0.8));
+            font-family: 'Courier New', monospace; /* Monospace font */
         }
 
         .chat-message:nth-child(odd) {
@@ -50,6 +51,7 @@
             display: inline-block;
             padding: 8px;
             border-bottom: 1px solid rgba(160, 180, 130, 0.5);
+            font-family: 'Courier New', monospace; /* Monospace font */
         }
 
         .input-container {
@@ -69,6 +71,7 @@
             border: none;
             background-color: rgba(200, 220, 180, 0.8);
             color: black;
+            font-family: 'Courier New', monospace; /* Monospace font */
         }
 
         #sendButton {
@@ -77,6 +80,7 @@
             color: white;
             border: none;
             cursor: pointer;
+            font-family: 'Courier New', monospace; /* Monospace font */
         }
 
         .username-container {
@@ -93,6 +97,7 @@
             border: none;
             background-color: rgba(200, 220, 180, 0.8);
             color: black;
+            font-family: 'Courier New', monospace; /* Monospace font */
         }
 
         #setUsernameButton {
@@ -101,6 +106,7 @@
             color: white;
             border: none;
             cursor: pointer;
+            font-family: 'Courier New', monospace; /* Monospace font */
         }
     </style>
 </head>
@@ -130,6 +136,12 @@
 
             // WebSocket connection
             const socket = new WebSocket('ws://localhost:8080');
+
+            // Handle WebSocket connection errors
+            socket.addEventListener('error', (error) => {
+                console.error('WebSocket error:', error);
+                alert('Failed to connect to the chat server. Please check if the server is running.');
+            });
 
             // Set username
             setUsernameButton.addEventListener('click', () => {
@@ -175,37 +187,6 @@
                 return `${hours}:${minutes}:${seconds}`;
             }
         });
-
-        // Server-Side JavaScript (Node.js)
-        // To run the server, save this part in a separate file (e.g., server.js) and run it using Node.js.
-        /*
-        const WebSocket = require('ws');
-
-        // Create a WebSocket server
-        const wss = new WebSocket.Server({ port: 8080 });
-
-        // Handle connections
-        wss.on('connection', (ws) => {
-            console.log('New client connected');
-
-            // Broadcast messages to all clients
-            ws.on('message', (message) => {
-                console.log(`Received: ${message}`);
-                wss.clients.forEach((client) => {
-                    if (client.readyState === WebSocket.OPEN) {
-                        client.send(message); // Broadcast the message
-                    }
-                });
-            });
-
-            // Handle client disconnection
-            ws.on('close', () => {
-                console.log('Client disconnected');
-            });
-        });
-
-        console.log('WebSocket server is running on ws://localhost:8080');
-        */
     </script>
 </body>
 </html>
