@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const chatHistory = document.getElementById("chat-history");
+    const chatBox = document.getElementById("chat-box"); // Changed to 'chat-box'
     const userInput = document.getElementById("user-input");
-    const sendButton = document.getElementById("send-button");
-    const clearButton = document.getElementById("clear-chat");
+    const sendButton = document.getElementById("send-btn"); // Changed to 'send-btn'
+    const clearButton = document.getElementById("clear-btn"); // Changed to 'clear-btn'
 
     // Load responses from external file (responses.js)
     let botResponses = {};
@@ -19,8 +19,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const messageElement = document.createElement("div");
         messageElement.classList.add(sender === "user" ? "user-message" : "bot-message");
         messageElement.innerText = message;
-        chatHistory.appendChild(messageElement);
-        chatHistory.scrollTop = chatHistory.scrollHeight;
+        chatBox.appendChild(messageElement); // Appends to 'chat-box' element
+        chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to the bottom
     }
 
     // Function to handle user input
@@ -73,6 +73,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Clear chat history
     clearButton.addEventListener("click", function () {
-        chatHistory.innerHTML = "";
+        chatBox.innerHTML = ""; // Clears the chat box
     });
 });
