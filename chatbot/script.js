@@ -1,29 +1,25 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const chatBox = document.getElementById("chat-box"); // Changed to 'chat-box'
+    const chatBox = document.getElementById("chat-box");
     const userInput = document.getElementById("user-input");
-    const sendButton = document.getElementById("send-btn"); // Changed to 'send-btn'
-    const clearButton = document.getElementById("clear-btn"); // Changed to 'clear-btn'
+    const sendButton = document.getElementById("send-btn");
+    const clearButton = document.getElementById("clear-btn");
 
-    // Load responses from external file (responses.js)
-    let botResponses = {};
+    // Ensure `responses.js` is accessible
+    if (typeof responses === "undefined") {
+        console.error("Error: responses.js is not loaded properly.");
+        return;
+    }
 
-    // Fetch the responses file
-    fetch("responses.js")
-        .then(response => response.text())
-        .then(text => {
-            botResponses = eval(text); // Convert text to an object
-        });
-
-    // Function to add message to chat
+    // Function to add a message to the chat
     function addMessage(sender, message) {
         const messageElement = document.createElement("div");
         messageElement.classList.add(sender === "user" ? "user-message" : "bot-message");
         messageElement.innerText = message;
-        chatBox.appendChild(messageElement); // Appends to 'chat-box' element
-        chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to the bottom
+        chatBox.appendChild(messageElement);
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // Function to handle user input
+    // Function to process user input and get a response
     function handleUserInput() {
         let userMessage = userInput.value.toLowerCase().trim();
         if (userMessage === "") return;
@@ -38,23 +34,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to find the correct response
     function findResponse(userMessage) {
-        for (let category in botResponses) {
-            let data = botResponses[category];
+        for (let category in responses) {
+            let data = responses[category];
 
             // Check if the user message matches any input variation
             for (let input of data.inputs) {
                 if (userMessage.includes(input)) {
                     return data.outputs[Math.floor(Math.random() * data.outputs.length)];
-                }
-            }
-
-            // Check spelling corrections
-            if (category === "spelling_corrections") {
-                for (let incorrect in data) {
-                    if (userMessage.includes(incorrect)) {
-                        userMessage = userMessage.replace(incorrect, data[incorrect]);
-                        return findResponse(userMessage);
-                    }
                 }
             }
         }
@@ -73,6 +59,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Clear chat history
     clearButton.addEventListener("click", function () {
-        chatBox.innerHTML = ""; // Clears the chat box
+        chatBox.innerHTML = "";
     });
 });
