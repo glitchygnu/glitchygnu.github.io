@@ -1,45 +1,78 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const chatBox = document.getElementById("chat-box");
+document.addEventListener("DOMContentLoaded", function () {
+    const chatHistory = document.getElementById("chat-history");
     const userInput = document.getElementById("user-input");
-    const sendBtn = document.getElementById("send-btn");
-    const clearBtn = document.getElementById("clear-btn");
+    const sendButton = document.getElementById("send-button");
+    const clearButton = document.getElementById("clear-chat");
 
-    function correctSpelling(input) {
-        return input.split(" ").map(word => responses.spelling_corrections[word] || word).join(" ");
-    }
+    // Load responses from external file (responses.js)
+    let botResponses = {};
 
+    // Fetch the responses file
+    fetch("responses.js")
+        .then(response => response.text())
+        .then(text => {
+            botResponses = eval(text); // Convert text to an object
+        });
+
+    // Function to add message to chat
     function addMessage(sender, message) {
         const messageElement = document.createElement("div");
-        messageElement.innerHTML = `<strong>${sender}:</strong> ${message}`;
-        chatBox.appendChild(messageElement);
-        chatBox.scrollTop = chatBox.scrollHeight;
+        messageElement.classList.add(sender === "user" ? "user-message" : "bot-message");
+        messageElement.innerText = message;
+        chatHistory.appendChild(messageElement);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
     }
 
-    function getResponse(userText) {
-        userText = correctSpelling(userText.toLowerCase().trim());
+    // Function to handle user input
+    function handleUserInput() {
+        let userMessage = userInput.value.toLowerCase().trim();
+        if (userMessage === "") return;
 
-        for (let category in responses) {
-            if (category !== "spelling_corrections" && responses[category].inputs.some(input => userText.includes(input))) {
-                return responses[category].outputs[Math.floor(Math.random() * responses[category].outputs.length)];
+        addMessage("user", userMessage);
+
+        let response = findResponse(userMessage);
+        setTimeout(() => addMessage("bot", response), 500);
+
+        userInput.value = ""; // Clear input field
+    }
+
+    // Function to find the correct response
+    function findResponse(userMessage) {
+        for (let category in botResponses) {
+            let data = botResponses[category];
+
+            // Check if the user message matches any input variation
+            for (let input of data.inputs) {
+                if (userMessage.includes(input)) {
+                    return data.outputs[Math.floor(Math.random() * data.outputs.length)];
+                }
+            }
+
+            // Check spelling corrections
+            if (category === "spelling_corrections") {
+                for (let incorrect in data) {
+                    if (userMessage.includes(incorrect)) {
+                        userMessage = userMessage.replace(incorrect, data[incorrect]);
+                        return findResponse(userMessage);
+                    }
+                }
             }
         }
-        return "I'm not sure how to respond to that!";
+
+        // Default response if no match is found
+        return "Hmm... I don't quite understand. Can you rephrase that?";
     }
 
-    sendBtn.addEventListener("click", () => {
-        const userText = userInput.value;
-        if (!userText) return;
-
-        addMessage("You", userText);
-        setTimeout(() => addMessage("Bot", getResponse(userText)), 500);
-        userInput.value = "";
+    // Send message on button click or Enter key press
+    sendButton.addEventListener("click", handleUserInput);
+    userInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            handleUserInput();
+        }
     });
 
-    clearBtn.addEventListener("click", () => {
-        chatBox.innerHTML = "";
-    });
-
-    userInput.addEventListener("keypress", (event) => {
-        if (event.key === "Enter") sendBtn.click();
+    // Clear chat history
+    clearButton.addEventListener("click", function () {
+        chatHistory.innerHTML = "";
     });
 });
