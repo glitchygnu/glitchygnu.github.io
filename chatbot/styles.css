@@ -59,3 +59,53 @@ body {
     border-radius: 5px;
     cursor: pointer;
 }
+
+
+
+
+
+
+.input-container {
+  display: flex;
+  align-items: center;
+  background: #1f2937;
+  color: white;
+  border-radius: 9999px;
+  padding: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 350px;
+}
+.input-container input {
+  font-size: medium;
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 8px;
+  border-radius: 9999px;
+}
+.input-container input::placeholder {
+  color: #9ca3af;
+}
+.send-button {
+  background: #22c55e;
+  border: none;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.send-button:hover {
+  background: #16a34a;
+}
+.send-button svg {
+  width: 20px;
+  height: 20px;
+  stroke: white;
+}
