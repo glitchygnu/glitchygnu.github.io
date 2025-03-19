@@ -8,14 +8,16 @@
 </head>
 <body>
     <div class="chat-container">
-        <div class="chat-header">Smart Chatbot</div>
-        <div class="chat-history" id="chatHistory"></div>
-        <div class="chat-input-container">
-            <input type="text" id="userInput" placeholder="Type a message...">
-            <button onclick="sendMessage()">Send</button>
+        <div class="chat-header">
+            <h2>Chatbot</h2>
+            <button id="clear-chat">Clear Chat</button>
+        </div>
+        <div class="chat-box" id="chat-box"></div>
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Type a message...">
+            <button id="send-btn">Send</button>
         </div>
     </div>
-    <script src="responses.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
