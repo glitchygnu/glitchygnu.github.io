@@ -1,64 +1,46 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const chatBox = document.getElementById("chat-box");
-    const userInput = document.getElementById("user-input");
-    const sendButton = document.getElementById("send-btn");
-    const clearButton = document.getElementById("clear-btn");
-
-    // Ensure `responses.js` is accessible
-    if (typeof responses === "undefined") {
-        console.error("Error: responses.js is not loaded properly.");
-        return;
+document.getElementById("user-input").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        sendMessage();
     }
+});
 
-    // Function to add a message to the chat
-    function addMessage(sender, message) {
-        const messageElement = document.createElement("div");
-        messageElement.classList.add(sender === "user" ? "user-message" : "bot-message");
-        messageElement.innerText = message;
-        chatBox.appendChild(messageElement);
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
+function sendMessage() {
+    let inputField = document.getElementById("user-input");
+    let userText = inputField.value.trim();
 
-    // Function to process user input and get a response
-    function handleUserInput() {
-        let userMessage = userInput.value.toLowerCase().trim();
-        if (userMessage === "") return;
+    if (userText === "") return;
 
-        addMessage("user", userMessage);
+    addMessage(userText, "user");
+    inputField.value = "";
 
-        let response = findResponse(userMessage);
-        setTimeout(() => addMessage("bot", response), 500);
+    setTimeout(() => {
+        let response = getBotResponse(userText);
+        addMessage(response, "bot");
+    }, 500);
+}
 
-        userInput.value = ""; // Clear input field
-    }
+function addMessage(text, sender) {
+    let chatBox = document.getElementById("chat-box");
+    let messageDiv = document.createElement("div");
+    messageDiv.classList.add("chat-message", sender);
+    messageDiv.textContent = text;
+    chatBox.appendChild(messageDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
 
-    // Function to find the correct response
-    function findResponse(userMessage) {
-        for (let category in responses) {
-            let data = responses[category];
+function clearChat() {
+    document.getElementById("chat-box").innerHTML = '<div class="chat-message bot">Welcome! How can I help you?</div>';
+}
 
-            // Check if the user message matches any input variation
-            for (let input of data.inputs) {
-                if (userMessage.includes(input)) {
-                    return data.outputs[Math.floor(Math.random() * data.outputs.length)];
-                }
+function getBotResponse(input) {
+    input = input.toLowerCase();
+
+    for (let topic of responses) {
+        for (let pattern of topic.input) {
+            if (input.includes(pattern)) {
+                return topic.output[Math.floor(Math.random() * topic.output.length)];
             }
         }
-
-        // Default response if no match is found
-        return "Hmm... I don't quite understand. Can you rephrase that?";
     }
-
-    // Send message on button click or Enter key press
-    sendButton.addEventListener("click", handleUserInput);
-    userInput.addEventListener("keypress", function (event) {
-        if (event.key === "Enter") {
-            handleUserInput();
-        }
-    });
-
-    // Clear chat history
-    clearButton.addEventListener("click", function () {
-        chatBox.innerHTML = "";
-    });
-});
+    return "I'm not sure about that. Can you rephrase?";
+}
