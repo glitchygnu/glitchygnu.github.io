@@ -1,5 +1,12 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
 body {
-    background: #121212;
+    background-color: #1e1e1e;
     color: white;
     display: flex;
     justify-content: center;
@@ -10,102 +17,64 @@ body {
 .chat-container {
     width: 400px;
     height: 600px;
-    background: #1e1e1e;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
+    border-radius: 10px;
+    background: #252525;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     overflow: hidden;
-}
-
-.chat-header {
-    background: #272727;
-    padding: 15px;
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    border-bottom: 2px solid #383838;
 }
 
 .chat-box {
     flex: 1;
-    padding: 15px;
+    padding: 10px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    gap: 10px;
 }
 
-.chat-input {
+.chat-message {
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 75%;
+    word-wrap: break-word;
+}
+
+.user {
+    background: #0078ff;
+    align-self: flex-end;
+}
+
+.bot {
+    background: #333;
+    align-self: flex-start;
+}
+
+.input-area {
     display: flex;
     padding: 10px;
-    background: #272727;
-    border-top: 2px solid #383838;
+    background: #333;
 }
 
-.chat-input input {
+input {
     flex: 1;
     padding: 10px;
     border: none;
-    font-size: 16px;
-    background: #333;
+    outline: none;
+    background: #1e1e1e;
     color: white;
-    border-radius: 5px;
 }
 
-.chat-input button {
+button {
+    background: #0078ff;
+    border: none;
     padding: 10px;
-    background: #007aff;
     color: white;
-    border-radius: 5px;
     cursor: pointer;
+    margin-left: 5px;
 }
 
-
-
-
-
-
-.input-container {
-  display: flex;
-  align-items: center;
-  background: #1f2937;
-  color: white;
-  border-radius: 9999px;
-  padding: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 350px;
-}
-.input-container input {
-  font-size: medium;
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: white;
-  padding: 8px;
-  border-radius: 9999px;
-}
-.input-container input::placeholder {
-  color: #9ca3af;
-}
-.send-button {
-  background: #22c55e;
-  border: none;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.send-button:hover {
-  background: #16a34a;
-}
-.send-button svg {
-  width: 20px;
-  height: 20px;
-  stroke: white;
+button:hover {
+    background: #005bb5;
 }
