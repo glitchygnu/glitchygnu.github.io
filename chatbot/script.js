@@ -8,7 +8,7 @@ document.getElementById("user-input").addEventListener("keypress", function(even
 // Function to send a user message
 function sendMessage() {
     let inputField = document.getElementById("user-input");
-    let userText = inputField.value.trim();
+    let userText = inputField.value.trim().toLowerCase(); // Convert to lowercase and remove spaces
 
     if (userText === "") return; // Ignore empty messages
 
@@ -38,17 +38,15 @@ function clearChat() {
 
 // Function to get a response from the bot
 function getBotResponse(input) {
-    input = input.toLowerCase().trim(); // Convert input to lowercase and remove extra spaces
+    input = input.toLowerCase().trim(); // Normalize input
 
-    // Iterate through all topics
     for (let topic of responses) {
         for (let pattern of topic.input) {
             if (input.includes(pattern)) { 
-                // Return a random response from the matched topic
                 return topic.output[Math.floor(Math.random() * topic.output.length)];
             }
         }
     }
 
-    return "I'm not sure about that. Can you rephrase?"; // Default response if no match found
+    return "I'm not sure about that. Can you rephrase?"; // Default response
 }
