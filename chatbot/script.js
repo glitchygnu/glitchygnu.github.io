@@ -6,12 +6,12 @@ document.getElementById("user-input").addEventListener("keypress", function(even
 
 function sendMessage() {
     let inputField = document.getElementById("user-input");
-    let userText = inputField.value.trim().toLowerCase(); // Convert to lowercase and trim spaces
+    let userText = inputField.value.trim().toLowerCase();
 
-    if (userText === "") return; // Ignore empty messages
+    if (userText === "") return;
 
     addMessage(userText, "user");
-    inputField.value = ""; // Clear input field
+    inputField.value = ""; // Clear input
 
     setTimeout(() => {
         let response = getBotResponse(userText);
@@ -29,7 +29,7 @@ function addMessage(text, sender) {
 }
 
 function clearChat() {
-    document.getElementById("chat-box").innerHTML = '<div class="chat-message bot">Welcome! How can I help you?</div>';
+    document.getElementById("chat-box").innerHTML = '<div class="chat-message bot">Welcome! Type a message to start.</div>';
 }
 
 function getBotResponse(input) {
@@ -42,6 +42,5 @@ function getBotResponse(input) {
             }
         }
     }
-
     return "I'm not sure about that. Can you rephrase?";
 }
