@@ -6,7 +6,7 @@ document.getElementById("user-input").addEventListener("keypress", function(even
 
 function sendMessage() {
     let inputField = document.getElementById("user-input");
-    let userText = inputField.value.trim().toLowerCase();
+    let userText = inputField.value.trim(); // Don't lowercase here to preserve case for display
 
     if (userText === "") return;
 
@@ -33,14 +33,66 @@ function clearChat() {
 }
 
 function getBotResponse(input) {
-    input = input.toLowerCase().trim();
+    const lowerInput = input.toLowerCase().trim();
+    let possibleResponses = [];
 
+    // First pass: look for exact matches in any topic
     for (let topic of responses) {
         for (let pattern of topic.input) {
-            if (input.includes(pattern)) { 
-                return topic.output[Math.floor(Math.random() * topic.output.length)];
+            if (lowerInput.includes(pattern.toLowerCase())) {
+                possibleResponses.push(...topic.output);
             }
         }
     }
-    return "I'm not sure about that. Can you rephrase?";
+
+    // Second pass: look for partial matches if no exact matches found
+    if (possibleResponses.length === 0) {
+        for (let topic of responses) {
+            for (let pattern of topic.input) {
+                const patternWords = pattern.toLowerCase().split(/\s+/);
+                const inputWords = lowerInput.split(/\s+/);
+                
+                // Check if any pattern word exists in input
+                if (patternWords.some(word => 
+                    word.length > 3 && // Only consider words longer than 3 chars
+                    inputWords.includes(word)
+                )) {
+                    possibleResponses.push(...topic.output);
+                }
+            }
+        }
+    }
+
+    // Third pass: check for similar words (levenstein distance could be added here)
+    if (possibleResponses.length === 0) {
+        for (let topic of responses) {
+            for (let pattern of topic.input) {
+                const patternWords = pattern.toLowerCase().split(/\s+/);
+                const inputWords = lowerInput.split(/\s+/);
+                
+                // Check if any input word starts with a pattern word
+                if (inputWords.some(inputWord => 
+                    patternWords.some(patternWord => 
+                        inputWord.startsWith(patternWord) && patternWord.length > 3
+                    )
+                )) {
+                    possibleResponses.push(...topic.output);
+                }
+            }
+        }
+    }
+
+    // If we found matches, return a random one
+    if (possibleResponses.length > 0) {
+        return possibleResponses[Math.floor(Math.random() * possibleResponses.length)];
+    }
+
+    // Final fallback if nothing matches
+    const fallbacks = [
+        "I'm not entirely sure about that. Could you ask differently?",
+        "That's an interesting point. Could you elaborate?",
+        "I don't have information about that exact topic. Try asking something else!",
+        "Hmm, I might need more context to answer that properly."
+    ];
+    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
 }
