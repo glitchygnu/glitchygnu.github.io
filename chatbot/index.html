@@ -3,18 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot</title>
+    <title>Neon Chatbot</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="cyberpunk-scanner"></div>
     <div id="chat-container">
+        <div class="terminal-header">
+            <div class="terminal-controls">
+                <span class="control red"></span>
+                <span class="control yellow"></span>
+                <span class="control green"></span>
+            </div>
+            <div class="terminal-title">SYNTH-CHAT v2.4.1</div>
+        </div>
         <div id="chat-box">
-            <div class="chat-message bot">Welcome! Type a message to start.</div>
+            <div class="chat-message bot">SYSTEM INITIALIZED...<br>Welcome to neural interface. Type your query.</div>
         </div>
         <div id="input-container">
-            <input type="text" id="user-input" placeholder="Type your message..." autofocus>
-            <button id="send-btn" onclick="sendMessage()">Send</button>
-            <button id="clear-btn" onclick="clearChat()">Clear</button>
+            <input type="text" id="user-input" placeholder="> INPUT MESSAGE..." autofocus>
+            <button id="send-btn" onclick="sendMessage()">
+                <span class="btn-text">SEND</span>
+                <span class="btn-pulse"></span>
+            </button>
+            <button id="clear-btn" onclick="clearChat()">
+                <span class="btn-text">CLEAR</span>
+                <span class="btn-pulse"></span>
+            </button>
         </div>
     </div>
     <script src="responses.js"></script>
