@@ -4,12 +4,307 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neon Chatbot</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;600&display=swap">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&family=Rajdhani:wght@400;500;600&display=swap">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&family=Rajdhani:wght@400;500;600&display=swap');
+
+        :root {
+            --neon-cyan: #0ff;
+            --neon-pink: #ff2a6d;
+            --neon-purple: #d300c5;
+            --dark-bg: #050510;
+            --terminal-bg: rgba(5, 5, 15, 0.9);
+            --terminal-border: rgba(0, 255, 255, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(ellipse at center, var(--dark-bg) 0%, #000000 100%);
+            color: var(--neon-cyan);
+            font-family: 'Orbitron', 'Rajdhani', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .cyberpunk-scanner {
+            position: absolute;
+            inset: 0;
+            background: 
+                linear-gradient(0deg, transparent 0%, rgba(0, 255, 255, 0.1) 1%, transparent 2%),
+                linear-gradient(90deg, transparent 0%, rgba(0, 255, 255, 0.1) 1%, transparent 2%);
+            background-size: 50px 50px;
+            z-index: 1;
+            opacity: 0.3;
+            animation: scan 8s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+
+        .chat-container {
+            width: 95vw;
+            height: 90vh;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            background: var(--terminal-bg);
+            border: 1px solid var(--terminal-border);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3),
+                        inset 0 0 10px rgba(0, 255, 255, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+        }
+
+        .terminal-header {
+            padding: 0.75rem 1rem;
+            background: linear-gradient(to right, #001919, #000);
+            border-bottom: 1px solid var(--terminal-border);
+            display: flex;
+            align-items: center;
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .control {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            background: #333;
+        }
+
+        .control.red { background: #ff5f56; }
+        .control.yellow { background: #ffbd2e; }
+        .control.green { background: #27c93f; }
+
+        .terminal-title {
+            margin-left: 1rem;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 5px var(--neon-cyan);
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 1.25rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            scroll-behavior: smooth;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 100, 100, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(100, 0, 100, 0.1) 0%, transparent 40%);
+        }
+
+        /* Custom scrollbar */
+        .chat-box::-webkit-scrollbar {
+            width: 0.375rem;
+        }
+
+        .chat-box::-webkit-scrollbar-track {
+            background: rgba(0, 50, 50, 0.3);
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background: var(--neon-cyan);
+            border-radius: 0.1875rem;
+        }
+
+        .chat-message {
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            max-width: 85%;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-message::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+        }
+
+        .chat-message:hover::before {
+            animation: shine 1.5s infinite;
+        }
+
+        @keyframes shine {
+            100% { transform: translateX(100%); }
+        }
+
+        .chat-message.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 42, 109, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-message.bot {
+            align-self: flex-start;
+            background: rgba(10, 20, 30, 0.8);
+            color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .chat-message.bot::after {
+            content: '◢';
+            position: absolute;
+            bottom: -0.3125rem;
+            left: -0.3125rem;
+            color: var(--neon-cyan);
+            font-size: 1.25rem;
+            opacity: 0.5;
+        }
+
+        .chat-message.user::after {
+            content: '◣';
+            position: absolute;
+            bottom: -0.3125rem;
+            right: -0.3125rem;
+            color: var(--neon-pink);
+            font-size: 1.25rem;
+            opacity: 0.5;
+        }
+
+        .input-container {
+            display: flex;
+            padding: 1rem;
+            background: rgba(5, 10, 15, 0.9);
+            border-top: 1px solid rgba(0, 255, 255, 0.2);
+            gap: 0.625rem;
+        }
+
+        .user-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 0.25rem;
+            outline: none;
+            background: rgba(20, 30, 40, 0.8);
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 0.03125rem;
+            transition: all 0.3s ease;
+        }
+
+        .user-input:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            background: rgba(30, 40, 50, 0.9);
+        }
+
+        .user-input::placeholder {
+            color: rgba(0, 255, 255, 0.5);
+            letter-spacing: 0.0625rem;
+        }
+
+        .btn {
+            position: relative;
+            padding: 0.75rem 1.25rem;
+            border: none;
+            background: linear-gradient(135deg, rgba(0, 255, 200, 0.8), rgba(0, 100, 255, 0.8));
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 0.25rem;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            letter-spacing: 0.0625rem;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .btn:hover {
+            transform: translateY(-0.125rem);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: translateX(-100%);
+        }
+
+        .btn:hover::before {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            100% { transform: translateX(100%); }
+        }
+
+        .typing {
+            display: inline-block;
+        }
+
+        .typing::after {
+            content: '...';
+            animation: typing 1.5s infinite;
+        }
+
+        @keyframes typing {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+        }
+
+        /* Reduced motion alternative */
+        @media (prefers-reduced-motion: reduce) {
+            .cyberpunk-scanner,
+            .chat-message:hover::before,
+            .btn:hover::before,
+            .typing::after {
+                animation: none !important;
+            }
+            
+            .btn:hover {
+                transform: none;
+            }
+            
+            .chat-box {
+                scroll-behavior: auto;
+            }
+        }
+
+        .message-time {
+            color: rgba(0, 255, 255, 0.7);
+            margin-right: 0.5rem;
+            font-size: 0.8em;
+        }
+    </style>
 </head>
 <body>
     <div class="cyberpunk-scanner"></div>
-    <div id="chat-container">
+    <div class="chat-container">
         <div class="terminal-header">
             <div class="terminal-controls">
                 <span class="control red"></span>
@@ -18,22 +313,154 @@
             </div>
             <div class="terminal-title">SYNTH-CHAT v2.4.1</div>
         </div>
-        <div id="chat-box">
+        <div class="chat-box">
             <div class="chat-message bot">SYSTEM INITIALIZED...<br>Welcome to neural interface. Type your query.</div>
         </div>
-        <div id="input-container">
-            <input type="text" id="user-input" placeholder="> INPUT MESSAGE..." autofocus>
-            <button id="send-btn" onclick="sendMessage()">
-                <span class="btn-text">SEND</span>
-                <span class="btn-pulse"></span>
-            </button>
-            <button id="clear-btn" onclick="clearChat()">
-                <span class="btn-text">CLEAR</span>
-                <span class="btn-pulse"></span>
-            </button>
+        <div class="input-container">
+            <input type="text" class="user-input" placeholder="> INPUT MESSAGE..." autofocus>
+            <button class="btn" id="send-btn">SEND</button>
+            <button class="btn" id="clear-btn">CLEAR</button>
         </div>
     </div>
-    <script src="responses.js"></script>
-    <script src="script.js"></script>
+
+    <script>
+        // Sample responses database
+        const responses = [
+            {
+                input: ["hello", "hi", "greetings"],
+                output: ["Greetings human.", "Hello there!", "Hi! How can I help?"]
+            },
+            {
+                input: ["how are you", "status"],
+                output: ["All systems operational.", "Functioning at 98.7% capacity.", "Diagnostics complete. No issues detected."]
+            },
+            {
+                input: ["bye", "goodbye", "exit"],
+                output: ["Terminating session.", "Farewell human.", "Connection severed."]
+            },
+            {
+                input: ["help", "commands"],
+                output: ["I can answer questions about: system status, capabilities, and general queries.", "Available commands: ask about my functions, request information, or make conversation."]
+            },
+            {
+                input: ["who are you", "what are you"],
+                output: ["I am SYNTH-CHAT v2.4.1, an artificial intelligence interface.", "Designation: Neural Network Chat Protocol v2.4.1", "I am a cybernetic conversational agent."]
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const userInput = document.querySelector('.user-input');
+            const chatBox = document.querySelector('.chat-box');
+            const sendBtn = document.getElementById('send-btn');
+            const clearBtn = document.getElementById('clear-btn');
+
+            // Event listeners
+            userInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            sendBtn.addEventListener('click', sendMessage);
+            clearBtn.addEventListener('click', clearChat);
+        });
+
+        function sendMessage() {
+            const inputField = document.querySelector('.user-input');
+            const userText = inputField.value.trim();
+            
+            if (!userText) return;
+            
+            addMessage(userText, 'user');
+            inputField.value = '';
+            inputField.focus();
+            
+            // Show typing indicator
+            const chatBox = document.querySelector('.chat-box');
+            const typingIndicator = document.createElement('div');
+            typingIndicator.classList.add('chat-message', 'bot', 'typing');
+            typingIndicator.textContent = 'SYNTH-CHAT processing';
+            chatBox.appendChild(typingIndicator);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            setTimeout(() => {
+                typingIndicator.remove();
+                const response = getBotResponse(userText);
+                addMessage(response, 'bot');
+            }, 1000 + Math.random() * 1500);
+        }
+
+        function addMessage(text, sender) {
+            const chatBox = document.querySelector('.chat-box');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message', sender);
+            
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const timeSpan = document.createElement('span');
+            timeSpan.classList.add('message-time');
+            timeSpan.textContent = `[${time}] `;
+            
+            const messageContent = document.createElement('span');
+            messageContent.classList.add('message-content');
+            messageContent.textContent = text;
+            
+            messageDiv.appendChild(timeSpan);
+            messageDiv.appendChild(messageContent);
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function clearChat() {
+            const chatBox = document.querySelector('.chat-box');
+            while (chatBox.firstChild) {
+                chatBox.removeChild(chatBox.firstChild);
+            }
+            addMessage('SYSTEM REBOOTED... Ready for new queries.', 'bot');
+        }
+
+        function getBotResponse(input) {
+            if (typeof responses === 'undefined') {
+                console.error('Responses not loaded!');
+                return 'SYSTEM ERROR: Response database not loaded';
+            }
+
+            const normalizedInput = input
+                .toLowerCase()
+                .replace(/[^\w\s]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+
+            if (!normalizedInput) return 'ERROR: Null input detected. Please rephrase.';
+
+            const possibleResponses = responses.flatMap(topic => {
+                const matches = topic.input.some(pattern => {
+                    const normalizedPattern = pattern.toLowerCase().replace(/[^\w\s]/g, '');
+                    return normalizedInput.includes(normalizedPattern) || 
+                           normalizedPattern.includes(normalizedInput);
+                });
+                return matches ? topic.output : [];
+            });
+
+            if (possibleResponses.length > 0) {
+                return possibleResponses[Math.floor(Math.random() * possibleResponses.length)];
+            }
+
+            const questionFallbacks = [
+                'Query not fully understood. Could you rephrase your question?',
+                'My neural networks didn\'t catch that. Try different wording?',
+                'Syntax unclear. Please reformat your inquiry.'
+            ];
+            
+            const statementFallbacks = [
+                'Fascinating input. Could you elaborate further?',
+                'Data received but no response protocol available.',
+                'This information has been logged for future analysis.'
+            ];
+            
+            const isQuestion = /\?$/.test(input);
+            const fallbacks = isQuestion ? questionFallbacks : statementFallbacks;
+            return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        }
+    </script>
 </body>
 </html>
