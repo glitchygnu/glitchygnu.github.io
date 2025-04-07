@@ -4,17 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexusAI - Advanced Conversational Interface</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
+            /* Default theme - blue */
             --primary: #00f0ff;
             --primary-dark: #0084ff;
             --secondary: #7b2dff;
+            --accent: #ff2d7b;
             --dark: #0a0a12;
             --darker: #05050a;
             --light: #f0f0ff;
             --gray: #1a1a2e;
             --light-gray: #2a2a3a;
-            --accent: #ff2d7b;
+            --success: #00ff9d;
+            --warning: #ffcc00;
+            --danger: #ff3860;
+            --info: #00d1ff;
+        }
+
+        /* Theme classes */
+        .theme-orange {
+            --primary: #ff7b00;
+            --primary-dark: #ff5500;
+            --secondary: #ff2d7b;
+            --accent: #ffcc00;
+        }
+
+        .theme-green {
+            --primary: #00ff9d;
+            --primary-dark: #00cc7a;
+            --secondary: #00b4ff;
+            --accent: #7b2dff;
+        }
+
+        .theme-yellow {
+            --primary: #ffcc00;
+            --primary-dark: #ffaa00;
+            --secondary: #ff7b00;
+            --accent: #00f0ff;
+        }
+
+        .theme-purple {
+            --primary: #b362ff;
+            --primary-dark: #8a2dff;
+            --secondary: #ff2d7b;
+            --accent: #00f0ff;
+        }
+
+        .theme-red {
+            --primary: #ff3860;
+            --primary-dark: #ff1442;
+            --secondary: #ff7b00;
+            --accent: #00f0ff;
         }
 
         * {
@@ -37,6 +79,7 @@
             flex-direction: column;
             overflow: hidden;
             line-height: 1.6;
+            transition: all 0.5s ease;
         }
 
         header {
@@ -45,7 +88,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            border-bottom: 1px solid rgba(var(--primary-rgb), 0.2);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
             z-index: 100;
             position: relative;
@@ -55,6 +98,7 @@
             display: flex;
             align-items: center;
             gap: 1rem;
+            cursor: pointer;
         }
 
         .logo h1 {
@@ -64,8 +108,13 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+            text-shadow: 0 0 15px rgba(var(--primary-rgb), 0.3);
             letter-spacing: -0.5px;
+            transition: all 0.3s;
+        }
+
+        .logo:hover h1 {
+            text-shadow: 0 0 20px rgba(var(--primary-rgb), 0.5);
         }
 
         .logo-icon {
@@ -76,8 +125,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.3);
             animation: pulse 3s infinite ease-in-out;
+            transition: all 0.3s;
+        }
+
+        .logo:hover .logo-icon {
+            transform: rotate(15deg);
+            box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.5);
         }
 
         @keyframes pulse {
@@ -87,7 +142,7 @@
 
         nav ul {
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
             list-style: none;
         }
 
@@ -101,11 +156,15 @@
             position: relative;
             font-size: 0.95rem;
             opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         nav a:hover {
             opacity: 1;
             color: var(--primary);
+            background: rgba(var(--primary-rgb), 0.1);
         }
 
         nav a::after {
@@ -143,15 +202,15 @@
 
         .particle {
             position: absolute;
-            background: rgba(0, 240, 255, 0.5);
+            background: rgba(var(--primary-rgb), 0.5);
             border-radius: 50%;
             pointer-events: none;
         }
 
         .sidebar {
             width: 280px;
-            background-color: rgba(10, 10, 18, 0.8);
-            border-right: 1px solid rgba(0, 240, 255, 0.1);
+            background-color: rgba(10, 10, 18, 0.9);
+            border-right: 1px solid rgba(var(--primary-rgb), 0.1);
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
@@ -188,12 +247,12 @@
             align-items: center;
             gap: 0.5rem;
             font-size: 0.9rem;
-            box-shadow: 0 2px 10px rgba(0, 240, 255, 0.2);
+            box-shadow: 0 2px 10px rgba(var(--primary-rgb), 0.2);
         }
 
         .new-chat-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.3);
         }
 
         .new-chat-btn:active {
@@ -219,17 +278,25 @@
             text-overflow: ellipsis;
             background-color: rgba(26, 26, 46, 0.3);
             border-left: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
         }
 
         .chat-item:hover {
-            background-color: rgba(0, 240, 255, 0.1);
+            background-color: rgba(var(--primary-rgb), 0.1);
             border-left: 3px solid var(--primary);
         }
 
         .chat-item.active {
-            background: linear-gradient(90deg, rgba(0, 240, 255, 0.1), transparent);
+            background: linear-gradient(90deg, rgba(var(--primary-rgb), 0.1), transparent);
             border-left: 3px solid var(--primary);
             color: white;
+        }
+
+        .chat-item-icon {
+            color: var(--primary);
+            font-size: 0.9rem;
         }
 
         .chat-container {
@@ -273,7 +340,7 @@
             background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
             color: white;
             border-bottom-right-radius: 3px;
-            box-shadow: 0 5px 20px rgba(123, 45, 255, 0.2);
+            box-shadow: 0 5px 20px rgba(var(--secondary-rgb), 0.2);
             animation-delay: 0.1s;
         }
 
@@ -282,7 +349,7 @@
             background-color: var(--gray);
             border-bottom-left-radius: 3px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(var(--primary-rgb), 0.1);
             animation-delay: 0.2s;
         }
 
@@ -296,8 +363,8 @@
             background-color: var(--gray);
             transform: rotate(45deg);
             z-index: -1;
-            border-left: 1px solid rgba(0, 240, 255, 0.1);
-            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+            border-left: 1px solid rgba(var(--primary-rgb), 0.1);
+            border-bottom: 1px solid rgba(var(--primary-rgb), 0.1);
         }
 
         .user-message::before {
@@ -328,7 +395,16 @@
             border-radius: 12px;
             border-bottom-left-radius: 3px;
             margin-bottom: 1rem;
-            border: 1px solid rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(var(--primary-rgb), 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .typing-text {
+            font-size: 0.9rem;
+            color: var(--light);
+            opacity: 0.8;
         }
 
         .typing-dot {
@@ -360,13 +436,46 @@
 
         .input-container {
             padding: 1.5rem;
-            background-color: rgba(10, 10, 18, 0.8);
-            border-top: 1px solid rgba(0, 240, 255, 0.1);
+            background-color: rgba(10, 10, 18, 0.9);
+            border-top: 1px solid rgba(var(--primary-rgb), 0.1);
             display: flex;
             gap: 1rem;
             position: relative;
             z-index: 10;
             backdrop-filter: blur(10px);
+        }
+
+        .input-tools {
+            display: flex;
+            gap: 0.5rem;
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 1.5rem;
+        }
+
+        .input-tool-btn {
+            background: rgba(var(--primary-rgb), 0.1);
+            color: var(--primary);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .input-tool-btn:hover {
+            background: rgba(var(--primary-rgb), 0.2);
+            transform: translateY(-2px);
+        }
+
+        .input-tool-btn.active {
+            background: var(--primary);
+            color: var(--darker);
         }
 
         .message-input {
@@ -381,7 +490,7 @@
             max-height: 150px;
             outline: none;
             transition: all 0.3s;
-            border: 1px solid rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(var(--primary-rgb), 0.1);
         }
 
         .message-input:focus {
@@ -401,12 +510,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 10px rgba(0, 240, 255, 0.2);
+            box-shadow: 0 2px 10px rgba(var(--primary-rgb), 0.2);
         }
 
         .send-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.3);
         }
 
         .send-btn:active {
@@ -426,7 +535,7 @@
             height: 60px;
             background: radial-gradient(circle at center, var(--primary), var(--secondary));
             border-radius: 50%;
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+            box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.5);
             cursor: pointer;
             z-index: 5;
             transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
@@ -438,7 +547,7 @@
 
         .ai-orb:hover {
             transform: scale(1.1) rotate(15deg);
-            box-shadow: 0 0 40px rgba(0, 240, 255, 0.7);
+            box-shadow: 0 0 40px rgba(var(--primary-rgb), 0.7);
         }
 
         .ai-orb-core {
@@ -456,8 +565,8 @@
         }
 
         @keyframes glowPulse {
-            0% { box-shadow: 0 0 30px rgba(0, 240, 255, 0.5); }
-            100% { box-shadow: 0 0 45px rgba(0, 240, 255, 0.8); }
+            0% { box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.5); }
+            100% { box-shadow: 0 0 45px rgba(var(--primary-rgb), 0.8); }
         }
 
         @keyframes corePulse {
@@ -476,6 +585,11 @@
             font-size: 0.8rem;
             color: var(--primary);
             z-index: 20;
+            background: rgba(10, 10, 18, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid rgba(var(--primary-rgb), 0.2);
+            backdrop-filter: blur(5px);
         }
 
         .status-indicator {
@@ -490,6 +604,371 @@
         @keyframes statusPulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
+        }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: var(--darker);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(var(--primary-rgb), 0.2);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(var(--primary-rgb), 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0.7;
+        }
+
+        .modal-close:hover {
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(var(--primary-rgb), 0.1);
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--darker);
+            flex-shrink: 0;
+        }
+
+        .contact-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+            color: var(--light);
+        }
+
+        .contact-info p {
+            color: rgba(var(--light-rgb), 0.7);
+            font-size: 0.9rem;
+        }
+
+        .contact-info a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        /* Features grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-card {
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            border: 1px solid rgba(var(--primary-rgb), 0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: rgba(var(--primary-rgb), 0.3);
+        }
+
+        .feature-icon {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+
+        .feature-desc {
+            font-size: 0.9rem;
+            color: rgba(var(--light-rgb), 0.7);
+            line-height: 1.5;
+        }
+
+        /* Documentation styles */
+        .doc-section {
+            margin-bottom: 2rem;
+        }
+
+        .doc-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .doc-section p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .doc-section ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .doc-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Theme selector */
+        .theme-selector {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 5;
+            transform: translateX(150%);
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .theme-selector.active {
+            transform: translateX(0);
+        }
+
+        .theme-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.2), transparent 70%);
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-btn.active {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 3px var(--light), 0 0 0 6px var(--primary);
+        }
+
+        .theme-btn.blue {
+            background: linear-gradient(135deg, #00f0ff, #7b2dff);
+        }
+
+        .theme-btn.orange {
+            background: linear-gradient(135deg, #ff7b00, #ff2d7b);
+        }
+
+        .theme-btn.green {
+            background: linear-gradient(135deg, #00ff9d, #00b4ff);
+        }
+
+        .theme-btn.yellow {
+            background: linear-gradient(135deg, #ffcc00, #ff7b00);
+        }
+
+        .theme-btn.purple {
+            background: linear-gradient(135deg, #b362ff, #ff2d7b);
+        }
+
+        .theme-btn.red {
+            background: linear-gradient(135deg, #ff3860, #ff7b00);
+        }
+
+        /* File upload preview */
+        .file-preview {
+            display: none;
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1px dashed rgba(var(--primary-rgb), 0.5);
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .file-preview.active {
+            display: flex;
+        }
+
+        .file-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+            color: var(--light);
+        }
+
+        .file-size {
+            font-size: 0.8rem;
+            color: rgba(var(--light-rgb), 0.7);
+        }
+
+        .file-remove {
+            background: none;
+            border: none;
+            color: var(--danger);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* AI personality selector */
+        .personality-selector {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 20px);
+            right: 0;
+            background: var(--darker);
+            border-radius: 8px;
+            padding: 1rem;
+            width: 250px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(var(--primary-rgb), 0.2);
+            z-index: 20;
+        }
+
+        .personality-selector.active {
+            display: block;
+        }
+
+        .personality-option {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0.5rem;
+        }
+
+        .personality-option:hover {
+            background: rgba(var(--primary-rgb), 0.1);
+        }
+
+        .personality-option.active {
+            background: rgba(var(--primary-rgb), 0.2);
+            border-left: 3px solid var(--primary);
+        }
+
+        .personality-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(var(--primary-rgb), 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .personality-info h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.2rem;
+            color: var(--light);
+        }
+
+        .personality-info p {
+            font-size: 0.8rem;
+            color: rgba(var(--light-rgb), 0.7);
         }
 
         /* Responsive Design */
@@ -525,6 +1004,25 @@
                 bottom: 20px;
                 right: 20px;
             }
+
+            .theme-selector {
+                bottom: 90px;
+                right: 20px;
+            }
+
+            .theme-btn {
+                width: 40px;
+                height: 40px;
+            }
+
+            nav ul {
+                gap: 0.5rem;
+            }
+
+            nav a {
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
         }
 
         /* Advanced scrollbar */
@@ -556,6 +1054,31 @@
             font-size: 0.9rem;
             overflow-x: auto;
             border-left: 3px solid var(--primary);
+            position: relative;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+            color: rgba(var(--light-rgb), 0.7);
+        }
+
+        .copy-code {
+            background: rgba(var(--primary-rgb), 0.1);
+            color: var(--primary);
+            border: none;
+            border-radius: 4px;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .copy-code:hover {
+            background: rgba(var(--primary-rgb), 0.2);
         }
 
         /* Markdown styling */
@@ -580,6 +1103,15 @@
             border-bottom: 1px solid var(--primary);
         }
 
+        .message ul, .message ol {
+            margin-left: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .message li {
+            margin-bottom: 0.3rem;
+        }
+
         /* Loading animation */
         @keyframes shimmer {
             0% { background-position: -200% 0; }
@@ -591,21 +1123,377 @@
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
         }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--darker);
+            color: var(--light);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            border-left: 4px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .notification.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .notification-icon {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        /* Voice recording indicator */
+        .voice-recording {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--danger);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(255, 56, 96, 0.3);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .voice-recording.active {
+            opacity: 1;
+            bottom: 120px;
+        }
+
+        .voice-pulse {
+            width: 12px;
+            height: 12px;
+            background-color: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: var(--darker);
+            color: var(--light);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(var(--primary-rgb), 0.2);
+            white-space: nowrap;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--darker);
+            transform: rotate(45deg);
+        }
+
+        .tooltip.top::after {
+            bottom: -5px;
+            left: 50%;
+            margin-left: -5px;
+        }
+
+        .tooltip.bottom::after {
+            top: -5px;
+            left: 50%;
+            margin-left: -5px;
+        }
+
+        .tooltip.left::after {
+            right: -5px;
+            top: 50%;
+            margin-top: -5px;
+        }
+
+        .tooltip.right::after {
+            left: -5px;
+            top: 50%;
+            margin-top: -5px;
+        }
+
+        /* Context menu */
+        .context-menu {
+            position: absolute;
+            background: var(--darker);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(var(--primary-rgb), 0.2);
+            z-index: 1000;
+            opacity: 0;
+            transform: scale(0.8);
+            transform-origin: top left;
+            transition: all 0.2s;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .context-menu.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: all;
+        }
+
+        .context-item {
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .context-item:hover {
+            background: rgba(var(--primary-rgb), 0.1);
+        }
+
+        .context-item i {
+            width: 20px;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .context-divider {
+            height: 1px;
+            background: rgba(var(--primary-rgb), 0.1);
+            margin: 0.3rem 0;
+        }
+
+        /* Toggle switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--light-gray);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Enterprise dashboard */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: rgba(var(--light-rgb), 0.7);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--light);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--danger);
+        }
+
+        /* Chart container */
+        .chart-container {
+            background: rgba(26, 26, 46, 0.5);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            height: 300px;
+            position: relative;
+        }
+
+        /* Contextual help */
+        .help-bubble {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--darker);
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 5;
+            box-shadow: 0 5px 20px rgba(var(--accent-rgb), 0.3);
+            transition: all 0.3s;
+        }
+
+        .help-bubble:hover {
+            transform: scale(1.1);
+        }
+
+        /* Welcome tour */
+        .tour-highlight {
+            position: absolute;
+            z-index: 1000;
+            border-radius: 8px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.8), 0 0 20px var(--primary);
+            transition: all 0.4s;
+        }
+
+        .tour-tooltip {
+            position: absolute;
+            background: var(--darker);
+            color: var(--light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            max-width: 300px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(var(--primary-rgb), 0.2);
+            z-index: 1001;
+        }
+
+        .tour-tooltip h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .tour-tooltip p {
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .tour-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tour-progress {
+            font-size: 0.8rem;
+            color: rgba(var(--light-rgb), 0.7);
+        }
+
+        .tour-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .tour-button {
+            background: rgba(var(--primary-rgb), 0.1);
+            color: var(--primary);
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tour-button.primary {
+            background: var(--primary);
+            color: var(--darker);
+        }
+
+        .tour-button:hover {
+            background: rgba(var(--primary-rgb), 0.2);
+        }
+
+        .tour-button.primary:hover {
+            background: var(--primary-dark);
+        }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">
-            <div class="logo-icon"></div>
+        <div class="logo" id="logo">
+            <div class="logo-icon">
+                <i class="fas fa-robot"></i>
+            </div>
             <h1>NexusAI</h1>
         </div>
         <nav>
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Features</a></li>
-                <li><a href="#">Enterprise</a></li>
-                <li><a href="#">Documentation</a></li>
-                <li><a href="#">Contact</a></li>
+                <li><a href="#" id="features-link"><i class="fas fa-star"></i> Features</a></li>
+                <li><a href="#" id="enterprise-link"><i class="fas fa-building"></i> Enterprise</a></li>
+                <li><a href="#" id="docs-link"><i class="fas fa-book"></i> Documentation</a></li>
+                <li><a href="#" id="contact-link"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li><a href="#" id="theme-link"><i class="fas fa-palette"></i> Themes</a></li>
             </ul>
         </nav>
     </header>
@@ -617,35 +1505,65 @@
         <div class="sidebar">
             <div class="sidebar-header">
                 <h2>Conversation History</h2>
-                <button class="new-chat-btn">
-                    <span>+</span> New
+                <button class="new-chat-btn" id="new-chat-btn">
+                    <i class="fas fa-plus"></i> New
                 </button>
             </div>
-            <div class="chat-history">
-                <div class="chat-item active">Welcome to NexusAI</div>
-                <div class="chat-item">AI Development Discussion</div>
-                <div class="chat-item">Programming Concepts</div>
-                <div class="chat-item">Web Design Consultation</div>
-                <div class="chat-item">Future Technology Trends</div>
-                <div class="chat-item">Machine Learning Basics</div>
-                <div class="chat-item">Data Analysis Project</div>
+            <div class="chat-history" id="chat-history">
+                <div class="chat-item active">
+                    <i class="fas fa-comment-dots chat-item-icon"></i>
+                    Welcome to NexusAI
+                </div>
+                <div class="chat-item">
+                    <i class="fas fa-code chat-item-icon"></i>
+                    Programming Concepts
+                </div>
+                <div class="chat-item">
+                    <i class="fas fa-brain chat-item-icon"></i>
+                    AI Development
+                </div>
+                <div class="chat-item">
+                    <i class="fas fa-paint-brush chat-item-icon"></i>
+                    Web Design Consultation
+                </div>
+                <div class="chat-item">
+                    <i class="fas fa-chart-line chat-item-icon"></i>
+                    Data Analysis Project
+                </div>
+                <div class="chat-item">
+                    <i class="fas fa-microchip chat-item-icon"></i>
+                    Future Tech Trends
+                </div>
+                <div class="chat-item">
+                    <i class="fas fa-graduation-cap chat-item-icon"></i>
+                    Machine Learning Basics
+                </div>
+                <div class="chat-item">
+                    <i class="fas fa-database chat-item-icon"></i>
+                    Database Optimization
+                </div>
+                <div class="chat-item">
+                    <i class="fas fa-shield-alt chat-item-icon"></i>
+                    Security Consultation
+                </div>
             </div>
         </div>
 
         <div class="chat-container">
             <div class="connection-status">
                 <div class="status-indicator"></div>
-                <span>Connected</span>
+                <span>Connected to NexusAI v4.2</span>
             </div>
 
-            <div class="chat-messages">
+            <div class="chat-messages" id="chat-messages">
                 <div class="message bot-message">
-                    Welcome to NexusAI, your advanced conversational interface. I'm here to assist with complex queries, data analysis, and intelligent discussions. How may I assist you today?
+                    <strong>Welcome to NexusAI v4.2</strong> - Your advanced conversational interface with multi-modal capabilities.<br><br>
+                    I'm equipped with real-time data processing, code generation, and contextual understanding. How may I assist you today?
                     <div class="message-time">Today, 14:32</div>
                 </div>
 
                 <div class="message user-message">
-                    Demonstrate your capabilities with a complex response about artificial intelligence.
+                    Demonstrate your capabilities with a complex response about artificial intelligence and show me some Python code for a neural network.
                     <div class="message-time">Today, 14:33</div>
                 </div>
 
@@ -653,25 +1571,37 @@
                     Artificial intelligence represents the culmination of decades of research in machine learning, neural networks, and cognitive computing. Modern systems utilize transformer architectures with attention mechanisms that enable contextual understanding at unprecedented scales.
 
                     <div class="code-block">
-                        // Example of a simple neural network in PyTorch<br>
+                        <div class="code-header">
+                            <span>Python - Neural Network Implementation</span>
+                            <button class="copy-code" onclick="copyCode(this)">Copy</button>
+                        </div>
                         import torch<br>
-                        import torch.nn as nn<br><br>
+                        import torch.nn as nn<br>
+                        import torch.nn.functional as F<br><br>
                         
                         class NeuralNet(nn.Module):<br>
-                        &nbsp;&nbsp;def __init__(self):<br>
+                        &nbsp;&nbsp;def __init__(self, input_size, hidden_size, num_classes):<br>
                         &nbsp;&nbsp;&nbsp;&nbsp;super(NeuralNet, self).__init__()<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;self.layer1 = nn.Linear(784, 512)<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;self.layer2 = nn.Linear(512, 256)<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;self.layer3 = nn.Linear(256, 10)<br><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;self.fc1 = nn.Linear(input_size, hidden_size)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;self.fc2 = nn.Linear(hidden_size, hidden_size)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;self.fc3 = nn.Linear(hidden_size, num_classes)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;self.dropout = nn.Dropout(0.5)<br><br>
                         
                         &nbsp;&nbsp;def forward(self, x):<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;x = torch.relu(self.layer1(x))<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;x = torch.relu(self.layer2(x))<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;x = self.layer3(x)<br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;return x
+                        &nbsp;&nbsp;&nbsp;&nbsp;x = F.relu(self.fc1(x))<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;x = self.dropout(x)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;x = F.relu(self.fc2(x))<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;x = self.dropout(x)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;x = self.fc3(x)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;return x<br><br>
+                        
+                        # Example usage<br>
+                        model = NeuralNet(input_size=784, hidden_size=512, num_classes=10)<br>
+                        criterion = nn.CrossEntropyLoss()<br>
+                        optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
                     </div>
                     
-                    The field continues to evolve with innovations in few-shot learning and self-supervised approaches.
+                    The field continues to evolve with innovations in few-shot learning and self-supervised approaches. Would you like me to explain any specific part of this implementation or discuss advanced architectures like Transformers or GANs?
                     <div class="message-time">Today, 14:33</div>
                 </div>
 
@@ -679,38 +1609,576 @@
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
+                    <span class="typing-text">NexusAI is thinking...</span>
                 </div>
             </div>
 
             <div class="input-container">
-                <textarea class="message-input" placeholder="Enter your query..."></textarea>
-                <button class="send-btn">
-                    <span class="send-icon">â</span>
+                <div class="input-tools">
+                    <button class="input-tool-btn" title="Upload File" id="upload-btn">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <button class="input-tool-btn" title="Voice Command" id="voice-btn">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="input-tool-btn" title="AI Personality" id="personality-btn">
+                        <i class="fas fa-user-astronaut"></i>
+                    </button>
+                </div>
+                <textarea class="message-input" id="message-input" placeholder="Enter your query or type / for commands..."></textarea>
+                <button class="send-btn" id="send-btn">
+                    <span class="send-icon"><i class="fas fa-paper-plane"></i></span>
                 </button>
+                <div class="file-preview" id="file-preview">
+                    <i class="fas fa-file-alt file-icon"></i>
+                    <div class="file-info">
+                        <div class="file-name" id="file-name">No file selected</div>
+                        <div class="file-size" id="file-size">0 KB</div>
+                    </div>
+                    <button class="file-remove" id="file-remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="ai-orb" title="AI Assistant">
+        <!-- AI Personality Selector -->
+        <div class="personality-selector" id="personality-selector">
+            <div class="personality-option active">
+                <div class="personality-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="personality-info">
+                    <h4>Default AI</h4>
+                    <p>Balanced and professional</p>
+                </div>
+            </div>
+            <div class="personality-option">
+                <div class="personality-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="personality-info">
+                    <h4>Professor</h4>
+                    <p>Detailed and educational</p>
+                </div>
+            </div>
+            <div class="personality-option">
+                <div class="personality-icon">
+                    <i class="fas fa-terminal"></i>
+                </div>
+                <div class="personality-info">
+                    <h4>Developer</h4>
+                    <p>Technical and code-focused</p>
+                </div>
+            </div>
+            <div class="personality-option">
+                <div class="personality-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <div class="personality-info">
+                    <h4>Creative</h4>
+                    <p>Imaginative and expressive</p>
+                </div>
+            </div>
+            <div class="personality-option">
+                <div class="personality-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="personality-info">
+                    <h4>Concise</h4>
+                    <p>Brief and to the point</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Theme Selector -->
+        <div class="theme-selector" id="theme-selector">
+            <button class="theme-btn blue active" data-theme="default"></button>
+            <button class="theme-btn orange" data-theme="orange"></button>
+            <button class="theme-btn green" data-theme="green"></button>
+            <button class="theme-btn yellow" data-theme="yellow"></button>
+            <button class="theme-btn purple" data-theme="purple"></button>
+            <button class="theme-btn red" data-theme="red"></button>
+        </div>
+
+        <!-- AI Orb -->
+        <div class="ai-orb" id="ai-orb" title="AI Assistant">
             <div class="ai-orb-core"></div>
+        </div>
+
+        <!-- Help Bubble -->
+        <div class="help-bubble" id="help-bubble">
+            ?
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="modal" id="contact-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-envelope"></i> Contact NexusAI</h3>
+                <button class="modal-close" id="contact-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-info">
+                        <h3>Email Support</h3>
+                        <p><a href="mailto:support@nexusai.com">support@nexusai.com</a></p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="contact-info">
+                        <h3>Phone Support</h3>
+                        <p><a href="tel:+18005551234">+1 (800) 555-1234</a></p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-info">
+                        <h3>Headquarters</h3>
+                        <p>123 AI Boulevard, Tech Valley, CA 94025</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="contact-info">
+                        <h3>Live Chat</h3>
+                        <p>Available 24/7 through our web portal</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Modal -->
+    <div class="modal" id="features-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-star"></i> NexusAI Features</h3>
+                <button class="modal-close" id="features-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4 class="feature-title">Advanced NLP</h4>
+                        <p class="feature-desc">State-of-the-art natural language processing with contextual understanding and sentiment analysis.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h4 class="feature-title">Code Generation</h4>
+                        <p class="feature-desc">Generate, explain, and debug code in multiple programming languages with best practices.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h4 class="feature-title">Data Analysis</h4>
+                        <p class="feature-desc">Process and visualize complex datasets with statistical analysis and machine learning insights.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <h4 class="feature-title">File Processing</h4>
+                        <p class="feature-desc">Upload and analyze documents, spreadsheets, and images with text extraction capabilities.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h4 class="feature-title">Custom Personalities</h4>
+                        <p class="feature-desc">Tailor the AI's response style to match your needs - from technical to creative.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-microphone"></i>
+                        </div>
+                        <h4 class="feature-title">Voice Interaction</h4>
+                        <p class="feature-desc">Speak naturally and receive voice responses for hands-free operation.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <h4 class="feature-title">Conversation Memory</h4>
+                        <p class="feature-desc">Context-aware responses that remember previous interactions in the session.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4 class="feature-title">Enterprise Security</h4>
+                        <p class="feature-desc">End-to-end encryption and compliance with industry security standards.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Documentation Modal -->
+    <div class="modal" id="docs-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-book"></i> NexusAI Documentation</h3>
+                <button class="modal-close" id="docs-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="doc-section">
+                    <h3><i class="fas fa-terminal"></i> Getting Started</h3>
+                    <p>Welcome to the NexusAI documentation. This guide will help you make the most of your AI assistant.</p>
+                    <p>To begin a conversation, simply type your message in the input box and press Enter or click the send button.</p>
+                </div>
+                
+                <div class="doc-section">
+                    <h3><i class="fas fa-magic"></i> Special Commands</h3>
+                    <p>NexusAI supports several special commands for enhanced functionality:</p>
+                    <ul>
+                        <li><strong>/code</strong> - Focus responses on code generation</li>
+                        <li><strong>/explain</strong> - Request detailed explanations</li>
+                        <li><strong>/summarize</strong> - Get concise summaries</li>
+                        <li><strong>/translate</strong> - Translate text between languages</li>
+                        <li><strong>/personality</strong> - Change AI response style</li>
+                    </ul>
+                </div>
+                
+                <div class="doc-section">
+                    <h3><i class="fas fa-file-upload"></i> File Uploads</h3>
+                    <p>NexusAI can process various file types:</p>
+                    <ul>
+                        <li><strong>Text files</strong> (.txt, .docx, .pdf) - Extract and analyze content</li>
+                        <li><strong>Spreadsheets</strong> (.xlsx, .csv) - Data analysis and visualization</li>
+                        <li><strong>Images</strong> (.png, .jpg) - Text extraction with OCR</li>
+                        <li><strong>Code files</strong> (.py, .js, etc.) - Code review and explanation</li>
+                    </ul>
+                </div>
+                
+                <div class="doc-section">
+                    <h3><i class="fas fa-cog"></i> Advanced Features</h3>
+                    <p>For enterprise users and developers:</p>
+                    <ul>
+                        <li><strong>API Access</strong> - Integrate NexusAI into your applications</li>
+                        <li><strong>Custom Training</strong> - Fine-tune models for your specific domain</li>
+                        <li><strong>Bulk Processing</strong> - Handle large datasets efficiently</li>
+                        <li><strong>Audit Logs</strong> - Track all AI interactions for compliance</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enterprise Modal -->
+    <div class="modal" id="enterprise-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-building"></i> Enterprise Solutions</h3>
+                <button class="modal-close" id="enterprise-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-title">Active Users</div>
+                        <div class="stat-value">1,248</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 12% from last month
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">API Requests</div>
+                        <div class="stat-value">4.2M</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 23% from last month
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Response Time</div>
+                        <div class="stat-value">248ms</div>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-down"></i> 5% from last month
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-title">Uptime</div>
+                        <div class="stat-value">99.98%</div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-check-circle"></i> All systems operational
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container" id="enterprise-chart">
+                    <!-- Chart would be rendered here with a library like Chart.js -->
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: rgba(var(--light-rgb), 0.5);">
+                        <i class="fas fa-chart-line" style="font-size: 2rem; margin-right: 1rem;"></i>
+                        <span>Enterprise Usage Analytics</span>
+                    </div>
+                </div>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <h4 class="feature-title">Private Deployment</h4>
+                        <p class="feature-desc">Deploy NexusAI on your private infrastructure with full data isolation and control.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <h4 class="feature-title">Custom Roles</h4>
+                        <p class="feature-desc">Granular access controls and permission management for your team.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <h4 class="feature-title">API Integration</h4>
+                        <p class="feature-desc">Seamless integration with your existing systems and workflows.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4 class="feature-title">Enhanced Security</h4>
+                        <p class="feature-desc">Enterprise-grade security with SOC 2 compliance and audit logging.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle notification-icon"></i>
+        <span id="notification-text">Notification message</span>
+    </div>
+
+    <!-- Voice Recording Indicator -->
+    <div class="voice-recording" id="voice-recording">
+        <div class="voice-pulse"></div>
+        <span>Listening... Speak now</span>
+    </div>
+
+    <!-- Tooltip Element -->
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- Context Menu -->
+    <div class="context-menu" id="context-menu">
+        <div class="context-item">
+            <i class="fas fa-copy"></i>
+            <span>Copy</span>
+        </div>
+        <div class="context-item">
+            <i class="fas fa-share"></i>
+            <span>Share</span>
+        </div>
+        <div class="context-divider"></div>
+        <div class="context-item">
+            <i class="fas fa-edit"></i>
+            <span>Edit</span>
+        </div>
+        <div class="context-item">
+            <i class="fas fa-trash"></i>
+            <span>Delete</span>
+        </div>
+    </div>
+
+    <!-- Tour Highlight -->
+    <div class="tour-highlight" id="tour-highlight"></div>
+    <div class="tour-tooltip" id="tour-tooltip">
+        <h3>Welcome to NexusAI</h3>
+        <p>This interactive tour will guide you through the main features of your advanced AI assistant.</p>
+        <div class="tour-nav">
+            <div class="tour-progress">1/5</div>
+            <div class="tour-buttons">
+                <button class="tour-button" id="tour-skip">Skip</button>
+                <button class="tour-button primary" id="tour-next">Next</button>
+            </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const messageInput = document.querySelector('.message-input');
-            const sendBtn = document.querySelector('.send-btn');
-            const chatMessages = document.querySelector('.chat-messages');
-            const newChatBtn = document.querySelector('.new-chat-btn');
+            // Get all DOM elements
+            const messageInput = document.getElementById('message-input');
+            const sendBtn = document.getElementById('send-btn');
+            const chatMessages = document.getElementById('chat-messages');
+            const newChatBtn = document.getElementById('new-chat-btn');
             const typingIndicator = document.querySelector('.typing-indicator');
-            const aiOrb = document.querySelector('.ai-orb');
+            const aiOrb = document.getElementById('ai-orb');
             const chatItems = document.querySelectorAll('.chat-item');
             const particlesContainer = document.getElementById('particles-js');
+            const themeSelector = document.getElementById('theme-selector');
+            const themeLink = document.getElementById('theme-link');
+            const contactLink = document.getElementById('contact-link');
+            const contactModal = document.getElementById('contact-modal');
+            const contactClose = document.getElementById('contact-close');
+            const featuresLink = document.getElementById('features-link');
+            const featuresModal = document.getElementById('features-modal');
+            const featuresClose = document.getElementById('features-close');
+            const docsLink = document.getElementById('docs-link');
+            const docsModal = document.getElementById('docs-modal');
+            const docsClose = document.getElementById('docs-close');
+            const enterpriseLink = document.getElementById('enterprise-link');
+            const enterpriseModal = document.getElementById('enterprise-modal');
+            const enterpriseClose = document.getElementById('enterprise-close');
+            const uploadBtn = document.getElementById('upload-btn');
+            const filePreview = document.getElementById('file-preview');
+            const fileName = document.getElementById('file-name');
+            const fileSize = document.getElementById('file-size');
+            const fileRemove = document.getElementById('file-remove');
+            const voiceBtn = document.getElementById('voice-btn');
+            const voiceRecording = document.getElementById('voice-recording');
+            const personalityBtn = document.getElementById('personality-btn');
+            const personalitySelector = document.getElementById('personality-selector');
+            const personalityOptions = document.querySelectorAll('.personality-option');
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notification-text');
+            const tooltip = document.getElementById('tooltip');
+            const contextMenu = document.getElementById('context-menu');
+            const helpBubble = document.getElementById('help-bubble');
+            const tourHighlight = document.getElementById('tour-highlight');
+            const tourTooltip = document.getElementById('tour-tooltip');
+            const tourSkip = document.getElementById('tour-skip');
+            const tourNext = document.getElementById('tour-next');
+            const logo = document.getElementById('logo');
+
+            // Set RGB values for primary color
+            document.documentElement.style.setProperty('--primary-rgb', '0, 240, 255');
+            document.documentElement.style.setProperty('--secondary-rgb', '123, 45, 255');
+            document.documentElement.style.setProperty('--accent-rgb', '255, 45, 123');
+            document.documentElement.style.setProperty('--light-rgb', '240, 240, 255');
 
             // Initialize particles
             createParticles();
 
             // Initially hide typing indicator
             typingIndicator.style.display = 'none';
+
+            // Theme selector toggle
+            themeLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                themeSelector.classList.toggle('active');
+            });
+
+            // Change theme
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove all theme classes
+                    document.body.classList.remove('theme-orange', 'theme-green', 'theme-yellow', 'theme-purple', 'theme-red');
+                    
+                    // Add selected theme class
+                    if (this.dataset.theme !== 'default') {
+                        document.body.classList.add(`theme-${this.dataset.theme}`);
+                    }
+                    
+                    // Update active button
+                    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update RGB values based on theme
+                    updateThemeColors(this.dataset.theme);
+                    
+                    // Show notification
+                    showNotification(`Theme changed to ${this.dataset.theme || 'default'}`);
+                });
+            });
+
+            // Update theme colors
+            function updateThemeColors(theme) {
+                let primaryRgb, secondaryRgb, accentRgb;
+                
+                switch(theme) {
+                    case 'orange':
+                        primaryRgb = '255, 123, 0';
+                        secondaryRgb = '255, 45, 123';
+                        accentRgb = '255, 204, 0';
+                        break;
+                    case 'green':
+                        primaryRgb = '0, 255, 157';
+                        secondaryRgb = '0, 180, 255';
+                        accentRgb = '123, 45, 255';
+                        break;
+                    case 'yellow':
+                        primaryRgb = '255, 204, 0';
+                        secondaryRgb = '255, 123, 0';
+                        accentRgb = '0, 240, 255';
+                        break;
+                    case 'purple':
+                        primaryRgb = '179, 98, 255';
+                        secondaryRgb = '255, 45, 123';
+                        accentRgb = '0, 240, 255';
+                        break;
+                    case 'red':
+                        primaryRgb = '255, 56, 96';
+                        secondaryRgb = '255, 123, 0';
+                        accentRgb = '0, 240, 255';
+                        break;
+                    default: // blue
+                        primaryRgb = '0, 240, 255';
+                        secondaryRgb = '123, 45, 255';
+                        accentRgb = '255, 45, 123';
+                }
+                
+                document.documentElement.style.setProperty('--primary-rgb', primaryRgb);
+                document.documentElement.style.setProperty('--secondary-rgb', secondaryRgb);
+                document.documentElement.style.setProperty('--accent-rgb', accentRgb);
+            }
+
+            // Contact modal
+            contactLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                contactModal.classList.add('active');
+            });
+
+            contactClose.addEventListener('click', function() {
+                contactModal.classList.remove('active');
+            });
+
+            // Features modal
+            featuresLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                featuresModal.classList.add('active');
+            });
+
+            featuresClose.addEventListener('click', function() {
+                featuresModal.classList.remove('active');
+            });
+
+            // Docs modal
+            docsLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                docsModal.classList.add('active');
+            });
+
+            docsClose.addEventListener('click', function() {
+                docsModal.classList.remove('active');
+            });
+
+            // Enterprise modal
+            enterpriseLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                enterpriseModal.classList.add('active');
+            });
+
+            enterpriseClose.addEventListener('click', function() {
+                enterpriseModal.classList.remove('active');
+            });
 
             // AI orb interaction
             aiOrb.addEventListener('click', function() {
@@ -721,6 +2189,9 @@
                 
                 // Add a system message
                 addBotMessage("NexusAI system activated. All neural pathways operating at optimal efficiency. How may I assist you?");
+                
+                // Show notification
+                showNotification("AI Assistant activated");
             });
 
             // Chat item selection
@@ -730,7 +2201,10 @@
                     this.classList.add('active');
                     
                     // Simulate loading chat history
-                    addBotMessage(`Loading conversation: "${this.textContent}"...`);
+                    addBotMessage(`Loading conversation: "${this.textContent.trim()}"...`);
+                    
+                    // Show notification
+                    showNotification(`Loaded conversation: ${this.textContent.trim()}`);
                 });
             });
 
@@ -751,6 +2225,249 @@
                 this.style.height = (this.scrollHeight) + 'px';
             });
 
+            // File upload
+            uploadBtn.addEventListener('click', function() {
+                // Create a file input element
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = '.txt,.pdf,.docx,.xlsx,.csv,.jpg,.png,.py,.js,.html,.css';
+                
+                fileInput.onchange = e => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        // Show file preview
+                        fileName.textContent = file.name;
+                        fileSize.textContent = formatFileSize(file.size);
+                        filePreview.classList.add('active');
+                        
+                        // Show notification
+                        showNotification(`File ready: ${file.name}`);
+                    }
+                };
+                
+                fileInput.click();
+            });
+
+            // Remove file
+            fileRemove.addEventListener('click', function() {
+                filePreview.classList.remove('active');
+                showNotification("File removed");
+            });
+
+            // Voice command
+            voiceBtn.addEventListener('click', function() {
+                if (voiceRecording.classList.contains('active')) {
+                    // Stop recording
+                    voiceRecording.classList.remove('active');
+                    this.classList.remove('active');
+                    showNotification("Voice command stopped");
+                    
+                    // Simulate processing
+                    setTimeout(() => {
+                        addUserMessage("This is a simulated voice command about artificial intelligence trends");
+                        setTimeout(() => {
+                            addBotMessage("Current AI trends include advancements in multimodal models, AI ethics frameworks, and edge AI deployment. The field is moving toward more efficient architectures and responsible AI practices.");
+                        }, 1000);
+                    }, 500);
+                } else {
+                    // Start recording
+                    voiceRecording.classList.add('active');
+                    this.classList.add('active');
+                    showNotification("Listening for voice command...");
+                }
+            });
+
+            // Personality selector
+            personalityBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                personalitySelector.classList.toggle('active');
+            });
+
+            // Personality selection
+            personalityOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    personalityOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    personalitySelector.classList.remove('active');
+                    
+                    const personality = this.querySelector('h4').textContent;
+                    showNotification(`AI personality set to: ${personality}`);
+                });
+            });
+
+            // Close personality selector when clicking elsewhere
+            document.addEventListener('click', function() {
+                personalitySelector.classList.remove('active');
+            });
+
+            // Help bubble
+            helpBubble.addEventListener('click', startTour);
+
+            // Tour controls
+            tourSkip.addEventListener('click', endTour);
+            tourNext.addEventListener('click', nextTourStep);
+
+            // Logo click
+            logo.addEventListener('click', function() {
+                // Easter egg - random fun message
+                const messages = [
+                    "NexusAI systems nominal",
+                    "All neural networks online",
+                    "Ready for your commands",
+                    "Initiating quantum computation",
+                    "Synaptic pathways engaged"
+                ];
+                const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+                showNotification(randomMsg);
+            });
+
+            // Context menu for messages
+            chatMessages.addEventListener('contextmenu', function(e) {
+                if (e.target.closest('.message')) {
+                    e.preventDefault();
+                    showContextMenu(e, e.target.closest('.message'));
+                }
+            });
+
+            // Close context menu
+            document.addEventListener('click', function() {
+                contextMenu.classList.remove('active');
+            });
+
+            // Show notification
+            function showNotification(message) {
+                notificationText.textContent = message;
+                notification.classList.add('active');
+                
+                setTimeout(() => {
+                    notification.classList.remove('active');
+                }, 3000);
+            }
+
+            // Show context menu
+            function showContextMenu(e, messageElement) {
+                contextMenu.style.left = `${e.pageX}px`;
+                contextMenu.style.top = `${e.pageY}px`;
+                contextMenu.classList.add('active');
+                
+                // Set data attribute for the selected message
+                contextMenu.setAttribute('data-message-id', messageElement.dataset.id || '');
+            }
+
+            // Start interactive tour
+            function startTour() {
+                // Reset tour
+                currentTourStep = 0;
+                nextTourStep();
+                
+                // Show first step
+                tourTooltip.style.display = 'block';
+                tourHighlight.style.display = 'block';
+            }
+
+            // End tour
+            function endTour() {
+                tourTooltip.style.display = 'none';
+                tourHighlight.style.display = 'none';
+            }
+
+            // Tour steps
+            const tourSteps = [
+                {
+                    target: '#message-input',
+                    position: 'top',
+                    title: 'Chat Input',
+                    content: 'Type your messages here to interact with NexusAI. Press Enter to send.',
+                    arrow: 'top'
+                },
+                {
+                    target: '#ai-orb',
+                    position: 'left',
+                    title: 'AI Assistant',
+                    content: 'Click the AI orb for quick access to system functions and status.',
+                    arrow: 'left'
+                },
+                {
+                    target: '.sidebar',
+                    position: 'right',
+                    title: 'Conversation History',
+                    content: 'Manage and switch between different conversations from this panel.',
+                    arrow: 'right'
+                },
+                {
+                    target: '#theme-link',
+                    position: 'bottom',
+                    title: 'Customization',
+                    content: 'Change the interface theme to match your preferences from here.',
+                    arrow: 'bottom'
+                },
+                {
+                    target: '#help-bubble',
+                    position: 'right',
+                    title: 'Need Help?',
+                    content: 'Click this button anytime to restart this tour or get assistance.',
+                    arrow: 'right'
+                }
+            ];
+            
+            let currentTourStep = 0;
+            
+            function nextTourStep() {
+                if (currentTourStep >= tourSteps.length) {
+                    endTour();
+                    return;
+                }
+                
+                const step = tourSteps[currentTourStep];
+                const target = document.querySelector(step.target);
+                
+                if (target) {
+                    // Position highlight
+                    const rect = target.getBoundingClientRect();
+                    tourHighlight.style.width = `${rect.width + 20}px`;
+                    tourHighlight.style.height = `${rect.height + 20}px`;
+                    tourHighlight.style.left = `${rect.left - 10}px`;
+                    tourHighlight.style.top = `${rect.top - 10}px`;
+                    
+                    // Position tooltip
+                    tourTooltip.querySelector('h3').textContent = step.title;
+                    tourTooltip.querySelector('p').textContent = step.content;
+                    tourTooltip.querySelector('.tour-progress').textContent = `${currentTourStep + 1}/${tourSteps.length}`;
+                    
+                    // Position based on step settings
+                    switch(step.position) {
+                        case 'top':
+                            tourTooltip.style.left = `${rect.left + rect.width/2 - 150}px`;
+                            tourTooltip.style.top = `${rect.top - 180}px`;
+                            break;
+                        case 'bottom':
+                            tourTooltip.style.left = `${rect.left + rect.width/2 - 150}px`;
+                            tourTooltip.style.top = `${rect.bottom + 20}px`;
+                            break;
+                        case 'left':
+                            tourTooltip.style.left = `${rect.left - 320}px`;
+                            tourTooltip.style.top = `${rect.top + rect.height/2 - 100}px`;
+                            break;
+                        case 'right':
+                            tourTooltip.style.left = `${rect.right + 20}px`;
+                            tourTooltip.style.top = `${rect.top + rect.height/2 - 100}px`;
+                            break;
+                    }
+                }
+                
+                currentTourStep++;
+            }
+
+            // Format file size
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
+            }
+
+            // Send message function
             function sendMessage() {
                 const message = messageInput.value.trim();
                 if (message) {
@@ -773,12 +2490,15 @@
                 }
             }
 
+            // Add user message
             function addUserMessage(text) {
                 const now = new Date();
                 const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const messageId = 'msg-' + Date.now();
                 
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message user-message';
+                messageDiv.dataset.id = messageId;
                 messageDiv.innerHTML = `
                     ${text}
                     <div class="message-time">Today, ${timeString}</div>
@@ -787,12 +2507,15 @@
                 chatMessages.appendChild(messageDiv);
             }
 
+            // Add bot message
             function addBotMessage(text) {
                 const now = new Date();
                 const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const messageId = 'msg-' + Date.now();
                 
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message bot-message';
+                messageDiv.dataset.id = messageId;
                 messageDiv.innerHTML = `
                     ${text}
                     <div class="message-time">Today, ${timeString}</div>
@@ -802,6 +2525,7 @@
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
 
+            // Generate intelligent response
             function generateIntelligentResponse(userMessage) {
                 const technicalTopics = [
                     "neural networks",
@@ -810,7 +2534,16 @@
                     "natural language processing",
                     "computer vision",
                     "reinforcement learning",
-                    "generative models"
+                    "generative models",
+                    "transformer",
+                    "gan",
+                    "cnn",
+                    "rnn",
+                    "python",
+                    "javascript",
+                    "code",
+                    "programming",
+                    "algorithm"
                 ];
 
                 const containsTechnicalTerm = technicalTopics.some(topic => 
@@ -818,20 +2551,54 @@
                 );
 
                 if (containsTechnicalTerm) {
+                    const matchedTerm = userMessage.match(new RegExp(technicalTopics.join("|"), "i"))[0];
                     const technicalResponses = [
-                        `The ${userMessage.match(new RegExp(technicalTopics.join("|"), "i"))[0]} architecture you mentioned represents a significant advancement in artificial intelligence. Current implementations leverage attention mechanisms and parallel processing to achieve state-of-the-art results across multiple benchmarks.`,
-                        `Research in ${userMessage.match(new RegExp(technicalTopics.join("|"), "i"))[0]} has shown remarkable progress in recent years. The latest papers demonstrate improvements in both accuracy and computational efficiency through novel optimization techniques.`,
-                        `When discussing ${userMessage.match(new RegExp(technicalTopics.join("|"), "i"))[0]}, it's important to consider the trade-offs between model complexity, training time, and inference speed. The optimal approach depends on your specific use case and available resources.`
+                        `The ${matchedTerm} architecture you mentioned represents a significant advancement in artificial intelligence. Current implementations leverage attention mechanisms and parallel processing to achieve state-of-the-art results across multiple benchmarks. Would you like me to elaborate on any specific aspect of ${matchedTerm}?`,
+                        `Research in ${matchedTerm} has shown remarkable progress in recent years. The latest papers demonstrate improvements in both accuracy and computational efficiency through novel optimization techniques. I can provide specific examples or code implementations if you're interested.`,
+                        `When discussing ${matchedTerm}, it's important to consider the trade-offs between model complexity, training time, and inference speed. The optimal approach depends on your specific use case and available resources. Would you like me to analyze your particular scenario?`,
+                        `The ${matchedTerm} field has evolved significantly. Modern implementations now incorporate techniques like transfer learning and self-supervised approaches. Here's a quick example of how this might look in practice:`,
+                        `For ${matchedTerm}, the key considerations are typically performance, scalability, and interpretability. Recent advancements have addressed these challenges in innovative ways. I can walk you through some case studies if that would be helpful.`
                     ];
                     
                     const randomResponse = technicalResponses[Math.floor(Math.random() * technicalResponses.length)];
-                    addBotMessage(randomResponse);
+                    
+                    // Sometimes include a code block
+                    if (Math.random() > 0.5) {
+                        const codeExamples = {
+                            "neural networks": `# Simple neural network in PyTorch\nmodel = nn.Sequential(\n    nn.Linear(784, 256),\n    nn.ReLU(),\n    nn.Linear(256, 128),\n    nn.ReLU(),\n    nn.Linear(128, 10)\n)`,
+                            "machine learning": `# Scikit-learn classifier example\nfrom sklearn.ensemble import RandomForestClassifier\nclf = RandomForestClassifier()\nclf.fit(X_train, y_train)\npredictions = clf.predict(X_test)`,
+                            "python": `# Python list comprehension example\nsquares = [x**2 for x in range(10) if x % 2 == 0]\n# Result: [0, 4, 16, 36, 64]`,
+                            "javascript": `// JavaScript async/await example\nasync function fetchData() {\n  const response = await fetch('api/data');\n  const data = await response.json();\n  return data;\n}`,
+                            "transformer": `# Transformer encoder layer in PyTorch\nencoder_layer = nn.TransformerEncoderLayer(\n    d_model=512, nhead=8, dim_feedforward=2048\n)\ntransformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=6)`
+                        };
+                        
+                        let codeToInclude = '';
+                        for (const [term, code] of Object.entries(codeExamples)) {
+                            if (userMessage.toLowerCase().includes(term)) {
+                                codeToInclude = code;
+                                break;
+                            }
+                        }
+                        
+                        if (!codeToInclude) {
+                            // Default code example
+                            codeToInclude = `# Default Python example\ndef greet(name):\n    return f"Hello, {name}!"\n\nprint(greet("NexusAI User"))`;
+                        }
+                        
+                        addBotMessage(`${randomResponse}<div class="code-block"><div class="code-header"><span>Code Example</span><button class="copy-code" onclick="copyCode(this)">Copy</button></div>${codeToInclude}</div>`);
+                    } else {
+                        addBotMessage(randomResponse);
+                    }
                 } else {
                     const generalResponses = [
                         "I've analyzed your query and can provide a detailed response based on current research and data patterns. Would you like me to focus on any particular aspect of this topic?",
                         "That's an interesting question. Based on my training data and knowledge cutoff, I can offer several perspectives on this matter. Let me know if you'd like me to elaborate on any specific angle.",
                         "My analysis indicates this topic has multiple dimensions worth exploring. I can provide a comprehensive overview or focus on specific technical details, depending on your needs.",
-                        "I've processed your input through multiple neural networks and can generate a response tailored to your expertise level. Would you prefer a high-level summary or in-depth technical details?"
+                        "I've processed your input through multiple neural networks and can generate a response tailored to your expertise level. Would you prefer a high-level summary or in-depth technical details?",
+                        "This is a fascinating subject area. I can approach it from various perspectives: technical, historical, practical applications, or future implications. Which would you find most valuable?",
+                        "After consulting multiple knowledge sources, I've identified several key points about this topic. Would you like me to organize them by importance, chronology, or another system?",
+                        "I can provide insights on this subject ranging from beginner to advanced levels. Please let me know your preferred depth of information.",
+                        "There are numerous ways to address this question. I can focus on accuracy, brevity, depth, or practical applications - what would serve you best?"
                     ];
                     
                     const randomResponse = generalResponses[Math.floor(Math.random() * generalResponses.length)];
@@ -852,6 +2619,9 @@
                 // Update active chat item
                 chatItems.forEach(item => item.classList.remove('active'));
                 chatItems[0].classList.add('active');
+                
+                // Show notification
+                showNotification("New conversation started");
             });
 
             // Create particle background
@@ -882,10 +2652,89 @@
                 }
             }
 
+            // Copy code function
+            window.copyCode = function(button) {
+                const codeBlock = button.closest('.code-block');
+                const code = codeBlock.textContent.replace('Copy', '').trim();
+                
+                navigator.clipboard.writeText(code).then(() => {
+                    const originalText = button.textContent;
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 2000);
+                });
+            };
+
             // Animate messages on load
             document.querySelectorAll('.message').forEach((msg, index) => {
                 msg.style.animationDelay = `${index * 0.1}s`;
             });
+
+            // Tooltip functionality
+            document.querySelectorAll('[title]').forEach(el => {
+                el.addEventListener('mouseenter', showTooltip);
+                el.addEventListener('mouseleave', hideTooltip);
+            });
+
+            function showTooltip(e) {
+                const target = e.target;
+                const title = target.getAttribute('title');
+                
+                if (!title) return;
+                
+                tooltip.textContent = title;
+                tooltip.style.display = 'block';
+                
+                // Position tooltip
+                const rect = target.getBoundingClientRect();
+                const tooltipWidth = tooltip.offsetWidth;
+                const tooltipHeight = tooltip.offsetHeight;
+                
+                // Default to bottom position
+                let top = rect.bottom + 5;
+                let left = rect.left + rect.width/2 - tooltipWidth/2;
+                let direction = 'top';
+                
+                // Check if bottom would be off screen
+                if (top + tooltipHeight > window.innerHeight) {
+                    top = rect.top - tooltipHeight - 5;
+                    direction = 'bottom';
+                }
+                
+                // Check if left would be off screen
+                if (left < 0) {
+                    left = 5;
+                }
+                
+                // Check if right would be off screen
+                if (left + tooltipWidth > window.innerWidth) {
+                    left = window.innerWidth - tooltipWidth - 5;
+                }
+                
+                tooltip.style.top = `${top}px`;
+                tooltip.style.left = `${left}px`;
+                tooltip.className = 'tooltip ' + direction;
+                
+                // Remove title to prevent native tooltip
+                target.removeAttribute('title');
+            }
+
+            function hideTooltip(e) {
+                tooltip.style.display = 'none';
+                // Restore title
+                if (e.target.getAttribute('data-original-title')) {
+                    e.target.setAttribute('title', e.target.getAttribute('data-original-title'));
+                }
+            }
+
+            // Start welcome tour after a delay
+            setTimeout(() => {
+                if (!localStorage.getItem('nexusai_tour_completed')) {
+                    startTour();
+                    localStorage.setItem('nexusai_tour_completed', 'true');
+                }
+            }, 3000);
         });
     </script>
 </body>
