@@ -59,6 +59,41 @@
             --accent: #00f0ff;
         }
 
+        .theme-pink {
+            --primary: #ff2d7b;
+            --primary-dark: #ff0062;
+            --secondary: #ff7b00;
+            --accent: #00f0ff;
+        }
+
+        .theme-teal {
+            --primary: #00f0ff;
+            --primary-dark: #00b4ff;
+            --secondary: #7b2dff;
+            --accent: #ff2d7b;
+        }
+
+        .theme-emerald {
+            --primary: #00ff9d;
+            --primary-dark: #00cc7a;
+            --secondary: #00b4ff;
+            --accent: #7b2dff;
+        }
+
+        .theme-crimson {
+            --primary: #ff3860;
+            --primary-dark: #ff1442;
+            --secondary: #ff7b00;
+            --accent: #00f0ff;
+        }
+
+        .theme-royal {
+            --primary: #7b2dff;
+            --primary-dark: #5a1dff;
+            --secondary: #ff2d7b;
+            --accent: #00f0ff;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -805,10 +840,50 @@
             z-index: 5;
             transform: translateX(150%);
             transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            background: var(--darker);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(var(--primary-rgb), 0.2);
+            width: 320px;
         }
 
         .theme-selector.active {
             transform: translateX(0);
+        }
+
+        .theme-selector-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .theme-selector-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .theme-selector-close {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .theme-selector-close:hover {
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        .theme-presets {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
         }
 
         .theme-btn {
@@ -864,6 +939,98 @@
 
         .theme-btn.red {
             background: linear-gradient(135deg, #ff3860, #ff7b00);
+        }
+
+        .theme-btn.pink {
+            background: linear-gradient(135deg, #ff2d7b, #ff0062);
+        }
+
+        .theme-btn.teal {
+            background: linear-gradient(135deg, #00f0ff, #00b4ff);
+        }
+
+        .theme-btn.emerald {
+            background: linear-gradient(135deg, #00ff9d, #00cc7a);
+        }
+
+        .theme-btn.crimson {
+            background: linear-gradient(135deg, #ff3860, #ff1442);
+        }
+
+        .theme-btn.royal {
+            background: linear-gradient(135deg, #7b2dff, #5a1dff);
+        }
+
+        .custom-theme-controls {
+            margin-top: 1.5rem;
+        }
+
+        .custom-theme-title {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .color-picker-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .color-picker-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .color-picker-label {
+            width: 100px;
+            font-size: 0.9rem;
+            color: var(--light);
+        }
+
+        .color-picker {
+            flex: 1;
+            height: 36px;
+            border-radius: 6px;
+            border: 1px solid rgba(var(--primary-rgb), 0.3);
+            background: var(--gray);
+            cursor: pointer;
+        }
+
+        .theme-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .theme-action-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .theme-save-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--darker);
+        }
+
+        .theme-reset-btn {
+            background: rgba(var(--primary-rgb), 0.1);
+            color: var(--primary);
+        }
+
+        .theme-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.3);
         }
 
         /* File upload preview */
@@ -971,6 +1138,208 @@
             color: rgba(var(--light-rgb), 0.7);
         }
 
+        /* Settings panel */
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100%;
+            background: var(--darker);
+            z-index: 100;
+            transition: right 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+            border-left: 1px solid rgba(var(--primary-rgb), 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .settings-panel.active {
+            right: 0;
+        }
+
+        .settings-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(var(--primary-rgb), 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .settings-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .settings-close {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0.7;
+        }
+
+        .settings-close:hover {
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        .settings-body {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .settings-group {
+            margin-bottom: 2rem;
+        }
+
+        .settings-group-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(var(--primary-rgb), 0.1);
+        }
+
+        .settings-item-label {
+            font-size: 0.95rem;
+            color: var(--light);
+        }
+
+        .settings-item-desc {
+            font-size: 0.8rem;
+            color: rgba(var(--light-rgb), 0.7);
+            margin-top: 0.3rem;
+        }
+
+        /* Toggle switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--light-gray);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Select dropdown */
+        .select-wrapper {
+            position: relative;
+            width: 180px;
+        }
+
+        .select-wrapper select {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            border: 1px solid rgba(var(--primary-rgb), 0.3);
+            background-color: var(--gray);
+            color: var(--light);
+            font-size: 0.9rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .select-wrapper::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--primary);
+            font-size: 0.8rem;
+        }
+
+        /* Range slider */
+        .range-slider {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .range-slider input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--light-gray);
+            outline: none;
+        }
+
+        .range-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .range-slider-value {
+            font-size: 0.8rem;
+            color: var(--primary);
+            margin-top: 0.3rem;
+            text-align: right;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .sidebar {
@@ -1008,6 +1377,7 @@
             .theme-selector {
                 bottom: 90px;
                 right: 20px;
+                width: 280px;
             }
 
             .theme-btn {
@@ -1022,6 +1392,10 @@
             nav a {
                 padding: 0.5rem;
                 font-size: 0.85rem;
+            }
+
+            .settings-panel {
+                width: 100%;
             }
         }
 
@@ -1284,52 +1658,6 @@
             margin: 0.3rem 0;
         }
 
-        /* Toggle switch */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--light-gray);
-            transition: .4s;
-            border-radius: 24px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked + .slider {
-            background-color: var(--primary);
-        }
-
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-
         /* Enterprise dashboard */
         .dashboard-stats {
             display: grid;
@@ -1494,6 +1822,7 @@
                 <li><a href="#" id="docs-link"><i class="fas fa-book"></i> Documentation</a></li>
                 <li><a href="#" id="contact-link"><i class="fas fa-envelope"></i> Contact</a></li>
                 <li><a href="#" id="theme-link"><i class="fas fa-palette"></i> Themes</a></li>
+                <li><a href="#" id="settings-link"><i class="fas fa-cog"></i> Settings</a></li>
             </ul>
         </nav>
     </header>
@@ -1693,12 +2022,205 @@
 
         <!-- Theme Selector -->
         <div class="theme-selector" id="theme-selector">
-            <button class="theme-btn blue active" data-theme="default"></button>
-            <button class="theme-btn orange" data-theme="orange"></button>
-            <button class="theme-btn green" data-theme="green"></button>
-            <button class="theme-btn yellow" data-theme="yellow"></button>
-            <button class="theme-btn purple" data-theme="purple"></button>
-            <button class="theme-btn red" data-theme="red"></button>
+            <div class="theme-selector-header">
+                <h3 class="theme-selector-title"><i class="fas fa-palette"></i> Theme Customization</h3>
+                <button class="theme-selector-close" id="theme-selector-close">&times;</button>
+            </div>
+            <div class="theme-presets">
+                <button class="theme-btn blue active" data-theme="default" title="Default Blue"></button>
+                <button class="theme-btn orange" data-theme="orange" title="Vibrant Orange"></button>
+                <button class="theme-btn green" data-theme="green" title="Emerald Green"></button>
+                <button class="theme-btn yellow" data-theme="yellow" title="Sunshine Yellow"></button>
+                <button class="theme-btn purple" data-theme="purple" title="Royal Purple"></button>
+                <button class="theme-btn red" data-theme="red" title="Crimson Red"></button>
+                <button class="theme-btn pink" data-theme="pink" title="Neon Pink"></button>
+                <button class="theme-btn teal" data-theme="teal" title="Ocean Teal"></button>
+                <button class="theme-btn emerald" data-theme="emerald" title="Deep Emerald"></button>
+                <button class="theme-btn crimson" data-theme="crimson" title="Dark Crimson"></button>
+                <button class="theme-btn royal" data-theme="royal" title="Regal Purple"></button>
+            </div>
+            <div class="custom-theme-controls">
+                <h4 class="custom-theme-title"><i class="fas fa-sliders-h"></i> Custom Theme</h4>
+                <div class="color-picker-group">
+                    <div class="color-picker-row">
+                        <span class="color-picker-label">Primary</span>
+                        <input type="color" class="color-picker" id="primary-color" value="#00f0ff">
+                    </div>
+                    <div class="color-picker-row">
+                        <span class="color-picker-label">Primary Dark</span>
+                        <input type="color" class="color-picker" id="primary-dark-color" value="#0084ff">
+                    </div>
+                    <div class="color-picker-row">
+                        <span class="color-picker-label">Secondary</span>
+                        <input type="color" class="color-picker" id="secondary-color" value="#7b2dff">
+                    </div>
+                    <div class="color-picker-row">
+                        <span class="color-picker-label">Accent</span>
+                        <input type="color" class="color-picker" id="accent-color" value="#ff2d7b">
+                    </div>
+                </div>
+                <div class="theme-actions">
+                    <button class="theme-action-btn theme-save-btn" id="theme-save-btn">Save Theme</button>
+                    <button class="theme-action-btn theme-reset-btn" id="theme-reset-btn">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel" id="settings-panel">
+            <div class="settings-header">
+                <h3 class="settings-title"><i class="fas fa-cog"></i> Settings</h3>
+                <button class="settings-close" id="settings-close">&times;</button>
+            </div>
+            <div class="settings-body">
+                <div class="settings-group">
+                    <h4 class="settings-group-title"><i class="fas fa-user-cog"></i> User Preferences</h4>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Dark Mode</div>
+                            <div class="settings-item-desc">Toggle between dark and light interface</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="dark-mode-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Animation Effects</div>
+                            <div class="settings-item-desc">Enable/disable interface animations</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="animations-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Message Density</div>
+                            <div class="settings-item-desc">Control how compact messages appear</div>
+                        </div>
+                        <div class="select-wrapper">
+                            <select id="message-density">
+                                <option value="compact">Compact</option>
+                                <option value="normal" selected>Normal</option>
+                                <option value="spacious">Spacious</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <h4 class="settings-group-title"><i class="fas fa-robot"></i> AI Behavior</h4>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Response Length</div>
+                            <div class="settings-item-desc">Control how verbose AI responses are</div>
+                        </div>
+                        <div class="range-slider">
+                            <input type="range" id="response-length" min="1" max="5" value="3">
+                            <div class="range-slider-value" id="response-length-value">Balanced</div>
+                        </div>
+                    </div>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Technical Depth</div>
+                            <div class="settings-item-desc">Adjust technical complexity of responses</div>
+                        </div>
+                        <div class="range-slider">
+                            <input type="range" id="technical-depth" min="1" max="5" value="3">
+                            <div class="range-slider-value" id="technical-depth-value">Intermediate</div>
+                        </div>
+                    </div>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Default Personality</div>
+                            <div class="settings-item-desc">Set the default AI response style</div>
+                        </div>
+                        <div class="select-wrapper">
+                            <select id="default-personality">
+                                <option value="default">Default</option>
+                                <option value="professor">Professor</option>
+                                <option value="developer">Developer</option>
+                                <option value="creative">Creative</option>
+                                <option value="concise">Concise</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <h4 class="settings-group-title"><i class="fas fa-bell"></i> Notifications</h4>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Message Notifications</div>
+                            <div class="settings-item-desc">Enable sound for new messages</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="message-notifications" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">System Alerts</div>
+                            <div class="settings-item-desc">Show system notifications</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="system-alerts" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Notification Volume</div>
+                            <div class="settings-item-desc">Adjust notification sound volume</div>
+                        </div>
+                        <div class="range-slider">
+                            <input type="range" id="notification-volume" min="0" max="100" value="70">
+                            <div class="range-slider-value" id="notification-volume-value">70%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <h4 class="settings-group-title"><i class="fas fa-shield-alt"></i> Privacy & Security</h4>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Chat History</div>
+                            <div class="settings-item-desc">Save conversation history locally</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="save-history" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Auto Clear</div>
+                            <div class="settings-item-desc">Automatically clear old conversations</div>
+                        </div>
+                        <div class="select-wrapper">
+                            <select id="auto-clear">
+                                <option value="never">Never</option>
+                                <option value="1week">After 1 week</option>
+                                <option value="1month" selected>After 1 month</option>
+                                <option value="3months">After 3 months</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Data Collection</div>
+                            <div class="settings-item-desc">Allow anonymous usage analytics</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="data-collection">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- AI Orb -->
@@ -1853,6 +2375,9 @@
                         <li><strong>/summarize</strong> - Get concise summaries</li>
                         <li><strong>/translate</strong> - Translate text between languages</li>
                         <li><strong>/personality</strong> - Change AI response style</li>
+                        <li><strong>/theme</strong> - Change interface color theme</li>
+                        <li><strong>/clear</strong> - Clear current conversation</li>
+                        <li><strong>/help</strong> - Show available commands</li>
                     </ul>
                 </div>
                 
@@ -1865,6 +2390,7 @@
                         <li><strong>Images</strong> (.png, .jpg) - Text extraction with OCR</li>
                         <li><strong>Code files</strong> (.py, .js, etc.) - Code review and explanation</li>
                     </ul>
+                    <p>Click the paperclip icon in the input area to attach files to your messages.</p>
                 </div>
                 
                 <div class="doc-section">
@@ -1875,6 +2401,8 @@
                         <li><strong>Custom Training</strong> - Fine-tune models for your specific domain</li>
                         <li><strong>Bulk Processing</strong> - Handle large datasets efficiently</li>
                         <li><strong>Audit Logs</strong> - Track all AI interactions for compliance</li>
+                        <li><strong>Webhooks</strong> - Receive real-time notifications</li>
+                        <li><strong>Custom Integrations</strong> - Connect with your existing systems</li>
                     </ul>
                 </div>
             </div>
@@ -1957,6 +2485,34 @@
                         <h4 class="feature-title">Enhanced Security</h4>
                         <p class="feature-desc">Enterprise-grade security with SOC 2 compliance and audit logging.</p>
                     </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h4 class="feature-title">Data Retention</h4>
+                        <p class="feature-desc">Customizable data retention policies to meet compliance requirements.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h4 class="feature-title">Priority Support</h4>
+                        <p class="feature-desc">24/7 dedicated support with guaranteed response times.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <h4 class="feature-title">Performance SLAs</h4>
+                        <p class="feature-desc">Guaranteed uptime and performance with financial backing.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h4 class="feature-title">Custom Training</h4>
+                        <p class="feature-desc">Tailor the AI model to your specific domain and terminology.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2025,6 +2581,13 @@
             const particlesContainer = document.getElementById('particles-js');
             const themeSelector = document.getElementById('theme-selector');
             const themeLink = document.getElementById('theme-link');
+            const themeSelectorClose = document.getElementById('theme-selector-close');
+            const themeSaveBtn = document.getElementById('theme-save-btn');
+            const themeResetBtn = document.getElementById('theme-reset-btn');
+            const primaryColorPicker = document.getElementById('primary-color');
+            const primaryDarkColorPicker = document.getElementById('primary-dark-color');
+            const secondaryColorPicker = document.getElementById('secondary-color');
+            const accentColorPicker = document.getElementById('accent-color');
             const contactLink = document.getElementById('contact-link');
             const contactModal = document.getElementById('contact-modal');
             const contactClose = document.getElementById('contact-close');
@@ -2057,6 +2620,24 @@
             const tourSkip = document.getElementById('tour-skip');
             const tourNext = document.getElementById('tour-next');
             const logo = document.getElementById('logo');
+            const settingsLink = document.getElementById('settings-link');
+            const settingsPanel = document.getElementById('settings-panel');
+            const settingsClose = document.getElementById('settings-close');
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const animationsToggle = document.getElementById('animations-toggle');
+            const messageDensitySelect = document.getElementById('message-density');
+            const responseLengthSlider = document.getElementById('response-length');
+            const responseLengthValue = document.getElementById('response-length-value');
+            const technicalDepthSlider = document.getElementById('technical-depth');
+            const technicalDepthValue = document.getElementById('technical-depth-value');
+            const defaultPersonalitySelect = document.getElementById('default-personality');
+            const messageNotificationsToggle = document.getElementById('message-notifications');
+            const systemAlertsToggle = document.getElementById('system-alerts');
+            const notificationVolumeSlider = document.getElementById('notification-volume');
+            const notificationVolumeValue = document.getElementById('notification-volume-value');
+            const saveHistoryToggle = document.getElementById('save-history');
+            const autoClearSelect = document.getElementById('auto-clear');
+            const dataCollectionToggle = document.getElementById('data-collection');
 
             // Set RGB values for primary color
             document.documentElement.style.setProperty('--primary-rgb', '0, 240, 255');
@@ -2076,13 +2657,21 @@
                 themeSelector.classList.toggle('active');
             });
 
-            // Change theme
+            themeSelectorClose.addEventListener('click', function() {
+                themeSelector.classList.remove('active');
+            });
+
+            // Change theme from presets
             document.querySelectorAll('.theme-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     // Remove all theme classes
-                    document.body.classList.remove('theme-orange', 'theme-green', 'theme-yellow', 'theme-purple', 'theme-red');
+                    document.body.classList.remove(
+                        'theme-orange', 'theme-green', 'theme-yellow', 
+                        'theme-purple', 'theme-red', 'theme-pink',
+                        'theme-teal', 'theme-emerald', 'theme-crimson', 'theme-royal'
+                    );
                     
-                    // Add selected theme class
+                    // Add selected theme class if not default
                     if (this.dataset.theme !== 'default') {
                         document.body.classList.add(`theme-${this.dataset.theme}`);
                     }
@@ -2093,6 +2682,9 @@
                     
                     // Update RGB values based on theme
                     updateThemeColors(this.dataset.theme);
+                    
+                    // Update color pickers to match theme
+                    updateColorPickers(this.dataset.theme);
                     
                     // Show notification
                     showNotification(`Theme changed to ${this.dataset.theme || 'default'}`);
@@ -2129,6 +2721,31 @@
                         secondaryRgb = '255, 123, 0';
                         accentRgb = '0, 240, 255';
                         break;
+                    case 'pink':
+                        primaryRgb = '255, 45, 123';
+                        secondaryRgb = '255, 123, 0';
+                        accentRgb = '0, 240, 255';
+                        break;
+                    case 'teal':
+                        primaryRgb = '0, 240, 255';
+                        secondaryRgb = '123, 45, 255';
+                        accentRgb = '255, 45, 123';
+                        break;
+                    case 'emerald':
+                        primaryRgb = '0, 255, 157';
+                        secondaryRgb = '0, 180, 255';
+                        accentRgb = '123, 45, 255';
+                        break;
+                    case 'crimson':
+                        primaryRgb = '255, 56, 96';
+                        secondaryRgb = '255, 123, 0';
+                        accentRgb = '0, 240, 255';
+                        break;
+                    case 'royal':
+                        primaryRgb = '123, 45, 255';
+                        secondaryRgb = '255, 45, 123';
+                        accentRgb = '0, 240, 255';
+                        break;
                     default: // blue
                         primaryRgb = '0, 240, 255';
                         secondaryRgb = '123, 45, 255';
@@ -2138,6 +2755,159 @@
                 document.documentElement.style.setProperty('--primary-rgb', primaryRgb);
                 document.documentElement.style.setProperty('--secondary-rgb', secondaryRgb);
                 document.documentElement.style.setProperty('--accent-rgb', accentRgb);
+            }
+
+            // Update color pickers based on theme
+            function updateColorPickers(theme) {
+                switch(theme) {
+                    case 'orange':
+                        primaryColorPicker.value = '#ff7b00';
+                        primaryDarkColorPicker.value = '#ff5500';
+                        secondaryColorPicker.value = '#ff2d7b';
+                        accentColorPicker.value = '#ffcc00';
+                        break;
+                    case 'green':
+                        primaryColorPicker.value = '#00ff9d';
+                        primaryDarkColorPicker.value = '#00cc7a';
+                        secondaryColorPicker.value = '#00b4ff';
+                        accentColorPicker.value = '#7b2dff';
+                        break;
+                    case 'yellow':
+                        primaryColorPicker.value = '#ffcc00';
+                        primaryDarkColorPicker.value = '#ffaa00';
+                        secondaryColorPicker.value = '#ff7b00';
+                        accentColorPicker.value = '#00f0ff';
+                        break;
+                    case 'purple':
+                        primaryColorPicker.value = '#b362ff';
+                        primaryDarkColorPicker.value = '#8a2dff';
+                        secondaryColorPicker.value = '#ff2d7b';
+                        accentColorPicker.value = '#00f0ff';
+                        break;
+                    case 'red':
+                        primaryColorPicker.value = '#ff3860';
+                        primaryDarkColorPicker.value = '#ff1442';
+                        secondaryColorPicker.value = '#ff7b00';
+                        accentColorPicker.value = '#00f0ff';
+                        break;
+                    case 'pink':
+                        primaryColorPicker.value = '#ff2d7b';
+                        primaryDarkColorPicker.value = '#ff0062';
+                        secondaryColorPicker.value = '#ff7b00';
+                        accentColorPicker.value = '#00f0ff';
+                        break;
+                    case 'teal':
+                        primaryColorPicker.value = '#00f0ff';
+                        primaryDarkColorPicker.value = '#00b4ff';
+                        secondaryColorPicker.value = '#7b2dff';
+                        accentColorPicker.value = '#ff2d7b';
+                        break;
+                    case 'emerald':
+                        primaryColorPicker.value = '#00ff9d';
+                        primaryDarkColorPicker.value = '#00cc7a';
+                        secondaryColorPicker.value = '#00b4ff';
+                        accentColorPicker.value = '#7b2dff';
+                        break;
+                    case 'crimson':
+                        primaryColorPicker.value = '#ff3860';
+                        primaryDarkColorPicker.value = '#ff1442';
+                        secondaryColorPicker.value = '#ff7b00';
+                        accentColorPicker.value = '#00f0ff';
+                        break;
+                    case 'royal':
+                        primaryColorPicker.value = '#7b2dff';
+                        primaryDarkColorPicker.value = '#5a1dff';
+                        secondaryColorPicker.value = '#ff2d7b';
+                        accentColorPicker.value = '#00f0ff';
+                        break;
+                    default: // blue
+                        primaryColorPicker.value = '#00f0ff';
+                        primaryDarkColorPicker.value = '#0084ff';
+                        secondaryColorPicker.value = '#7b2dff';
+                        accentColorPicker.value = '#ff2d7b';
+                }
+            }
+
+            // Save custom theme
+            themeSaveBtn.addEventListener('click', function() {
+                const primaryColor = primaryColorPicker.value;
+                const primaryDarkColor = primaryDarkColorPicker.value;
+                const secondaryColor = secondaryColorPicker.value;
+                const accentColor = accentColorPicker.value;
+                
+                // Convert hex to RGB
+                const primaryRgb = hexToRgb(primaryColor);
+                const primaryDarkRgb = hexToRgb(primaryDarkColor);
+                const secondaryRgb = hexToRgb(secondaryColor);
+                const accentRgb = hexToRgb(accentColor);
+                
+                // Update CSS variables
+                document.documentElement.style.setProperty('--primary', primaryColor);
+                document.documentElement.style.setProperty('--primary-dark', primaryDarkColor);
+                document.documentElement.style.setProperty('--secondary', secondaryColor);
+                document.documentElement.style.setProperty('--accent', accentColor);
+                
+                document.documentElement.style.setProperty('--primary-rgb', primaryRgb);
+                document.documentElement.style.setProperty('--primary-dark-rgb', primaryDarkRgb);
+                document.documentElement.style.setProperty('--secondary-rgb', secondaryRgb);
+                document.documentElement.style.setProperty('--accent-rgb', accentRgb);
+                
+                // Remove any theme classes
+                document.body.classList.remove(
+                    'theme-orange', 'theme-green', 'theme-yellow', 
+                    'theme-purple', 'theme-red', 'theme-pink',
+                    'theme-teal', 'theme-emerald', 'theme-crimson', 'theme-royal'
+                );
+                
+                // Deselect all theme buttons
+                document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                
+                showNotification('Custom theme saved successfully');
+            });
+
+            // Reset to default theme
+            themeResetBtn.addEventListener('click', function() {
+                // Remove all theme classes
+                document.body.classList.remove(
+                    'theme-orange', 'theme-green', 'theme-yellow', 
+                    'theme-purple', 'theme-red', 'theme-pink',
+                    'theme-teal', 'theme-emerald', 'theme-crimson', 'theme-royal'
+                );
+                
+                // Reset to default colors
+                document.documentElement.style.setProperty('--primary', '#00f0ff');
+                document.documentElement.style.setProperty('--primary-dark', '#0084ff');
+                document.documentElement.style.setProperty('--secondary', '#7b2dff');
+                document.documentElement.style.setProperty('--accent', '#ff2d7b');
+                
+                document.documentElement.style.setProperty('--primary-rgb', '0, 240, 255');
+                document.documentElement.style.setProperty('--primary-dark-rgb', '0, 132, 255');
+                document.documentElement.style.setProperty('--secondary-rgb', '123, 45, 255');
+                document.documentElement.style.setProperty('--accent-rgb', '255, 45, 123');
+                
+                // Reset color pickers
+                primaryColorPicker.value = '#00f0ff';
+                primaryDarkColorPicker.value = '#0084ff';
+                secondaryColorPicker.value = '#7b2dff';
+                accentColorPicker.value = '#ff2d7b';
+                
+                // Select default theme button
+                document.querySelector('.theme-btn.blue').classList.add('active');
+                
+                showNotification('Theme reset to default');
+            });
+
+            // Convert hex to RGB
+            function hexToRgb(hex) {
+                // Remove # if present
+                hex = hex.replace('#', '');
+                
+                // Parse r, g, b values
+                const r = parseInt(hex.substring(0, 2), 16);
+                const g = parseInt(hex.substring(2, 4), 16);
+                const b = parseInt(hex.substring(4, 6), 16);
+                
+                return `${r}, ${g}, ${b}`;
             }
 
             // Contact modal
@@ -2180,6 +2950,73 @@
                 enterpriseModal.classList.remove('active');
             });
 
+            // Settings panel
+            settingsLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                settingsPanel.classList.add('active');
+            });
+
+            settingsClose.addEventListener('click', function() {
+                settingsPanel.classList.remove('active');
+            });
+
+            // Settings controls
+            darkModeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    document.documentElement.style.setProperty('--dark', '#0a0a12');
+                    document.documentElement.style.setProperty('--darker', '#05050a');
+                    document.documentElement.style.setProperty('--light', '#f0f0ff');
+                    document.documentElement.style.setProperty('--gray', '#1a1a2e');
+                    document.documentElement.style.setProperty('--light-gray', '#2a2a3a');
+                } else {
+                    document.documentElement.style.setProperty('--dark', '#f0f0ff');
+                    document.documentElement.style.setProperty('--darker', '#e0e0f0');
+                    document.documentElement.style.setProperty('--light', '#0a0a12');
+                    document.documentElement.style.setProperty('--gray', '#e0e0f0');
+                    document.documentElement.style.setProperty('--light-gray', '#f0f0ff');
+                }
+                showNotification(`Dark mode ${this.checked ? 'enabled' : 'disabled'}`);
+            });
+
+            animationsToggle.addEventListener('change', function() {
+                const elements = document.querySelectorAll('*');
+                elements.forEach(el => {
+                    el.style.animation = this.checked ? '' : 'none';
+                });
+                showNotification(`Animations ${this.checked ? 'enabled' : 'disabled'}`);
+            });
+
+            messageDensitySelect.addEventListener('change', function() {
+                if (this.value === 'compact') {
+                    document.documentElement.style.setProperty('--message-padding', '0.8rem 1rem');
+                    document.documentElement.style.setProperty('--message-gap', '0.8rem');
+                    document.documentElement.style.setProperty('--message-line-height', '1.4');
+                } else if (this.value === 'spacious') {
+                    document.documentElement.style.setProperty('--message-padding', '1.5rem 2rem');
+                    document.documentElement.style.setProperty('--message-gap', '2rem');
+                    document.documentElement.style.setProperty('--message-line-height', '1.8');
+                } else {
+                    document.documentElement.style.setProperty('--message-padding', '1.2rem 1.5rem');
+                    document.documentElement.style.setProperty('--message-gap', '1.5rem');
+                    document.documentElement.style.setProperty('--message-line-height', '1.6');
+                }
+                showNotification(`Message density set to ${this.value}`);
+            });
+
+            responseLengthSlider.addEventListener('input', function() {
+                const values = ['Very Brief', 'Brief', 'Balanced', 'Detailed', 'Very Detailed'];
+                responseLengthValue.textContent = values[this.value - 1];
+            });
+
+            technicalDepthSlider.addEventListener('input', function() {
+                const values = ['Basic', 'Introductory', 'Intermediate', 'Advanced', 'Expert'];
+                technicalDepthValue.textContent = values[this.value - 1];
+            });
+
+            notificationVolumeSlider.addEventListener('input', function() {
+                notificationVolumeValue.textContent = `${this.value}%`;
+            });
+
             // AI orb interaction
             aiOrb.addEventListener('click', function() {
                 this.style.transform = 'scale(1.2) rotate(360deg)';
@@ -2187,7 +3024,7 @@
                     this.style.transform = '';
                 }, 1000);
                 
-                // Add a system message
+                              // Add a system message
                 addBotMessage("NexusAI system activated. All neural pathways operating at optimal efficiency. How may I assist you?");
                 
                 // Show notification
