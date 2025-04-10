@@ -26,13 +26,20 @@
             margin-bottom: 30px;
         }
 
-        #sample-text {
-            font-size: 18px;
-            line-height: 1.5;
-            margin: 20px 0;
+        #sample-text-container {
+            height: 5.4em; /* 3 lines (1.8em line-height × 3) */
+            overflow-y: auto;
             padding: 15px;
             background: #f8f9fa;
             border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        #sample-text {
+            font-size: 18px;
+            line-height: 1.8em;
+            margin: 0;
+            white-space: pre-wrap;
         }
 
         .correct { color: #34a853; }
@@ -49,6 +56,11 @@
             resize: none;
             margin: 10px 0;
             box-sizing: border-box;
+            /* Disable auto-correction */
+            autocapitalize: off;
+            autocomplete: off;
+            autocorrect: off;
+            spellcheck: false;
         }
 
         #start-btn {
@@ -80,7 +92,9 @@
 <body>
     <div class="container">
         <h1>Typing Speed Test</h1>
-        <div id="sample-text"></div>
+        <div id="sample-text-container">
+            <div id="sample-text"></div>
+        </div>
         <textarea id="input-area" placeholder="Click 'Start' and begin typing here..." disabled></textarea>
         <button id="start-btn">Start Test</button>
         <div id="results">
@@ -98,7 +112,8 @@
         ];
 
         let startTime, timer, currentText;
-        const sampleText = document.getElementById('sample-text');
+        const sampleTextElement = document.getElementById('sample-text');
+        const sampleTextContainer = document.getElementById('sample-text-container');
         const inputArea = document.getElementById('input-area');
         const startBtn = document.getElementById('start-btn');
         const results = document.getElementById('results');
@@ -116,7 +131,7 @@
             
             // Select new text
             currentText = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
-            sampleText.innerHTML = `<span class="remaining">${currentText}</span>`;
+            sampleTextElement.innerHTML = `<span class="remaining">${currentText}</span>`;
             
             // Start timer
             startTime = Date.now();
@@ -144,11 +159,17 @@
             const remaining = currentText.substring(correctLength);
             const incorrect = input[correctLength] && correctLength < currentText.length ? currentText[correctLength] : '';
             
-            sampleText.innerHTML = `
+            sampleTextElement.innerHTML = `
                 <span class="correct">${correct}</span>
                 ${incorrect ? `<span class="incorrect">${incorrect}</span>` : ''}
                 <span class="remaining">${remaining.substring(incorrect ? 1 : 0)}</span>
             `;
+
+            // Auto-scroll to keep current position visible
+            const textHeight = sampleTextElement.offsetHeight;
+            const containerHeight = sampleTextContainer.offsetHeight;
+            const scrollPos = (correctLength / currentText.length) * textHeight - (containerHeight / 3);
+            sampleTextContainer.scrollTop = Math.max(0, scrollPos);
 
             // Check if text is completed
             if (input === currentText) {
