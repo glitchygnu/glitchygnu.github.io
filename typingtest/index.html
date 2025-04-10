@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Typing Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #1a73e8;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        #sample-text {
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .correct { color: #34a853; }
+        .incorrect { color: #ea4335; text-decoration: underline; }
+        .remaining { color: #666; }
+
+        #input-area {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #1a73e8;
+            border-radius: 5px;
+            resize: none;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+
+        #start-btn {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        #results {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f0fe;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .stats {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Typing Speed Test</h1>
+        <div id="sample-text"></div>
+        <textarea id="input-area" placeholder="Click 'Start' and begin typing here..." disabled></textarea>
+        <button id="start-btn">Start Test</button>
+        <div id="results">
+            <div class="stats">Time: <span id="time">0</span>s</div>
+            <div class="stats">Speed: <span id="speed">0</span> WPM</div>
+            <div class="stats">Accuracy: <span id="accuracy">0</span>%</div>
+        </div>
+    </div>
+
+    <script>
+        const sampleTexts = [
+            "The quick brown fox jumps over the lazy dog.",
+            "Programming is the art of telling another human what one wants the computer to do.",
+            "Practice makes perfect. Keep typing to improve your speed and accuracy.",
+            "Success is not final, failure is not fatal: it is the courage to continue that counts."
+        ];
+
+        let startTime, timer, currentText;
+        const sampleText = document.getElementById('sample-text');
+        const inputArea = document.getElementById('input-area');
+        const startBtn = document.getElementById('start-btn');
+        const results = document.getElementById('results');
+        const timeSpan = document.getElementById('time');
+        const speedSpan = document.getElementById('speed');
+        const accuracySpan = document.getElementById('accuracy');
+
+        function newTest() {
+            // Reset state
+            clearInterval(timer);
+            inputArea.value = '';
+            results.style.display = 'none';
+            inputArea.disabled = false;
+            inputArea.focus();
+            
+            // Select new text
+            currentText = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
+            sampleText.innerHTML = `<span class="remaining">${currentText}</span>`;
+            
+            // Start timer
+            startTime = Date.now();
+            timer = setInterval(updateTime, 100);
+        }
+
+        function updateTime() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            timeSpan.textContent = elapsed;
+        }
+
+        function updateDisplay() {
+            const input = inputArea.value;
+            let correctLength = 0;
+            
+            // Find first incorrect character
+            while (correctLength < input.length && 
+                   correctLength < currentText.length &&
+                   input[correctLength] === currentText[correctLength]) {
+                correctLength++;
+            }
+
+            // Build display text
+            const correct = currentText.substring(0, correctLength);
+            const remaining = currentText.substring(correctLength + 1);
+            const incorrect = currentText[correctLength] || '';
+            
+            sampleText.innerHTML = `
+                <span class="correct">${correct}</span>
+                ${incorrect ? `<span class="incorrect">${incorrect}</span>` : ''}
+                <span class="remaining">${remaining}</span>
+            `;
+
+            // Check if text is completed
+            if (input === currentText) {
+                clearInterval(timer);
+                showResults();
+            }
+        }
+
+        function showResults() {
+            inputArea.disabled = true;
+            results.style.display = 'block';
+            
+            const time = (Date.now() - startTime) / 1000;
+            const words = currentText.split(/\s+/).length;
+            const wpm = Math.floor((words / time) * 60);
+            const accuracy = Math.floor(
+                (currentText.length / inputArea.value.length) * 100
+            ) || 0;
+
+            speedSpan.textContent = wpm;
+            accuracySpan.textContent = accuracy > 100 ? 100 : accuracy;
+        }
+
+        // Event listeners
+        startBtn.addEventListener('click', newTest);
+        inputArea.addEventListener('input', updateDisplay);
+    </script>
+</body>
+</html>
