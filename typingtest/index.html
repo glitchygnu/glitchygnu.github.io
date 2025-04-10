@@ -156,13 +156,13 @@
 
             // Build display text
             const correct = currentText.substring(0, correctLength);
-            const remaining = currentText.substring(correctLength);
             const incorrect = input[correctLength] && correctLength < currentText.length ? currentText[correctLength] : '';
+            const remaining = currentText.substring(correctLength + (incorrect ? 1 : 0));
             
             sampleTextElement.innerHTML = `
                 <span class="correct">${correct}</span>
                 ${incorrect ? `<span class="incorrect">${incorrect}</span>` : ''}
-                <span class="remaining">${remaining.substring(incorrect ? 1 : 0)}</span>
+                <span class="remaining">${remaining}</span>
             `;
 
             // Auto-scroll to keep current position visible
