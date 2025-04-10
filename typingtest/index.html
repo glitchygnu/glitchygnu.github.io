@@ -3,70 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Typing Test</title>
+    <title>Speed Typing Test</title>
     <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --container-bg: #f8f9fa;
+            --primary-color: #1a73e8;
+            --correct-color: #34a853;
+            --incorrect-color: #ea4335;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --container-bg: #2d2d2d;
+            --primary-color: #8ab4f8;
+            --correct-color: #81c995;
+            --incorrect-color: #f28b82;
+        }
+
         body {
             font-family: system-ui, -apple-system, sans-serif;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f0f2f5;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background 0.3s, color 0.3s;
         }
 
         .container {
-            background: white;
+            background: var(--container-bg);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        h1 {
-            color: #1a73e8;
-            text-align: center;
-            margin-bottom: 30px;
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
         }
 
-        #sample-text {
-            font-size: 18px;
-            line-height: 1.5;
+        #timer {
+            font-size: 24px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        #current-word {
+            font-size: 24px;
+            text-align: center;
             margin: 20px 0;
             padding: 15px;
-            background: #f8f9fa;
+            background: rgba(0,0,0,0.1);
             border-radius: 5px;
         }
 
-        .correct { color: #34a853; }
-        .incorrect { color: #ea4335; text-decoration: underline; }
-        .remaining { color: #666; }
-
         #input-area {
             width: 100%;
-            height: 150px;
+            height: 100px;
             padding: 15px;
-            font-size: 16px;
-            border: 2px solid #1a73e8;
+            font-size: 18px;
+            border: 2px solid var(--primary-color);
             border-radius: 5px;
             resize: none;
             margin: 10px 0;
             box-sizing: border-box;
         }
 
-        #start-btn {
-            background: #1a73e8;
+        .time-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .time-btn {
+            flex: 1;
+            padding: 10px;
+            background: var(--primary-color);
             color: white;
             border: none;
-            padding: 12px 25px;
-            font-size: 16px;
             border-radius: 5px;
             cursor: pointer;
-            width: 100%;
-            margin: 10px 0;
         }
 
         #results {
             margin-top: 20px;
             padding: 15px;
-            background: #e8f0fe;
+            background: rgba(0,0,0,0.1);
             border-radius: 5px;
             display: none;
         }
@@ -75,107 +105,151 @@
             font-size: 16px;
             margin: 5px 0;
         }
+
+        #words-left {
+            text-align: center;
+            margin: 10px 0;
+            color: var(--primary-color);
+        }
     </style>
 </head>
 <body>
+    <button class="theme-toggle">🌓</button>
     <div class="container">
-        <h1>Typing Speed Test</h1>
-        <div id="sample-text"></div>
-        <textarea id="input-area" placeholder="Click 'Start' and begin typing here..." disabled></textarea>
-        <button id="start-btn">Start Test</button>
+        <h1>Speed Typing Test</h1>
+        <div class="time-buttons">
+            <button class="time-btn" data-time="10">10 Seconds</button>
+            <button class="time-btn" data-time="60">1 Minute</button>
+            <button class="time-btn" data-time="300">5 Minutes</button>
+        </div>
+        <div id="timer">0:00</div>
+        <div id="current-word"></div>
+        <div id="words-left"></div>
+        <textarea id="input-area" placeholder="Start typing here..." 
+                 autocomplete="off" autocorrect="off" spellcheck="false"
+                 disabled></textarea>
         <div id="results">
-            <div class="stats">Time: <span id="time">0</span>s</div>
+            <div class="stats">Words: <span id="total-words">0</span></div>
             <div class="stats">Speed: <span id="speed">0</span> WPM</div>
             <div class="stats">Accuracy: <span id="accuracy">0</span>%</div>
         </div>
     </div>
 
     <script>
-        const sampleTexts = [
-            "The quick brown fox jumps over the lazy dog.",
-            "Programming is the art of telling another human what one wants the computer to do.",
-            "Practice makes perfect. Keep typing to improve your speed and accuracy.",
-            "Success is not final, failure is not fatal: it is the courage to continue that counts."
-        ];
+        // Generate 500 common English words
+        const wordList = [...Array(500)].map((_, i) => 
+            String.fromCharCode(97 + i % 26) + (i % 100) + 
+            (i < 26 ? '' : String.fromCharCode(97 + (i % 26)))
+            .sort(() => Math.random() - 0.5).slice(0, 200);
 
-        let startTime, timer, currentText;
-        const sampleText = document.getElementById('sample-text');
+        let currentWords = [];
+        let currentIndex = 0;
+        let correctWords = 0;
+        let totalTyped = 0;
+        let timer;
+        let timeLeft;
+        let testDuration = 60;
+
+        const themeToggle = document.querySelector('.theme-toggle');
+        const currentWord = document.getElementById('current-word');
         const inputArea = document.getElementById('input-area');
-        const startBtn = document.getElementById('start-btn');
+        const timerDisplay = document.getElementById('timer');
+        const wordsLeft = document.getElementById('words-left');
         const results = document.getElementById('results');
-        const timeSpan = document.getElementById('time');
+        const totalWordsSpan = document.getElementById('total-words');
         const speedSpan = document.getElementById('speed');
         const accuracySpan = document.getElementById('accuracy');
 
-        function newTest() {
-            // Reset state
-            clearInterval(timer);
+        function startTest(duration) {
+            testDuration = duration;
+            currentIndex = 0;
+            correctWords = 0;
+            totalTyped = 0;
+            timeLeft = duration;
+            
+            // Shuffle and select new words
+            currentWords = [...wordList].sort(() => Math.random() - 0.5);
+            
             inputArea.value = '';
-            results.style.display = 'none';
             inputArea.disabled = false;
             inputArea.focus();
+            results.style.display = 'none';
             
-            // Select new text
-            currentText = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
-            sampleText.innerHTML = `<span class="remaining">${currentText}</span>`;
-            
-            // Start timer
-            startTime = Date.now();
-            timer = setInterval(updateTime, 100);
+            updateWordDisplay();
+            updateTimer();
+            timer = setInterval(updateTimer, 1000);
         }
 
-        function updateTime() {
-            const elapsed = Math.floor((Date.now() - startTime) / 1000);
-            timeSpan.textContent = elapsed;
-        }
-
-        function updateDisplay() {
-            const input = inputArea.value;
-            let correctLength = 0;
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
             
-            // Find first incorrect character
-            while (correctLength < input.length && 
-                   correctLength < currentText.length &&
-                   input[correctLength] === currentText[correctLength]) {
-                correctLength++;
-            }
-
-            // Build display text
-            const correct = currentText.substring(0, correctLength);
-            const remaining = currentText.substring(correctLength + 1);
-            const incorrect = currentText[correctLength] || '';
-            
-            sampleText.innerHTML = `
-                <span class="correct">${correct}</span>
-                ${incorrect ? `<span class="incorrect">${incorrect}</span>` : ''}
-                <span class="remaining">${remaining}</span>
-            `;
-
-            // Check if text is completed
-            if (input === currentText) {
-                clearInterval(timer);
-                showResults();
+            if (timeLeft <= 0) {
+                endTest();
+            } else {
+                timeLeft--;
             }
         }
 
-        function showResults() {
+        function updateWordDisplay() {
+            currentWord.textContent = currentWords[currentIndex];
+            wordsLeft.textContent = `${currentWords.length - currentIndex} words remaining`;
+        }
+
+        function checkWord() {
+            const typedWord = inputArea.value.trim();
+            totalTyped++;
+            
+            if (typedWord === currentWords[currentIndex]) {
+                correctWords++;
+                currentWord.style.color = var(--correct-color);
+            } else {
+                currentWord.style.color = var(--incorrect-color);
+            }
+
+            setTimeout(() => {
+                currentIndex++;
+                if (currentIndex >= currentWords.length) currentIndex = 0;
+                inputArea.value = '';
+                updateWordDisplay();
+                currentWord.style.color = var(--text-color);
+            }, 50);
+        }
+
+        function endTest() {
+            clearInterval(timer);
             inputArea.disabled = true;
             results.style.display = 'block';
             
-            const time = (Date.now() - startTime) / 1000;
-            const words = currentText.split(/\s+/).length;
-            const wpm = Math.floor((words / time) * 60);
-            const accuracy = Math.floor(
-                (currentText.length / inputArea.value.length) * 100
-            ) || 0;
-
+            const minutes = testDuration / 60;
+            const wpm = Math.floor(correctWords / minutes);
+            const accuracy = Math.floor((correctWords / totalTyped) * 100) || 0;
+            
+            totalWordsSpan.textContent = `${correctWords}/${totalTyped}`;
             speedSpan.textContent = wpm;
-            accuracySpan.textContent = accuracy > 100 ? 100 : accuracy;
+            accuracySpan.textContent = accuracy;
         }
 
-        // Event listeners
-        startBtn.addEventListener('click', newTest);
-        inputArea.addEventListener('input', updateDisplay);
+        // Event Listeners
+        themeToggle.addEventListener('click', () => {
+            document.body.dataset.theme = 
+                document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+        });
+
+        document.querySelectorAll('.time-btn').forEach(btn => {
+            btn.addEventListener('click', () => startTest(parseInt(btn.dataset.time)));
+        });
+
+        inputArea.addEventListener('input', () => {
+            if (inputArea.value.includes(' ')) {
+                checkWord();
+            }
+        });
+
+        // Initialize
+        currentWords = [...wordList];
+        updateWordDisplay();
     </script>
 </body>
 </html>
