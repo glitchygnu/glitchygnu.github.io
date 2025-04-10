@@ -121,6 +121,23 @@
         const speedSpan = document.getElementById('speed');
         const accuracySpan = document.getElementById('accuracy');
 
+        // Fisher-Yates shuffle algorithm
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function getRandomText() {
+            // Select a random text sample
+            const text = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
+            // Split into words, shuffle, and rejoin
+            const words = text.split(' ');
+            return shuffleArray(words).join(' ');
+        }
+
         function newTest() {
             // Reset state
             clearInterval(timer);
@@ -129,8 +146,8 @@
             inputArea.disabled = false;
             inputArea.focus();
             
-            // Select new text
-            currentText = sampleTexts[Math.floor(Math.random() * sampleTexts.length)];
+            // Get new shuffled text
+            currentText = getRandomText();
             sampleTextElement.innerHTML = `<span class="remaining">${currentText}</span>`;
             
             // Start timer
