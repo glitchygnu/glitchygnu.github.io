@@ -45,6 +45,7 @@
         .correct { color: #34a853; }
         .incorrect { color: #ea4335; text-decoration: underline; }
         .remaining { color: #666; }
+        .current { background-color: #e8f0fe; } /* Highlight current character */
 
         #input-area {
             width: 100%;
@@ -171,16 +172,19 @@
                 correctLength++;
             }
 
-            // Build display text
-            const correct = currentText.substring(0, correctLength);
-            const incorrect = input[correctLength] && correctLength < currentText.length ? currentText[correctLength] : '';
-            const remaining = currentText.substring(correctLength + (incorrect ? 1 : 0));
+            // Build display text with all characters
+            let displayHTML = '';
+            for (let i = 0; i < currentText.length; i++) {
+                if (i < correctLength) {
+                    displayHTML += `<span class="correct">${currentText[i]}</span>`;
+                } else if (i === correctLength && input.length > correctLength) {
+                    displayHTML += `<span class="incorrect">${currentText[i]}</span>`;
+                } else {
+                    displayHTML += `<span class="remaining">${currentText[i]}</span>`;
+                }
+            }
             
-            sampleTextElement.innerHTML = `
-                <span class="correct">${correct}</span>
-                ${incorrect ? `<span class="incorrect">${incorrect}</span>` : ''}
-                <span class="remaining">${remaining}</span>
-            `;
+            sampleTextElement.innerHTML = displayHTML;
 
             // Auto-scroll to keep current position visible
             const textHeight = sampleTextElement.offsetHeight;
