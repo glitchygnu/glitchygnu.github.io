@@ -11,6 +11,17 @@
             margin: 0 auto;
             padding: 20px;
             background-color: #f0f2f5;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animation mode styles */
+        body.animation-mode {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #fff;
+            max-width: 100%;
+            padding: 20px;
         }
 
         .container {
@@ -18,12 +29,36 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.5s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        body.animation-mode .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border-radius: 15px;
+            color: #fff;
+            animation: pulseGlow 8s infinite alternate;
         }
 
         h1 {
             color: #1a73e8;
             text-align: center;
             margin-bottom: 30px;
+            transition: all 0.5s ease;
+        }
+
+        body.animation-mode h1 {
+            color: #00ff9d;
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.7);
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #00ff9d, #00b8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textGlow 2s infinite alternate;
         }
 
         #timer {
@@ -32,6 +67,14 @@
             margin: 10px 0;
             color: #ea4335;
             font-weight: bold;
+            transition: all 0.5s ease;
+        }
+
+        body.animation-mode #timer {
+            color: #ff4d4d;
+            font-size: 28px;
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.7);
+            animation: pulse 1s infinite alternate;
         }
 
         #sample-text-container {
@@ -43,6 +86,14 @@
             margin: 20px 0;
             border: 1px solid #ddd;
             line-height: 1.8em;
+            transition: all 0.5s ease;
+        }
+
+        body.animation-mode #sample-text-container {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.1);
+            animation: borderGlow 5s infinite alternate;
         }
 
         #sample-text {
@@ -58,6 +109,27 @@
         .remaining { color: #666; }
         .word-incorrect { color: #ea4335; }
 
+        body.animation-mode .correct { 
+            color: #00ff9d; 
+            text-shadow: 0 0 5px rgba(0, 255, 157, 0.5);
+        }
+        body.animation-mode .incorrect { 
+            color: #ff4d4d; 
+            text-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
+        }
+        body.animation-mode .current { 
+            background-color: rgba(0, 255, 157, 0.2); 
+            border-radius: 3px;
+            animation: currentWordPulse 1.5s infinite alternate;
+        }
+        body.animation-mode .remaining { 
+            color: rgba(255, 255, 255, 0.7); 
+        }
+        body.animation-mode .word-incorrect { 
+            color: #ff4d4d; 
+            text-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
+        }
+
         #input-area {
             width: 100%;
             height: 60px;
@@ -69,6 +141,15 @@
             margin: 10px 0;
             box-sizing: border-box;
             text-align: center;
+            transition: all 0.5s ease;
+        }
+
+        body.animation-mode #input-area {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid #00ff9d;
+            color: white;
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.3);
+            animation: inputGlow 3s infinite alternate;
         }
 
         #start-btn {
@@ -84,8 +165,37 @@
             transition: background 0.2s;
         }
 
-        #start-btn:hover {
-            background: #0d5bba;
+        body.animation-mode #start-btn {
+            background: linear-gradient(90deg, #00ff9d, #00b8ff);
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.5);
+            border: none;
+            animation: buttonPulse 2s infinite alternate;
+        }
+
+        #animation-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        body.animation-mode #animation-btn {
+            background: linear-gradient(90deg, #ff00ff, #00ffff);
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+            animation: rainbowButton 5s infinite;
         }
 
         #results {
@@ -94,17 +204,117 @@
             background: #e8f0fe;
             border-radius: 5px;
             display: none;
+            transition: all 0.5s ease;
+        }
+
+        body.animation-mode #results {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+            animation: resultsGlow 4s infinite alternate;
         }
 
         .stats {
             font-size: 16px;
             margin: 10px 0;
             font-weight: 500;
+            transition: all 0.5s ease;
+        }
+
+        body.animation-mode .stats {
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
         }
 
         .stats span {
             font-weight: bold;
             color: #1a73e8;
+            transition: all 0.5s ease;
+        }
+
+        body.animation-mode .stats span {
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+        }
+
+        /* Animation elements */
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-shape {
+            position: absolute;
+            opacity: 0.1;
+            z-index: 0;
+            animation: float 15s infinite linear;
+        }
+
+        /* Keyframe animations */
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-100px) rotate(180deg); }
+            100% { transform: translateY(0) rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); }
+            50% { box-shadow: 0 8px 32px 0 rgba(0, 255, 157, 0.3); }
+            100% { box-shadow: 0 8px 32px 0 rgba(0, 184, 255, 0.3); }
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 10px rgba(0, 255, 157, 0.7); }
+            100% { text-shadow: 0 0 20px rgba(0, 255, 157, 1); }
+        }
+
+        @keyframes borderGlow {
+            0% { box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.1); }
+            50% { box-shadow: inset 0 0 20px rgba(0, 255, 157, 0.2); }
+            100% { box-shadow: inset 0 0 20px rgba(0, 184, 255, 0.2); }
+        }
+
+        @keyframes inputGlow {
+            0% { box-shadow: 0 0 15px rgba(0, 255, 157, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(0, 255, 157, 0.5); }
+            100% { box-shadow: 0 0 15px rgba(0, 184, 255, 0.5); }
+        }
+
+        @keyframes buttonPulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 255, 157, 0.5); }
+            100% { transform: scale(1.02); box-shadow: 0 0 30px rgba(0, 255, 157, 0.8); }
+        }
+
+        @keyframes rainbowButton {
+            0% { background: linear-gradient(90deg, #ff00ff, #00ffff); }
+            25% { background: linear-gradient(90deg, #00ffff, #ffff00); }
+            50% { background: linear-gradient(90deg, #ffff00, #ff00ff); }
+            75% { background: linear-gradient(90deg, #ff00ff, #00ffff); }
+            100% { background: linear-gradient(90deg, #00ffff, #ffff00); }
+        }
+
+        @keyframes currentWordPulse {
+            0% { background-color: rgba(0, 255, 157, 0.2); }
+            100% { background-color: rgba(0, 255, 157, 0.4); }
+        }
+
+        @keyframes resultsGlow {
+            0% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); }
+            100% { box-shadow: 0 0 30px rgba(0, 255, 157, 0.4); }
+        }
+
+        @keyframes particleMove {
+            0% { transform: translate(0, 0); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)); opacity: 0; }
         }
     </style>
 </head>
@@ -133,6 +343,8 @@
             <div class="stats">Speed: <span id="speed">0</span> WPM</div>
         </div>
     </div>
+
+    <button id="animation-btn">Toggle Animation Mode</button>
 
     <script>
         // Enhanced word bank with varied word types and difficulty
@@ -175,6 +387,10 @@
         const startBtn = document.getElementById('start-btn');
         const results = document.getElementById('results');
         const timerDisplay = document.getElementById('timer');
+        const animationBtn = document.getElementById('animation-btn');
+        let animationMode = false;
+        let animationInterval;
+        let floatingShapes = [];
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -306,6 +522,11 @@
             
             inputArea.value = '';
             updateDisplay();
+
+            // Create particles for animation mode
+            if (animationMode) {
+                createParticles();
+            }
         }
 
         function endTest() {
@@ -324,6 +545,129 @@
             document.getElementById('speed').textContent = wpm;
         }
 
+        function toggleAnimationMode() {
+            animationMode = !animationMode;
+            document.body.classList.toggle('animation-mode', animationMode);
+            
+            if (animationMode) {
+                startAnimations();
+                animationBtn.textContent = "Normal Mode";
+            } else {
+                stopAnimations();
+                animationBtn.textContent = "Animation Mode";
+            }
+        }
+
+        function startAnimations() {
+            // Create floating shapes
+            createFloatingShapes();
+            
+            // Create particles periodically
+            animationInterval = setInterval(() => {
+                if (Math.random() > 0.7) {
+                    createParticles();
+                }
+            }, 1000);
+        }
+
+        function stopAnimations() {
+            clearInterval(animationInterval);
+            
+            // Remove all floating shapes
+            floatingShapes.forEach(shape => {
+                if (shape.parentNode) {
+                    shape.parentNode.removeChild(shape);
+                }
+            });
+            floatingShapes = [];
+        }
+
+        function createFloatingShapes() {
+            const colors = ['#00ff9d', '#00b8ff', '#ff00ff', '#ffff00', '#ff4d4d'];
+            const shapes = ['circle', 'triangle', 'square', 'pentagon'];
+            
+            for (let i = 0; i < 15; i++) {
+                const shape = document.createElement('div');
+                shape.className = 'floating-shape';
+                
+                // Random properties
+                const size = Math.random() * 50 + 20;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const shapeType = shapes[Math.floor(Math.random() * shapes.length)];
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const animationDuration = Math.random() * 20 + 10;
+                
+                // Style the shape
+                shape.style.width = `${size}px`;
+                shape.style.height = `${size}px`;
+                shape.style.left = `${left}%`;
+                shape.style.top = `${top}%`;
+                shape.style.animationDuration = `${animationDuration}s`;
+                shape.style.opacity = Math.random() * 0.1 + 0.05;
+                
+                // Different shapes
+                if (shapeType === 'circle') {
+                    shape.style.borderRadius = '50%';
+                    shape.style.background = `radial-gradient(circle, ${color}, transparent)`;
+                } else if (shapeType === 'triangle') {
+                    shape.style.width = '0';
+                    shape.style.height = '0';
+                    shape.style.background = 'transparent';
+                    shape.style.borderLeft = `${size/2}px solid transparent`;
+                    shape.style.borderRight = `${size/2}px solid transparent`;
+                    shape.style.borderBottom = `${size}px solid ${color}`;
+                } else if (shapeType === 'square') {
+                    shape.style.borderRadius = '5px';
+                    shape.style.background = color;
+                } else if (shapeType === 'pentagon') {
+                    // Using clip-path for pentagon
+                    shape.style.clipPath = 'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)';
+                    shape.style.background = color;
+                }
+                
+                document.body.appendChild(shape);
+                floatingShapes.push(shape);
+            }
+        }
+
+        function createParticles() {
+            const container = document.querySelector('.container');
+            const containerRect = container.getBoundingClientRect();
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random properties
+                const size = Math.random() * 5 + 2;
+                const color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                const startX = containerRect.left + containerRect.width / 2;
+                const startY = containerRect.top + containerRect.height / 2;
+                const tx = (Math.random() - 0.5) * 200;
+                const ty = (Math.random() - 0.5) * 200;
+                
+                // Style the particle
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${startX}px`;
+                particle.style.top = `${startY}px`;
+                particle.style.background = color;
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                particle.style.animation = 'particleMove 1s forwards';
+                
+                document.body.appendChild(particle);
+                
+                // Remove particle after animation
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, 1000);
+            }
+        }
+
         // Event listeners
         startBtn.addEventListener('click', () => {
             initializeTest();
@@ -338,6 +682,8 @@
             }
             updateDisplay();
         });
+
+        animationBtn.addEventListener('click', toggleAnimationMode);
 
         // Disable all auto-corrections
         inputArea.setAttribute('autocorrect', 'off');
