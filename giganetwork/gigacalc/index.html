@@ -1,1 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.3s ease;
+        }
 
+        body.dark-mode {
+            background-color: #222;
+            color: #fff;
+        }
+
+        .calculator {
+            width: 320px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .calculator {
+            background-color: #333;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .display {
+            padding: 20px;
+            text-align: right;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #eee;
+        }
+
+        body.dark-mode .display {
+            background-color: #444;
+            border-bottom: 1px solid #555;
+        }
+
+        .previous-operand {
+            font-size: 1.2rem;
+            color: #777;
+            height: 24px;
+            overflow: hidden;
+        }
+
+        body.dark-mode .previous-operand {
+            color: #aaa;
+        }
+
+        .current-operand {
+            font-size: 2.5rem;
+            margin-top: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background-color: #ddd;
+        }
+
+        body.dark-mode .buttons {
+            background-color: #555;
+        }
+
+        button {
+            border: none;
+            outline: none;
+            padding: 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            transition: all 0.2s ease;
+        }
+
+        body.dark-mode button {
+            background-color: #444;
+            color: #fff;
+        }
+
+        button:hover {
+            background-color: #e0e0e0;
+        }
+
+        body.dark-mode button:hover {
+            background-color: #555;
+        }
+
+        button:active {
+            background-color: #d0d0d0;
+        }
+
+        body.dark-mode button:active {
+            background-color: #666;
+        }
+
+        .number {
+            background-color: #f5f5f5;
+        }
+
+        body.dark-mode .number {
+            background-color: #3a3a3a;
+        }
+
+        .operation {
+            background-color: #e0f7fa;
+        }
+
+        body.dark-mode .operation {
+            background-color: #006064;
+        }
+
+        .equals {
+            background-color: #ffcdd2;
+        }
+
+        body.dark-mode .equals {
+            background-color: #b71c1c;
+        }
+
+        .span-2 {
+            grid-column: span 2;
+        }
+
+        /* Animation and Language buttons */
+        #animation-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        body.animation-mode #animation-btn {
+            background: linear-gradient(90deg, #ff00ff, #00ffff);
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+            animation: rainbowButton 5s infinite;
+        }
+
+        #language-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: #34a853;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        body.animation-mode #language-btn {
+            background: linear-gradient(90deg, #ff9900, #ff3399);
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(255, 153, 0, 0.5);
+            animation: languageButtonPulse 3s infinite alternate;
+        }
+
+        @keyframes rainbowButton {
+            0% { background: linear-gradient(90deg, #ff00ff, #00ffff); }
+            25% { background: linear-gradient(90deg, #00ffff, #ffff00); }
+            50% { background: linear-gradient(90deg, #ffff00, #ff00ff); }
+            75% { background: linear-gradient(90deg, #ff00ff, #00ffff); }
+            100% { background: linear-gradient(90deg, #00ffff, #ffff00); }
+        }
+
+        @keyframes languageButtonPulse {
+            0% { box-shadow: 0 0 20px rgba(255, 153, 0, 0.5); }
+            100% { box-shadow: 0 0 30px rgba(255, 51, 153, 0.8); }
+        }
+
+        /* Animation mode styles */
+        body.animation-mode {
+            animation: bgColorChange 10s infinite alternate;
+        }
+
+        @keyframes bgColorChange {
+            0% { background-color: #f5f5f5; }
+            25% { background-color: #ffe0f0; }
+            50% { background-color: #e0f0ff; }
+            75% { background-color: #f0ffe0; }
+            100% { background-color: #fff0e0; }
+        }
+
+        body.animation-mode.dark-mode {
+            animation: bgColorChangeDark 10s infinite alternate;
+        }
+
+        @keyframes bgColorChangeDark {
+            0% { background-color: #222; }
+            25% { background-color: #300022; }
+            50% { background-color: #002230; }
+            75% { background-color: #203000; }
+            100% { background-color: #301800; }
+        }
+
+        body.animation-mode .calculator {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating-shape {
+            position: fixed;
+            z-index: -1;
+            animation: floatShape linear infinite;
+        }
+
+        @keyframes floatShape {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, 50px) rotate(90deg); }
+            50% { transform: translate(100px, 0) rotate(180deg); }
+            75% { transform: translate(50px, -50px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display">
+            <div class="previous-operand" id="previous-operand"></div>
+            <div class="current-operand" id="current-operand">0</div>
+        </div>
+        <div class="buttons">
+            <button class="operation" data-action="clear">AC</button>
+            <button class="operation" data-action="delete">DEL</button>
+            <button class="operation" data-action="percentage">%</button>
+            <button class="operation" data-action="divide">÷</button>
+            <button class="number" data-number="7">7</button>
+            <button class="number" data-number="8">8</button>
+            <button class="number" data-number="9">9</button>
+            <button class="operation" data-action="multiply">×</button>
+            <button class="number" data-number="4">4</button>
+            <button class="number" data-number="5">5</button>
+            <button class="number" data-number="6">6</button>
+            <button class="operation" data-action="subtract">-</button>
+            <button class="number" data-number="1">1</button>
+            <button class="number" data-number="2">2</button>
+            <button class="number" data-number="3">3</button>
+            <button class="operation" data-action="add">+</button>
+            <button class="number span-2" data-number="0">0</button>
+            <button class="number" data-number=".">.</button>
+            <button class="equals" data-action="equals">=</button>
+        </div>
+    </div>
+
+    <button id="animation-btn">Toggle Animation Mode</button>
+    <button id="language-btn">Deutsch / German</button>
+
+    <script>
+        // Calculator functionality
+        class Calculator {
+            constructor(previousOperandTextElement, currentOperandTextElement) {
+                this.previousOperandTextElement = previousOperandTextElement;
+                this.currentOperandTextElement = currentOperandTextElement;
+                this.clear();
+            }
+
+            clear() {
+                this.currentOperand = '0';
+                this.previousOperand = '';
+                this.operation = undefined;
+            }
+
+            delete() {
+                this.currentOperand = this.currentOperand.toString().slice(0, -1);
+                if (this.currentOperand === '') {
+                    this.currentOperand = '0';
+                }
+            }
+
+            appendNumber(number) {
+                if (number === '.' && this.currentOperand.includes('.')) return;
+                if (this.currentOperand === '0' && number !== '.') {
+                    this.currentOperand = number.toString();
+                } else {
+                    this.currentOperand = this.currentOperand.toString() + number.toString();
+                }
+            }
+
+            chooseOperation(operation) {
+                if (this.currentOperand === '') return;
+                if (this.previousOperand !== '') {
+                    this.compute();
+                }
+                this.operation = operation;
+                this.previousOperand = this.currentOperand;
+                this.currentOperand = '';
+            }
+
+            compute() {
+                let computation;
+                const prev = parseFloat(this.previousOperand);
+                const current = parseFloat(this.currentOperand);
+                if (isNaN(prev) || isNaN(current)) return;
+
+                switch (this.operation) {
+                    case '+':
+                        computation = prev + current;
+                        break;
+                    case '-':
+                        computation = prev - current;
+                        break;
+                    case '×':
+                        computation = prev * current;
+                        break;
+                    case '÷':
+                        computation = prev / current;
+                        break;
+                    case '%':
+                        computation = prev % current;
+                        break;
+                    default:
+                        return;
+                }
+
+                this.currentOperand = computation.toString();
+                this.operation = undefined;
+                this.previousOperand = '';
+            }
+
+            calculatePercentage() {
+                if (this.currentOperand === '') return;
+                const current = parseFloat(this.currentOperand);
+                this.currentOperand = (current / 100).toString();
+            }
+
+            updateDisplay() {
+                this.currentOperandTextElement.innerText = this.currentOperand;
+                if (this.operation != null) {
+                    this.previousOperandTextElement.innerText = 
+                        `${this.previousOperand} ${this.operation}`;
+                } else {
+                    this.previousOperandTextElement.innerText = '';
+                }
+            }
+        }
+
+        // Initialize calculator
+        const numberButtons = document.querySelectorAll('[data-number]');
+        const operationButtons = document.querySelectorAll('[data-action="add"], [data-action="subtract"], [data-action="multiply"], [data-action="divide"], [data-action="percentage"]');
+        const equalsButton = document.querySelector('[data-action="equals"]');
+        const deleteButton = document.querySelector('[data-action="delete"]');
+        const clearButton = document.querySelector('[data-action="clear"]');
+        const percentageButton = document.querySelector('[data-action="percentage"]');
+        const previousOperandTextElement = document.getElementById('previous-operand');
+        const currentOperandTextElement = document.getElementById('current-operand');
+
+        const calculator = new Calculator(previousOperandTextElement, currentOperandTextElement);
+
+        numberButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                calculator.appendNumber(button.innerText);
+                calculator.updateDisplay();
+            });
+        });
+
+        operationButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                calculator.chooseOperation(button.innerText);
+                calculator.updateDisplay();
+            });
+        });
+
+        equalsButton.addEventListener('click', () => {
+            calculator.compute();
+            calculator.updateDisplay();
+        });
+
+        clearButton.addEventListener('click', () => {
+            calculator.clear();
+            calculator.updateDisplay();
+        });
+
+        deleteButton.addEventListener('click', () => {
+            calculator.delete();
+            calculator.updateDisplay();
+        });
+
+        percentageButton.addEventListener('click', () => {
+            calculator.calculatePercentage();
+            calculator.updateDisplay();
+        });
+
+        // Theme and language functionality
+        const animationBtn = document.getElementById('animation-btn');
+        const languageBtn = document.getElementById('language-btn');
+        let currentLanguage = 'en';
+        let animationMode = false;
+        let darkMode = false;
+
+        // Translations for UI elements
+        const translations = {
+            en: {
+                animationBtn: "Toggle Animation Mode",
+                languageBtn: "Deutsch / German",
+                calculatorButtons: {
+                    clear: "AC",
+                    delete: "DEL",
+                    percentage: "%",
+                    divide: "÷",
+                    multiply: "×",
+                    subtract: "-",
+                    add: "+",
+                    equals: "=",
+                    decimal: "."
+                }
+            },
+            de: {
+                animationBtn: "Animationsmodus umschalten",
+                languageBtn: "Englisch / English",
+                calculatorButtons: {
+                    clear: "AC",
+                    delete: "DEL",
+                    percentage: "%",
+                    divide: "÷",
+                    multiply: "×",
+                    subtract: "-",
+                    add: "+",
+                    equals: "=",
+                    decimal: ","
+                }
+            }
+        };
+
+        // Animation toggle function
+        function toggleAnimationMode() {
+            animationMode = !animationMode;
+            document.body.classList.toggle('animation-mode', animationMode);
+            
+            if (animationMode) {
+                startAnimations();
+            } else {
+                stopAnimations();
+            }
+            animationBtn.textContent = translations[currentLanguage].animationBtn;
+        }
+
+        // Language toggle function
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'en' ? 'de' : 'en';
+            updateLanguageUI();
+        }
+
+        // Update all UI elements with current language
+        function updateLanguageUI() {
+            animationBtn.textContent = translations[currentLanguage].animationBtn;
+            languageBtn.textContent = translations[currentLanguage].languageBtn;
+            
+            // Update decimal separator
+            document.querySelector('[data-number="."]').textContent = 
+                translations[currentLanguage].calculatorButtons.decimal;
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode', darkMode);
+        }
+
+        // Event listeners
+        animationBtn.addEventListener('click', toggleAnimationMode);
+        languageBtn.addEventListener('click', toggleLanguage);
+
+        // Initialize UI with default language
+        updateLanguageUI();
+
+        // Animation helper functions
+        let animationInterval;
+        let floatingShapes = [];
+
+        function startAnimations() {
+            // Create floating shapes
+            createFloatingShapes();
+            
+            // Create particles periodically
+            animationInterval = setInterval(() => {
+                if (Math.random() > 0.7) {
+                    createParticles();
+                }
+            }, 1000);
+        }
+
+        function stopAnimations() {
+            clearInterval(animationInterval);
+            
+            // Remove all floating shapes
+            floatingShapes.forEach(shape => {
+                if (shape.parentNode) {
+                    shape.parentNode.removeChild(shape);
+                }
+            });
+            floatingShapes = [];
+        }
+
+        function createFloatingShapes() {
+            const colors = ['#00ff9d', '#00b8ff', '#ff00ff', '#ffff00', '#ff4d4d'];
+            const shapes = ['circle', 'triangle', 'square', 'pentagon'];
+            
+            for (let i = 0; i < 15; i++) {
+                const shape = document.createElement('div');
+                shape.className = 'floating-shape';
+                
+                // Random properties
+                const size = Math.random() * 50 + 20;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const shapeType = shapes[Math.floor(Math.random() * shapes.length)];
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const animationDuration = Math.random() * 20 + 10;
+                
+                // Style the shape
+                shape.style.width = `${size}px`;
+                shape.style.height = `${size}px`;
+                shape.style.left = `${left}%`;
+                shape.style.top = `${top}%`;
+                shape.style.animationDuration = `${animationDuration}s`;
+                shape.style.opacity = Math.random() * 0.1 + 0.05;
+                
+                // Different shapes
+                if (shapeType === 'circle') {
+                    shape.style.borderRadius = '50%';
+                    shape.style.background = `radial-gradient(circle, ${color}, transparent)`;
+                } else if (shapeType === 'triangle') {
+                    shape.style.width = '0';
+                    shape.style.height = '0';
+                    shape.style.background = 'transparent';
+                    shape.style.borderLeft = `${size/2}px solid transparent`;
+                    shape.style.borderRight = `${size/2}px solid transparent`;
+                    shape.style.borderBottom = `${size}px solid ${color}`;
+                }
+                
+                document.body.appendChild(shape);
+                floatingShapes.push(shape);
+            }
+        }
+
+        function createParticles() {
+            const particleCount = 30;
+            const container = document.body;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random properties
+                const size = Math.random() * 10 + 2;
+                const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                const left = Math.random() * 100;
+                const duration = Math.random() * 3 + 1;
+                
+                // Style the particle
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.background = color;
+                particle.style.borderRadius = '50%';
+                particle.style.position = 'fixed';
+                particle.style.left = `${left}%`;
+                particle.style.top = '100%';
+                particle.style.opacity = '0';
+                particle.style.zIndex = '-1';
+                particle.style.boxShadow = `0 0 ${size}px ${size/2}px ${color}`;
+                
+                // Animation
+                particle.style.animation = `fall ${duration}s linear forwards`;
+                particle.style.animationDelay = `${Math.random() * 0.5}s`;
+                
+                container.appendChild(particle);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    particle.remove();
+                }, duration * 1000);
+            }
+        }
+
+        // Add styles for particles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fall {
+                0% {
+                    transform: translateY(0) scale(0);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 1;
+                }
+                90% {
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(-100vh) scale(1);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            if (e.key >= '0' && e.key <= '9') {
+                calculator.appendNumber(e.key);
+                calculator.updateDisplay();
+            } else if (e.key === '.') {
+                calculator.appendNumber(translations[currentLanguage].calculatorButtons.decimal);
+                calculator.updateDisplay();
+            } else if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
+                let operation;
+                switch (e.key) {
+                    case '+': operation = '+'; break;
+                    case '-': operation = '-'; break;
+                    case '*': operation = '×'; break;
+                    case '/': operation = '÷'; break;
+                }
+                calculator.chooseOperation(operation);
+                calculator.updateDisplay();
+            } else if (e.key === '%') {
+                calculator.calculatePercentage();
+                calculator.updateDisplay();
+            } else if (e.key === 'Enter' || e.key === '=') {
+                calculator.compute();
+                calculator.updateDisplay();
+            } else if (e.key === 'Backspace') {
+                calculator.delete();
+                calculator.updateDisplay();
+            } else if (e.key === 'Escape') {
+                calculator.clear();
+                calculator.updateDisplay();
+            }
+        });
+
+        // Toggle dark mode on 'd' key press
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'd') {
+                toggleDarkMode();
+            }
+        });
+    </script>
+</body>
+</html>
