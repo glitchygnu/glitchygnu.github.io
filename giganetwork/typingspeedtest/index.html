@@ -198,6 +198,30 @@
             animation: rainbowButton 5s infinite;
         }
 
+        #language-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: #34a853;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        body.animation-mode #language-btn {
+            background: linear-gradient(90deg, #ff9900, #ff3399);
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(255, 153, 0, 0.5);
+            animation: languageButtonPulse 3s infinite alternate;
+        }
+
         #results {
             margin-top: 20px;
             padding: 15px;
@@ -302,6 +326,11 @@
             100% { background: linear-gradient(90deg, #00ffff, #ffff00); }
         }
 
+        @keyframes languageButtonPulse {
+            0% { box-shadow: 0 0 20px rgba(255, 153, 0, 0.5); }
+            100% { box-shadow: 0 0 30px rgba(255, 51, 153, 0.8); }
+        }
+
         @keyframes currentWordPulse {
             0% { background-color: rgba(0, 255, 157, 0.2); }
             100% { background-color: rgba(0, 255, 157, 0.4); }
@@ -320,7 +349,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>1-Minute Typing Challenge</h1>
+        <h1 id="title">1-Minute Typing Challenge</h1>
         <div id="timer">01:00</div>
         <div id="sample-text-container">
             <div id="sample-text"></div>
@@ -336,51 +365,115 @@
         ></textarea>
         <button id="start-btn">Start Test</button>
         <div id="results">
-            <div class="stats">Total Words: <span id="total-words">0</span></div>
-            <div class="stats">Correct Words: <span id="correct-words">0</span></div>
-            <div class="stats">Characters Typed: <span id="total-chars">0</span></div>
-            <div class="stats">Accuracy: <span id="accuracy">0</span>%</div>
-            <div class="stats">Speed: <span id="speed">0</span> WPM</div>
+            <div class="stats"><span id="total-words-label">Total Words:</span> <span id="total-words">0</span></div>
+            <div class="stats"><span id="correct-words-label">Correct Words:</span> <span id="correct-words">0</span></div>
+            <div class="stats"><span id="total-chars-label">Characters Typed:</span> <span id="total-chars">0</span></div>
+            <div class="stats"><span id="accuracy-label">Accuracy:</span> <span id="accuracy">0</span>%</div>
+            <div class="stats"><span id="speed-label">Speed:</span> <span id="speed">0</span> <span id="wpm-label">WPM</span></div>
         </div>
     </div>
 
     <button id="animation-btn">Toggle Animation Mode</button>
+    <button id="language-btn">Deutsch / German</button>
 
     <script>
-        // Enhanced word bank with varied word types and difficulty
-        const wordBank = [
-            // Nouns
-            "algorithm", "velocity", "momentum", "apparatus", "phenomenon",
-            "synthesis", "paradox", "spectrum", "momentum", "apparatus",
-            "quintessence", "resonance", "trajectory", "aberration", "catalyst",
-            
-            // Verbs
-            "fluctuate", "synthesize", "accelerate", "illuminate", "oscillate",
-            "quantify", "resonate", "transcend", "validate", "compensate",
-            "deviate", "fabricate", "hypothesize", "manipulate", "navigate",
-            
-            // Adjectives
-            "ambivalent", "conspicuous", "ephemeral", "heterogeneous", "luminous",
-            "obsolete", "precarious", "spontaneous", "ubiquitous", "voracious",
-            "ambiguous", "exponential", "impervious", "meticulous", "profound",
-            
-            // Adverbs
-            "consequently", "exponentially", "indubitably", "perpetually", "sporadically",
-            "simultaneously", "theoretically", "unanimously", "virtually", "zealously",
-            
-            // Mixed difficulty words
-            "acquiesce", "belligerent", "circumvent", "demagogue", "equilibrium",
-            "facetious", "grandiose", "haphazard", "idiosyncratic", "juxtapose",
-            "kaleidoscope", "labyrinthine", "magnanimous", "nefarious", "omnipotent",
-            "paradigm", "quixotic", "rhetorical", "serendipity", "trepidation",
-            "unilateral", "vociferous", "wanderlust", "xenophobia", "yesteryear",
-            "zeitgeist"
-        ];
+        // Word banks for both languages
+        const wordBanks = {
+            en: [
+                // Nouns
+                "algorithm", "velocity", "momentum", "apparatus", "phenomenon",
+                "synthesis", "paradox", "spectrum", "momentum", "apparatus",
+                "quintessence", "resonance", "trajectory", "aberration", "catalyst",
+                
+                // Verbs
+                "fluctuate", "synthesize", "accelerate", "illuminate", "oscillate",
+                "quantify", "resonate", "transcend", "validate", "compensate",
+                "deviate", "fabricate", "hypothesize", "manipulate", "navigate",
+                
+                // Adjectives
+                "ambivalent", "conspicuous", "ephemeral", "heterogeneous", "luminous",
+                "obsolete", "precarious", "spontaneous", "ubiquitous", "voracious",
+                "ambiguous", "exponential", "impervious", "meticulous", "profound",
+                
+                // Adverbs
+                "consequently", "exponentially", "indubitably", "perpetually", "sporadically",
+                "simultaneously", "theoretically", "unanimously", "virtually", "zealously",
+                
+                // Mixed difficulty words
+                "acquiesce", "belligerent", "circumvent", "demagogue", "equilibrium",
+                "facetious", "grandiose", "haphazard", "idiosyncratic", "juxtapose",
+                "kaleidoscope", "labyrinthine", "magnanimous", "nefarious", "omnipotent",
+                "paradigm", "quixotic", "rhetorical", "serendipity", "trepidation",
+                "unilateral", "vociferous", "wanderlust", "xenophobia", "yesteryear",
+                "zeitgeist"
+            ],
+            de: [
+                // Nouns
+                "Algorithmus", "Geschwindigkeit", "Schwung", "Apparat", "Phänomen",
+                "Synthese", "Paradoxon", "Spektrum", "Impuls", "Gerät",
+                "Quintessenz", "Resonanz", "Flugbahn", "Abweichung", "Katalysator",
+                
+                // Verbs
+                "schwanken", "synthetisieren", "beschleunigen", "beleuchten", "oszillieren",
+                "quantifizieren", "mitschwingen", "transzendieren", "validieren", "kompensieren",
+                "abweichen", "fabrizieren", "hypothesieren", "manipulieren", "navigieren",
+                
+                // Adjectives
+                "ambivalent", "auffällig", "flüchtig", "heterogen", "leuchtend",
+                "veraltet", "prekär", "spontan", "allgegenwärtig", "unersättlich",
+                "mehrdeutig", "exponentiell", "undurchdringlich", "akribisch", "tiefgründig",
+                
+                // Adverbs
+                "folglich", "exponentiell", "zweifellos", "unaufhörlich", "sporadisch",
+                "gleichzeitig", "theoretisch", "einstimmig", "virtuell", "eifrig",
+                
+                // Mixed difficulty words
+                "dulden", "kriegerisch", "umgehen", "Volksverführer", "Gleichgewicht",
+                "spöttisch", "grandios", "planlos", "eigenartig", "nebeneinanderstellen",
+                "Kaleidoskop", "labyrinthisch", "großmütig", "ruchlos", "allmächtig",
+                "Paradigma", "idealistisch", "rhetorisch", "glücklicher Zufall", "Besorgnis",
+                "einseitig", "lautstark", "Fernweh", "Fremdenfeindlichkeit", "Vergangenheit",
+                "Zeitgeist"
+            ]
+        };
+
+        // Translations for UI elements
+        const translations = {
+            en: {
+                title: "1-Minute Typing Challenge",
+                timer: "01:00",
+                inputPlaceholder: "Click 'Start' and begin typing here...",
+                startBtn: "Start Test",
+                totalWords: "Total Words",
+                correctWords: "Correct Words",
+                totalChars: "Characters Typed",
+                accuracy: "Accuracy",
+                speed: "Speed",
+                wpm: "WPM",
+                animationBtn: "Toggle Animation Mode",
+                languageBtn: "Deutsch / German"
+            },
+            de: {
+                title: "1-Minute Tipp-Herausforderung",
+                timer: "01:00",
+                inputPlaceholder: "Klicken Sie auf 'Start' und beginnen Sie hier zu tippen...",
+                startBtn: "Test starten",
+                totalWords: "Wörter insgesamt",
+                correctWords: "Korrekte Wörter",
+                totalChars: "Eingegebene Zeichen",
+                accuracy: "Genauigkeit",
+                speed: "Geschwindigkeit",
+                wpm: "WPM",
+                animationBtn: "Animationsmodus umschalten",
+                languageBtn: "Englisch / English"
+            }
+        };
 
         let startTime, timer, currentText, currentPosition = 0;
         let correctChars = 0, totalChars = 0;
         let correctWords = 0, totalWords = 0;
         let processedText = '';
+        let currentLanguage = 'en';
         const sampleTextElement = document.getElementById('sample-text');
         const sampleTextContainer = document.getElementById('sample-text-container');
         const inputArea = document.getElementById('input-area');
@@ -388,6 +481,7 @@
         const results = document.getElementById('results');
         const timerDisplay = document.getElementById('timer');
         const animationBtn = document.getElementById('animation-btn');
+        const languageBtn = document.getElementById('language-btn');
         let animationMode = false;
         let animationInterval;
         let floatingShapes = [];
@@ -402,7 +496,7 @@
 
         function generateRandomText() {
             // Shuffle the word bank and select first 100 words
-            const shuffledWords = shuffleArray([...wordBank]);
+            const shuffledWords = shuffleArray([...wordBanks[currentLanguage]]);
             return shuffledWords.slice(0, 100).join(' ');
         }
 
@@ -422,7 +516,7 @@
             results.style.display = 'none';
             inputArea.disabled = false;
             inputArea.focus();
-            timerDisplay.textContent = '01:00';
+            timerDisplay.textContent = translations[currentLanguage].timer;
             startBtn.disabled = false;
             sampleTextContainer.scrollTop = 0;
         }
@@ -551,10 +645,43 @@
             
             if (animationMode) {
                 startAnimations();
-                animationBtn.textContent = "Normal Mode";
+                animationBtn.textContent = translations[currentLanguage].animationBtn;
             } else {
                 stopAnimations();
-                animationBtn.textContent = "Animation Mode";
+                animationBtn.textContent = translations[currentLanguage].animationBtn;
+            }
+        }
+
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === 'en' ? 'de' : 'en';
+            updateLanguageUI();
+            
+            // If test is running, regenerate text in new language
+            if (timer) {
+                currentText = generateRandomText();
+                currentPosition = 0;
+                processedText = '';
+                updateDisplay();
+            }
+        }
+
+        function updateLanguageUI() {
+            // Update all UI elements
+            document.getElementById('title').textContent = translations[currentLanguage].title;
+            document.getElementById('input-area').placeholder = translations[currentLanguage].inputPlaceholder;
+            startBtn.textContent = translations[currentLanguage].startBtn;
+            document.getElementById('total-words-label').textContent = translations[currentLanguage].totalWords;
+            document.getElementById('correct-words-label').textContent = translations[currentLanguage].correctWords;
+            document.getElementById('total-chars-label').textContent = translations[currentLanguage].totalChars;
+            document.getElementById('accuracy-label').textContent = translations[currentLanguage].accuracy;
+            document.getElementById('speed-label').textContent = translations[currentLanguage].speed;
+            document.getElementById('wpm-label').textContent = translations[currentLanguage].wpm;
+            animationBtn.textContent = translations[currentLanguage].animationBtn;
+            languageBtn.textContent = translations[currentLanguage].languageBtn;
+            
+            // Update timer display if test isn't running
+            if (!timer) {
+                timerDisplay.textContent = translations[currentLanguage].timer;
             }
         }
 
@@ -684,6 +811,7 @@
         });
 
         animationBtn.addEventListener('click', toggleAnimationMode);
+        languageBtn.addEventListener('click', toggleLanguage);
 
         // Disable all auto-corrections
         inputArea.setAttribute('autocorrect', 'off');
@@ -691,6 +819,9 @@
         inputArea.setAttribute('autocomplete', 'off');
         inputArea.setAttribute('autocapitalize', 'off');
         inputArea.setAttribute('inputmode', 'text');
+
+        // Initialize UI with default language
+        updateLanguageUI();
     </script>
 </body>
 </html>
