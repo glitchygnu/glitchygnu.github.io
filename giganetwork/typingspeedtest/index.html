@@ -56,6 +56,7 @@
         .incorrect { color: #ea4335; text-decoration: underline; }
         .current { background-color: #e8f0fe; border-radius: 3px; }
         .remaining { color: #666; }
+        .word-incorrect { color: #ea4335; }
 
         #input-area {
             width: 100%;
@@ -167,6 +168,7 @@
         let startTime, timer, currentText, currentPosition = 0;
         let correctChars = 0, totalChars = 0;
         let correctWords = 0, totalWords = 0;
+        let processedText = '';
         const sampleTextElement = document.getElementById('sample-text');
         const sampleTextContainer = document.getElementById('sample-text-container');
         const inputArea = document.getElementById('input-area');
@@ -195,6 +197,7 @@
             totalChars = 0;
             correctWords = 0;
             totalWords = 0;
+            processedText = '';
             
             // Display all text with remaining class
             sampleTextElement.innerHTML = `<span class="remaining">${currentText}</span>`;
@@ -230,9 +233,7 @@
             const currentWordEnd = currentText.indexOf(' ', currentPosition);
             const currentWord = currentText.substring(currentPosition, currentWordEnd === -1 ? currentText.length : currentWordEnd);
             
-            let displayHTML = '';
-            // Already processed text
-            displayHTML += `<span class="correct">${currentText.substring(0, currentPosition)}</span>`;
+            let displayHTML = processedText;
             
             // Current word being typed
             let currentWordHTML = '';
@@ -251,13 +252,13 @@
             sampleTextElement.innerHTML = displayHTML;
             
             // Auto-scroll logic
-            const charHeight = 18; // Approximate height of one line of characters
-            const visibleLines = 3; // Number of visible lines in container
-            const currentLine = Math.floor(currentPosition / 40); // Approximate chars per line
-            const scrollPosition = Math.max(0, (currentLine - 1) * charHeight);
+            const cursorPosition = currentPosition + input.length;
+            const lineHeight = 27; // Approximate line height in pixels
+            const linesScrolled = Math.floor(cursorPosition / 30); // Approx chars per line
+            const scrollPosition = linesScrolled * lineHeight;
             
             if (scrollPosition > sampleTextContainer.scrollTop) {
-                sampleTextContainer.scrollTop = scrollPosition;
+                sampleTextContainer.scrollTop = scrollPosition - 50;
             }
         }
 
@@ -275,13 +276,24 @@
             );
             
             // Check correctness
+            let isCorrect = true;
             let correct = 0;
             for (let i = 0; i < Math.min(typedWord.length, currentWord.length); i++) {
-                if (typedWord[i] === currentWord[i]) correct++;
+                if (typedWord[i] === currentWord[i]) {
+                    correct++;
+                } else {
+                    isCorrect = false;
+                }
             }
             correctChars += correct;
             
-            if (typedWord === currentWord) correctWords++;
+            // Add to processed text with correct styling
+            if (isCorrect && typedWord.length === currentWord.length) {
+                correctWords++;
+                processedText += `<span class="correct">${currentWord} </span>`;
+            } else {
+                processedText += `<span class="word-incorrect">${currentWord} </span>`;
+            }
             
             // Move to next word
             currentPosition = currentWordEnd === -1 ? currentText.length : currentWordEnd + 1;
@@ -289,6 +301,7 @@
             // If we've reached the end, wrap around to beginning
             if (currentPosition >= currentText.length) {
                 currentPosition = 0;
+                processedText = '';
             }
             
             inputArea.value = '';
@@ -302,7 +315,7 @@
             
             const timeMinutes = 1;
             const accuracy = Math.round((correctChars / totalChars) * 100) || 0;
-            const wpm = Math.round((totalWords / timeMinutes));
+            const wpm = Math.round((correctWords / timeMinutes));
             
             document.getElementById('total-words').textContent = totalWords;
             document.getElementById('correct-words').textContent = correctWords;
