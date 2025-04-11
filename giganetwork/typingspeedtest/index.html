@@ -42,13 +42,14 @@
             border-radius: 5px;
             margin: 20px 0;
             border: 1px solid #ddd;
+            line-height: 1.8em;
         }
 
         #sample-text {
             font-size: 18px;
-            line-height: 1.8em;
             margin: 0;
             white-space: pre-wrap;
+            line-height: inherit;
         }
 
         .correct { color: #34a853; }
@@ -167,6 +168,7 @@
         let correctChars = 0, totalChars = 0;
         let correctWords = 0, totalWords = 0;
         const sampleTextElement = document.getElementById('sample-text');
+        const sampleTextContainer = document.getElementById('sample-text-container');
         const inputArea = document.getElementById('input-area');
         const startBtn = document.getElementById('start-btn');
         const results = document.getElementById('results');
@@ -203,6 +205,7 @@
             inputArea.focus();
             timerDisplay.textContent = '01:00';
             startBtn.disabled = false;
+            sampleTextContainer.scrollTop = 0;
         }
 
         function startCountdown() {
@@ -246,6 +249,16 @@
             displayHTML += `<span class="remaining">${currentText.substring(currentPosition + input.length)}</span>`;
             
             sampleTextElement.innerHTML = displayHTML;
+            
+            // Auto-scroll logic
+            const charHeight = 18; // Approximate height of one line of characters
+            const visibleLines = 3; // Number of visible lines in container
+            const currentLine = Math.floor(currentPosition / 40); // Approximate chars per line
+            const scrollPosition = Math.max(0, (currentLine - 1) * charHeight);
+            
+            if (scrollPosition > sampleTextContainer.scrollTop) {
+                sampleTextContainer.scrollTop = scrollPosition;
+            }
         }
 
         function processInput() {
