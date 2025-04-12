@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💥 GRADE ROASTER 10,000X ULTRA 💥</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #ff00aa;
+            --secondary: #00ffcc;
+            --success: #00ff88;
+            --warning: #ffcc00;
+            --danger: #ff0066;
+            --light: #f8f9fa;
+            --dark: #222;
+            --bg: #0a0a1a;
+            --text: #fff;
+            --disco: false;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* CRT SCANLINES EFFECT */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(
+                    rgba(0, 0, 0, 0.1) 1px,
+                    transparent 1px
+                );
+            background-size: 100% 3px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: scanline 8s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(10, 10, 30, 0.8);
+            border-radius: 20px;
+            box-shadow: 
+                0 0 30px var(--primary),
+                0 0 60px var(--secondary);
+            position: relative;
+            overflow: hidden;
+            border: 3px solid var(--primary);
+            animation: borderGlow 3s infinite alternate;
+        }
+
+        @keyframes borderGlow {
+            0% { border-color: var(--primary); box-shadow: 0 0 30px var(--primary); }
+            50% { border-color: var(--secondary); box-shadow: 0 0 50px var(--secondary); }
+            100% { border-color: #ff00ff; box-shadow: 0 0 70px #ff00ff; }
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #ff00aa, #00ffcc, #ff00aa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            animation: rainbow 5s linear infinite;
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .description {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #aaa;
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            font-size: 1.2rem;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 20px var(--secondary);
+            transform: scale(1.02);
+        }
+
+        button {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            font-weight: bold;
+            margin: 1rem 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        .results {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .result-card {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.3);
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 255, 200, 0.5);
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+            text-shadow: 0 0 5px var(--secondary);
+        }
+
+        .result-value {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px currentColor;
+        }
+
+        .grade-A { color: #00ff88; }
+        .grade-B { color: #00ffcc; }
+        .grade-C { color: #ffcc00; }
+        .grade-D { color: #ff9900; }
+        .grade-F { color: #ff0066; }
+
+        .progress-container {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 1rem 0;
+            height: 30px;
+            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.5s ease-in-out, background 0.5s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .grade-scale {
+            margin-top: 2rem;
+        }
+
+        .grade-scale h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+            text-shadow: 0 0 5px var(--primary);
+            font-size: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-message {
+            color: var(--danger);
+            margin-top: 0.5rem;
+            font-size: 1rem;
+            text-shadow: 0 0 5px var(--danger);
+        }
+
+        /* DISCO MODE */
+        .disco-ball {
+            position: fixed;
+            top: -50px;
+            right: -50px;
+            width: 100px;
+            height: 100px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="white"/><circle cx="50" cy="50" r="40" fill="none" stroke="black" stroke-width="1"/><circle cx="50" cy="50" r="35" fill="none" stroke="black" stroke-width="1"/><circle cx="50" cy="50" r="30" fill="none" stroke="black" stroke-width="1"/></svg>') no-repeat;
+            background-size: contain;
+            z-index: 9998;
+            animation: spin 5s linear infinite;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .disco-mode .disco-ball {
+            opacity: 1;
+        }
+
+        .disco-mode::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(
+                    rgba(255, 0, 255, 0.1) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(255, 255, 0, 0.1) 1px,
+                    transparent 1px
+                );
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 9997;
+            animation: discoBg 0.5s linear infinite;
+        }
+
+        @keyframes discoBg {
+            0% { background-position: 0 0; }
+            100% { background-position: 20px 20px; }
+        }
+
+        /* CONTROLS */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .control-btn.active {
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* ROAST MESSAGE */
+        .roast-message {
+            font-style: italic;
+            text-align: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 0, 0, 0.2);
+            border-radius: 10px;
+            border-left: 5px solid var(--danger);
+            font-size: 1.1rem;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* MEME IMAGE */
+        .meme-img {
+            width: 100%;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 20px rgba(255, 0, 170, 0.5);
+        }
+
+        /* TRY HARDER BUTTON */
+        #tryHarder {
+            background: linear-gradient(45deg, #ff0066, #9900ff);
+            display: none;
+        }
+
+        #ohNoBtn {
+            background: linear-gradient(45deg, #ff0000, #ff6600);
+            display: none;
+        }
+
+        /* EMOJI GRADES */
+        .emoji-grade {
+            font-size: 3rem;
+            margin-right: 1rem;
+            vertical-align: middle;
+        }
+
+        /* PARTICLE EFFECTS */
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="disco-ball"></div>
+    <div class="container">
+        <h1>💥 GRADE ROASTER 10,000X ULTRA 💥</h1>
+        <p class="description">Enter your grades... if you dare. 😈</p>
+
+        <div class="controls">
+            <button id="discoBtn" class="control-btn">💃 DISCO MODE 🕺</button>
+            <button id="darkModeBtn" class="control-btn">🌙 DARK MODE</button>
+            <button id="randomColorBtn" class="control-btn">🎨 RANDOM COLORS</button>
+            <button id="ohNoBtn" class="control-btn">😱 OH NO, NOT AGAIN!</button>
+        </div>
+
+        <div class="form-group">
+            <label for="totalPoints">📊 TOTAL POINTS POSSIBLE</label>
+            <input type="number" id="totalPoints" placeholder="How many points was this even worth?" min="1">
+            <div id="totalPointsError" class="error-message hidden">🚨 Bro, enter a real number. >:(</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="earnedPoints">🎯 POINTS YOU EARNED</label>
+            <input type="number" id="earnedPoints" placeholder="Be honest... we'll know." min="0">
+            <div id="earnedPointsError" class="error-message hidden">🚨 You can't be serious...</div>
+        </div>
+        
+        <button id="calculateBtn">🔥 ROAST MY GRADE!</button>
+        <button id="tryHarder">💀 TRY HARDER (CLICK IF YOU DARE)</button>
+
+        <div id="roastMessage" class="roast-message hidden">
+            "I've seen potatoes with better grades." 🥔
+        </div>
+
+        <img id="memeImg" class="meme-img hidden" src="" alt="Grade Meme">
+        
+        <div id="results" class="results">
+            <div class="result-card">
+                <h2 class="result-title">📈 YOUR PERCENTAGE</h2>
+                <div id="percentage" class="result-value">0%</div>
+                <div class="progress-container">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
+            </div>
+            
+            <div class="result-card">
+                <h2 class="result-title">🎓 LETTER GRADE</h2>
+                <div id="letterGrade" class="result-value">
+                    <span id="emojiGrade" class="emoji-grade">❓</span>
+                    <span id="letterGradeText">-</span>
+                </div>
+            </div>
+            
+            <div class="result-card">
+                <h2 class="result-title">📊 POINTS TO NEXT GRADE</h2>
+                <div id="nextGrade" class="result-value">-</div>
+            </div>
+            
+            <div class="grade-scale">
+                <h3>📝 STANDARD GRADE SCALE</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Grade</th>
+                            <th>Percentage</th>
+                            <th>Emoji</th>
+                            <th>Vibe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="grade-A">A</td>
+                            <td>90-100%</td>
+                            <td>🎉</td>
+                            <td>Nerd Alert!</td>
+                        </tr>
+                        <tr>
+                            <td class="grade-B">B</td>
+                            <td>80-89%</td>
+                            <td>👍</td>
+                            <td>Almost Cool</td>
+                        </tr>
+                        <tr>
+                            <td class="grade-C">C</td>
+                            <td>70-79%</td>
+                            <td>😐</td>
+                            <td>Mediocre</td>
+                        </tr>
+                        <tr>
+                            <td class="grade-D">D</td>
+                            <td>60-69%</td>
+                            <td>😬</td>
+                            <td>Yikes...</td>
+                        </tr>
+                        <tr>
+                            <td class="grade-F">F</td>
+                            <td>0-59%</td>
+                            <td>💀</td>
+                            <td>FAILURE</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <audio id="successSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" preload="auto"></audio>
+    <audio id="failSound" src="https://assets.mixkit.co/sfx/preview/mixkit-sad-game-over-trombone-471.mp3" preload="auto"></audio>
+    <audio id="drumrollSound" src="https://assets.mixkit.co/sfx/preview/mixkit-drum-roll-573.mp3" preload="auto"></audio>
+    <audio id="booSound" src="https://assets.mixkit.co/sfx/preview/mixkit-people-booing-551.mp3" preload="auto"></audio>
+    <audio id="sadSound" src="https://assets.mixkit.co/sfx/preview/mixkit-sad-trombone-472.mp3" preload="auto"></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const totalPointsInput = document.getElementById('totalPoints');
+            const earnedPointsInput = document.getElementById('earnedPoints');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const tryHarderBtn = document.getElementById('tryHarder');
+            const ohNoBtn = document.getElementById('ohNoBtn');
+            const resultsDiv = document.getElementById('results');
+            const percentageDiv = document.getElementById('percentage');
+            const letterGradeDiv = document.getElementById('letterGradeText');
+            const emojiGradeDiv = document.getElementById('emojiGrade');
+            const nextGradeDiv = document.getElementById('nextGrade');
+            const progressBar = document.getElementById('progressBar');
+            const totalPointsError = document.getElementById('totalPointsError');
+            const earnedPointsError = document.getElementById('earnedPointsError');
+            const roastMessage = document.getElementById('roastMessage');
+            const memeImg = document.getElementById('memeImg');
+            const discoBtn = document.getElementById('discoBtn');
+            const darkModeBtn = document.getElementById('darkModeBtn');
+            const randomColorBtn = document.getElementById('randomColorBtn');
+            const body = document.body;
+            
+            // Sounds
+            const successSound = document.getElementById('successSound');
+            const failSound = document.getElementById('failSound');
+            const drumrollSound = document.getElementById('drumrollSound');
+            const booSound = document.getElementById('booSound');
+            const sadSound = document.getElementById('sadSound');
+            
+            // Roasts for bad grades
+            const roasts = [
+                "Did you use a magic 8-ball to answer these? 🔮",
+                "I've seen better grades on a banana. 🍌",
+                "Was your dog helping you with this? 🐕",
+                "Did you study... at all? 📚",
+                "Your parents will LOVE this. 😬",
+                "At least you tried... or did you? 🤔",
+                "This is why we can't have nice things. 😤",
+                "Maybe next time don't use TikTok as a study guide. 📱",
+                "Did you write the answers in invisible ink? ✍️",
+                "Congratulations! You failed successfully. 🎉",
+                "Your grade is as disappointing as the last season of Game of Thrones. 🐉",
+                "If grades were WiFi, you'd have no bars. 📶",
+                "Your brain: 'Error 404 - Knowledge not found' 🧠",
+                "This grade is a crime scene. 🚨",
+                "Did you guess... on purpose? 🎲"
+            ];
+            
+            // Encouragement for good grades
+            const encouragements = [
+                "Look at you, you beautiful nerd! 🤓",
+                "Someone's getting extra dessert tonight! 🍰",
+                "Your parents might actually smile! 😊",
+                "A+ for Awesome! ✨",
+                "You're basically a genius now. 🧠",
+                "Can you teach the rest of the class? 👩‍🏫",
+                "Gold star for you! ⭐",
+                "Your brain is HUGE! 🧠💪",
+                "Who's smart? YOU'RE SMART! 🎓",
+                "You're the reason the curve exists. 📈"
+            ];
+            
+            // Meme images for grades
+            const gradeMemes = {
+                A: "https://i.imgflip.com/4/1bij.jpg", // Success Kid
+                B: "https://i.imgflip.com/4/1bgw.jpg", // One Does Not Simply
+                C: "https://i.imgflip.com/4/1bhf.jpg", // Y U No
+                D: "https://i.imgflip.com/4/1bh3.jpg", // Futurama Fry
+                F: "https://i.imgflip.com/4/1bh8.jpg"  // Facepalm
+            };
+            
+            // Disco mode
+            let discoMode = false;
+            
+            // Dark mode
+            let darkMode = true;
+            
+            // Event listeners
+            calculateBtn.addEventListener('click', calculateGrade);
+            tryHarderBtn.addEventListener('click', roastHarder);
+            ohNoBtn.addEventListener('click', playSadTrombone);
+            discoBtn.addEventListener('click', toggleDisco);
+            darkModeBtn.addEventListener('click', toggleDarkMode);
+            randomColorBtn.addEventListener('click', randomizeColors);
+            
+            // Also calculate when pressing Enter in either input field
+            [totalPointsInput, earnedPointsInput].forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        calculateGrade();
+                    }
+                });
+            });
+            
+            // Create particles for effects
+            function createParticles(count) {
+                for (let i = 0; i < count; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    // Random properties
+                    const size = Math.random() * 10 + 5;
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight;
+                    const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                    const duration = Math.random() * 3 + 2;
+                    
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.left = `${x}px`;
+                    particle.style.top = `${y}px`;
+                    particle.style.background = color;
+                    particle.style.animation = `fall ${duration}s linear forwards`;
+                    
+                    document.body.appendChild(particle);
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        particle.remove();
+                    }, duration * 1000);
+                }
+                
+                // Add falling animation
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    @keyframes fall {
+                        0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+                        100% { transform: translateY(${window.innerHeight}px) rotate(360deg); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            // Extra roast when "Try Harder" is clicked
+            function roastHarder() {
+                roastMessage.textContent = roasts[Math.floor(Math.random() * roasts.length)];
+                roastMessage.style.display = 'block';
+                createParticles(50);
+                booSound.currentTime = 0;
+                booSound.play();
+                memeImg.src = gradeMemes.F;
+                memeImg.classList.remove('hidden');
+            }
+            
+            // Play sad trombone
+            function playSadTrombone() {
+                sadSound.currentTime = 0;
+                sadSound.play();
+                createParticles(30);
+                roastMessage.textContent = "It's okay... maybe next time? 😢";
+                roastMessage.style.display = 'block';
+            }
+            
+            // Toggle disco mode
+            function toggleDisco() {
+                discoMode = !discoMode;
+                discoBtn.classList.toggle('active');
+                
+                if (discoMode) {
+                    body.classList.add('disco-mode');
+                    discoBtn.textContent = "🛑 STOP DISCO";
+                    createParticles(100);
+                } else {
+                    body.classList.remove('disco-mode');
+                    discoBtn.textContent = "💃 DISCO MODE 🕺";
+                }
+            }
+            
+            // Toggle dark mode
+            function toggleDarkMode() {
+                darkMode = !darkMode;
+                darkModeBtn.classList.toggle('active');
+                
+                if (darkMode) {
+                    document.documentElement.style.setProperty('--bg', '#0a0a1a');
+                    document.documentElement.style.setProperty('--text', '#fff');
+                    darkModeBtn.textContent = "🌙 DARK MODE";
+                } else {
+                    document.documentElement.style.setProperty('--bg', '#f5f5f5');
+                    document.documentElement.style.setProperty('--text', '#333');
+                    darkModeBtn.textContent = "☀️ LIGHT MODE";
+                }
+            }
+            
+            // Randomize colors
+            function randomizeColors() {
+                const randomHue = Math.floor(Math.random() * 360);
+                const complementaryHue = (randomHue + 180) % 360;
+                
+                document.documentElement.style.setProperty('--primary', `hsl(${randomHue}, 100%, 50%)`);
+                document.documentElement.style.setProperty('--secondary', `hsl(${complementaryHue}, 100%, 50%)`);
+                
+                createParticles(30);
+            }
+            
+            // Calculate grade with MAXIMUM ROASTING
+            function calculateGrade() {
+                // Reset error messages
+                totalPointsError.classList.add('hidden');
+                earnedPointsError.classList.add('hidden');
+                tryHarderBtn.style.display = 'none';
+                ohNoBtn.style.display = 'none';
+                roastMessage.style.display = 'none';
+                memeImg.classList.add('hidden');
+                
+                // Get values
+                const totalPoints = parseFloat(totalPointsInput.value);
+                const earnedPoints = parseFloat(earnedPointsInput.value);
+                
+                // Validate inputs
+                let isValid = true;
+                
+                if (isNaN(totalPoints)) {
+                    totalPointsError.textContent = "🚨 Enter a number, silly!";
+                    totalPointsError.classList.remove('hidden');
+                    isValid = false;
+                } else if (totalPoints <= 0) {
+                    totalPointsError.textContent = "🚨 Total points must be greater than 0!";
+                    totalPointsError.classList.remove('hidden');
+                    isValid = false;
+                }
+                
+                if (isNaN(earnedPoints)) {
+                    earnedPointsError.textContent = "🚨 Enter a number, silly!";
+                    earnedPointsError.classList.remove('hidden');
+                    isValid = false;
+                } else if (earnedPoints < 0) {
+                    earnedPointsError.textContent = "🚨 You can't earn negative points!";
+                    earnedPointsError.classList.remove('hidden');
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    failSound.currentTime = 0;
+                    failSound.play();
+                    createParticles(20);
+                    return;
+                }
+                
+                if (earnedPoints > totalPoints) {
+                    earnedPointsError.textContent = "🚨 You can't earn more than the total points!";
+                    earnedPointsError.classList.remove('hidden');
+                    failSound.currentTime = 0;
+                    failSound.play();
+                    createParticles(20);
+                    return;
+                }
+                
+                // Drumroll please!
+                drumrollSound.currentTime = 0;
+                drumrollSound.play();
+                
+                // Hide previous results during calculation
+                resultsDiv.style.display = 'none';
+                
+                // Calculate percentage with dramatic delay
+                setTimeout(() => {
+                    const percentage = (earnedPoints / totalPoints) * 100;
+                    
+                    // Determine letter grade with EMOJIS
+                    let letterGrade, gradeClass, emoji, performance;
+                    
+                    if (percentage >= 90) {
+                        letterGrade = 'A';
+                        gradeClass = 'grade-A';
+                        emoji = '🎉';
+                        performance = 'Nerd Alert!';
+                    } else if (percentage >= 80) {
+                        letterGrade = 'B';
+                        gradeClass = 'grade-B';
+                        emoji = '👍';
+                        performance = 'Almost Cool';
+                    } else if (percentage >= 70) {
+                        letterGrade = 'C';
+                        gradeClass = 'grade-C';
+                        emoji = '😐';
+                        performance = 'Mediocre';
+                    } else if (percentage >= 60) {
+                        letterGrade = 'D';
+                        gradeClass = 'grade-D';
+                        emoji = '😬';
+                        performance = 'Yikes...';
+                    } else {
+                        letterGrade = 'F';
+                        gradeClass = 'grade-F';
+                        emoji = '💀';
+                        performance = 'FAILURE';
+                        tryHarderBtn.style.display = 'block';
+                        ohNoBtn.style.display = 'block';
+                    }
+                    
+                    // Show appropriate roast or encouragement
+                    if (letterGrade === 'A' || letterGrade === 'B') {
+                        roastMessage.textContent = encouragements[Math.floor(Math.random() * encouragements.length)];
+                        roastMessage.style.background = 'rgba(0, 255, 136, 0.2)';
+                        roastMessage.style.borderLeft = '5px solid var(--success)';
+                    } else {
+                        roastMessage.textContent = roasts[Math.floor(Math.random() * roasts.length)];
+                        roastMessage.style.background = 'rgba(255, 0, 102, 0.2)';
+                        roastMessage.style.borderLeft = '5px solid var(--danger)';
+                    }
+                    roastMessage.style.display = 'block';
+                    
+                    // Show meme
+                    memeImg.src = gradeMemes[letterGrade];
+                    memeImg.classList.remove('hidden');
+                    
+                    // Calculate points needed for next grade
+                    let nextGradeInfo = '🌟 You have the highest grade possible! 🌟';
+                    
+                    if (letterGrade !== 'A') {
+                        const nextThreshold = letterGrade === 'B' ? 90 : 
+                                            letterGrade === 'C' ? 80 : 
+                                            letterGrade === 'D' ? 70 : 60;
+                        const pointsNeeded = Math.ceil((nextThreshold / 100) * totalPoints - earnedPoints);
+                        
+                        if (pointsNeeded > 0) {
+                            const nextLetter = String.fromCharCode(letterGrade.charCodeAt(0) - 1);
+                            nextGradeInfo = `You need ${pointsNeeded} more point${pointsNeeded !== 1 ? 's' : ''} to reach a ${nextLetter} ${emojiForGrade(nextLetter)}`;
+                        } else {
+                            nextGradeInfo = `You're right at the ${letterGrade} threshold!`;
+                        }
+                    }
+                    
+                    // Update the UI
+                    percentageDiv.textContent = `${percentage.toFixed(2)}%`;
+                    letterGradeDiv.innerHTML = `${letterGrade} <small>(${performance})</small>`;
+                    letterGradeDiv.className = `result-value ${gradeClass}`;
+                    emojiGradeDiv.textContent = emoji;
+                    nextGradeDiv.innerHTML = nextGradeInfo;
+                    
+                    // Update progress bar with animation
+                    progressBar.style.width = '0%';
+                    setTimeout(() => {
+                        progressBar.style.width = `${Math.min(100, percentage)}%`;
+                    }, 100);
+                    
+                    // Play appropriate sound
+                    if (letterGrade === 'A') {
+                        successSound.currentTime = 0;
+                        successSound.play();
+                        confetti({
+                            particleCount: 300,
+                            spread: 100,
+                            origin: { y: 0.6 }
+                        });
+                        createParticles(150);
+                    } else if (letterGrade === 'F') {
+                        failSound.currentTime = 0;
+                        failSound.play();
+                        createParticles(50);
+                    } else {
+                        drumrollSound.pause();
+                    }
+                    
+                    // Show results
+                    resultsDiv.style.display = 'block';
+                    
+                    // Scroll to results
+                    resultsDiv.scrollIntoView({ behavior: 'smooth' });
+                }, 1500);
+            }
+            
+            // Helper function for emoji grades
+            function emojiForGrade(grade) {
+                switch(grade) {
+                    case 'A': return '🎉';
+                    case 'B': return '👍';
+                    case 'C': return '😐';
+                    case 'D': return '😬';
+                    default: return '💀';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
