@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥🤖 ULTIMATE ROAST BOT 9000 X-TREME EDITION 🤖🔥</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #ff00aa;
+            --secondary: #00ffcc;
+            --danger: #ff0066;
+            --safe: #00ff88;
+            --bg: #111;
+            --text: #fff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff00aa, #00ffcc, #ff00aa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            animation: rainbow 5s linear infinite;
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #aaa;
+        }
+
+        .roast-option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.2rem;
+        }
+
+        .roast-option:hover {
+            background: rgba(255, 0, 170, 0.2);
+            transform: scale(1.02);
+        }
+
+        .roast-option.selected {
+            background: var(--primary);
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        #selfieUpload {
+            display: none;
+        }
+
+        .upload-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            display: inline-block;
+            margin: 1rem 0;
+            font-size: 1.2rem;
+        }
+
+        .roast-btn {
+            background: linear-gradient(45deg, #ff0066, #9900ff);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 1rem 0;
+            transition: all 0.3s;
+        }
+
+        .roast-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px var(--danger);
+        }
+
+        .roast-result {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: rgba(255, 0, 102, 0.2);
+            border-radius: 10px;
+            border-left: 5px solid var(--danger);
+            font-size: 1.5rem;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .meme-result {
+            width: 100%;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 20px rgba(255, 0, 170, 0.5);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        #previewImage {
+            max-width: 300px;
+            border-radius: 10px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Disco Mode */
+        .disco-mode {
+            animation: discoBg 0.1s linear infinite;
+        }
+
+        @keyframes discoBg {
+            0% { background-color: #ff0066; }
+            25% { background-color: #6600ff; }
+            50% { background-color: #00ffcc; }
+            75% { background-color: #ffcc00; }
+            100% { background-color: #ff0066; }
+        }
+
+        /* Safe Mode */
+        .safe-mode .roast-result {
+            background: rgba(0, 255, 136, 0.2);
+            border-left: 5px solid var(--safe);
+        }
+
+        /* Disclaimer Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #111;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 600px;
+            border: 3px solid var(--danger);
+            text-align: center;
+        }
+
+        .modal h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .modal p {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .modal-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+        }
+
+        .modal-btn:hover {
+            background: var(--secondary);
+        }
+
+        /* Emergency Compliment Button */
+        #complimentBtn {
+            background: linear-gradient(45deg, #00ff88, #00ccff);
+        }
+
+        #complimentBtn:hover {
+            box-shadow: 0 0 20px var(--safe);
+        }
+    </style>
+</head>
+<body id="body">
+    <!-- Disclaimer Modal -->
+    <div id="disclaimerModal" class="modal">
+        <div class="modal-content">
+            <h2>⚠️ WARNING: THIS IS A PRANK WEBSITE ⚠️</h2>
+            <p><strong>This website is for entertainment purposes only!</strong> The roasts are randomly generated and <strong>not personal</strong>. If you're feeling sensitive, depressed, or easily offended, please <strong>DO NOT USE THIS SITE</strong>.</p>
+            <p>By clicking "I AGREE", you acknowledge that this is just humor and <strong>not meant to be taken seriously</strong>. If you need support, please reach out to friends, family, or mental health professionals.</p>
+            <button id="agreeBtn" class="modal-btn">🤪 I AGREE - ROAST ME!</button>
+            <button id="leaveBtn" class="modal-btn">😢 I'M TOO SENSITIVE - TAKE ME AWAY</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>🔥🤖 ULTIMATE ROAST BOT 9000 X-TREME EDITION 🤖🔥</h1>
+        <p class="subtitle">Upload a selfie or pick a weakness... if you dare. 😈</p>
+
+        <button id="disclaimerBtn" class="control-btn">⚠️ READ DISCLAIMER FIRST!</button>
+
+        <div id="roastOptions">
+            <div class="roast-option" data-type="looks">🔥 Roast My Looks</div>
+            <div class="roast-option" data-type="intelligence">🧠 Roast My Intelligence</div>
+            <div class="roast-option" data-type="life">💀 Roast My Life Choices</div>
+            <div class="roast-option" data-type="selfie">📸 Roast My Selfie (MAXIMUM SAVAGE)</div>
+        </div>
+
+        <label for="selfieUpload" class="upload-btn" id="uploadBtn">📸 UPLOAD SELFIEEEEE</label>
+        <input type="file" id="selfieUpload" accept="image/*">
+        <img id="previewImage" class="hidden">
+
+        <button id="roastBtn" class="roast-btn hidden">🚀 ROAST ME INTO OBLIVION!</button>
+
+        <div id="roastResult" class="roast-result hidden">
+            "Your face looks like it was drawn by a toddler with crayons." 👶
+        </div>
+
+        <img id="memeResult" class="meme-result hidden" src="" alt="Roast Meme">
+
+        <div class="controls">
+            <button id="discoBtn" class="control-btn">💃 DISCO ROAST 🕺</button>
+            <button id="ohNoBtn" class="control-btn">😱 OH NO, TOO REAL!</button>
+            <button id="complimentBtn" class="control-btn">💖 EMERGENCY COMPLIMENT</button>
+            <button id="shareBtn" class="control-btn">📤 SEND TO MY ENEMIES</button>
+            <button id="safeModeBtn" class="control-btn">🌈 SAFE MODE</button>
+        </div>
+    </div>
+
+    <audio id="airhornSound" src="https://assets.mixkit.co/sfx/preview/mixkit-air-horn-618.mp3" preload="auto"></audio>
+    <audio id="booSound" src="https://assets.mixkit.co/sfx/preview/mixkit-people-booing-551.mp3" preload="auto"></audio>
+    <audio id="sadSound" src="https://assets.mixkit.co/sfx/preview/mixkit-sad-trombone-472.mp3" preload="auto"></audio>
+    <audio id="dramaticSound" src="https://assets.mixkit.co/sfx/preview/mixkit-dramatic-organ-560.mp3" preload="auto"></audio>
+    <audio id="niceSound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3" preload="auto"></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const roastOptions = document.querySelectorAll('.roast-option');
+            const selfieUpload = document.getElementById('selfieUpload');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const previewImage = document.getElementById('previewImage');
+            const roastBtn = document.getElementById('roastBtn');
+            const roastResult = document.getElementById('roastResult');
+            const memeResult = document.getElementById('memeResult');
+            const discoBtn = document.getElementById('discoBtn');
+            const ohNoBtn = document.getElementById('ohNoBtn');
+            const complimentBtn = document.getElementById('complimentBtn');
+            const shareBtn = document.getElementById('shareBtn');
+            const safeModeBtn = document.getElementById('safeModeBtn');
+            const disclaimerBtn = document.getElementById('disclaimerBtn');
+            const disclaimerModal = document.getElementById('disclaimerModal');
+            const agreeBtn = document.getElementById('agreeBtn');
+            const leaveBtn = document.getElementById('leaveBtn');
+            const body = document.getElementById('body');
+
+            // Sounds
+            const airhornSound = document.getElementById('airhornSound');
+            const booSound = document.getElementById('booSound');
+            const sadSound = document.getElementById('sadSound');
+            const dramaticSound = document.getElementById('dramaticSound');
+            const niceSound = document.getElementById('niceSound');
+
+            // Roast database (ChatGPT who?)
+            const roasts = {
+                looks: [
+                    "Did you dress in the dark? ☠️",
+                    "Your face looks like a WiFi signal... weak. 📶",
+                    "Did a toddler do your makeup? 👶",
+                    "You look like a before picture. 📸",
+                    "Your hairline is running away from your face. 🏃‍♂️",
+                    "You look like a potato with anxiety. 🥔",
+                    "Your style is 'I gave up.' 👕",
+                    "Your face could scare a zombie. 🧟",
+                    "You look like a glitch in the Matrix. 💻",
+                    "Did you lose a fight with a lawnmower? ✂️"
+                ],
+                intelligence: [
+                    "You're as sharp as a marble. 🟠",
+                    "Your brain is smoother than a bowling ball. 🎳",
+                    "You couldn't pour water out of a boot with instructions. 👢",
+                    "You're not the dumbest person alive, but you better hope they don't die. 💀",
+                    "If brains were dynamite, you wouldn't have enough to blow your nose. 💣",
+                    "You're about as useful as a screen door on a submarine. 🚪",
+                    "You have the IQ of a toaster. 🍞",
+                    "You're proof that evolution can go backwards. 🐒",
+                    "You're the human equivalent of a '404 Error.' ❌",
+                    "Your common sense is still loading... ⌛"
+                ],
+                life: [
+                    "Your life is a 'How Not To' guide. 📖",
+                    "Your birth certificate is an apology letter. ✉️",
+                    "Your future is as bright as a black hole. 🌌",
+                    "Your life is like a movie... a horror movie. 🎬",
+                    "You peaked in kindergarten. 🖍️",
+                    "Your life choices make me want to call CPS. 📞",
+                    "You were the fastest swimmer... out of millions. 🏊",
+                    "Your parents are disappointed... and strangers are too. 😔",
+                    "Your existence is a cautionary tale. ⚠️",
+                    "You’re the reason aliens won’t talk to us. 👽"
+                ],
+                selfie: [
+                    "This selfie should come with a jumpscare warning. 😱",
+                    "Your face could stop a clock. ⏰",
+                    "This photo belongs in the 'Before' section of a makeover show. 📺",
+                    "Your smile looks like you're in pain. 😬",
+                    "You look like a Sims character with randomized features. 🎮",
+                    "This is why cameras have a delete button. 📸",
+                    "Your face is like modern art... confusing and ugly. 🎨",
+                    "You look like you were drawn from memory. ✏️",
+                    "This selfie is a hate crime. ⚖️",
+                    "Your face is a public service announcement for birth control. 💊"
+                ]
+            };
+
+            // Compliments database (for safe mode)
+            const compliments = [
+                "You're beautiful inside and out! 💖",
+                "Your smile could light up a room! ✨",
+                "You're smarter than you think! 🧠",
+                "You're doing amazing, sweetie! 👑",
+                "The world is better with you in it! 🌎",
+                "You're stronger than you know! 💪",
+                "You deserve all the happiness! 😊",
+                "You're one in a million! 🌟",
+                "Your potential is limitless! 🚀",
+                "You're loved more than you realize! 💕"
+            ];
+
+            // Meme templates
+            const memeTemplates = [
+                "https://i.imgflip.com/4/1bij.jpg", // Success Kid (ironic)
+                "https://i.imgflip.com/4/1bgw.jpg", // One Does Not Simply
+                "https://i.imgflip.com/4/1bhf.jpg", // Y U No
+                "https://i.imgflip.com/4/1bh3.jpg", // Futurama Fry
+                "https://i.imgflip.com/4/1bh8.jpg", // Facepalm
+                "https://i.imgflip.com/4/1bip.jpg", // Roll Safe
+                "https://i.imgflip.com/4/1bg5.jpg", // Distracted Boyfriend
+                "https://i.imgflip.com/4/1bhw.jpg", // Drake Hotline Bling
+                "https://i.imgflip.com/4/1ihzfe.jpg", // Trump Won
+                "https://i.imgflip.com/4/1otk96.jpg" // Change My Mind
+            ];
+
+            let selectedRoastType = null;
+            let uploadedImage = null;
+            let safeMode = false;
+
+            // Show disclaimer modal on load
+            disclaimerModal.style.display = 'flex';
+
+            // Agree to disclaimer
+            agreeBtn.addEventListener('click', function() {
+                disclaimerModal.style.display = 'none';
+                airhornSound.currentTime = 0;
+                airhornSound.play();
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            });
+
+            // Leave if too sensitive
+            leaveBtn.addEventListener('click', function() {
+                window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // Rickroll for the weak
+            });
+
+            // Show disclaimer again if clicked
+            disclaimerBtn.addEventListener('click', function() {
+                disclaimerModal.style.display = 'flex';
+            });
+
+            // Select roast type
+            roastOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    roastOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedRoastType = this.dataset.type;
+
+                    if (selectedRoastType === 'selfie') {
+                        uploadBtn.style.display = 'inline-block';
+                        roastBtn.classList.add('hidden');
+                    } else {
+                        uploadBtn.style.display = 'none';
+                        roastBtn.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // Upload selfie
+            selfieUpload.addEventListener('change', function(e) {
+                if (e.target.files.length) {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+
+                    reader.onload = function(event) {
+                        previewImage.src = event.target.result;
+                        previewImage.classList.remove('hidden');
+                        uploadedImage = event.target.result;
+                        roastBtn.classList.remove('hidden');
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Generate roast
+            roastBtn.addEventListener('click', function() {
+                if (!selectedRoastType) return;
+
+                // Play dramatic sound
+                dramaticSound.currentTime = 0;
+                dramaticSound.play();
+
+                // Hide previous results
+                roastResult.classList.add('hidden');
+                memeResult.classList.add('hidden');
+
+                // Show loading effect
+                roastResult.textContent = "🤖 GENERATING SAVAGE ROAST... 🤖";
+                roastResult.classList.remove('hidden');
+
+                // Simulate AI thinking (lol)
+                setTimeout(() => {
+                    let resultText;
+                    if (safeMode) {
+                        const complimentList = compliments;
+                        resultText = complimentList[Math.floor(Math.random() * complimentList.length)];
+                    } else {
+                        const roastList = roasts[selectedRoastType];
+                        resultText = roastList[Math.floor(Math.random() * roastList.length)];
+                    }
+                    
+                    roastResult.textContent = resultText;
+                    roastResult.classList.remove('hidden');
+
+                    // Show meme
+                    const randomMeme = memeTemplates[Math.floor(Math.random() * memeTemplates.length)];
+                    memeResult.src = randomMeme;
+                    memeResult.classList.remove('hidden');
+
+                    // Play sound effect
+                    if (safeMode) {
+                        niceSound.currentTime = 0;
+                        niceSound.play();
+                        confetti({
+                            particleCount: 100,
+                            spread: 70,
+                            origin: { y: 0.6 },
+                            colors: ['#00ff88', '#00ccff', '#ffffff']
+                        });
+                    } else if (selectedRoastType === 'selfie') {
+                        airhornSound.currentTime = 0;
+                        airhornSound.play();
+                        confetti({
+                            particleCount: 100,
+                            spread: 70,
+                            origin: { y: 0.6 },
+                            colors: ['#ff0000', '#00ff00', '#0000ff']
+                        });
+                    } else {
+                        booSound.currentTime = 0;
+                        booSound.play();
+                    }
+                }, 2000);
+            });
+
+            // Disco mode
+            discoBtn.addEventListener('click', function() {
+                body.classList.toggle('disco-mode');
+                airhornSound.currentTime = 0;
+                airhornSound.play();
+            });
+
+            // Oh no button
+            ohNoBtn.addEventListener('click', function() {
+                sadSound.currentTime = 0;
+                sadSound.play();
+                roastResult.textContent = "It's okay... you're beautiful on the inside. (Maybe.) 💖";
+                roastResult.style.background = "rgba(0, 255, 136, 0.2)";
+                roastResult.style.borderLeft = "5px solid var(--safe)";
+            });
+
+            // Emergency compliment button
+            complimentBtn.addEventListener('click', function() {
+                const complimentList = compliments;
+                const randomCompliment = complimentList[Math.floor(Math.random() * complimentList.length)];
+                roastResult.textContent = randomCompliment;
+                roastResult.style.background = "rgba(0, 255, 136, 0.2)";
+                roastResult.style.borderLeft = "5px solid var(--safe)";
+                roastResult.classList.remove('hidden');
+                niceSound.currentTime = 0;
+                niceSound.play();
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#00ff88', '#00ccff', '#ffffff']
+                });
+            });
+
+            // Share button (mock)
+            shareBtn.addEventListener('click', function() {
+                alert("📤 Roast sent to ALL YOUR ENEMIES! Enjoy the drama! 💥");
+            });
+
+            // Safe mode toggle
+            safeModeBtn.addEventListener('click', function() {
+                safeMode = !safeMode;
+                if (safeMode) {
+                    safeModeBtn.textContent = "😈 DANGER MODE";
+                    body.classList.add('safe-mode');
+                    roastResult.style.background = "rgba(0, 255, 136, 0.2)";
+                    roastResult.style.borderLeft = "5px solid var(--safe)";
+                } else {
+                    safeModeBtn.textContent = "🌈 SAFE MODE";
+                    body.classList.remove('safe-mode');
+                    roastResult.style.background = "rgba(255, 0, 102, 0.2)";
+                    roastResult.style.borderLeft = "5px solid var(--danger)";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
