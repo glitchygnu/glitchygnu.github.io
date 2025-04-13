@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moodify - Music That Feels You</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --happy: #FFD166;
+            --sad: #06D6A0;
+            --energetic: #EF476F;
+            --calm: #118AB2;
+            --default: #6C63FF;
+            --dark: #073B4C;
+            --light: #F8F9FA;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #073B4C 0%, #118AB2 100%);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 1.5s ease;
+        }
+
+        /* Landing Page */
+        .landing {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .landing::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(108, 99, 255, 0.2) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        .landing h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #FFD166, #EF476F);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: fadeIn 1.5s ease;
+        }
+
+        .landing p {
+            font-size: 1.5rem;
+            margin-bottom: 3rem;
+            max-width: 700px;
+            opacity: 0.9;
+            animation: fadeIn 2s ease;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, var(--default), #6C63FF);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: pulse 2s infinite, fadeIn 2.5s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .cta-button:hover::after {
+            transform: translateX(100%);
+        }
+
+        .wave-animation {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            overflow: hidden;
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" fill="rgba(255,255,255,0.1)" opacity=".25"/><path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" fill="rgba(255,255,255,0.1)" opacity=".5"/><path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" fill="rgba(255,255,255,0.1)"/></svg>');
+            background-repeat: repeat-x;
+            animation: wave 15s linear infinite;
+        }
+
+        /* Mood Detection Screen */
+        .mood-detection {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .mood-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+
+        .mood-title.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .webcam-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin-bottom: 2rem;
+        }
+
+        .webcam-feed {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transform: scale(0.9);
+            opacity: 0;
+            transition: all 0.8s ease 0.3s;
+        }
+
+        .webcam-feed.show {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .mood-halo {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0;
+            transition: all 0.8s ease;
+            background: radial-gradient(circle, var(--default) 0%, transparent 70%);
+        }
+
+        .mood-halo.active {
+            opacity: 0.6;
+        }
+
+        .mood-emoji {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.8s ease 0.6s;
+        }
+
+        .mood-emoji.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .calibration-loader {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top-color: var(--light);
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .calibration-loader.show {
+            opacity: 1;
+        }
+
+        /* Music Player */
+        .music-player {
+            display: none;
+            height: 100vh;
+            padding: 2rem;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .mood-indicator {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+
+        .current-mood-emoji {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .current-mood-text {
+            font-weight: 600;
+        }
+
+        .visualizer-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .visualizer-mode {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .visualizer-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .visualizer-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .visualizer-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .album-art {
+            width: 200px;
+            height: 200px;
+            border-radius: 20px;
+            margin: 0 auto 2rem;
+            background: linear-gradient(45deg, var(--default), #6C63FF);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .album-art-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.7;
+            transition: all 2s ease;
+        }
+
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .song-info {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            width: 100%;
+        }
+
+        .song-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .song-artist {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--default), #6C63FF);
+            border-radius: 3px;
+            width: 0%;
+            position: relative;
+            transition: width 0.1s linear;
+        }
+
+        .progress-marker {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            right: -6px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .progress-container:hover .progress-marker {
+            opacity: 1;
+        }
+
+        .progress-time {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        .control-buttons {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, var(--default), #6C63FF);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .vibe-shift-btn {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .vibe-shift-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Mood Journal */
+        .mood-journal {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 350px;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            z-index: 100;
+            transition: right 0.5s ease;
+            overflow-y: auto;
+        }
+
+        .mood-journal.open {
+            right: 0;
+        }
+
+        .journal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .journal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-journal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .journal-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .mood-graph {
+            width: 100%;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .mood-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-item {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .therapy-tip {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Sharing */
+        .snapshot-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #EF476F, #FFD166);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 50;
+            transition: all 0.3s ease;
+        }
+
+        .snapshot-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .snapshot-preview {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 200;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .snapshot-image {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .snapshot-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .snapshot-action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .snapshot-action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .close-snapshot {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); }
+            100% { transform: scale(1); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); }
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .landing h1 {
+                font-size: 2.5rem;
+            }
+            
+            .landing p {
+                font-size: 1.2rem;
+            }
+            
+            .webcam-container {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .mood-journal {
+                width: 100%;
+                right: -100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Page -->
+    <section class="landing" id="landing">
+        <h1>Moodify</h1>
+        <p>Music that adapts to your emotions in real-time. Let AI create the perfect soundtrack for your mood.</p>
+        <button class="cta-button" id="startButton">Start Listening Now</button>
+        
+        <div class="wave-animation">
+            <div class="wave"></div>
+        </div>
+    </section>
+
+    <!-- Mood Detection Screen -->
+    <section class="mood-detection" id="moodDetection">
+        <h2 class="mood-title">How are you feeling today?</h2>
+        <div class="webcam-container">
+            <div class="mood-halo" id="moodHalo"></div>
+            <video class="webcam-feed" id="webcamFeed" autoplay playsinline></video>
+        </div>
+        <div class="mood-emoji" id="moodEmoji">😊</div>
+        <div class="calibration-loader" id="calibrationLoader"></div>
+    </section>
+
+    <!-- Music Player -->
+    <section class="music-player" id="musicPlayer">
+        <div class="player-header">
+            <button id="journalButton">
+                <i class="fas fa-chart-line"></i>
+            </button>
+            <div class="mood-indicator">
+                <span class="current-mood-emoji" id="currentMoodEmoji">😊</span>
+                <span class="current-mood-text" id="currentMoodText">Happy</span>
+            </div>
+        </div>
+
+        <div class="visualizer-container" id="visualizerContainer">
+            <div class="visualizer-mode">
+                <button class="visualizer-btn active" data-mode="wave">Wave</button>
+                <button class="visualizer-btn" data-mode="particles">Particles</button>
+                <button class="visualizer-btn" data-mode="mood">Mood</button>
+            </div>
+            <canvas id="visualizerCanvas"></canvas>
+        </div>
+
+        <div class="album-art" id="albumArt">
+            <div class="album-art-blob" style="width: 150px; height: 150px; background: var(--happy); top: -30px; left: -30px;"></div>
+            <div class="album-art-blob" style="width: 120px; height: 120px; background: var(--energetic); bottom: -20px; right: -20px;"></div>
+        </div>
+
+        <div class="player-controls">
+            <div class="song-info">
+                <h3 class="song-title" id="songTitle">Loading...</h3>
+                <p class="song-artist" id="songArtist">Moodify AI</p>
+            </div>
+
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-marker"></div>
+                </div>
+                <div class="progress-time">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+            </div>
+
+            <div class="control-buttons">
+                <button class="control-btn" id="prevButton">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button class="control-btn play-btn" id="playButton">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="control-btn" id="nextButton">
+                    <i class="fas fa-step-forward"></i>
+                </button>
+            </div>
+
+            <button class="vibe-shift-btn" id="vibeShiftButton">
+                <i class="fas fa-random"></i> Vibe Shift
+            </button>
+        </div>
+    </section>
+
+    <!-- Mood Journal -->
+    <div class="mood-journal" id="moodJournal">
+        <div class="journal-header">
+            <h3 class="journal-title">Mood Journal</h3>
+            <button class="close-journal" id="closeJournalButton">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="journal-section">
+            <h4 class="section-title">Today's Mood</h4>
+            <div class="mood-graph" id="moodGraph"></div>
+        </div>
+
+        <div class="journal-section">
+            <h4 class="section-title">Your Stats</h4>
+            <div class="mood-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="happyStat">0</div>
+                    <div class="stat-label">Happy</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="sadStat">0</div>
+                    <div class="stat-label">Sad</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="energeticStat">0</div>
+                    <div class="stat-label">Energetic</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="journal-section">
+            <h4 class="section-title">Musical Therapy</h4>
+            <div class="therapy-tip" id="therapyTip">
+                Based on your recent listening habits, we recommend taking a short walk outside to refresh your mind.
+            </div>
+        </div>
+    </div>
+
+    <!-- Snapshot Button -->
+    <div class="snapshot-btn" id="snapshotButton">
+        <i class="fas fa-camera"></i>
+    </div>
+
+    <!-- Snapshot Preview -->
+    <div class="snapshot-preview" id="snapshotPreview">
+        <button class="close-snapshot" id="closeSnapshotButton">
+            <i class="fas fa-times"></i>
+        </button>
+        <img class="snapshot-image" id="snapshotImage" src="" alt="Mood Snapshot">
+        <div class="snapshot-actions">
+            <button class="snapshot-action-btn" id="downloadSnapshotButton">
+                <i class="fas fa-download"></i> Download
+            </button>
+            <button class="snapshot-action-btn" id="shareSnapshotButton">
+                <i class="fas fa-share-alt"></i> Share
+            </button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const landingPage = document.getElementById('landing');
+            const moodDetection = document.getElementById('moodDetection');
+            const musicPlayer = document.getElementById('musicPlayer');
+            const startButton = document.getElementById('startButton');
+            const webcamFeed = document.getElementById('webcamFeed');
+            const moodHalo = document.getElementById('moodHalo');
+            const moodEmoji = document.getElementById('moodEmoji');
+            const calibrationLoader = document.getElementById('calibrationLoader');
+            const currentMoodEmoji = document.getElementById('currentMoodEmoji');
+            const currentMoodText = document.getElementById('currentMoodText');
+            const visualizerCanvas = document.getElementById('visualizerCanvas');
+            const albumArt = document.getElementById('albumArt');
+            const songTitle = document.getElementById('songTitle');
+            const songArtist = document.getElementById('songArtist');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const currentTime = document.getElementById('currentTime');
+            const duration = document.getElementById('duration');
+            const playButton = document.getElementById('playButton');
+            const prevButton = document.getElementById('prevButton');
+            const nextButton = document.getElementById('nextButton');
+            const vibeShiftButton = document.getElementById('vibeShiftButton');
+            const journalButton = document.getElementById('journalButton');
+            const moodJournal = document.getElementById('moodJournal');
+            const closeJournalButton = document.getElementById('closeJournalButton');
+            const snapshotButton = document.getElementById('snapshotButton');
+            const snapshotPreview = document.getElementById('snapshotPreview');
+            const snapshotImage = document.getElementById('snapshotImage');
+            const closeSnapshotButton = document.getElementById('closeSnapshotButton');
+            const downloadSnapshotButton = document.getElementById('downloadSnapshotButton');
+            const shareSnapshotButton = document.getElementById('shareSnapshotButton');
+            const visualizerButtons = document.querySelectorAll('.visualizer-btn');
+            
+            // Mood variables
+            let currentMood = 'happy';
+            const moods = {
+                happy: { emoji: '😊', color: '#FFD166', name: 'Happy' },
+                sad: { emoji: '😢', color: '#06D6A0', name: 'Sad' },
+                energetic: { emoji: '🔥', color: '#EF476F', name: 'Energetic' },
+                calm: { emoji: '🧘', color: '#118AB2', name: 'Calm' }
+            };
+            
+            // Audio variables
+            let audioContext;
+            let analyser;
+            let dataArray;
+            let source;
+            let isPlaying = false;
+            let currentSongIndex = 0;
+            
+            // Mock music data (in a real app, this would come from an API)
+            const songs = {
+                happy: [
+                    { title: "Sunshine Day", artist: "The Happy Beats", duration: "3:45" },
+                    { title: "Good Vibes", artist: "Summer Waves", duration: "2:58" },
+                    { title: "Dancing in the Light", artist: "Joyful Noise", duration: "4:12" }
+                ],
+                sad: [
+                    { title: "Rainy Window", artist: "Melancholy", duration: "5:20" },
+                    { title: "Fading Memories", artist: "Echoes", duration: "3:45" },
+                    { title: "Quiet Thoughts", artist: "Solitude", duration: "4:30" }
+                ],
+                energetic: [
+                    { title: "Power Up", artist: "Energy Boost", duration: "3:15" },
+                    { title: "Adrenaline Rush", artist: "Intense", duration: "2:45" },
+                    { title: "Unstoppable", artist: "Momentum", duration: "3:30" }
+                ],
+                calm: [
+                    { title: "Gentle Breeze", artist: "Tranquility", duration: "6:15" },
+                    { title: "Still Waters", artist: "Peaceful", duration: "5:45" },
+                    { title: "Mindful Moments", artist: "Serenity", duration: "4:50" }
+                ]
+            };
+            
+            // Visualizer variables
+            let visualizerMode = 'wave';
+            let canvasCtx = visualizerCanvas.getContext('2d');
+            let particles = [];
+            let blobPositions = [];
+            
+            // Initialize
+            init();
+            
+            function init() {
+                // Set up event listeners
+                startButton.addEventListener('click', startMoodDetection);
+                playButton.addEventListener('click', togglePlay);
+                prevButton.addEventListener('click', playPreviousSong);
+                nextButton.addEventListener('click', playNextSong);
+                vibeShiftButton.addEventListener('click', shiftVibe);
+                journalButton.addEventListener('click', openJournal);
+                closeJournalButton.addEventListener('click', closeJournal);
+                snapshotButton.addEventListener('click', takeSnapshot);
+                closeSnapshotButton.addEventListener('click', closeSnapshot);
+                downloadSnapshotButton.addEventListener('click', downloadSnapshot);
+                shareSnapshotButton.addEventListener('click', shareSnapshot);
+                
+                visualizerButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        visualizerButtons.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        visualizerMode = btn.dataset.mode;
+                        if (visualizerMode === 'particles') initParticles();
+                        if (visualizerMode === 'mood') initBlobs();
+                    });
+                });
+                
+                progressContainer.addEventListener('click', seek);
+                
+                // Set up canvas
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+                
+                // Initialize particles for particle mode
+                initParticles();
+                initBlobs();
+                
+                // Load face-api.js models
+                loadFaceModels();
+            }
+            
+            function resizeCanvas() {
+                visualizerCanvas.width = visualizerContainer.clientWidth;
+                visualizerCanvas.height = visualizerContainer.clientHeight;
+            }
+            
+            function loadFaceModels() {
+                Promise.all([
+                    faceapi.nets.tinyFaceDetector.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models'),
+                    faceapi.nets.faceLandmark68Net.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models'),
+                    faceapi.nets.faceExpressionNet.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models')
+                ]).then(startMoodDetection).catch(err => {
+                    console.error("Error loading face models:", err);
+                    // Fallback to manual mood selection if face detection fails
+                    manualMoodSelection();
+                });
+            }
+            
+            function startMoodDetection() {
+                // Hide landing page, show mood detection
+                landingPage.style.display = 'none';
+                moodDetection.style.display = 'flex';
+                
+                // Animate in elements
+                setTimeout(() => {
+                    document.querySelector('.mood-title').classList.add('show');
+                }, 100);
+                
+                setTimeout(() => {
+                    document.querySelector('.webcam-feed').classList.add('show');
+                }, 300);
+                
+                setTimeout(() => {
+                    document.querySelector('.mood-emoji').classList.add('show');
+                }, 600);
+                
+                // Start webcam
+                startWebcam();
+            }
+            
+            function startWebcam() {
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                        .then(stream => {
+                            webcamFeed.srcObject = stream;
+                            
+                            // Start detecting mood after a short delay
+                            setTimeout(() => {
+                                detectMood();
+                            }, 1000);
+                        })
+                        .catch(err => {
+                            console.error("Error accessing webcam:", err);
+                            // Fallback to manual mood selection if webcam fails
+                            manualMoodSelection();
+                        });
+                } else {
+                    manualMoodSelection();
+                }
+            }
+            
+            function detectMood() {
+                calibrationLoader.classList.add('show');
+                
+                // Show calibration for 3 seconds
+                setTimeout(() => {
+                    faceapi.detectAllFaces(webcamFeed, new faceapi.TinyFaceDetectorOptions())
+                        .withFaceLandmarks()
+                        .withFaceExpressions()
+                        .then(results => {
+                            calibrationLoader.classList.remove('show');
+                            
+                            if (results.length > 0) {
+                                const expressions = results[0].expressions;
+                                let detectedMood;
+                                
+                                // Determine dominant emotion
+                                if (expressions.happy > 0.7) {
+                                    detectedMood = 'happy';
+                                } else if (expressions.sad > 0.7) {
+                                    detectedMood = 'sad';
+                                } else if (expressions.angry > 0.6 || expressions.surprised > 0.6) {
+                                    detectedMood = 'energetic';
+                                } else {
+                                    detectedMood = 'calm';
+                                }
+                                
+                                setMood(detectedMood);
+                                startMusicPlayer();
+                            } else {
+                                // No face detected
+                                manualMoodSelection();
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Error detecting face:", err);
+                            manualMoodSelection();
+                        });
+                }, 3000);
+            }
+            
+            function manualMoodSelection() {
+                calibrationLoader.classList.remove('show');
+                moodEmoji.textContent = '🤔';
+                moodHalo.style.background = 'radial-gradient(circle, var(--default) 0%, transparent 70%)';
+                moodHalo.classList.add('active');
+                
+                // Show mood options
+                setTimeout(() => {
+                    setMood('happy');
+                    startMusicPlayer();
+                }, 1500);
+            }
+            
+            function setMood(mood) {
+                currentMood = mood;
+                const moodData = moods[mood];
+                
+                // Update mood display
+                moodEmoji.textContent = moodData.emoji;
+                moodHalo.style.background = `radial-gradient(circle, ${moodData.color} 0%, transparent 70%)`;
+                moodHalo.classList.add('active');
+                
+                currentMoodEmoji.textContent = moodData.emoji;
+                currentMoodText.textContent = moodData.name;
+                
+                // Update background gradient
+                document.body.style.background = `linear-gradient(135deg, ${moodData.color} 0%, ${darkenColor(moodData.color, 30)} 100%)`;
+                
+                // Update album art blobs
+                updateAlbumArt(moodData.color);
+            }
+            
+            function darkenColor(color, amount) {
+                // Simple color darkening function
+                return color; // In a real app, implement proper color manipulation
+            }
+            
+            function updateAlbumArt(baseColor) {
+                const blobs = albumArt.querySelectorAll('.album-art-blob');
+                blobs[0].style.background = baseColor;
+                blobs[1].style.background = lightenColor(baseColor, 20);
+            }
+            
+            function lightenColor(color, amount) {
+                // Simple color lightening function
+                return color; // In a real app, implement proper color manipulation
+            }
+            
+            function startMusicPlayer() {
+                // Hide mood detection, show music player
+                setTimeout(() => {
+                    moodDetection.style.display = 'none';
+                    musicPlayer.style.display = 'flex';
+                    
+                    // Initialize audio context
+                    initAudio();
+                    
+                    // Start with first song
+                    playSong();
+                }, 1500);
+            }
+            
+            function initAudio() {
+                // Create audio context
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                
+                // Create mock audio node (in a real app, this would be from actual audio files)
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.value = 440;
+                gainNode.gain.value = 0.1;
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(analyser);
+                analyser.connect(audioContext.destination);
+                
+                // Start oscillator (mock audio)
+                oscillator.start();
+                
+                // Create data array for visualization
+                const bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                
+                // Start visualization
+                visualize();
+            }
+            
+            function togglePlay() {
+                if (isPlaying) {
+                    // Pause audio
+                    audioContext.suspend();
+                    playButton.innerHTML = '<i class="fas fa-play"></i>';
+                } else {
+                    // Play audio
+                    audioContext.resume();
+                    playButton.innerHTML = '<i class="fas fa-pause"></i>';
+                }
+                isPlaying = !isPlaying;
+            }
+            
+            function playSong() {
+                const song = songs[currentMood][currentSongIndex];
+                songTitle.textContent = song.title;
+                songArtist.textContent = song.artist;
+                duration.textContent = song.duration;
+                
+                // Reset progress
+                progressBar.style.width = '0%';
+                currentTime.textContent = '0:00';
+                
+                // Auto-play if not already playing
+                if (!isPlaying) {
+                    togglePlay();
+                }
+                
+                // Start progress update
+                updateProgress();
+            }
+            
+            function playNextSong() {
+                currentSongIndex = (currentSongIndex + 1) % songs[currentMood].length;
+                playSong();
+            }
+            
+            function playPreviousSong() {
+                currentSongIndex = (currentSongIndex - 1 + songs[currentMood].length) % songs[currentMood].length;
+                playSong();
+            }
+            
+            function updateProgress() {
+                if (!isPlaying) return;
+                
+                // Mock progress update
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 1;
+                    const percent = Math.min(progress / 100, 1);
+                    progressBar.style.width = `${percent * 100}%`;
+                    
+                    // Update current time (mock)
+                    const totalSeconds = 180; // 3 minutes
+                    const currentSeconds = Math.floor(totalSeconds * percent);
+                    const minutes = Math.floor(currentSeconds / 60);
+                    const seconds = currentSeconds % 60;
+                    currentTime.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        playNextSong();
+                    }
+                }, 100);
+            }
+            
+            function seek(e) {
+                const rect = progressContainer.getBoundingClientRect();
+                const seekPosition = (e.clientX - rect.left) / rect.width;
+                progressBar.style.width = `${seekPosition * 100}%`;
+                
+                // In a real app, this would seek the audio
+                const totalSeconds = 180; // 3 minutes
+                const currentSeconds = Math.floor(totalSeconds * seekPosition);
+                const minutes = Math.floor(currentSeconds / 60);
+                const seconds = currentSeconds % 60;
+                currentTime.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            function shiftVibe() {
+                const moodKeys = Object.keys(moods);
+                const currentIndex = moodKeys.indexOf(currentMood);
+                const nextIndex = (currentIndex + 1) % moodKeys.length;
+                setMood(moodKeys[nextIndex]);
+                
+                // Change to first song of new mood
+                currentSongIndex = 0;
+                playSong();
+            }
+            
+            function visualize() {
+                if (!analyser) return;
+                
+                // Clear canvas
+                canvasCtx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+                
+                // Get frequency data
+                analyser.getByteFrequencyData(dataArray);
+                
+                // Draw based on current mode
+                if (visualizerMode === 'wave') {
+                    drawWaveform();
+                } else if (visualizerMode === 'particles') {
+                    drawParticles();
+                } else if (visualizerMode === 'mood') {
+                    drawMoodBlobs();
+                }
+                
+                // Continue animation
+                requestAnimationFrame(visualize);
+            }
+            
+            function drawWaveform() {
+                const width = visualizerCanvas.width;
+                const height = visualizerCanvas.height;
+                const barWidth = (width / dataArray.length) * 2.5;
+                let x = 0;
+                
+                canvasCtx.fillStyle = moods[currentMood].color;
+                
+                for (let i = 0; i < dataArray.length; i++) {
+                    const barHeight = (dataArray[i] / 255) * height;
+                    
+                    canvasCtx.fillRect(
+                        x,
+                        height - barHeight,
+                        barWidth,
+                        barHeight
+                    );
+                    
+                    x += barWidth + 1;
+                }
+            }
+            
+            function initParticles() {
+                particles = [];
+                const particleCount = 100;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push({
+                        x: Math.random() * visualizerCanvas.width,
+                        y: Math.random() * visualizerCanvas.height,
+                        size: Math.random() * 5 + 2,
+                        speed: Math.random() * 2 + 0.5,
+                        color: moods[currentMood].color,
+                        opacity: Math.random() * 0.5 + 0.5
+                    });
+                }
+            }
+            
+            function drawParticles() {
+                const width = visualizerCanvas.width;
+                const height = visualizerCanvas.height;
+                
+                // Get average frequency for movement
+                let avgFrequency = 0;
+                for (let i = 0; i < dataArray.length; i++) {
+                    avgFrequency += dataArray[i];
+                }
+                avgFrequency /= dataArray.length;
+                
+                // Normalize to 0-1 range
+                const intensity = avgFrequency / 255;
+                
+                particles.forEach(particle => {
+                    // Update position based on frequency
+                    particle.y -= particle.speed;
+                    if (particle.y < 0) {
+                        particle.y = height;
+                        particle.x = Math.random() * width;
+                    }
+                    
+                    // Add some horizontal movement based on frequency
+                    particle.x += (Math.random() - 0.5) * intensity * 10;
+                    
+                    // Draw particle
+                    canvasCtx.beginPath();
+                    canvasCtx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    canvasCtx.fillStyle = `rgba(${hexToRgb(particle.color)}, ${particle.opacity})`;
+                    canvasCtx.fill();
+                });
+            }
+            
+            function initBlobs() {
+                blobPositions = [];
+                const blobCount = 5;
+                
+                for (let i = 0; i < blobCount; i++) {
+                    blobPositions.push({
+                        x: Math.random() * visualizerCanvas.width,
+                        y: Math.random() * visualizerCanvas.height,
+                        size: Math.random() * 100 + 50,
+                        speedX: (Math.random() - 0.5) * 2,
+                        speedY: (Math.random() - 0.5) * 2
+                    });
+                }
+            }
+            
+            function drawMoodBlobs() {
+                const width = visualizerCanvas.width;
+                const height = visualizerCanvas.height;
+                
+                // Get average frequency for movement
+                let avgFrequency = 0;
+                for (let i = 0; i < dataArray.length; i++) {
+                    avgFrequency += dataArray[i];
+                }
+                avgFrequency /= dataArray.length;
+                
+                // Normalize to 0-1 range
+                const intensity = avgFrequency / 255;
+                
+                // Clear with semi-transparent background for trail effect
+                canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                canvasCtx.fillRect(0, 0, width, height);
+                
+                blobPositions.forEach(blob => {
+                    // Update position
+                    blob.x += blob.speedX * intensity * 2;
+                    blob.y += blob.speedY * intensity * 2;
+                    
+                    // Bounce off edges
+                    if (blob.x < 0 || blob.x > width) blob.speedX *= -1;
+                    if (blob.y < 0 || blob.y > height) blob.speedY *= -1;
+                    
+                    // Draw blob
+                    const gradient = canvasCtx.createRadialGradient(
+                        blob.x, blob.y, 0,
+                        blob.x, blob.y, blob.size
+                    );
+                    gradient.addColorStop(0, moods[currentMood].color);
+                    gradient.addColorStop(1, 'transparent');
+                    
+                    canvasCtx.beginPath();
+                    canvasCtx.arc(blob.x, blob.y, blob.size, 0, Math.PI * 2);
+                    canvasCtx.fillStyle = gradient;
+                    canvasCtx.fill();
+                });
+            }
+            
+            function hexToRgb(hex) {
+                // Simple hex to rgb conversion
+                return '255, 255, 255'; // In a real app, implement proper conversion
+            }
+            
+            function openJournal() {
+                moodJournal.classList.add('open');
+                updateJournalStats();
+            }
+            
+            function closeJournal() {
+                moodJournal.classList.remove('open');
+            }
+            
+            function updateJournalStats() {
+                // Mock stats - in a real app these would come from actual usage data
+                document.getElementById('happyStat').textContent = Math.floor(Math.random() * 20) + 5;
+                document.getElementById('sadStat').textContent = Math.floor(Math.random() * 10) + 2;
+                document.getElementById('energeticStat').textContent = Math.floor(Math.random() * 15) + 3;
+                
+                // Update therapy tip based on mood
+                const tips = {
+                    happy: "You've been listening to a lot of happy music! Keep spreading those positive vibes.",
+                    sad: "Your recent music choices suggest you might be feeling down. Remember, it's okay to not be okay.",
+                    energetic: "You're full of energy! Consider channeling it into something creative today.",
+                    calm: "You've been seeking calmness. Try a short meditation session to enhance this peaceful state."
+                };
+                
+                document.getElementById('therapyTip').textContent = tips[currentMood];
+            }
+            
+            function takeSnapshot() {
+                // In a real app, this would use html2canvas or similar to capture the player
+                // For this demo, we'll create a mock snapshot
+                
+                // Show loading state
+                snapshotPreview.style.display = 'flex';
+                snapshotImage.src = '';
+                
+                // Create mock snapshot after short delay
+                setTimeout(() => {
+                    const mockSnapshot = createMockSnapshot();
+                    snapshotImage.src = mockSnapshot;
+                }, 500);
+            }
+            
+            function createMockSnapshot() {
+                // In a real app, this would be replaced with actual canvas capture
+                // For demo purposes, we'll return a data URL of a mock image
+                return 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600"><rect width="400" height="600" fill="%23073B4C"/><rect x="50" y="50" width="300" height="500" rx="20" fill="%23118AB2" fill-opacity="0.8"/><text x="200" y="100" font-family="Arial" font-size="24" fill="white" text-anchor="middle">My Moodify Snapshot</text><text x="200" y="150" font-family="Arial" font-size="48" fill="white" text-anchor="middle">' + moods[currentMood].emoji + '</text><text x="200" y="200" font-family="Arial" font-size="24" fill="white" text-anchor="middle">' + currentMoodText.textContent + '</text><text x="200" y="250" font-family="Arial" font-size="18" fill="white" text-anchor="middle">' + songTitle.textContent + '</text><text x="200" y="280" font-family="Arial" font-size="16" fill="white" text-anchor="middle">by ' + songArtist.textContent + '</text><circle cx="200" cy="380" r="80" fill="' + moods[currentMood].color + '"/><text x="200" y="500" font-family="Arial" font-size="14" fill="white" text-anchor="middle">Share your mood with #Moodify</text></svg>';
+            }
+            
+            function closeSnapshot() {
+                snapshotPreview.style.display = 'none';
+            }
+            
+            function downloadSnapshot() {
+                // In a real app, this would download the actual snapshot
+                const link = document.createElement('a');
+                link.href = snapshotImage.src;
+                link.download = 'moodify-snapshot.png';
+                link.click();
+            }
+            
+            function shareSnapshot() {
+                // In a real app, this would use the Web Share API
+                alert("In a real app, this would share your mood snapshot!");
+            }
+        });
+    </script>
+</body>
+</html>
