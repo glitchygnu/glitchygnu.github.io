@@ -6,4 +6,4 @@ Source Code for glitchygnu.github.io
 - web-frontend
 - cdn
 
-## Gigacalc
+## GigaNetwork.
