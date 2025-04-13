@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InstaLearn - Learn in 10 Seconds!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --accent: #fd79a8;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #d63031;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Rubik', sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        header {
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        nav ul {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--light);
+            border: 2px solid var(--light);
+        }
+
+        .btn-outline:hover {
+            background: var(--light);
+            color: var(--dark);
+            transform: translateY(-2px);
+        }
+
+        /* HERO SECTION */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(109, 92, 231, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            z-index: -1;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .hero .btn {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .floating-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.2;
+            animation: float 10s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.2;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* FEATURES SECTION */
+        .features {
+            padding: 5rem 2rem;
+            background: linear-gradient(to bottom, var(--dark), #1a1a1a);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        /* LESSON FEED */
+        .lesson-feed {
+            padding: 5rem 1rem;
+            background: #1a1a1a;
+        }
+
+        .feed-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .lesson-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .lesson-video {
+            width: 100%;
+            height: 350px;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lesson-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 2;
+        }
+
+        .play-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .play-btn i {
+            color: white;
+            font-size: 1.5rem;
+            margin-left: 5px;
+        }
+
+        .lesson-info {
+            padding: 1.5rem;
+        }
+
+        .lesson-category {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .lesson-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .lesson-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .lesson-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            color: var(--accent);
+            transform: scale(1.2);
+        }
+
+        .liked {
+            color: var(--danger);
+        }
+
+        .bookmarked {
+            color: var(--warning);
+        }
+
+        /* QUIZ MODAL */
+        .quiz-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s;
+        }
+
+        .quiz-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .quiz-container {
+            background: var(--dark);
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            padding: 2rem;
+            position: relative;
+            border: 1px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(108, 92, 231, 0.3);
+            transform: scale(0.9);
+            transition: all 0.3s;
+        }
+
+        .quiz-modal.active .quiz-container {
+            transform: scale(1);
+        }
+
+        .close-quiz {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-quiz:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        .quiz-question {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .quiz-option.selected {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .quiz-option.correct {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .quiz-option.incorrect {
+            background: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .quiz-progress {
+            height: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .quiz-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quiz-score {
+            font-weight: 500;
+        }
+
+        .next-question {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .next-question:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .quiz-complete {
+            text-align: center;
+            display: none;
+        }
+
+        .quiz-complete h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .quiz-complete p {
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .quiz-result {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #000;
+            padding: 3rem 2rem 1rem;
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--light);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-links a {
+            color: var(--light);
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* ANIMATIONS */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.8s forwards;
+        }
+
+        .delay-1 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.4s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.6s;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero-btns {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .lesson-video {
+                height: 250px;
+            }
+        }
+
+        /* 3D EFFECTS */
+        .lesson-card {
+            transition: transform 0.5s, box-shadow 0.5s;
+        }
+
+        .lesson-card:hover {
+            transform: rotateY(10deg) rotateX(5deg) translateY(-10px);
+            box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* GLOW EFFECT */
+        .glow {
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px rgba(108, 92, 231, 0.5);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(108, 92, 231, 0.8);
+            }
+        }
+
+        /* PARTICLE EFFECT */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* TYPING EFFECT */
+        .typing-text {
+            overflow: hidden;
+            border-right: 3px solid var(--accent);
+            white-space: nowrap;
+            margin: 0 auto;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--accent) }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles-js"></div>
+    
+    <div class="app-container">
+        <header>
+            <a href="#" class="logo">
+                <i class="fas fa-bolt"></i>
+                <span>InstaLearn</span>
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#lessons">Lessons</a></li>
+                    <li><a href="#">Categories</a></li>
+                </ul>
+            </nav>
+            
+            <div class="user-actions">
+                <button class="btn btn-outline">Login</button>
+                <button class="btn btn-primary">Sign Up</button>
+            </div>
+        </header>
+        
+        <section class="hero">
+            <div class="floating-icons" id="floating-icons"></div>
+            
+            <h1 class="slide-in">Learn Anything in <span class="typing-text">10 Seconds</span></h1>
+            <p class="slide-in delay-1">The TikTok-style platform where experts teach you valuable skills in ultra-short, engaging videos. No fluff, just knowledge!</p>
+            
+            <div class="hero-btns slide-in delay-2">
+                <button class="btn btn-primary">
+                    <i class="fas fa-play"></i> Start Learning
+                </button>
+                <button class="btn btn-outline">
+                    <i class="fas fa-star"></i> Trending Now
+                </button>
+            </div>
+            
+            <div class="slide-in delay-3" style="text-align: center;">
+                <p>Join <span id="user-count">1,245,893</span> learners worldwide</p>
+                <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                    <div style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--primary); overflow: hidden; margin: 0 -10px;">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--primary); overflow: hidden; margin: 0 -10px;">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--primary); overflow: hidden; margin: 0 -10px;">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--primary); overflow: hidden; margin: 0 -10px;">
+                        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="features" id="features">
+            <h2 class="section-title slide-in">Why InstaLearn Works</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card slide-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-stopwatch"></i>
+                    </div>
+                    <h3>10-Second Lessons</h3>
+                    <p>Our brains retain information better in short bursts. Get straight to the point without wasting time.</p>
+                </div>
+                
+                <div class="feature-card slide-in delay-1">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI-Powered Summaries</h3>
+                    <p>After each lesson, get a concise text summary generated by AI to reinforce your learning.</p>
+                </div>
+                
+                <div class="feature-card slide-in delay-2">
+                    <div class="feature-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h3>Skill Stacks</h3>
+                    <p>Combine related micro-lessons into full courses tailored to your learning goals.</p>
+                </div>
+                
+                <div class="feature-card slide-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3>Interactive Quizzes</h3>
+                    <p>Test your knowledge immediately after each lesson with fun, gamified quizzes.</p>
+                </div>
+                
+                <div class="feature-card slide-in delay-1">
+                    <div class="feature-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Learning Streaks</h3>
+                    <p>Build and maintain daily learning habits with our streak tracking system.</p>
+                </div>
+                
+                <div class="feature-card slide-in delay-2">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Community Challenges</h3>
+                    <p>Compete with friends and other learners in weekly skill-building challenges.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="lesson-feed" id="lessons">
+            <h2 class="section-title slide-in">Popular Lessons Right Now</h2>
+            
+            <div class="feed-container">
+                <!-- Lesson 1 -->
+                <div class="lesson-card slide-in">
+                    <div class="lesson-video">
+                        <video poster="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80">
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="play-btn">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="lesson-info">
+                        <span class="lesson-category">Language</span>
+                        <h3 class="lesson-title">5 Essential Spanish Phrases for Travelers</h3>
+                        <p>Learn the most useful phrases you'll need when visiting Spanish-speaking countries.</p>
+                        <div class="lesson-meta">
+                            <span><i class="fas fa-eye"></i> 245K views</span>
+                            <div class="lesson-actions">
+                                <button class="action-btn like-btn"><i class="fas fa-heart"></i></button>
+                                <button class="action-btn bookmark-btn"><i class="fas fa-bookmark"></i></button>
+                                <button class="action-btn share-btn"><i class="fas fa-share-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lesson 2 -->
+                <div class="lesson-card slide-in delay-1">
+                    <div class="lesson-video">
+                        <video poster="https://images.unsplash.com/photo-1545205597-3d9d02c29597?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80">
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="play-btn">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="lesson-info">
+                        <span class="lesson-category">Tech</span>
+                        <h3 class="lesson-title">Keyboard Shortcuts That Will 10X Your Productivity</h3>
+                        <p>The most powerful keyboard shortcuts for Windows and Mac that professionals use daily.</p>
+                        <div class="lesson-meta">
+                            <span><i class="fas fa-eye"></i> 189K views</span>
+                            <div class="lesson-actions">
+                                <button class="action-btn like-btn"><i class="fas fa-heart"></i></button>
+                                <button class="action-btn bookmark-btn"><i class="fas fa-bookmark"></i></button>
+                                <button class="action-btn share-btn"><i class="fas fa-share-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lesson 3 -->
+                <div class="lesson-card slide-in delay-2">
+                    <div class="lesson-video">
+                        <video poster="https://images.unsplash.com/photo-1498837167922-ddd27525d352?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80">
+                            <source src="" type="video/mp4">
+                        </video>
+                        <div class="play-btn">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="lesson-info">
+                        <span class="lesson-category">Cooking</span>
+                        <h3 class="lesson-title">The Perfect Scrambled Eggs - Chef's Secret</h3>
+                        <p>Learn the restaurant technique for making the creamiest, fluffiest scrambled eggs every time.</p>
+                        <div class="lesson-meta">
+                            <span><i class="fas fa-eye"></i> 312K views</span>
+                            <div class="lesson-actions">
+                                <button class="action-btn like-btn"><i class="fas fa-heart"></i></button>
+                                <button class="action-btn bookmark-btn"><i class="fas fa-bookmark"></i></button>
+                                <button class="action-btn share-btn"><i class="fas fa-share-alt"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quiz Button -->
+                <div class="slide-in" style="text-align: center; margin-top: 2rem;">
+                    <button class="btn btn-primary" id="take-quiz-btn" style="padding: 1rem 2rem; font-size: 1.1rem;">
+                        <i class="fas fa-question-circle"></i> Test Your Knowledge with a Quick Quiz
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Quiz Modal -->
+        <div class="quiz-modal" id="quiz-modal">
+            <div class="quiz-container">
+                <button class="close-quiz" id="close-quiz">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <div class="quiz-progress">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                
+                <div id="quiz-content">
+                    <h2 style="margin-bottom: 1rem; color: var(--primary);">Quick Knowledge Check</h2>
+                    <p style="margin-bottom: 1.5rem; opacity: 0.8;">Let's see what you've learned from these micro-lessons!</p>
+                    
+                    <div class="quiz-question" id="quiz-question"></div>
+                    
+                    <div class="quiz-options" id="quiz-options"></div>
+                    
+                    <div class="quiz-footer">
+                        <div class="quiz-score" id="quiz-score">Score: 0/0</div>
+                        <button class="next-question" id="next-question">Next Question</button>
+                    </div>
+                </div>
+                
+                <div class="quiz-complete" id="quiz-complete">
+                    <h2>Quiz Complete!</h2>
+                    <div class="quiz-result" id="quiz-result">0%</div>
+                    <p id="quiz-feedback">Keep learning to improve your score!</p>
+                    <button class="btn btn-primary" id="retry-quiz" style="margin-top: 1rem;">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="footer-links slide-in">
+                <a href="#">About Us</a>
+                <a href="#">Careers</a>
+                <a href="#">Press</a>
+                <a href="#">Blog</a>
+                <a href="#">Help Center</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+            
+            <div class="social-links slide-in delay-1">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+            
+            <p class="copyright slide-in delay-2">© 2023 InstaLearn. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Floating icons animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const floatingIcons = document.getElementById('floating-icons');
+            const icons = ['fas fa-atom', 'fas fa-book', 'fas fa-brain', 'fas fa-calculator', 'fas fa-code', 
+                          'fas fa-flask', 'fas fa-graduation-cap', 'fas fa-language', 'fas fa-music', 'fas fa-paint-brush'];
+            
+            for (let i = 0; i < 30; i++) {
+                const icon = document.createElement('i');
+                icon.className = icons[Math.floor(Math.random() * icons.length)] + ' floating-icon';
+                icon.style.left = Math.random() * 100 + '%';
+                icon.style.top = Math.random() * 100 + '%';
+                icon.style.animationDuration = 5 + Math.random() * 15 + 's';
+                icon.style.animationDelay = Math.random() * 5 + 's';
+                icon.style.fontSize = (1 + Math.random() * 2) + 'rem';
+                floatingIcons.appendChild(icon);
+            }
+            
+            // Animate user count
+            let count = 1245893;
+            const userCount = document.getElementById('user-count');
+            setInterval(() => {
+                count += Math.floor(Math.random() * 10);
+                userCount.textContent = count.toLocaleString();
+            }, 3000);
+            
+            // Like and bookmark functionality
+            const likeButtons = document.querySelectorAll('.like-btn');
+            const bookmarkButtons = document.querySelectorAll('.bookmark-btn');
+            
+            likeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.classList.toggle('liked');
+                    const heartIcon = this.querySelector('i');
+                    if (this.classList.contains('liked')) {
+                        heartIcon.style.transform = 'scale(1.3)';
+                        setTimeout(() => {
+                            heartIcon.style.transform = 'scale(1)';
+                        }, 300);
+                    }
+                });
+            });
+            
+            bookmarkButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.classList.toggle('bookmarked');
+                    const bookmarkIcon = this.querySelector('i');
+                    if (this.classList.contains('bookmarked')) {
+                        bookmarkIcon.style.transform = 'translateY(-5px)';
+                        setTimeout(() => {
+                            bookmarkIcon.style.transform = 'translateY(0)';
+                        }, 300);
+                    }
+                });
+            });
+            
+            // Quiz functionality
+            const quizModal = document.getElementById('quiz-modal');
+            const takeQuizBtn = document.getElementById('take-quiz-btn');
+            const closeQuizBtn = document.getElementById('close-quiz');
+            const nextQuestionBtn = document.getElementById('next-question');
+            const retryQuizBtn = document.getElementById('retry-quiz');
+            const quizContent = document.getElementById('quiz-content');
+            const quizComplete = document.getElementById('quiz-complete');
+            const quizQuestion = document.getElementById('quiz-question');
+            const quizOptions = document.getElementById('quiz-options');
+            const quizScore = document.getElementById('quiz-score');
+            const quizResult = document.getElementById('quiz-result');
+            const quizFeedback = document.getElementById('quiz-feedback');
+            const progressBar = document.getElementById('progress-bar');
+            
+            const questions = [
+                {
+                    question: "Which of these is NOT a common Spanish greeting?",
+                    options: ["Hola", "Buenos días", "Guten Tag", "¿Qué tal?"],
+                    correct: 2
+                },
+                {
+                    question: "What is the shortcut for 'Undo' on Windows?",
+                    options: ["Ctrl+Z", "Ctrl+X", "Ctrl+C", "Ctrl+V"],
+                    correct: 0
+                },
+                {
+                    question: "What's the chef's secret for perfect scrambled eggs?",
+                    options: ["High heat", "Constant stirring", "Adding milk", "Low and slow cooking"],
+                    correct: 3
+                }
+            ];
+            
+            let currentQuestion = 0;
+            let score = 0;
+            let selectedOption = null;
+            
+            takeQuizBtn.addEventListener('click', () => {
+                quizModal.classList.add('active');
+                startQuiz();
+            });
+            
+            closeQuizBtn.addEventListener('click', () => {
+                quizModal.classList.remove('active');
+            });
+            
+            retryQuizBtn.addEventListener('click', () => {
+                currentQuestion = 0;
+                score = 0;
+                quizComplete.style.display = 'none';
+                quizContent.style.display = 'block';
+                startQuiz();
+            });
+            
+            function startQuiz() {
+                currentQuestion = 0;
+                score = 0;
+                showQuestion();
+            }
+            
+            function showQuestion() {
+                if (currentQuestion >= questions.length) {
+                    showResults();
+                    return;
+                }
+                
+                const question = questions[currentQuestion];
+                quizQuestion.textContent = question.question;
+                quizOptions.innerHTML = '';
+                
+                question.options.forEach((option, index) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'quiz-option';
+                    optionElement.textContent = option;
+                    optionElement.addEventListener('click', () => selectOption(index));
+                    quizOptions.appendChild(optionElement);
+                });
+                
+                quizScore.textContent = `Score: ${score}/${currentQuestion}`;
+                progressBar.style.width = `${(currentQuestion / questions.length) * 100}%`;
+                nextQuestionBtn.style.display = 'none';
+            }
+            
+            function selectOption(index) {
+                if (selectedOption !== null) return;
+                
+                selectedOption = index;
+                const options = document.querySelectorAll('.quiz-option');
+                const question = questions[currentQuestion];
+                
+                options.forEach((option, i) => {
+                    if (i === question.correct) {
+                        option.classList.add('correct');
+                    } else if (i === index && i !== question.correct) {
+                        option.classList.add('incorrect');
+                    }
+                    
+                    if (i === index) {
+                        option.classList.add('selected');
+                        if (i === question.correct) {
+                            score++;
+                        }
+                    }
+                });
+                
+                quizScore.textContent = `Score: ${score}/${currentQuestion + 1}`;
+                nextQuestionBtn.style.display = 'block';
+            }
+            
+            nextQuestionBtn.addEventListener('click', () => {
+                currentQuestion++;
+                selectedOption = null;
+                showQuestion();
+            });
+            
+            function showResults() {
+                quizContent.style.display = 'none';
+                quizComplete.style.display = 'block';
+                
+                const percentage = Math.round((score / questions.length) * 100);
+                quizResult.textContent = `${percentage}%`;
+                
+                if (percentage >= 80) {
+                    quizFeedback.textContent = "Excellent! You're a quick learner!";
+                } else if (percentage >= 50) {
+                    quizFeedback.textContent = "Good job! Review the lessons to improve!";
+                } else {
+                    quizFeedback.textContent = "Keep learning! You'll get better with practice!";
+                }
+                
+                progressBar.style.width = '100%';
+            }
+            
+            // Play button functionality for lesson videos
+            const playButtons = document.querySelectorAll('.play-btn');
+            playButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const videoContainer = this.parentElement;
+                    const video = videoContainer.querySelector('video');
+                    
+                    // In a real app, this would play the actual video
+                    // For demo, we'll just show an alert
+                    alert("In the full app, this would play the 10-second lesson video!");
+                    
+                    // This would be the actual code to play the video:
+                    // video.play();
+                    // this.style.display = 'none';
+                });
+            });
+            
+            // Scroll animations
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('slide-in');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            document.querySelectorAll('.slide-in').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Particle.js background
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#6c5ce7"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.3,
+                        "random": false,
+                        "anim": {
+                            "enable": false,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 40,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#6c5ce7",
+                        "opacity": 0.2,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 2,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 400,
+                            "size": 40,
+                            "duration": 2,
+                            "opacity": 8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 200,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+            
+            // 3D tilt effect on lesson cards
+            const lessonCards = document.querySelectorAll('.lesson-card');
+            lessonCards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+                    const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+                    card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+                });
+                
+                card.addEventListener('mouseenter', () => {
+                    card.style.transition = 'none';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.transform = 'rotateY(0deg) rotateX(0deg)';
+                });
+            });
+            
+            // Glow effect on buttons
+            const primaryButtons = document.querySelectorAll('.btn-primary');
+            setInterval(() => {
+                primaryButtons.forEach(btn => {
+                    btn.classList.toggle('glow');
+                });
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
