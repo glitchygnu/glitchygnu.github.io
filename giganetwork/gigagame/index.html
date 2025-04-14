@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Jumper</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow: hidden;
             background-color: #000;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Orbitron', sans-serif;
+            touch-action: manipulation;
+            user-select: none;
         }
         
         #game-container {
@@ -21,7 +24,7 @@
         }
         
         #game-canvas {
-            background-color: #111;
+            background: linear-gradient(to bottom, #000428, #004e92);
             display: block;
         }
         
@@ -32,6 +35,7 @@
             color: #fff;
             font-size: 24px;
             z-index: 10;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #0088ff;
         }
         
         #game-over {
@@ -44,21 +48,30 @@
             text-align: center;
             display: none;
             z-index: 10;
+            text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff0088;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #00ffff;
         }
         
         #restart-btn {
             margin-top: 20px;
-            padding: 10px 20px;
+            padding: 15px 30px;
             font-size: 20px;
-            background-color: #4CAF50;
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px #00ffff;
         }
         
         #restart-btn:hover {
-            background-color: #45a049;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #00ffff;
         }
         
         #instructions {
@@ -67,6 +80,22 @@
             left: 20px;
             color: #fff;
             font-size: 18px;
+            text-shadow: 0 0 5px #00ffff;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        #title {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            font-size: 42px;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #0088ff;
+            z-index: 10;
         }
         
         .star {
@@ -90,17 +119,28 @@
         .jump {
             animation: astronaut-jump 0.8s linear;
         }
+        
+        #power-up {
+            position: absolute;
+            display: none;
+            color: #ff0;
+            font-size: 24px;
+            text-shadow: 0 0 10px #ff0;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
     <div id="game-container">
+        <h1 id="title">SPACE JUMPER</h1>
         <canvas id="game-canvas"></canvas>
-        <div id="score-display">Score: 0</div>
-        <div id="instructions">Press SPACE or UP to jump</div>
+        <div id="score-display">SCORE: 0</div>
+        <div id="instructions">SPACE/UP/CLICK to JUMP</div>
+        <div id="power-up"></div>
         <div id="game-over">
-            Game Over!<br>
-            <span id="final-score">Score: 0</span><br>
-            <button id="restart-btn">Play Again</button>
+            GAME OVER!<br>
+            <span id="final-score">SCORE: 0</span><br>
+            <button id="restart-btn">PLAY AGAIN</button>
         </div>
     </div>
 
@@ -112,6 +152,7 @@
             const gameOverDisplay = document.getElementById('game-over');
             const finalScoreDisplay = document.getElementById('final-score');
             const restartBtn = document.getElementById('restart-btn');
+            const powerUpDisplay = document.getElementById('power-up');
             
             // Set canvas size
             canvas.width = window.innerWidth;
@@ -123,27 +164,47 @@
             let isGameOver = false;
             let animationId;
             let stars = [];
+            let powerUpActive = false;
+            let powerUpEndTime = 0;
+            
+            // Load images
+            const astronautImg = new Image();
+            astronautImg.src = 'https://cdn.pixabay.com/photo/2020/03/11/17/20/astronaut-4922867_960_720.png';
+            
+            const asteroidImgs = [
+                'https://cdn.pixabay.com/photo/2013/07/12/18/57/asteroid-154615_960_720.png',
+                'https://cdn.pixabay.com/photo/2013/07/12/18/57/asteroid-154616_960_720.png',
+                'https://cdn.pixabay.com/photo/2013/07/12/18/57/asteroid-154617_960_720.png'
+            ].map(src => {
+                const img = new Image();
+                img.src = src;
+                return img;
+            });
+            
+            const powerUpImg = new Image();
+            powerUpImg.src = 'https://cdn.pixabay.com/photo/2017/01/31/23/42/decorative-2028039_960_720.png';
             
             // Create background stars
             function createStars() {
                 stars = [];
-                const starCount = 100;
+                const starCount = 200;
                 
                 for (let i = 0; i < starCount; i++) {
                     stars.push({
                         x: Math.random() * canvas.width,
                         y: Math.random() * canvas.height,
                         size: Math.random() * 3,
-                        speed: 0.2 + Math.random() * 0.8
+                        speed: 0.2 + Math.random() * 0.8,
+                        alpha: 0.1 + Math.random() * 0.9
                     });
                 }
             }
             
             // Draw stars
             function drawStars() {
-                ctx.fillStyle = '#fff';
-                
                 stars.forEach(star => {
+                    ctx.globalAlpha = star.alpha;
+                    ctx.fillStyle = '#fff';
                     ctx.beginPath();
                     ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
                     ctx.fill();
@@ -155,36 +216,34 @@
                     if (star.x < 0) {
                         star.x = canvas.width;
                         star.y = Math.random() * canvas.height;
+                        star.alpha = 0.1 + Math.random() * 0.9;
                     }
                 });
+                ctx.globalAlpha = 1;
             }
             
             // Astronaut
             const astronaut = {
                 x: 100,
-                y: canvas.height - 100,
-                width: 60,
-                height: 80,
+                y: canvas.height - 150,
+                width: 80,
+                height: 100,
                 isJumping: false,
                 gravity: 1.5,
                 velocity: 0,
-                jumpForce: -20,
-                groundY: canvas.height - 100,
+                jumpForce: -22,
+                groundY: canvas.height - 150,
+                img: astronautImg,
+                imgLoaded: false,
                 
                 draw() {
-                    // Body
-                    ctx.fillStyle = '#fff';
-                    ctx.fillRect(this.x, this.y, this.width, this.height);
-                    
-                    // Helmet
-                    ctx.beginPath();
-                    ctx.arc(this.x + this.width/2, this.y - 15, 25, 0, Math.PI * 2);
-                    ctx.fillStyle = '#ccc';
-                    ctx.fill();
-                    
-                    // Oxygen tank
-                    ctx.fillStyle = '#555';
-                    ctx.fillRect(this.x - 15, this.y + 10, 15, 50);
+                    if (this.imgLoaded) {
+                        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+                    } else {
+                        // Fallback if image doesn't load
+                        ctx.fillStyle = '#fff';
+                        ctx.fillRect(this.x, this.y, this.width, this.height);
+                    }
                 },
                 
                 jump() {
@@ -208,49 +267,90 @@
                 }
             };
             
+            astronautImg.onload = () => {
+                astronaut.imgLoaded = true;
+            };
+            
             // Asteroids
             let asteroids = [];
+            let powerUps = [];
             
             function createAsteroid() {
-                const size = 30 + Math.random() * 50;
+                const size = 40 + Math.random() * 60;
+                const asteroidType = Math.floor(Math.random() * asteroidImgs.length);
                 const asteroid = {
                     x: canvas.width,
-                    y: canvas.height - size - 10,
+                    y: canvas.height - size - 20,
                     width: size,
                     height: size,
                     speed: gameSpeed + Math.random() * 2,
-                    color: `hsl(${Math.random() * 60 + 10}, 70%, 50%)`
+                    type: asteroidType,
+                    imgLoaded: asteroidImgs[asteroidType].complete,
+                    rotation: 0,
+                    rotationSpeed: (Math.random() - 0.5) * 0.1
                 };
                 
                 // Occasionally create a flying asteroid
                 if (Math.random() < 0.3) {
-                    asteroid.y = canvas.height - size - 50 - Math.random() * 100;
+                    asteroid.y = canvas.height - size - 100 - Math.random() * 150;
                 }
                 
                 asteroids.push(asteroid);
             }
             
+            function createPowerUp() {
+                if (Math.random() < 0.01 && !powerUpActive && powerUps.length === 0) {
+                    const size = 40;
+                    const powerUp = {
+                        x: canvas.width,
+                        y: canvas.height - size - 150 - Math.random() * 100,
+                        width: size,
+                        height: size,
+                        speed: gameSpeed + 1,
+                        imgLoaded: powerUpImg.complete
+                    };
+                    
+                    powerUps.push(powerUp);
+                }
+            }
+            
             function drawAsteroids() {
                 asteroids.forEach((asteroid, index) => {
-                    ctx.fillStyle = asteroid.color;
-                    ctx.beginPath();
-                    ctx.arc(
-                        asteroid.x + asteroid.width/2,
-                        asteroid.y + asteroid.height/2,
-                        asteroid.width/2,
-                        0,
-                        Math.PI * 2
-                    );
-                    ctx.fill();
+                    if (asteroid.imgLoaded && asteroidImgs[asteroid.type].complete) {
+                        ctx.save();
+                        ctx.translate(asteroid.x + asteroid.width/2, asteroid.y + asteroid.height/2);
+                        ctx.rotate(asteroid.rotation);
+                        ctx.drawImage(
+                            asteroidImgs[asteroid.type], 
+                            -asteroid.width/2, 
+                            -asteroid.height/2, 
+                            asteroid.width, 
+                            asteroid.height
+                        );
+                        ctx.restore();
+                    } else {
+                        // Fallback if image doesn't load
+                        ctx.fillStyle = `hsl(${Math.random() * 60 + 10}, 70%, 50%)`;
+                        ctx.beginPath();
+                        ctx.arc(
+                            asteroid.x + asteroid.width/2,
+                            asteroid.y + asteroid.height/2,
+                            asteroid.width/2,
+                            0,
+                            Math.PI * 2
+                        );
+                        ctx.fill();
+                    }
                     
                     // Move asteroid
                     asteroid.x -= asteroid.speed;
+                    asteroid.rotation += asteroid.rotationSpeed;
                     
                     // Remove asteroid if off screen
                     if (asteroid.x + asteroid.width < 0) {
                         asteroids.splice(index, 1);
                         score++;
-                        scoreDisplay.textContent = `Score: ${score}`;
+                        scoreDisplay.textContent = `SCORE: ${score}`;
                         
                         // Increase game speed every 10 points
                         if (score % 10 === 0) {
@@ -265,9 +365,82 @@
                         astronaut.y + astronaut.height > asteroid.y &&
                         astronaut.y < asteroid.y + asteroid.height
                     ) {
-                        gameOver();
+                        if (!powerUpActive) {
+                            gameOver();
+                        } else {
+                            // If power-up is active, destroy the asteroid
+                            asteroids.splice(index, 1);
+                            score += 2; // Bonus points for destroying asteroids
+                            scoreDisplay.textContent = `SCORE: ${score}`;
+                        }
                     }
                 });
+            }
+            
+            function drawPowerUps() {
+                powerUps.forEach((powerUp, index) => {
+                    if (powerUp.imgLoaded && powerUpImg.complete) {
+                        ctx.drawImage(powerUpImg, powerUp.x, powerUp.y, powerUp.width, powerUp.height);
+                    } else {
+                        // Fallback if image doesn't load
+                        ctx.fillStyle = '#ff0';
+                        ctx.beginPath();
+                        ctx.arc(
+                            powerUp.x + powerUp.width/2,
+                            powerUp.y + powerUp.height/2,
+                            powerUp.width/2,
+                            0,
+                            Math.PI * 2
+                        );
+                        ctx.fill();
+                    }
+                    
+                    // Move power-up
+                    powerUp.x -= powerUp.speed;
+                    
+                    // Remove power-up if off screen
+                    if (powerUp.x + powerUp.width < 0) {
+                        powerUps.splice(index, 1);
+                    }
+                    
+                    // Check collision with astronaut
+                    if (
+                        astronaut.x + astronaut.width > powerUp.x &&
+                        astronaut.x < powerUp.x + powerUp.width &&
+                        astronaut.y + astronaut.height > powerUp.y &&
+                        astronaut.y < powerUp.y + powerUp.height
+                    ) {
+                        activatePowerUp();
+                        powerUps.splice(index, 1);
+                    }
+                });
+            }
+            
+            function activatePowerUp() {
+                powerUpActive = true;
+                powerUpEndTime = Date.now() + 5000; // 5 seconds
+                powerUpDisplay.textContent = "SHIELD ACTIVATED!";
+                powerUpDisplay.style.display = 'block';
+                powerUpDisplay.style.left = (canvas.width/2 - 100) + 'px';
+                powerUpDisplay.style.top = '100px';
+                
+                setTimeout(() => {
+                    powerUpDisplay.style.display = 'none';
+                }, 2000);
+            }
+            
+            function checkPowerUpStatus() {
+                if (powerUpActive && Date.now() > powerUpEndTime) {
+                    powerUpActive = false;
+                    powerUpDisplay.textContent = "SHIELD DEACTIVATED";
+                    powerUpDisplay.style.display = 'block';
+                    powerUpDisplay.style.left = (canvas.width/2 - 110) + 'px';
+                    powerUpDisplay.style.top = '100px';
+                    
+                    setTimeout(() => {
+                        powerUpDisplay.style.display = 'none';
+                    }, 2000);
+                }
             }
             
             // Game loop
@@ -286,8 +459,44 @@
                     createAsteroid();
                 }
                 
-                // Draw asteroids
+                // Create power-ups
+                createPowerUp();
+                
+                // Draw asteroids and power-ups
                 drawAsteroids();
+                drawPowerUps();
+                
+                // Check power-up status
+                checkPowerUpStatus();
+                
+                // Draw shield effect if power-up is active
+                if (powerUpActive) {
+                    ctx.strokeStyle = '#0ff';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(
+                        astronaut.x + astronaut.width/2,
+                        astronaut.y + astronaut.height/2,
+                        astronaut.width + 20,
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.stroke();
+                    
+                    // Pulsing effect
+                    const pulseSize = Math.sin(Date.now() / 200) * 5;
+                    ctx.strokeStyle = `rgba(0, 255, 255, ${0.5 + Math.sin(Date.now() / 300) * 0.5})`;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(
+                        astronaut.x + astronaut.width/2,
+                        astronaut.y + astronaut.height/2,
+                        astronaut.width + 20 + pulseSize,
+                        0,
+                        Math.PI * 2
+                    );
+                    ctx.stroke();
+                }
                 
                 if (!isGameOver) {
                     animationId = requestAnimationFrame(gameLoop);
@@ -298,7 +507,7 @@
             function gameOver() {
                 isGameOver = true;
                 cancelAnimationFrame(animationId);
-                finalScoreDisplay.textContent = `Score: ${score}`;
+                finalScoreDisplay.textContent = `SCORE: ${score}`;
                 gameOverDisplay.style.display = 'block';
             }
             
@@ -308,25 +517,35 @@
                 score = 0;
                 gameSpeed = 5;
                 asteroids = [];
+                powerUps = [];
+                powerUpActive = false;
                 astronaut.y = astronaut.groundY;
                 astronaut.isJumping = false;
                 astronaut.velocity = 0;
-                scoreDisplay.textContent = `Score: ${score}`;
+                scoreDisplay.textContent = `SCORE: ${score}`;
                 gameOverDisplay.style.display = 'none';
+                powerUpDisplay.style.display = 'none';
                 createStars();
                 gameLoop();
             }
             
             // Event listeners
-            document.addEventListener('keydown', (e) => {
-                if ((e.code === 'Space' || e.key === 'ArrowUp') && !isGameOver) {
+            function handleJump() {
+                if (!isGameOver) {
                     astronaut.jump();
-                }
-                
-                if (e.code === 'Space' && isGameOver) {
+                } else {
                     restartGame();
                 }
+            }
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.code === 'Space' || e.key === 'ArrowUp' || e.key === 'w') {
+                    handleJump();
+                }
             });
+            
+            document.addEventListener('click', handleJump);
+            document.addEventListener('touchstart', handleJump);
             
             restartBtn.addEventListener('click', restartGame);
             
@@ -334,7 +553,7 @@
             window.addEventListener('resize', () => {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
-                astronaut.groundY = canvas.height - 100;
+                astronaut.groundY = canvas.height - 150;
                 astronaut.y = astronaut.groundY;
                 createStars();
             });
