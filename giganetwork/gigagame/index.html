@@ -3,1104 +3,1291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Clash - The Addictive Clicker Game</title>
+    <title>QUANTUM JUMPER: EXTREME</title>
     <style>
-        :root {
-            --primary: #6e45e2;
-            --secondary: #88d3ce;
-            --dark: #1a1a2e;
-            --light: #f8f9fa;
-            --accent: #ff6b6b;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-            user-select: none;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap');
         
         body {
-            background: linear-gradient(135deg, var(--dark), #16213e);
-            color: var(--light);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-        }
-        
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--primary);
-        }
-        
-        .game-title {
-            font-size: 2.5rem;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 10px rgba(110, 69, 226, 0.3);
-        }
-        
-        .stats {
-            display: flex;
-            gap: 20px;
-        }
-        
-        .stat-box {
-            background: rgba(26, 26, 46, 0.7);
-            padding: 10px 15px;
-            border-radius: 10px;
-            border: 1px solid var(--primary);
-            box-shadow: 0 0 15px rgba(110, 69, 226, 0.2);
-        }
-        
-        .main-game {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .click-area {
-            flex: 1;
-            background: rgba(26, 26, 46, 0.5);
-            border-radius: 20px;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 30px rgba(110, 69, 226, 0.3);
-            transition: all 0.3s;
-            cursor: pointer;
-            position: relative;
+            margin: 0;
             overflow: hidden;
-            min-height: 400px;
-        }
-        
-        .click-area:active {
-            transform: scale(0.98);
-            box-shadow: 0 0 20px rgba(110, 69, 226, 0.5);
-        }
-        
-        .click-area::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(110, 69, 226, 0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-        
-        .click-area:hover::before {
-            opacity: 1;
-        }
-        
-        .click-target {
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            font-weight: bold;
+            background: #000;
+            font-family: 'Comic Neue', cursive;
             color: white;
-            box-shadow: 0 0 30px rgba(110, 69, 226, 0.5);
-            position: relative;
-            transition: transform 0.1s;
-            z-index: 2;
+            user-select: none;
+            touch-action: none;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23ff00ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg>'), auto;
         }
-        
-        .click-target:active {
-            transform: scale(0.95);
+        #gameCanvas {
+            display: block;
+            background: #111;
+            image-rendering: pixelated;
+            filter: contrast(1.5) brightness(1.2);
         }
-        
-        .click-target::after {
-            content: '';
+        #ui {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .click-target:active::after {
-            opacity: 0.4;
-        }
-        
-        .click-effect {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background: white;
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0.7;
-            transform: scale(0);
-            animation: clickAnimation 0.5s forwards;
-            z-index: 1;
-        }
-        
-        @keyframes clickAnimation {
-            0% { transform: scale(0); opacity: 0.7; }
-            100% { transform: scale(3); opacity: 0; }
-        }
-        
-        .upgrades {
-            width: 300px;
-            background: rgba(26, 26, 46, 0.5);
-            border-radius: 20px;
-            padding: 20px;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 20px rgba(110, 69, 226, 0.2);
-            overflow-y: auto;
-            max-height: 600px;
-        }
-        
-        .upgrades h2 {
-            margin-bottom: 20px;
-            color: var(--secondary);
-            text-align: center;
-            font-size: 1.5rem;
-        }
-        
-        .upgrade-item {
-            background: rgba(26, 26, 46, 0.7);
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+            z-index: 100;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
             border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid var(--primary);
-            transition: all 0.3s;
+            border: 2px solid #f0f;
+        }
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            display: none;
+            background: rgba(0,0,0,0.9);
+            padding: 30px;
+            border-radius: 20px;
+            border: 5px solid #f0f;
+            box-shadow: 0 0 30px #0ff;
+            z-index: 200;
+            max-width: 80%;
+        }
+        #restartBtn {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: none;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
             cursor: pointer;
-        }
-        
-        .upgrade-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(110, 69, 226, 0.3);
-        }
-        
-        .upgrade-item.unlocked {
-            border-color: var(--secondary);
-        }
-        
-        .upgrade-item.locked {
-            opacity: 0.6;
-            filter: grayscale(50%);
-            cursor: not-allowed;
-        }
-        
-        .upgrade-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        
-        .upgrade-cost {
-            color: var(--accent);
-        }
-        
-        .upgrade-level {
-            color: var(--secondary);
-        }
-        
-        .achievements {
-            background: rgba(26, 26, 46, 0.5);
-            border-radius: 20px;
-            padding: 20px;
-            margin-top: 30px;
-            border: 2px solid var(--primary);
-            box-shadow: 0 0 20px rgba(110, 69, 226, 0.2);
-        }
-        
-        .achievements h2 {
-            margin-bottom: 20px;
-            color: var(--secondary);
-            text-align: center;
-            font-size: 1.5rem;
-        }
-        
-        .achievement-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-        }
-        
-        .achievement {
-            background: rgba(26, 26, 46, 0.7);
-            border-radius: 10px;
-            padding: 15px;
-            border: 1px solid var(--primary);
+            border-radius: 50px;
+            margin-top: 20px;
             transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px #0ff;
         }
-        
-        .achievement.unlocked {
-            border-color: gold;
-            background: rgba(26, 26, 46, 0.9);
+        #restartBtn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px #f0f;
         }
-        
-        .achievement.unlocked .achievement-title {
-            color: gold;
+        .glitch {
+            animation: glitch 0.1s infinite, shake 0.1s infinite;
         }
-        
-        .achievement-title {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: var(--light);
+        @keyframes glitch {
+            0% { filter: hue-rotate(0deg) blur(0px); }
+            20% { filter: hue-rotate(90deg) blur(1px); }
+            40% { filter: hue-rotate(180deg) blur(2px); }
+            60% { filter: hue-rotate(270deg) blur(1px); }
+            80% { filter: hue-rotate(360deg) blur(0px); }
+            100% { filter: hue-rotate(0deg) blur(0px); }
         }
-        
-        .achievement-desc {
-            font-size: 0.9rem;
-            color: #aaa;
+        @keyframes shake {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
         }
-        
-        .achievement-progress {
-            height: 5px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            margin-top: 10px;
-            overflow: hidden;
-        }
-        
-        .achievement-progress-bar {
-            height: 100%;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            width: 0%;
-            transition: width 0.5s;
-        }
-        
-        .particles {
+        #particles {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 0;
+            z-index: 10;
         }
-        
-        .particle {
+        #secretCodes {
             position: absolute;
-            background: white;
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0;
+            bottom: 10px;
+            right: 10px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.3);
         }
-        
-        .combo-display {
-            position: fixed;
+        #soundToggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: 2px solid #f0f;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #cheatMode {
+            position: absolute;
+            top: 60px;
+            right: 10px;
+            background: rgba(255,0,0,0.7);
+            color: white;
+            border: 2px solid #f0f;
+            border-radius: 5px;
+            padding: 5px;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        #narration {
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 5rem;
-            font-weight: bold;
-            color: var(--accent);
-            text-shadow: 0 0 20px rgba(255, 107, 107, 0.7);
+            font-size: 24px;
+            text-align: center;
             opacity: 0;
+            transition: opacity 1s;
+            text-shadow: 0 0 10px #0ff;
+            max-width: 80%;
             pointer-events: none;
-            z-index: 10;
-            animation: comboFade 1s forwards;
-        }
-        
-        @keyframes comboFade {
-            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
-        }
-        
-        .critical-hit {
-            animation: criticalHit 0.3s forwards;
-        }
-        
-        @keyframes criticalHit {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.3); }
-            100% { transform: scale(1); }
-        }
-        
-        .prestige-button {
-            background: linear-gradient(135deg, gold, #ffd700);
-            color: #333;
-            border: none;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 20px;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-            transition: all 0.3s;
-        }
-        
-        .prestige-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.7);
-        }
-        
-        .prestige-button:active {
-            transform: translateY(1px);
-        }
-        
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(26, 26, 46, 0.9);
-            border-left: 5px solid var(--accent);
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-            transform: translateX(150%);
-            transition: transform 0.3s;
-            z-index: 100;
-        }
-        
-        .notification.show {
-            transform: translateX(0);
-        }
-        
-        .notification-title {
-            font-weight: bold;
-            color: var(--accent);
-            margin-bottom: 5px;
-        }
-        
-        @media (max-width: 768px) {
-            .main-game {
-                flex-direction: column;
-            }
-            
-            .upgrades {
-                width: 100%;
-            }
-            
-            .click-target {
-                width: 150px;
-                height: 150px;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1 class="game-title">COSMIC CLASH</h1>
-            <div class="stats">
-                <div class="stat-box">
-                    <div>Energy: <span id="energy">0</span></div>
-                </div>
-                <div class="stat-box">
-                    <div>EPS: <span id="eps">0</span></div>
-                </div>
-                <div class="stat-box">
-                    <div>EPC: <span id="epc">1</span></div>
-                </div>
-            </div>
-        </header>
-        
-        <div class="main-game">
-            <div class="click-area" id="clickArea">
-                <div class="particles" id="particles"></div>
-                <div class="click-target" id="clickTarget">
-                    TAP!
-                </div>
-            </div>
-            
-            <div class="upgrades">
-                <h2>UPGRADES</h2>
-                <div id="upgradesContainer">
-                    <!-- Upgrades will be added here dynamically -->
-                </div>
-                
-                <button class="prestige-button" id="prestigeButton" style="display: none;">
-                    PRESTIGE (Reset for bonuses!)
-                </button>
-            </div>
-        </div>
-        
-        <div class="achievements">
-            <h2>ACHIEVEMENTS</h2>
-            <div class="achievement-grid" id="achievementsContainer">
-                <!-- Achievements will be added here dynamically -->
-            </div>
-        </div>
+    <canvas id="gameCanvas"></canvas>
+    <div id="particles"></div>
+    <div id="ui">
+        <div>SCORE: <span id="score">0</span></div>
+        <div>HIGH SCORE: <span id="highScore">0</span></div>
+        <div>DIMENSION: <span id="dimension">1</span></div>
+        <div>COMBO: <span id="combo">x1</span></div>
+        <div>TIME DILATION: <span id="timeWarp">100%</span></div>
     </div>
-    
-    <div class="combo-display" id="comboDisplay"></div>
-    
-    <div class="notification" id="notification">
-        <div class="notification-title" id="notificationTitle">Achievement Unlocked!</div>
-        <div class="notification-message" id="notificationMessage">You've unlocked an achievement!</div>
+    <div id="gameOver">
+        <h1 style="font-family: 'Press Start 2P', cursive; color: #f0f; text-shadow: 0 0 10px #0ff;">QUANTUM COLLAPSE</h1>
+        <p>YOUR SCORE: <span id="finalScore">0</span></p>
+        <p>MAX DIMENSION: <span id="finalDimension">1</span></p>
+        <p>QUANTUM ENTANGLEMENTS: <span id="finalJumps">0</span></p>
+        <button id="restartBtn">REBOOT UNIVERSE</button>
     </div>
-    
+    <div id="soundToggle">🔊</div>
+    <div id="cheatMode">CHEAT MODE: OFF</div>
+    <div id="narration"></div>
+    <div id="secretCodes">Konami Code: ↑↑↓↓←→←→BA</div>
+
+    <audio id="bgMusic" loop>
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-game-show-suspense-waiting-668.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="jumpSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-quick-jump-arcade-game-239.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="deathSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-game-over-213.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="powerupSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="dimensionSound">
+        <source src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-positive-interface-2571.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
-        // Game State
-        const game = {
-            energy: 0,
-            energyPerClick: 1,
-            energyPerSecond: 0,
-            totalClicks: 0,
-            totalEnergy: 0,
-            upgrades: [],
-            achievements: [],
-            combo: 0,
-            lastClickTime: 0,
-            comboTimeout: null,
-            prestigePoints: 0,
-            highestEnergy: 0,
-            particles: [],
-            clickEffects: [],
-            version: "1.0.0",
-            saveVersion: "1.0.0"
+        // ==== INSANE GAME SETUP ====
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 800;
+        canvas.height = 600;
+        
+        // ==== CRAZY GAME VARIABLES ====
+        let score = 0;
+        let highScore = localStorage.getItem('highScore') || 0;
+        let gameOver = false;
+        let dimension = 1;
+        let glitchEffect = false;
+        let blackHoleActive = false;
+        let powerUpActive = false;
+        let timeWarp = 1.0;
+        let combo = 1;
+        let jumps = 0;
+        let cheatMode = false;
+        let soundOn = true;
+        let narrationTimeout;
+        let konamiCode = [];
+        let konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let particles = [];
+        let screenShake = 0;
+        let rainbowMode = false;
+        let invertedControls = false;
+        let gravityWells = [];
+        let lastObstacleTime = 0;
+        let isMobile = /Mobi|Android/i.test(navigator.userAgent);
+        
+        // ==== PSYCHEDELIC PLAYER ====
+        const player = {
+            x: 100,
+            y: 300,
+            width: 30,
+            height: 30,
+            speed: 5,
+            gravity: 0.5,
+            velocity: 0,
+            jumpForce: -12,
+            color: '#0FF',
+            trail: [],
+            maxTrail: 10,
+            isDashing: false,
+            dashCooldown: 0,
+            rotation: 0,
+            spinSpeed: 0
         };
         
-        // Upgrades Data
-        const upgradesData = [
-            { id: 1, name: "Solar Panel", description: "Generate 0.2 energy per second", baseCost: 10, baseValue: 0.2, scaling: 1.15, maxLevel: 0, unlockAt: 0 },
-            { id: 2, name: "Fusion Reactor", description: "Generate 1 energy per second", baseCost: 100, baseValue: 1, scaling: 1.15, maxLevel: 0, unlockAt: 50 },
-            { id: 3, name: "Quantum Singularity", description: "Generate 5 energy per second", baseCost: 1000, baseValue: 5, scaling: 1.15, maxLevel: 0, unlockAt: 500 },
-            { id: 4, name: "Click Amplifier", description: "+1 energy per click", baseCost: 50, baseValue: 1, scaling: 1.2, maxLevel: 0, unlockAt: 20 },
-            { id: 5, name: "Click Multiplier", description: "Multiply click power by 1.5x", baseCost: 200, baseValue: 1.5, scaling: 1.3, maxLevel: 0, unlockAt: 100 },
-            { id: 6, name: "Auto-Clicker", description: "Automatically click once per second", baseCost: 500, baseValue: 1, scaling: 1.25, maxLevel: 0, unlockAt: 300 },
-            { id: 7, name: "Critical Chance", description: "10% chance for 5x energy", baseCost: 1000, baseValue: 0.1, scaling: 1.4, maxLevel: 0, unlockAt: 800 },
-            { id: 8, name: "Combo Bonus", description: "Increase combo multiplier", baseCost: 1500, baseValue: 0.2, scaling: 1.5, maxLevel: 0, unlockAt: 1200 }
-        ];
+        // ==== CRAZY GAME ELEMENTS ====
+        let obstacles = [];
+        let powerUps = [];
+        let blackHole = null;
+        let dimensionPortals = [];
+        let timeWarps = [];
+        let quantumParticles = [];
         
-        // Achievements Data
-        const achievementsData = [
-            { id: 1, name: "First Click", description: "Click for the first time", goal: 1, current: 0, type: "clicks", reward: 10, unlocked: false },
-            { id: 2, name: "Energy Novice", description: "Reach 100 energy", goal: 100, current: 0, type: "energy", reward: 50, unlocked: false },
-            { id: 3, name: "Click Master", description: "Perform 500 clicks", goal: 500, current: 0, type: "clicks", reward: 100, unlocked: false },
-            { id: 4, name: "Energy Expert", description: "Reach 1,000 energy", goal: 1000, current: 0, type: "energy", reward: 200, unlocked: false },
-            { id: 5, name: "Upgrade Enthusiast", description: "Buy 10 upgrades", goal: 10, current: 0, type: "upgrades", reward: 150, unlocked: false },
-            { id: 6, name: "Combo Starter", description: "Reach a 5x combo", goal: 5, current: 0, type: "combo", reward: 75, unlocked: false },
-            { id: 7, name: "Energy Master", description: "Reach 10,000 energy", goal: 10000, current: 0, type: "energy", reward: 500, unlocked: false },
-            { id: 8, name: "Click Legend", description: "Perform 5,000 clicks", goal: 5000, current: 0, type: "clicks", reward: 1000, unlocked: false },
-            { id: 9, name: "Critical Success", description: "Get 50 critical hits", goal: 50, current: 0, type: "criticals", reward: 300, unlocked: false },
-            { id: 10, name: "Prestige Seeker", description: "Prestige once", goal: 1, current: 0, type: "prestige", reward: 1000, unlocked: false }
-        ];
+        // ==== SOUND SETUP ====
+        const bgMusic = document.getElementById('bgMusic');
+        const jumpSound = document.getElementById('jumpSound');
+        const deathSound = document.getElementById('deathSound');
+        const powerupSound = document.getElementById('powerupSound');
+        const dimensionSound = document.getElementById('dimensionSound');
         
-        // DOM Elements
-        const energyDisplay = document.getElementById('energy');
-        const epsDisplay = document.getElementById('eps');
-        const epcDisplay = document.getElementById('epc');
-        const clickArea = document.getElementById('clickArea');
-        const clickTarget = document.getElementById('clickTarget');
-        const upgradesContainer = document.getElementById('upgradesContainer');
-        const achievementsContainer = document.getElementById('achievementsContainer');
-        const comboDisplay = document.getElementById('comboDisplay');
-        const notification = document.getElementById('notification');
-        const notificationTitle = document.getElementById('notificationTitle');
-        const notificationMessage = document.getElementById('notificationMessage');
-        const prestigeButton = document.getElementById('prestigeButton');
-        const particlesContainer = document.getElementById('particles');
+        // ==== UI UPDATES ====
+        document.getElementById('highScore').textContent = highScore;
+        document.getElementById('soundToggle').addEventListener('click', toggleSound);
+        document.getElementById('cheatMode').addEventListener('click', toggleCheatMode);
         
-        // Initialize the game
-        function initGame() {
-            loadGame();
-            setupUpgrades();
-            setupAchievements();
-            render();
+        // ==== MOBILE CONTROLS ====
+        if (isMobile) {
+            const mobileControls = document.createElement('div');
+            mobileControls.style.position = 'absolute';
+            mobileControls.style.bottom = '20px';
+            mobileControls.style.left = '0';
+            mobileControls.style.right = '0';
+            mobileControls.style.display = 'flex';
+            mobileControls.style.justifyContent = 'center';
+            mobileControls.style.gap = '50px';
+            mobileControls.style.zIndex = '100';
             
-            // Game loop
-            setInterval(gameLoop, 1000);
+            const jumpBtn = document.createElement('div');
+            jumpBtn.style.width = '80px';
+            jumpBtn.style.height = '80px';
+            jumpBtn.style.backgroundColor = 'rgba(0,255,255,0.3)';
+            jumpBtn.style.borderRadius = '50%';
+            jumpBtn.style.display = 'flex';
+            jumpBtn.style.alignItems = 'center';
+            jumpBtn.style.justifyContent = 'center';
+            jumpBtn.style.fontSize = '24px';
+            jumpBtn.style.color = 'white';
+            jumpBtn.style.border = '2px solid #0ff';
+            jumpBtn.style.boxShadow = '0 0 10px #0ff';
+            jumpBtn.textContent = '↑';
+            jumpBtn.addEventListener('touchstart', () => keys[' '] = true);
+            jumpBtn.addEventListener('touchend', () => keys[' '] = false);
             
-            // Animation loop
-            requestAnimationFrame(animationLoop);
+            const dashBtn = document.createElement('div');
+            dashBtn.style.width = '80px';
+            dashBtn.style.height = '80px';
+            dashBtn.style.backgroundColor = 'rgba(255,0,255,0.3)';
+            dashBtn.style.borderRadius = '50%';
+            dashBtn.style.display = 'flex';
+            dashBtn.style.alignItems = 'center';
+            dashBtn.style.justifyContent = 'center';
+            dashBtn.style.fontSize = '24px';
+            dashBtn.style.color = 'white';
+            dashBtn.style.border = '2px solid #f0f';
+            dashBtn.style.boxShadow = '0 0 10px #f0f';
+            dashBtn.textContent = '⚡';
+            dashBtn.addEventListener('touchstart', () => keys['Shift'] = true);
+            dashBtn.addEventListener('touchend', () => keys['Shift'] = false);
+            
+            mobileControls.appendChild(dashBtn);
+            mobileControls.appendChild(jumpBtn);
+            document.body.appendChild(mobileControls);
         }
         
-        // Game loop
-        function gameLoop() {
-            // Generate energy from passive sources
-            generatePassiveEnergy();
-            
-            // Update displays
-            updateDisplays();
-            
-            // Check for achievements
-            checkAchievements();
-            
-            // Auto-clicker functionality
-            autoClick();
-            
-            // Save game periodically
-            if (game.totalClicks % 10 === 0) {
-                saveGame();
-            }
-            
-            // Show prestige button if conditions are met
-            if (game.energy >= 10000 && game.prestigePoints === 0) {
-                prestigeButton.style.display = 'block';
-            }
-        }
-        
-        // Animation loop
-        function animationLoop() {
-            updateParticles();
-            updateClickEffects();
-            requestAnimationFrame(animationLoop);
-        }
-        
-        // Setup upgrades
-        function setupUpgrades() {
-            upgradesContainer.innerHTML = '';
-            game.upgrades = JSON.parse(JSON.stringify(upgradesData));
-            
-            game.upgrades.forEach(upgrade => {
-                const upgradeElement = document.createElement('div');
-                upgradeElement.className = `upgrade-item ${game.energy >= upgrade.unlockAt ? '' : 'locked'}`;
-                upgradeElement.innerHTML = `
-                    <div class="upgrade-header">
-                        <span class="upgrade-name">${upgrade.name}</span>
-                        <span class="upgrade-cost">Cost: ${Math.floor(upgrade.baseCost * Math.pow(upgrade.scaling, upgrade.maxLevel))}</span>
-                    </div>
-                    <div class="upgrade-description">${upgrade.description}</div>
-                    <div class="upgrade-level">Level: ${upgrade.maxLevel}</div>
-                `;
-                
-                if (game.energy >= upgrade.unlockAt) {
-                    upgradeElement.addEventListener('click', () => buyUpgrade(upgrade.id));
-                }
-                
-                upgradesContainer.appendChild(upgradeElement);
-                upgrade.element = upgradeElement;
-            });
-        }
-        
-        // Setup achievements
-        function setupAchievements() {
-            achievementsContainer.innerHTML = '';
-            game.achievements = JSON.parse(JSON.stringify(achievementsData));
-            
-            game.achievements.forEach(achievement => {
-                const achievementElement = document.createElement('div');
-                achievementElement.className = `achievement ${achievement.unlocked ? 'unlocked' : ''}`;
-                
-                const progressPercent = (achievement.current / achievement.goal) * 100;
-                
-                achievementElement.innerHTML = `
-                    <div class="achievement-title">${achievement.name}</div>
-                    <div class="achievement-desc">${achievement.description}</div>
-                    ${achievement.unlocked ? 
-                        '<div class="achievement-reward">Reward: +' + achievement.reward + ' energy</div>' : 
-                        `<div class="achievement-progress">
-                            <div class="achievement-progress-bar" style="width: ${progressPercent}%"></div>
-                        </div>`
-                    }
-                `;
-                
-                achievementsContainer.appendChild(achievementElement);
-                achievement.element = achievementElement;
-            });
-        }
-        
-        // Buy upgrade
-        function buyUpgrade(upgradeId) {
-            const upgrade = game.upgrades.find(u => u.id === upgradeId);
-            if (!upgrade) return;
-            
-            const cost = Math.floor(upgrade.baseCost * Math.pow(upgrade.scaling, upgrade.maxLevel));
-            
-            if (game.energy >= cost) {
-                game.energy -= cost;
-                upgrade.maxLevel++;
-                
-                // Apply upgrade effect
-                switch (upgrade.id) {
-                    case 1:
-                    case 2:
-                    case 3:
-                        game.energyPerSecond += upgrade.baseValue;
-                        break;
-                    case 4:
-                        game.energyPerClick += upgrade.baseValue;
-                        break;
-                    case 5:
-                        game.energyPerClick *= upgrade.baseValue;
-                        break;
-                    case 7:
-                        // Critical chance is handled in the click function
-                        break;
-                    case 8:
-                        // Combo bonus is handled in the click function
-                        break;
-                }
-                
-                // Update upgrade display
-                updateUpgradeDisplay(upgrade);
-                updateDisplays();
-                
-                // Check for upgrade-related achievements
-                checkAchievements();
-                
-                // Visual feedback
-                createParticles(20, upgrade.element.getBoundingClientRect());
-            }
-        }
-        
-        // Update upgrade display
-        function updateUpgradeDisplay(upgrade) {
-            const cost = Math.floor(upgrade.baseCost * Math.pow(upgrade.scaling, upgrade.maxLevel));
-            
-            upgrade.element.innerHTML = `
-                <div class="upgrade-header">
-                    <span class="upgrade-name">${upgrade.name}</span>
-                    <span class="upgrade-cost">Cost: ${cost}</span>
-                </div>
-                <div class="upgrade-description">${upgrade.description}</div>
-                <div class="upgrade-level">Level: ${upgrade.maxLevel}</div>
-            `;
-            
-            // Check if player can afford
-            if (game.energy < cost) {
-                upgrade.element.classList.add('locked');
-            } else {
-                upgrade.element.classList.remove('locked');
-            }
-        }
-        
-        // Handle click
-        function handleClick(event) {
-            // Check if click is on the target or area
-            const isTargetClick = event.target === clickTarget || event.target.closest('#clickTarget');
-            
-            // Calculate click position for effects
-            const rect = clickArea.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-            
-            // Add click effect
-            addClickEffect(x, y);
-            
-            // Calculate energy gain
-            let energyGain = game.energyPerClick;
-            
-            // Combo system
-            const now = Date.now();
-            const timeDiff = now - game.lastClickTime;
-            
-            if (timeDiff < 500) { // Half second window for combos
-                game.combo++;
-                clearTimeout(game.comboTimeout);
-                
-                // Show combo display
-                if (game.combo > 1) {
-                    comboDisplay.textContent = `${game.combo}x COMBO!`;
-                    comboDisplay.style.opacity = '1';
-                    
-                    // Apply combo bonus if upgrade is purchased
-                    const comboUpgrade = game.upgrades.find(u => u.id === 8);
-                    if (comboUpgrade && comboUpgrade.maxLevel > 0) {
-                        const comboMultiplier = 1 + (comboUpgrade.maxLevel * comboUpgrade.baseValue);
-                        energyGain *= comboMultiplier;
-                    }
-                    
-                    // Animate combo display
-                    setTimeout(() => {
-                        comboDisplay.style.opacity = '0';
-                    }, 500);
-                }
-            } else {
-                game.combo = 0;
-            }
-            
-            game.lastClickTime = now;
-            game.comboTimeout = setTimeout(() => {
-                game.combo = 0;
-            }, 500);
-            
-            // Critical hit chance
-            const criticalUpgrade = game.upgrades.find(u => u.id === 7);
-            let isCritical = false;
-            
-            if (criticalUpgrade && criticalUpgrade.maxLevel > 0) {
-                const criticalChance = criticalUpgrade.baseValue * criticalUpgrade.maxLevel;
-                if (Math.random() < criticalChance) {
-                    energyGain *= 5;
-                    isCritical = true;
-                    game.achievements.find(a => a.id === 9).current++;
-                    
-                    // Visual feedback for critical
-                    clickTarget.classList.add('critical-hit');
-                    setTimeout(() => {
-                        clickTarget.classList.remove('critical-hit');
-                    }, 300);
-                }
-            }
-            
-            // Add energy
-            game.energy += energyGain;
-            game.totalClicks++;
-            game.totalEnergy += energyGain;
-            
-            if (game.energy > game.highestEnergy) {
-                game.highestEnergy = game.energy;
-            }
-            
-            // Update displays
-            updateDisplays();
-            
-            // Visual feedback
-            if (isTargetClick) {
-                clickTarget.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    clickTarget.style.transform = 'scale(1)';
-                }, 100);
-            }
-            
-            // Add particles for more satisfying feedback
-            createParticles(isCritical ? 30 : 15, { left: x, top: y, width: 10, height: 10 });
-            
-            // Check achievements
-            checkAchievements();
-        }
-        
-        // Generate passive energy
-        function generatePassiveEnergy() {
-            game.energy += game.energyPerSecond;
-            game.totalEnergy += game.energyPerSecond;
-            
-            if (game.energy > game.highestEnergy) {
-                game.highestEnergy = game.energy;
-            }
-        }
-        
-        // Auto-clicker functionality
-        function autoClick() {
-            const autoClickerUpgrade = game.upgrades.find(u => u.id === 6);
-            if (autoClickerUpgrade && autoClickerUpgrade.maxLevel > 0) {
-                const clicks = autoClickerUpgrade.maxLevel * autoClickerUpgrade.baseValue;
-                for (let i = 0; i < clicks; i++) {
-                    // Simulate a click with a slight delay to prevent freezing
-                    setTimeout(() => {
-                        const rect = clickArea.getBoundingClientRect();
-                        const x = rect.width / 2;
-                        const y = rect.height / 2;
-                        
-                        // Add click effect at center
-                        addClickEffect(x, y);
-                        
-                        // Add energy
-                        game.energy += game.energyPerClick;
-                        game.totalClicks++;
-                        game.totalEnergy += game.energyPerClick;
-                        
-                        if (game.energy > game.highestEnergy) {
-                            game.highestEnergy = game.energy;
-                        }
-                        
-                        // Update displays
-                        updateDisplays();
-                        
-                        // Check achievements
-                        checkAchievements();
-                    }, i * 50);
-                }
-            }
-        }
-        
-        // Check achievements
-        function checkAchievements() {
-            let unlockedAny = false;
-            
-            game.achievements.forEach(achievement => {
-                if (achievement.unlocked) return;
-                
-                // Update current progress based on type
-                switch (achievement.type) {
-                    case 'clicks':
-                        achievement.current = game.totalClicks;
-                        break;
-                    case 'energy':
-                        achievement.current = game.energy;
-                        break;
-                    case 'upgrades':
-                        achievement.current = game.upgrades.reduce((sum, u) => sum + u.maxLevel, 0);
-                        break;
-                    case 'combo':
-                        if (game.combo > achievement.current) {
-                            achievement.current = game.combo;
-                        }
-                        break;
-                    case 'criticals':
-                        // Already updated in click handler
-                        break;
-                    case 'prestige':
-                        // Handled in prestige function
-                        break;
-                }
-                
-                // Check if achievement is unlocked
-                if (achievement.current >= achievement.goal) {
-                    achievement.unlocked = true;
-                    unlockedAny = true;
-                    
-                    // Apply reward
-                    game.energy += achievement.reward;
-                    
-                    // Show notification
-                    showNotification(achievement.name, `You earned ${achievement.reward} energy!`);
-                    
-                    // Update achievement display
-                    updateAchievementDisplay(achievement);
-                } else {
-                    // Update progress bar
-                    const progressBar = achievement.element.querySelector('.achievement-progress-bar');
-                    if (progressBar) {
-                        const progressPercent = (achievement.current / achievement.goal) * 100;
-                        progressBar.style.width = `${progressPercent}%`;
-                    }
-                }
-            });
-            
-            if (unlockedAny) {
-                updateDisplays();
-            }
-        }
-        
-        // Update achievement display
-        function updateAchievementDisplay(achievement) {
-            achievement.element.classList.add('unlocked');
-            achievement.element.innerHTML = `
-                <div class="achievement-title">${achievement.name}</div>
-                <div class="achievement-desc">${achievement.description}</div>
-                <div class="achievement-reward">Reward: +${achievement.reward} energy</div>
-            `;
-        }
-        
-        // Show notification
-        function showNotification(title, message) {
-            notificationTitle.textContent = title;
-            notificationMessage.textContent = message;
-            
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-        
-        // Update displays
-        function updateDisplays() {
-            energyDisplay.textContent = Math.floor(game.energy).toLocaleString();
-            epsDisplay.textContent = game.energyPerSecond.toFixed(1);
-            epcDisplay.textContent = game.energyPerClick.toFixed(1);
-            
-            // Update upgrade affordances
-            game.upgrades.forEach(upgrade => {
-                const cost = Math.floor(upgrade.baseCost * Math.pow(upgrade.scaling, upgrade.maxLevel));
-                if (game.energy >= cost && game.energy >= upgrade.unlockAt) {
-                    upgrade.element.classList.remove('locked');
-                } else {
-                    upgrade.element.classList.add('locked');
-                }
-            });
-        }
-        
-        // Render the game
-        function render() {
-            updateDisplays();
-        }
-        
-        // Add click effect
-        function addClickEffect(x, y) {
-            game.clickEffects.push({
-                x,
-                y,
-                size: Math.random() * 10 + 5,
-                life: 1,
-                speedX: (Math.random() - 0.5) * 10,
-                speedY: (Math.random() - 0.5) * 10,
-                alpha: 1
-            });
-        }
-        
-        // Update click effects
-        function updateClickEffects() {
-            const effectsToKeep = [];
-            
-            game.clickEffects.forEach(effect => {
-                effect.x += effect.speedX;
-                effect.y += effect.speedY;
-                effect.life -= 0.02;
-                effect.alpha = effect.life;
-                
-                if (effect.life > 0) {
-                    effectsToKeep.push(effect);
-                }
-            });
-            
-            game.clickEffects = effectsToKeep;
-        }
-        
-        // Create particles
-        function createParticles(count, rect) {
+        // ==== PARTICLE SYSTEM ====
+        function createParticles(x, y, count, color) {
             for (let i = 0; i < count; i++) {
-                game.particles.push({
-                    x: rect.left + rect.width / 2,
-                    y: rect.top + rect.height / 2,
+                particles.push({
+                    x: x,
+                    y: y,
                     size: Math.random() * 5 + 2,
-                    color: `hsl(${Math.random() * 60 + 200}, 80%, 60%)`,
-                    speedX: (Math.random() - 0.5) * 10,
-                    speedY: (Math.random() - 0.5) * 10,
-                    life: 1
+                    color: color || `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    speedX: Math.random() * 6 - 3,
+                    speedY: Math.random() * 6 - 3,
+                    life: 100
                 });
             }
         }
         
-        // Update particles
         function updateParticles() {
-            particlesContainer.innerHTML = '';
-            
-            const particlesToKeep = [];
-            
-            game.particles.forEach(particle => {
-                particle.x += particle.speedX;
-                particle.y += particle.speedY;
-                particle.life -= 0.01;
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].x += particles[i].speedX;
+                particles[i].y += particles[i].speedY;
+                particles[i].life--;
                 
-                if (particle.life > 0) {
-                    particlesToKeep.push(particle);
-                    
-                    const particleElement = document.createElement('div');
-                    particleElement.className = 'particle';
-                    particleElement.style.left = `${particle.x}px`;
-                    particleElement.style.top = `${particle.y}px`;
-                    particleElement.style.width = `${particle.size}px`;
-                    particleElement.style.height = `${particle.size}px`;
-                    particleElement.style.backgroundColor = particle.color;
-                    particleElement.style.opacity = particle.life;
-                    
-                    particlesContainer.appendChild(particleElement);
+                if (particles[i].life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+        }
+        
+        function drawParticles() {
+            const particlesCanvas = document.getElementById('particles');
+            const pctx = particlesCanvas.getContext('2d');
+            particlesCanvas.width = canvas.width;
+            particlesCanvas.height = canvas.height;
+            
+            pctx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+            
+            particles.forEach(p => {
+                pctx.globalAlpha = p.life / 100;
+                pctx.fillStyle = p.color;
+                pctx.beginPath();
+                pctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                pctx.fill();
+            });
+            
+            pctx.globalAlpha = 1.0;
+        }
+        
+        // ==== NARRATION SYSTEM ====
+        function showNarration(text, duration = 3000) {
+            const narration = document.getElementById('narration');
+            narration.textContent = text;
+            narration.style.opacity = 1;
+            
+            clearTimeout(narrationTimeout);
+            narrationTimeout = setTimeout(() => {
+                narration.style.opacity = 0;
+            }, duration);
+        }
+        
+        // ==== SOUND FUNCTIONS ====
+        function toggleSound() {
+            soundOn = !soundOn;
+            document.getElementById('soundToggle').textContent = soundOn ? '🔊' : '🔇';
+            
+            if (soundOn) {
+                bgMusic.play().catch(e => console.log("Audio play prevented:", e));
+            } else {
+                bgMusic.pause();
+            }
+        }
+        
+        function playSound(sound, volume = 1.0) {
+            if (!soundOn) return;
+            
+            const clone = sound.cloneNode();
+            clone.volume = volume;
+            clone.play().catch(e => console.log("Sound play prevented:", e));
+        }
+        
+        // ==== CHEAT MODE ====
+        function toggleCheatMode() {
+            cheatMode = !cheatMode;
+            document.getElementById('cheatMode').textContent = cheatMode ? 
+                'CHEAT MODE: ON' : 'CHEAT MODE: OFF';
+            document.getElementById('cheatMode').style.background = cheatMode ? 
+                'rgba(0,255,0,0.7)' : 'rgba(255,0,0,0.7)';
+            
+            if (cheatMode) {
+                showNarration("REALITY HACK ACTIVATED!", 2000);
+                createParticles(canvas.width/2, canvas.height/2, 100, '#0f0');
+            }
+        }
+        
+        // ==== KONAMI CODE ====
+        function checkKonamiCode(key) {
+            konamiCode.push(key);
+            if (konamiCode.length > konamiSequence.length) {
+                konamiCode.shift();
+            }
+            
+            if (konamiCode.join(',') === konamiSequence.join(',')) {
+                rainbowMode = !rainbowMode;
+                showNarration(rainbowMode ? "RAINBOW MODE ACTIVATED!" : "RAINBOW MODE DEACTIVATED", 2000);
+                createParticles(canvas.width/2, canvas.height/2, 200, '#fff');
+                konamiCode = [];
+            }
+        }
+        
+        // ==== GAME LOOP ====
+        function gameLoop() {
+            if (gameOver) return;
+            
+            update();
+            draw();
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // ==== UPDATE GAME STATE ====
+        function update() {
+            // Time warp effect
+            const timeDelta = timeWarp * (cheatMode ? 0.7 : 1.0);
+            
+            // Player trail
+            player.trail.push({x: player.x, y: player.y, color: player.color});
+            if (player.trail.length > player.maxTrail) {
+                player.trail.shift();
+            }
+            
+            // Player movement
+            player.velocity += player.gravity * timeDelta;
+            player.y += player.velocity * timeDelta;
+            
+            // Player rotation
+            player.rotation += player.spinSpeed * timeDelta;
+            player.spinSpeed *= 0.95; // Friction
+            
+            // Dash ability
+            if (player.dashCooldown > 0) {
+                player.dashCooldown -= timeDelta;
+            }
+            
+            // Jump on Spacebar
+            if ((keys[' '] || keys['ArrowUp']) && player.y >= canvas.height - player.height) {
+                player.velocity = player.jumpForce * (invertedControls ? -1 : 1);
+                jumps++;
+                playSound(jumpSound);
+                createParticles(player.x + player.width/2, player.y + player.height, 20, player.color);
+                
+                // Combo system
+                const now = Date.now();
+                if (now - lastObstacleTime < 500) {
+                    combo++;
+                    document.getElementById('combo').textContent = `x${combo}`;
+                    score += combo * 2;
+                }
+                lastObstacleTime = now;
+            }
+            
+            // Dash on Shift
+            if (keys['Shift'] && player.dashCooldown <= 0) {
+                player.isDashing = true;
+                player.dashCooldown = 100;
+                player.velocity = -20;
+                player.spinSpeed = 0.5;
+                setTimeout(() => player.isDashing = false, 200);
+                createParticles(player.x + player.width/2, player.y + player.height/2, 50, '#f0f');
+                playSound(powerupSound, 0.7);
+            }
+            
+            // Boundary check
+            if (player.y > canvas.height - player.height) {
+                player.y = canvas.height - player.height;
+                player.velocity = 0;
+            }
+            
+            // Screen shake
+            if (screenShake > 0) {
+                screenShake--;
+            }
+            
+            // Generate obstacles with increasing difficulty
+            const obstacleRate = 0.01 + (score / 10000);
+            if (Math.random() < obstacleRate * timeDelta) {
+                const types = ['normal', 'spinning', 'bouncy', 'homing', 'explosive'];
+                const type = types[Math.floor(Math.random() * types.length)];
+                
+                const obstacle = {
+                    x: canvas.width,
+                    y: Math.random() * (canvas.height - 100),
+                    width: 20 + Math.random() * 30,
+                    height: 30 + Math.random() * 100,
+                    speed: 3 + Math.random() * 3 + (score / 1000),
+                    color: `hsl(${Math.random() * 360}, 70%, 50%)`,
+                    type: type,
+                    rotation: 0,
+                    spinSpeed: type === 'spinning' ? Math.random() * 0.1 - 0.05 : 0,
+                    bounce: type === 'bouncy' ? Math.random() * 5 : 0,
+                    bounceDir: 1,
+                    homing: type === 'homing' ? 0.02 : 0,
+                    life: type === 'explosive' ? 200 : Infinity
+                };
+                
+                obstacles.push(obstacle);
+            }
+            
+            // Move obstacles with special behaviors
+            obstacles.forEach((obstacle, index) => {
+                obstacle.x -= obstacle.speed * timeDelta;
+                
+                // Special behaviors
+                if (obstacle.type === 'spinning') {
+                    obstacle.rotation += obstacle.spinSpeed * timeDelta;
+                }
+                
+                if (obstacle.type === 'bouncy') {
+                    obstacle.y += obstacle.bounce * obstacle.bounceDir * timeDelta;
+                    if (obstacle.y < 0 || obstacle.y > canvas.height - obstacle.height) {
+                        obstacle.bounceDir *= -1;
+                    }
+                }
+                
+                if (obstacle.type === 'homing') {
+                    obstacle.y += (player.y - obstacle.y) * obstacle.homing * timeDelta;
+                }
+                
+                if (obstacle.type === 'explosive') {
+                    obstacle.life -= timeDelta;
+                    if (obstacle.life <= 0) {
+                        createParticles(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2, 50, obstacle.color);
+                        obstacles.splice(index, 1);
+                        screenShake = 10;
+                        return;
+                    }
+                }
+                
+                if (obstacle.x + obstacle.width < 0) {
+                    obstacles.splice(index, 1);
+                    score += 10 * combo;
+                    document.getElementById('score').textContent = score;
                 }
             });
             
-            game.particles = particlesToKeep;
-        }
-        
-        // Prestige function
-        function prestige() {
-            if (game.energy < 10000) return;
-            
-            // Calculate prestige points (1% of highest energy)
-            const points = Math.floor(game.highestEnergy / 100);
-            game.prestigePoints += points;
-            
-            // Reset game state but keep prestige points
-            const oldPrestige = game.prestigePoints;
-            Object.assign(game, {
-                energy: 0,
-                energyPerClick: 1 + (oldPrestige * 0.1), // Bonus based on prestige points
-                energyPerSecond: 0,
-                totalClicks: 0,
-                totalEnergy: 0,
-                combo: 0,
-                lastClickTime: 0,
-                highestEnergy: 0,
-                upgrades: JSON.parse(JSON.stringify(upgradesData)),
-                achievements: JSON.parse(JSON.stringify(achievementsData))
+            // Collision detection with crazy effects
+            obstacles.forEach(obstacle => {
+                if (
+                    player.x < obstacle.x + obstacle.width &&
+                    player.x + player.width > obstacle.x &&
+                    player.y < obstacle.y + obstacle.height &&
+                    player.y + player.height > obstacle.y
+                ) {
+                    if (!powerUpActive && !cheatMode) {
+                        if (obstacle.type === 'explosive') {
+                            createParticles(player.x + player.width/2, player.y + player.height/2, 200, '#f00');
+                            screenShake = 20;
+                        }
+                        endGame();
+                    } else if (powerUpActive) {
+                        obstacles.splice(obstacles.indexOf(obstacle), 1);
+                        createParticles(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2, 30, '#0f0');
+                        score += 50;
+                    }
+                }
             });
-            game.prestigePoints = oldPrestige;
             
-            // Update achievement for prestige
-            game.achievements.find(a => a.id === 10).current = 1;
-            game.achievements.find(a => a.id === 10).unlocked = true;
+            // Dimension Shift (Every 100 points) with increasing effects
+            if (score > 0 && score % 100 === 0 && dimension < 10) {
+                shiftDimension();
+            }
             
-            // Show notification
-            showNotification("Prestige!", `You gained ${points} prestige points!`);
+            // Black Hole Event (Random) with gravity well
+            if (Math.random() < 0.0005 * timeDelta && !blackHoleActive && dimension > 3) {
+                spawnBlackHole();
+            }
             
-            // Reinitialize game
-            setupUpgrades();
-            setupAchievements();
-            updateDisplays();
+            // Power-Ups (Random) with different types
+            if (Math.random() < 0.003 * timeDelta && !powerUpActive) {
+                spawnPowerUp();
+            }
             
-            // Hide prestige button until conditions are met again
-            prestigeButton.style.display = 'none';
+            // Gravity wells
+            updateGravityWells();
             
-            // Save game
-            saveGame();
+            // Quantum particles
+            updateQuantumParticles();
+            
+            // Time warps
+            updateTimeWarps();
+            
+            // Dimension portals
+            updateDimensionPortals();
+            
+            // Update particles
+            updateParticles();
         }
         
-        // Save game
-        function saveGame() {
-            const saveData = {
-                version: game.version,
-                energy: game.energy,
-                energyPerClick: game.energyPerClick,
-                energyPerSecond: game.energyPerSecond,
-                totalClicks: game.totalClicks,
-                totalEnergy: game.totalEnergy,
-                upgrades: game.upgrades,
-                achievements: game.achievements,
-                prestigePoints: game.prestigePoints,
-                highestEnergy: game.highestEnergy
+        // ==== DRAW EVERYTHING WITH CRAZY EFFECTS ====
+        function draw() {
+            // Clear screen with trippy background
+            if (rainbowMode) {
+                ctx.fillStyle = `hsl(${Date.now() % 360}, 70%, 10%)`;
+            } else {
+                ctx.fillStyle = '#111';
+            }
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw starfield background
+            drawStarfield();
+            
+            // Apply screen shake
+            const shakeX = screenShake > 0 ? Math.random() * 10 - 5 : 0;
+            const shakeY = screenShake > 0 ? Math.random() * 10 - 5 : 0;
+            ctx.save();
+            ctx.translate(shakeX, shakeY);
+            
+            // Draw gravity wells
+            drawGravityWells();
+            
+            // Draw time warps
+            drawTimeWarps();
+            
+            // Draw dimension portals
+            drawDimensionPortals();
+            
+            // Draw quantum particles
+            drawQuantumParticles();
+            
+            // Draw player trail
+            player.trail.forEach((pos, i) => {
+                const alpha = i / player.trail.length;
+                ctx.fillStyle = pos.color.replace(')', `, ${alpha})`).replace('rgb', 'rgba');
+                ctx.fillRect(pos.x, pos.y, player.width, player.height);
+            });
+            
+            // Draw player with rotation
+            ctx.save();
+            ctx.translate(player.x + player.width/2, player.y + player.height/2);
+            ctx.rotate(player.rotation);
+            ctx.fillStyle = player.color;
+            if (player.isDashing) {
+                ctx.fillStyle = '#f0f';
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = '#f0f';
+            }
+            ctx.fillRect(-player.width/2, -player.height/2, player.width, player.height);
+            
+            // Dash effect
+            if (player.isDashing) {
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(-player.width/2, -player.height/2, player.width, player.height);
+            }
+            ctx.restore();
+            
+            // Draw obstacles with special effects
+            obstacles.forEach(obstacle => {
+                ctx.save();
+                ctx.translate(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2);
+                ctx.rotate(obstacle.rotation);
+                
+                if (obstacle.type === 'explosive') {
+                    const pulse = Math.sin(Date.now() * 0.01) * 5;
+                    ctx.shadowBlur = 10 + pulse;
+                    ctx.shadowColor = obstacle.color;
+                }
+                
+                ctx.fillStyle = obstacle.color;
+                ctx.fillRect(-obstacle.width/2, -obstacle.height/2, obstacle.width, obstacle.height);
+                
+                if (obstacle.type === 'explosive') {
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(-obstacle.width/2, -obstacle.height/2, obstacle.width, obstacle.height);
+                }
+                
+                ctx.restore();
+            });
+            
+            // Draw power-ups
+            powerUps.forEach(powerUp => {
+                ctx.fillStyle = powerUp.type === 'phantom' ? '#0f0' : '#f0f';
+                ctx.beginPath();
+                ctx.arc(powerUp.x, powerUp.y, powerUp.width/2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Pulsing effect
+                const pulse = Math.sin(Date.now() * 0.01) * 3;
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(powerUp.x, powerUp.y, powerUp.width/2 + pulse, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+            
+            // Draw Black Hole with accretion disk
+            if (blackHoleActive) {
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(blackHole.x, blackHole.y, blackHole.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Accretion disk
+                for (let i = 0; i < 3; i++) {
+                    ctx.strokeStyle = `hsla(${blackHole.hue + i * 120}, 100%, 50%, 0.5)`;
+                    ctx.lineWidth = 3 + i * 2;
+                    ctx.beginPath();
+                    ctx.arc(blackHole.x, blackHole.y, blackHole.radius + 10 + i * 15, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+                
+                // Gravitational lensing effect
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(blackHole.x, blackHole.y, blackHole.radius * 3, 0, Math.PI * 2);
+                ctx.clip();
+                
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.fillRect(blackHole.x - blackHole.radius * 3, blackHole.y - blackHole.radius * 3, 
+                             blackHole.radius * 6, blackHole.radius * 6);
+                
+                // Distort background
+                const distortion = blackHole.radius * 2;
+                for (let y = blackHole.y - distortion; y < blackHole.y + distortion; y += 5) {
+                    for (let x = blackHole.x - distortion; x < blackHole.x + distortion; x += 5) {
+                        const dx = x - blackHole.x;
+                        const dy = y - blackHole.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        const angle = Math.atan2(dy, dx);
+                        
+                        if (dist < blackHole.radius * 2 && dist > blackHole.radius) {
+                            const newDist = dist + (blackHole.radius * 2 - dist) * 0.5;
+                            const newX = blackHole.x + Math.cos(angle) * newDist;
+                            const newY = blackHole.y + Math.sin(angle) * newDist;
+                            
+                            ctx.drawImage(canvas, x, y, 5, 5, newX, newY, 5, 5);
+                        }
+                    }
+                }
+                ctx.restore();
+            }
+            
+            // Glitch Effect
+            if (glitchEffect) {
+                canvas.classList.add('glitch');
+                setTimeout(() => {
+                    canvas.classList.remove('glitch');
+                    glitchEffect = false;
+                }, 500);
+            }
+            
+            // Rainbow mode overlay
+            if (rainbowMode) {
+                ctx.fillStyle = `hsla(${Date.now() % 360}, 70%, 50%, 0.1)`;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            ctx.restore(); // Restore from screen shake
+            
+            // Draw particles on top
+            drawParticles();
+        }
+        
+        // ==== STARFIELD BACKGROUND ====
+        function drawStarfield() {
+            if (!this.stars) {
+                this.stars = [];
+                for (let i = 0; i < 200; i++) {
+                    this.stars.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        size: Math.random() * 2,
+                        speed: Math.random() * 0.5,
+                        alpha: Math.random()
+                    });
+                }
+            }
+            
+            this.stars.forEach(star => {
+                star.x -= star.speed * timeWarp;
+                if (star.x < 0) {
+                    star.x = canvas.width;
+                    star.y = Math.random() * canvas.height;
+                }
+                
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                ctx.fillRect(star.x, star.y, star.size, star.size);
+            });
+        }
+        
+        // ==== GRAVITY WELLS ====
+        function updateGravityWells() {
+            if (blackHoleActive) {
+                // Black hole gravity
+                const dx = player.x + player.width/2 - blackHole.x;
+                const dy = player.y + player.height/2 - blackHole.y;
+                const distSq = dx * dx + dy * dy;
+                const force = (blackHole.radius * 100) / distSq;
+                
+                if (distSq < blackHole.radius * blackHole.radius) {
+                    // Inside black hole - game over with special effect
+                    createParticles(player.x, player.y, 500, '#000');
+                    screenShake = 30;
+                    endGame();
+                    return;
+                }
+                
+                player.velocity += dy * 0.0001 * force * timeWarp;
+                player.x -= dx * 0.0001 * force * timeWarp;
+            }
+            
+            // Update other gravity wells
+            for (let i = gravityWells.length - 1; i >= 0; i--) {
+                gravityWells[i].life--;
+                if (gravityWells[i].life <= 0) {
+                    gravityWells.splice(i, 1);
+                }
+            }
+        }
+        
+        function drawGravityWells() {
+            gravityWells.forEach(well => {
+                const alpha = well.life / 100;
+                ctx.strokeStyle = `rgba(0, 255, 255, ${alpha})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(well.x, well.y, well.radius, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+        }
+        
+        // ==== TIME WARPS ====
+        function updateTimeWarps() {
+            if (Math.random() < 0.0003 * timeWarp && timeWarps.length < 3) {
+                timeWarps.push({
+                    x: canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: 30 + Math.random() * 50,
+                    speed: 2 + Math.random() * 3,
+                    type: Math.random() > 0.5 ? 'slow' : 'fast'
+                });
+            }
+            
+            for (let i = timeWarps.length - 1; i >= 0; i--) {
+                timeWarps[i].x -= timeWarps[i].speed * timeWarp;
+                
+                // Check collision with player
+                const dx = player.x + player.width/2 - timeWarps[i].x;
+                const dy = player.y + player.height/2 - timeWarps[i].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < timeWarps[i].radius) {
+                    timeWarp = timeWarps[i].type === 'slow' ? 0.5 : 2.0;
+                    document.getElementById('timeWarp').textContent = `${Math.round(timeWarp * 100)}%`;
+                    createParticles(timeWarps[i].x, timeWarps[i].y, 50, timeWarps[i].type === 'slow' ? '#00f' : '#f00');
+                    timeWarps.splice(i, 1);
+                    setTimeout(() => {
+                        timeWarp = 1.0;
+                        document.getElementById('timeWarp').textContent = '100%';
+                    }, 3000);
+                }
+                
+                if (timeWarps[i].x + timeWarps[i].radius < 0) {
+                    timeWarps.splice(i, 1);
+                }
+            }
+        }
+        
+        function drawTimeWarps() {
+            timeWarps.forEach(warp => {
+                ctx.fillStyle = warp.type === 'slow' ? 'rgba(0,0,255,0.3)' : 'rgba(255,0,0,0.3)';
+                ctx.beginPath();
+                ctx.arc(warp.x, warp.y, warp.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.strokeStyle = warp.type === 'slow' ? '#00f' : '#f00';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(warp.x, warp.y, warp.radius, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Spiral effect
+                ctx.beginPath();
+                for (let a = 0; a < Math.PI * 4; a += 0.1) {
+                    const r = warp.radius * (1 - a / (Math.PI * 4));
+                    const x = warp.x + Math.cos(a + Date.now() * 0.005) * r;
+                    const y = warp.y + Math.sin(a + Date.now() * 0.005) * r;
+                    if (a === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                ctx.strokeStyle = warp.type === 'slow' ? 'rgba(0,0,255,0.7)' : 'rgba(255,0,0,0.7)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            });
+        }
+        
+        // ==== DIMENSION PORTALS ====
+        function updateDimensionPortals() {
+            if (Math.random() < 0.0002 * timeWarp && dimensionPortals.length < 2) {
+                dimensionPortals.push({
+                    x: canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: 40,
+                    speed: 3,
+                    targetDimension: Math.floor(Math.random() * 5) + 1
+                });
+            }
+            
+            for (let i = dimensionPortals.length - 1; i >= 0; i--) {
+                dimensionPortals[i].x -= dimensionPortals[i].speed * timeWarp;
+                
+                // Check collision with player
+                const dx = player.x + player.width/2 - dimensionPortals[i].x;
+                const dy = player.y + player.height/2 - dimensionPortals[i].y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist < dimensionPortals[i].radius) {
+                    dimension = dimensionPortals[i].targetDimension;
+                    shiftDimension();
+                    createParticles(dimensionPortals[i].x, dimensionPortals[i].y, 100, '#ff0');
+                    dimensionPortals.splice(i, 1);
+                }
+                
+                if (dimensionPortals[i].x + dimensionPortals[i].radius < 0) {
+                    dimensionPortals.splice(i, 1);
+                }
+            }
+        }
+        
+        function drawDimensionPortals() {
+            dimensionPortals.forEach(portal => {
+                // Portal glow
+                const gradient = ctx.createRadialGradient(
+                    portal.x, portal.y, 0,
+                    portal.x, portal.y, portal.radius
+                );
+                gradient.addColorStop(0, `hsl(${portal.targetDimension * 60}, 100%, 50%)`);
+                gradient.addColorStop(1, 'rgba(0,0,0,0)');
+                
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(portal.x, portal.y, portal.radius, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Portal ring
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(portal.x, portal.y, portal.radius, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Dimension number
+                ctx.fillStyle = '#fff';
+                ctx.font = '20px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(portal.targetDimension, portal.x, portal.y);
+            });
+        }
+        
+        // ==== QUANTUM PARTICLES ====
+        function updateQuantumParticles() {
+            if (Math.random() < 0.01 * timeWarp) {
+                quantumParticles.push({
+                    x: canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: 3 + Math.random() * 5,
+                    speed: 2 + Math.random() * 3,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    life: 100 + Math.random() * 100,
+                    angle: 0,
+                    spin: Math.random() * 0.1 - 0.05
+                });
+            }
+            
+            for (let i = quantumParticles.length - 1; i >= 0; i--) {
+                quantumParticles[i].x -= quantumParticles[i].speed * timeWarp;
+                quantumParticles[i].angle += quantumParticles[i].spin * timeWarp;
+                quantumParticles[i].life--;
+                
+                if (quantumParticles[i].life <= 0 || quantumParticles[i].x + quantumParticles[i].size < 0) {
+                    quantumParticles.splice(i, 1);
+                }
+            }
+        }
+        
+        function drawQuantumParticles() {
+            quantumParticles.forEach(particle => {
+                ctx.save();
+                ctx.translate(particle.x, particle.y);
+                ctx.rotate(particle.angle);
+                
+                ctx.fillStyle = particle.color;
+                ctx.fillRect(-particle.size/2, -particle.size/2, particle.size, particle.size);
+                
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(-particle.size/2, -particle.size/2, particle.size, particle.size);
+                
+                ctx.restore();
+            });
+        }
+        
+        // ==== SHIFT DIMENSION (CHANGES PHYSICS AND VISUALS) ====
+        function shiftDimension() {
+            dimension = (dimension % 10) + 1;
+            document.getElementById('dimension').textContent = dimension;
+            glitchEffect = true;
+            screenShake = 10;
+            
+            // Create gravity well at player position
+            gravityWells.push({
+                x: player.x + player.width/2,
+                y: player.y + player.height/2,
+                radius: 100,
+                life: 100
+            });
+            
+            // Play dimension shift sound
+            playSound(dimensionSound);
+            
+            // Show dimension name
+            const dimensionNames = [
+                "NORMAL SPACE",
+                "LOW-G DIMENSION",
+                "ANTI-GRAVITY ZONE",
+                "HYPERSPACE",
+                "MIRROR UNIVERSE",
+                "QUANTUM REALM",
+                "DARK MATTER PLANE",
+                "TIME VORTEX",
+                "CHAOS DIMENSION",
+                "NULL SPACE"
+            ];
+            showNarration(`DIMENSION ${dimension}: ${dimensionNames[dimension-1]}`);
+            
+            // Change player color based on dimension
+            player.color = `hsl(${dimension * 36}, 100%, 50%)`;
+            
+            // Change game mechanics based on dimension
+            switch (dimension) {
+                case 1: // Normal
+                    player.gravity = 0.5;
+                    player.jumpForce = -12;
+                    invertedControls = false;
+                    break;
+                case 2: // Low Gravity
+                    player.gravity = 0.2;
+                    player.jumpForce = -8;
+                    invertedControls = false;
+                    break;
+                case 3: // Reverse Gravity
+                    player.gravity = -0.5;
+                    player.jumpForce = 12;
+                    invertedControls = false;
+                    break;
+                case 4: // Hyper Speed
+                    player.gravity = 0.5;
+                    player.jumpForce = -15;
+                    invertedControls = false;
+                    break;
+                case 5: // Mirror Mode (Controls Inverted)
+                    player.gravity = 0.5;
+                    player.jumpForce = -12;
+                    invertedControls = true;
+                    break;
+                case 6: // Quantum Realm (Tiny player)
+                    player.gravity = 0.3;
+                    player.jumpForce = -10;
+                    player.width = 15;
+                    player.height = 15;
+                    invertedControls = false;
+                    break;
+                case 7: // Giant Mode
+                    player.gravity = 0.7;
+                    player.jumpForce = -14;
+                    player.width = 60;
+                    player.height = 60;
+                    invertedControls = false;
+                    break;
+                case 8: // Bouncy
+                    player.gravity = 0.4;
+                    player.jumpForce = -12;
+                    player.velocity *= 1.5;
+                    invertedControls = false;
+                    break;
+                case 9: // Chaotic
+                    player.gravity = Math.random() * 0.8 - 0.4;
+                    player.jumpForce = -10 + Math.random() * 10 - 5;
+                    invertedControls = Math.random() > 0.5;
+                    break;
+                case 10: // Null Space (No gravity)
+                    player.gravity = 0;
+                    player.jumpForce = -8;
+                    invertedControls = false;
+                    break;
+            }
+        }
+        
+        // ==== SPAWN BLACK HOLE (BOSS BATTLE) ====
+        function spawnBlackHole() {
+            blackHoleActive = true;
+            blackHole = {
+                x: canvas.width + 100,
+                y: canvas.height / 2,
+                radius: 50,
+                speed: 3,
+                hue: Math.random() * 360
             };
             
-            localStorage.setItem('cosmicClashSave', JSON.stringify(saveData));
+            showNarration("WARNING: SINGULARITY DETECTED!", 2000);
+            
+            // Black Hole Movement
+            const blackHoleInterval = setInterval(() => {
+                blackHole.x -= blackHole.speed * timeWarp;
+                blackHole.hue = (blackHole.hue + 1) % 360;
+                
+                // Create particles for accretion disk
+                if (Math.random() < 0.3) {
+                    createParticles(
+                        blackHole.x + Math.cos(Math.random() * Math.PI * 2) * blackHole.radius * 1.5,
+                        blackHole.y + Math.sin(Math.random() * Math.PI * 2) * blackHole.radius * 1.5,
+                        1,
+                        `hsl(${blackHole.hue}, 100%, 50%)`
+                    );
+                }
+                
+                if (blackHole.x + blackHole.radius < 0) {
+                    clearInterval(blackHoleInterval);
+                    blackHoleActive = false;
+                    showNarration("SINGULARITY ESCAPED", 1500);
+                }
+            }, 16);
         }
         
-        // Load game
-        function loadGame() {
-            const saveData = JSON.parse(localStorage.getItem('cosmicClashSave'));
-            if (!saveData) return;
+        // ==== SPAWN POWER-UP ====
+        function spawnPowerUp() {
+            powerUpActive = true;
+            const powerUp = {
+                x: canvas.width,
+                y: Math.random() * (canvas.height - 30),
+                width: 30,
+                height: 30,
+                speed: 5,
+                type: Math.random() > 0.5 ? 'phantom' : 'hyper'
+            };
             
-            // Check save version for compatibility
-            if (saveData.version !== game.version) {
-                console.log('Save version mismatch, starting fresh');
-                return;
-            }
+            powerUps.push(powerUp);
+            playSound(powerupSound);
             
-            // Load basic stats
-            game.energy = saveData.energy || 0;
-            game.energyPerClick = saveData.energyPerClick || 1;
-            game.energyPerSecond = saveData.energyPerSecond || 0;
-            game.totalClicks = saveData.totalClicks || 0;
-            game.totalEnergy = saveData.totalEnergy || 0;
-            game.prestigePoints = saveData.prestigePoints || 0;
-            game.highestEnergy = saveData.highestEnergy || 0;
+            // Power-Up movement
+            const powerUpInterval = setInterval(() => {
+                powerUp.x -= powerUp.speed * timeWarp;
+                
+                if (powerUp.x + powerUp.width < 0) {
+                    clearInterval(powerUpInterval);
+                    powerUps.splice(powerUps.indexOf(powerUp), 1);
+                }
+            }, 16);
             
-            // Load upgrades
-            if (saveData.upgrades) {
-                game.upgrades = saveData.upgrades.map(savedUpgrade => {
-                    const baseUpgrade = upgradesData.find(u => u.id === savedUpgrade.id);
-                    return { ...baseUpgrade, ...savedUpgrade };
-                });
-            }
-            
-            // Load achievements
-            if (saveData.achievements) {
-                game.achievements = saveData.achievements.map(savedAchievement => {
-                    const baseAchievement = achievementsData.find(a => a.id === savedAchievement.id);
-                    return { ...baseAchievement, ...savedAchievement };
-                });
-            }
+            // Power-Up Effect
+            setTimeout(() => {
+                powerUpActive = false;
+                showNarration(powerUp.type === 'phantom' ? "PHANTOM MODE ENDED" : "HYPER MODE ENDED", 1500);
+            }, 5000);
         }
         
-        // Event Listeners
-        clickArea.addEventListener('click', handleClick);
-        prestigeButton.addEventListener('click', prestige);
+        // ==== END GAME WITH CRAZY EFFECTS ====
+        function endGame() {
+            gameOver = true;
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('highScore', highScore);
+            }
+            
+            // Create explosion effect
+            createParticles(player.x + player.width/2, player.y + player.height/2, 200, '#f00');
+            screenShake = 20;
+            
+            // Play death sound
+            playSound(deathSound);
+            
+            // Update UI
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalDimension').textContent = dimension;
+            document.getElementById('finalJumps').textContent = jumps;
+            document.getElementById('gameOver').style.display = 'block';
+            
+            // Stop music
+            bgMusic.pause();
+        }
         
-        // Start the game
-        initGame();
+        // ==== RESTART GAME ====
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            // Reset everything
+            score = 0;
+            obstacles = [];
+            powerUps = [];
+            blackHoleActive = false;
+            powerUpActive = false;
+            player.y = 300;
+            player.velocity = 0;
+            player.width = 30;
+            player.height = 30;
+            dimension = 1;
+            gameOver = false;
+            timeWarp = 1.0;
+            combo = 1;
+            jumps = 0;
+            player.trail = [];
+            gravityWells = [];
+            timeWarps = [];
+            dimensionPortals = [];
+            quantumParticles = [];
+            invertedControls = false;
+            
+            // Update UI
+            document.getElementById('score').textContent = score;
+            document.getElementById('combo').textContent = 'x1';
+            document.getElementById('dimension').textContent = dimension;
+            document.getElementById('timeWarp').textContent = '100%';
+            document.getElementById('gameOver').style.display = 'none';
+            
+            // Reset player color
+            player.color = '#0FF';
+            
+            // Start music
+            if (soundOn) {
+                bgMusic.currentTime = 0;
+                bgMusic.play().catch(e => console.log("Audio play prevented:", e));
+            }
+            
+            // Restart game loop
+            gameLoop();
+        });
+        
+        // ==== KEYBOARD CONTROLS WITH KONAMI CODE ====
+        const keys = {};
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            checkKonamiCode(e.key);
+            
+            // Cheat codes
+            if (e.key === '`') toggleCheatMode();
+            if (e.key === '1' && cheatMode) dimension = 1, shiftDimension();
+            if (e.key === '2' && cheatMode) dimension = 2, shiftDimension();
+            if (e.key === '3' && cheatMode) dimension = 3, shiftDimension();
+            if (e.key === '4' && cheatMode) dimension = 4, shiftDimension();
+            if (e.key === '5' && cheatMode) dimension = 5, shiftDimension();
+            if (e.key === '0' && cheatMode) score += 100;
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+        
+        // Touch controls for mobile
+        document.addEventListener('touchstart', (e) => {
+            keys[' '] = true;
+            e.preventDefault();
+        });
+        
+        document.addEventListener('touchend', (e) => {
+            keys[' '] = false;
+            e.preventDefault();
+        });
+        
+        // ==== START THE INSANITY ====
+        showNarration("QUANTUM JUMPER: EXTREME EDITION", 2000);
+        setTimeout(() => {
+            showNarration("WARP DRIVE INITIATED", 1500);
+        }, 2500);
+        
+        // Start music
+        if (soundOn) {
+            bgMusic.volume = 0.5;
+            bgMusic.play().catch(e => console.log("Audio play prevented:", e));
+        }
+        
+        gameLoop();
     </script>
 </body>
 </html>
