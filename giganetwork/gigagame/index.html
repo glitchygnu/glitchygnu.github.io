@@ -3,1291 +3,346 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUANTUM JUMPER: EXTREME</title>
+    <title>Space Jumper</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap');
-        
         body {
             margin: 0;
+            padding: 0;
             overflow: hidden;
-            background: #000;
-            font-family: 'Comic Neue', cursive;
-            color: white;
-            user-select: none;
-            touch-action: none;
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23ff00ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93"/></svg>'), auto;
+            background-color: #000;
+            font-family: 'Arial', sans-serif;
         }
-        #gameCanvas {
+        
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        #game-canvas {
+            background-color: #111;
             display: block;
-            background: #111;
-            image-rendering: pixelated;
-            filter: contrast(1.5) brightness(1.2);
         }
-        #ui {
+        
+        #score-display {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 20px;
-            text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
-            z-index: 100;
-            background: rgba(0,0,0,0.7);
-            padding: 10px;
-            border-radius: 10px;
-            border: 2px solid #f0f;
-        }
-        #gameOver {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            display: none;
-            background: rgba(0,0,0,0.9);
-            padding: 30px;
-            border-radius: 20px;
-            border: 5px solid #f0f;
-            box-shadow: 0 0 30px #0ff;
-            z-index: 200;
-            max-width: 80%;
-        }
-        #restartBtn {
-            padding: 15px 30px;
-            background: linear-gradient(45deg, #ff00ff, #00ffff);
-            border: none;
-            color: white;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 50px;
-            margin-top: 20px;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 0 20px #0ff;
-        }
-        #restartBtn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 30px #f0f;
-        }
-        .glitch {
-            animation: glitch 0.1s infinite, shake 0.1s infinite;
-        }
-        @keyframes glitch {
-            0% { filter: hue-rotate(0deg) blur(0px); }
-            20% { filter: hue-rotate(90deg) blur(1px); }
-            40% { filter: hue-rotate(180deg) blur(2px); }
-            60% { filter: hue-rotate(270deg) blur(1px); }
-            80% { filter: hue-rotate(360deg) blur(0px); }
-            100% { filter: hue-rotate(0deg) blur(0px); }
-        }
-        @keyframes shake {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
-        }
-        #particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+            top: 20px;
+            right: 20px;
+            color: #fff;
+            font-size: 24px;
             z-index: 10;
         }
-        #secretCodes {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            font-size: 12px;
-            color: rgba(255,255,255,0.3);
-        }
-        #soundToggle {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            border: 2px solid #f0f;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
-            cursor: pointer;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        #cheatMode {
-            position: absolute;
-            top: 60px;
-            right: 10px;
-            background: rgba(255,0,0,0.7);
-            color: white;
-            border: 2px solid #f0f;
-            border-radius: 5px;
-            padding: 5px;
-            font-size: 12px;
-            cursor: pointer;
-            z-index: 100;
-        }
-        #narration {
+        
+        #game-over {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 24px;
+            color: #fff;
+            font-size: 48px;
             text-align: center;
-            opacity: 0;
-            transition: opacity 1s;
-            text-shadow: 0 0 10px #0ff;
-            max-width: 80%;
-            pointer-events: none;
+            display: none;
+            z-index: 10;
+        }
+        
+        #restart-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        #restart-btn:hover {
+            background-color: #45a049;
+        }
+        
+        #instructions {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            font-size: 18px;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle 1s infinite alternate;
+        }
+        
+        @keyframes twinkle {
+            from { opacity: 0.3; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes astronaut-jump {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-100px); }
+            100% { transform: translateY(0); }
+        }
+        
+        .jump {
+            animation: astronaut-jump 0.8s linear;
         }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <div id="particles"></div>
-    <div id="ui">
-        <div>SCORE: <span id="score">0</span></div>
-        <div>HIGH SCORE: <span id="highScore">0</span></div>
-        <div>DIMENSION: <span id="dimension">1</span></div>
-        <div>COMBO: <span id="combo">x1</span></div>
-        <div>TIME DILATION: <span id="timeWarp">100%</span></div>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+        <div id="score-display">Score: 0</div>
+        <div id="instructions">Press SPACE or UP to jump</div>
+        <div id="game-over">
+            Game Over!<br>
+            <span id="final-score">Score: 0</span><br>
+            <button id="restart-btn">Play Again</button>
+        </div>
     </div>
-    <div id="gameOver">
-        <h1 style="font-family: 'Press Start 2P', cursive; color: #f0f; text-shadow: 0 0 10px #0ff;">QUANTUM COLLAPSE</h1>
-        <p>YOUR SCORE: <span id="finalScore">0</span></p>
-        <p>MAX DIMENSION: <span id="finalDimension">1</span></p>
-        <p>QUANTUM ENTANGLEMENTS: <span id="finalJumps">0</span></p>
-        <button id="restartBtn">REBOOT UNIVERSE</button>
-    </div>
-    <div id="soundToggle">🔊</div>
-    <div id="cheatMode">CHEAT MODE: OFF</div>
-    <div id="narration"></div>
-    <div id="secretCodes">Konami Code: ↑↑↓↓←→←→BA</div>
-
-    <audio id="bgMusic" loop>
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-game-show-suspense-waiting-668.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="jumpSound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-quick-jump-arcade-game-239.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="deathSound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-game-over-213.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="powerupSound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" type="audio/mpeg">
-    </audio>
-    <audio id="dimensionSound">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-positive-interface-2571.mp3" type="audio/mpeg">
-    </audio>
 
     <script>
-        // ==== INSANE GAME SETUP ====
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = 800;
-        canvas.height = 600;
-        
-        // ==== CRAZY GAME VARIABLES ====
-        let score = 0;
-        let highScore = localStorage.getItem('highScore') || 0;
-        let gameOver = false;
-        let dimension = 1;
-        let glitchEffect = false;
-        let blackHoleActive = false;
-        let powerUpActive = false;
-        let timeWarp = 1.0;
-        let combo = 1;
-        let jumps = 0;
-        let cheatMode = false;
-        let soundOn = true;
-        let narrationTimeout;
-        let konamiCode = [];
-        let konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-        let particles = [];
-        let screenShake = 0;
-        let rainbowMode = false;
-        let invertedControls = false;
-        let gravityWells = [];
-        let lastObstacleTime = 0;
-        let isMobile = /Mobi|Android/i.test(navigator.userAgent);
-        
-        // ==== PSYCHEDELIC PLAYER ====
-        const player = {
-            x: 100,
-            y: 300,
-            width: 30,
-            height: 30,
-            speed: 5,
-            gravity: 0.5,
-            velocity: 0,
-            jumpForce: -12,
-            color: '#0FF',
-            trail: [],
-            maxTrail: 10,
-            isDashing: false,
-            dashCooldown: 0,
-            rotation: 0,
-            spinSpeed: 0
-        };
-        
-        // ==== CRAZY GAME ELEMENTS ====
-        let obstacles = [];
-        let powerUps = [];
-        let blackHole = null;
-        let dimensionPortals = [];
-        let timeWarps = [];
-        let quantumParticles = [];
-        
-        // ==== SOUND SETUP ====
-        const bgMusic = document.getElementById('bgMusic');
-        const jumpSound = document.getElementById('jumpSound');
-        const deathSound = document.getElementById('deathSound');
-        const powerupSound = document.getElementById('powerupSound');
-        const dimensionSound = document.getElementById('dimensionSound');
-        
-        // ==== UI UPDATES ====
-        document.getElementById('highScore').textContent = highScore;
-        document.getElementById('soundToggle').addEventListener('click', toggleSound);
-        document.getElementById('cheatMode').addEventListener('click', toggleCheatMode);
-        
-        // ==== MOBILE CONTROLS ====
-        if (isMobile) {
-            const mobileControls = document.createElement('div');
-            mobileControls.style.position = 'absolute';
-            mobileControls.style.bottom = '20px';
-            mobileControls.style.left = '0';
-            mobileControls.style.right = '0';
-            mobileControls.style.display = 'flex';
-            mobileControls.style.justifyContent = 'center';
-            mobileControls.style.gap = '50px';
-            mobileControls.style.zIndex = '100';
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('game-canvas');
+            const ctx = canvas.getContext('2d');
+            const scoreDisplay = document.getElementById('score-display');
+            const gameOverDisplay = document.getElementById('game-over');
+            const finalScoreDisplay = document.getElementById('final-score');
+            const restartBtn = document.getElementById('restart-btn');
             
-            const jumpBtn = document.createElement('div');
-            jumpBtn.style.width = '80px';
-            jumpBtn.style.height = '80px';
-            jumpBtn.style.backgroundColor = 'rgba(0,255,255,0.3)';
-            jumpBtn.style.borderRadius = '50%';
-            jumpBtn.style.display = 'flex';
-            jumpBtn.style.alignItems = 'center';
-            jumpBtn.style.justifyContent = 'center';
-            jumpBtn.style.fontSize = '24px';
-            jumpBtn.style.color = 'white';
-            jumpBtn.style.border = '2px solid #0ff';
-            jumpBtn.style.boxShadow = '0 0 10px #0ff';
-            jumpBtn.textContent = '↑';
-            jumpBtn.addEventListener('touchstart', () => keys[' '] = true);
-            jumpBtn.addEventListener('touchend', () => keys[' '] = false);
+            // Set canvas size
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
             
-            const dashBtn = document.createElement('div');
-            dashBtn.style.width = '80px';
-            dashBtn.style.height = '80px';
-            dashBtn.style.backgroundColor = 'rgba(255,0,255,0.3)';
-            dashBtn.style.borderRadius = '50%';
-            dashBtn.style.display = 'flex';
-            dashBtn.style.alignItems = 'center';
-            dashBtn.style.justifyContent = 'center';
-            dashBtn.style.fontSize = '24px';
-            dashBtn.style.color = 'white';
-            dashBtn.style.border = '2px solid #f0f';
-            dashBtn.style.boxShadow = '0 0 10px #f0f';
-            dashBtn.textContent = '⚡';
-            dashBtn.addEventListener('touchstart', () => keys['Shift'] = true);
-            dashBtn.addEventListener('touchend', () => keys['Shift'] = false);
+            // Game variables
+            let score = 0;
+            let gameSpeed = 5;
+            let isGameOver = false;
+            let animationId;
+            let stars = [];
             
-            mobileControls.appendChild(dashBtn);
-            mobileControls.appendChild(jumpBtn);
-            document.body.appendChild(mobileControls);
-        }
-        
-        // ==== PARTICLE SYSTEM ====
-        function createParticles(x, y, count, color) {
-            for (let i = 0; i < count; i++) {
-                particles.push({
-                    x: x,
-                    y: y,
-                    size: Math.random() * 5 + 2,
-                    color: color || `hsl(${Math.random() * 360}, 100%, 50%)`,
-                    speedX: Math.random() * 6 - 3,
-                    speedY: Math.random() * 6 - 3,
-                    life: 100
-                });
-            }
-        }
-        
-        function updateParticles() {
-            for (let i = particles.length - 1; i >= 0; i--) {
-                particles[i].x += particles[i].speedX;
-                particles[i].y += particles[i].speedY;
-                particles[i].life--;
+            // Create background stars
+            function createStars() {
+                stars = [];
+                const starCount = 100;
                 
-                if (particles[i].life <= 0) {
-                    particles.splice(i, 1);
-                }
-            }
-        }
-        
-        function drawParticles() {
-            const particlesCanvas = document.getElementById('particles');
-            const pctx = particlesCanvas.getContext('2d');
-            particlesCanvas.width = canvas.width;
-            particlesCanvas.height = canvas.height;
-            
-            pctx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
-            
-            particles.forEach(p => {
-                pctx.globalAlpha = p.life / 100;
-                pctx.fillStyle = p.color;
-                pctx.beginPath();
-                pctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                pctx.fill();
-            });
-            
-            pctx.globalAlpha = 1.0;
-        }
-        
-        // ==== NARRATION SYSTEM ====
-        function showNarration(text, duration = 3000) {
-            const narration = document.getElementById('narration');
-            narration.textContent = text;
-            narration.style.opacity = 1;
-            
-            clearTimeout(narrationTimeout);
-            narrationTimeout = setTimeout(() => {
-                narration.style.opacity = 0;
-            }, duration);
-        }
-        
-        // ==== SOUND FUNCTIONS ====
-        function toggleSound() {
-            soundOn = !soundOn;
-            document.getElementById('soundToggle').textContent = soundOn ? '🔊' : '🔇';
-            
-            if (soundOn) {
-                bgMusic.play().catch(e => console.log("Audio play prevented:", e));
-            } else {
-                bgMusic.pause();
-            }
-        }
-        
-        function playSound(sound, volume = 1.0) {
-            if (!soundOn) return;
-            
-            const clone = sound.cloneNode();
-            clone.volume = volume;
-            clone.play().catch(e => console.log("Sound play prevented:", e));
-        }
-        
-        // ==== CHEAT MODE ====
-        function toggleCheatMode() {
-            cheatMode = !cheatMode;
-            document.getElementById('cheatMode').textContent = cheatMode ? 
-                'CHEAT MODE: ON' : 'CHEAT MODE: OFF';
-            document.getElementById('cheatMode').style.background = cheatMode ? 
-                'rgba(0,255,0,0.7)' : 'rgba(255,0,0,0.7)';
-            
-            if (cheatMode) {
-                showNarration("REALITY HACK ACTIVATED!", 2000);
-                createParticles(canvas.width/2, canvas.height/2, 100, '#0f0');
-            }
-        }
-        
-        // ==== KONAMI CODE ====
-        function checkKonamiCode(key) {
-            konamiCode.push(key);
-            if (konamiCode.length > konamiSequence.length) {
-                konamiCode.shift();
-            }
-            
-            if (konamiCode.join(',') === konamiSequence.join(',')) {
-                rainbowMode = !rainbowMode;
-                showNarration(rainbowMode ? "RAINBOW MODE ACTIVATED!" : "RAINBOW MODE DEACTIVATED", 2000);
-                createParticles(canvas.width/2, canvas.height/2, 200, '#fff');
-                konamiCode = [];
-            }
-        }
-        
-        // ==== GAME LOOP ====
-        function gameLoop() {
-            if (gameOver) return;
-            
-            update();
-            draw();
-            
-            requestAnimationFrame(gameLoop);
-        }
-        
-        // ==== UPDATE GAME STATE ====
-        function update() {
-            // Time warp effect
-            const timeDelta = timeWarp * (cheatMode ? 0.7 : 1.0);
-            
-            // Player trail
-            player.trail.push({x: player.x, y: player.y, color: player.color});
-            if (player.trail.length > player.maxTrail) {
-                player.trail.shift();
-            }
-            
-            // Player movement
-            player.velocity += player.gravity * timeDelta;
-            player.y += player.velocity * timeDelta;
-            
-            // Player rotation
-            player.rotation += player.spinSpeed * timeDelta;
-            player.spinSpeed *= 0.95; // Friction
-            
-            // Dash ability
-            if (player.dashCooldown > 0) {
-                player.dashCooldown -= timeDelta;
-            }
-            
-            // Jump on Spacebar
-            if ((keys[' '] || keys['ArrowUp']) && player.y >= canvas.height - player.height) {
-                player.velocity = player.jumpForce * (invertedControls ? -1 : 1);
-                jumps++;
-                playSound(jumpSound);
-                createParticles(player.x + player.width/2, player.y + player.height, 20, player.color);
-                
-                // Combo system
-                const now = Date.now();
-                if (now - lastObstacleTime < 500) {
-                    combo++;
-                    document.getElementById('combo').textContent = `x${combo}`;
-                    score += combo * 2;
-                }
-                lastObstacleTime = now;
-            }
-            
-            // Dash on Shift
-            if (keys['Shift'] && player.dashCooldown <= 0) {
-                player.isDashing = true;
-                player.dashCooldown = 100;
-                player.velocity = -20;
-                player.spinSpeed = 0.5;
-                setTimeout(() => player.isDashing = false, 200);
-                createParticles(player.x + player.width/2, player.y + player.height/2, 50, '#f0f');
-                playSound(powerupSound, 0.7);
-            }
-            
-            // Boundary check
-            if (player.y > canvas.height - player.height) {
-                player.y = canvas.height - player.height;
-                player.velocity = 0;
-            }
-            
-            // Screen shake
-            if (screenShake > 0) {
-                screenShake--;
-            }
-            
-            // Generate obstacles with increasing difficulty
-            const obstacleRate = 0.01 + (score / 10000);
-            if (Math.random() < obstacleRate * timeDelta) {
-                const types = ['normal', 'spinning', 'bouncy', 'homing', 'explosive'];
-                const type = types[Math.floor(Math.random() * types.length)];
-                
-                const obstacle = {
-                    x: canvas.width,
-                    y: Math.random() * (canvas.height - 100),
-                    width: 20 + Math.random() * 30,
-                    height: 30 + Math.random() * 100,
-                    speed: 3 + Math.random() * 3 + (score / 1000),
-                    color: `hsl(${Math.random() * 360}, 70%, 50%)`,
-                    type: type,
-                    rotation: 0,
-                    spinSpeed: type === 'spinning' ? Math.random() * 0.1 - 0.05 : 0,
-                    bounce: type === 'bouncy' ? Math.random() * 5 : 0,
-                    bounceDir: 1,
-                    homing: type === 'homing' ? 0.02 : 0,
-                    life: type === 'explosive' ? 200 : Infinity
-                };
-                
-                obstacles.push(obstacle);
-            }
-            
-            // Move obstacles with special behaviors
-            obstacles.forEach((obstacle, index) => {
-                obstacle.x -= obstacle.speed * timeDelta;
-                
-                // Special behaviors
-                if (obstacle.type === 'spinning') {
-                    obstacle.rotation += obstacle.spinSpeed * timeDelta;
-                }
-                
-                if (obstacle.type === 'bouncy') {
-                    obstacle.y += obstacle.bounce * obstacle.bounceDir * timeDelta;
-                    if (obstacle.y < 0 || obstacle.y > canvas.height - obstacle.height) {
-                        obstacle.bounceDir *= -1;
-                    }
-                }
-                
-                if (obstacle.type === 'homing') {
-                    obstacle.y += (player.y - obstacle.y) * obstacle.homing * timeDelta;
-                }
-                
-                if (obstacle.type === 'explosive') {
-                    obstacle.life -= timeDelta;
-                    if (obstacle.life <= 0) {
-                        createParticles(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2, 50, obstacle.color);
-                        obstacles.splice(index, 1);
-                        screenShake = 10;
-                        return;
-                    }
-                }
-                
-                if (obstacle.x + obstacle.width < 0) {
-                    obstacles.splice(index, 1);
-                    score += 10 * combo;
-                    document.getElementById('score').textContent = score;
-                }
-            });
-            
-            // Collision detection with crazy effects
-            obstacles.forEach(obstacle => {
-                if (
-                    player.x < obstacle.x + obstacle.width &&
-                    player.x + player.width > obstacle.x &&
-                    player.y < obstacle.y + obstacle.height &&
-                    player.y + player.height > obstacle.y
-                ) {
-                    if (!powerUpActive && !cheatMode) {
-                        if (obstacle.type === 'explosive') {
-                            createParticles(player.x + player.width/2, player.y + player.height/2, 200, '#f00');
-                            screenShake = 20;
-                        }
-                        endGame();
-                    } else if (powerUpActive) {
-                        obstacles.splice(obstacles.indexOf(obstacle), 1);
-                        createParticles(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2, 30, '#0f0');
-                        score += 50;
-                    }
-                }
-            });
-            
-            // Dimension Shift (Every 100 points) with increasing effects
-            if (score > 0 && score % 100 === 0 && dimension < 10) {
-                shiftDimension();
-            }
-            
-            // Black Hole Event (Random) with gravity well
-            if (Math.random() < 0.0005 * timeDelta && !blackHoleActive && dimension > 3) {
-                spawnBlackHole();
-            }
-            
-            // Power-Ups (Random) with different types
-            if (Math.random() < 0.003 * timeDelta && !powerUpActive) {
-                spawnPowerUp();
-            }
-            
-            // Gravity wells
-            updateGravityWells();
-            
-            // Quantum particles
-            updateQuantumParticles();
-            
-            // Time warps
-            updateTimeWarps();
-            
-            // Dimension portals
-            updateDimensionPortals();
-            
-            // Update particles
-            updateParticles();
-        }
-        
-        // ==== DRAW EVERYTHING WITH CRAZY EFFECTS ====
-        function draw() {
-            // Clear screen with trippy background
-            if (rainbowMode) {
-                ctx.fillStyle = `hsl(${Date.now() % 360}, 70%, 10%)`;
-            } else {
-                ctx.fillStyle = '#111';
-            }
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw starfield background
-            drawStarfield();
-            
-            // Apply screen shake
-            const shakeX = screenShake > 0 ? Math.random() * 10 - 5 : 0;
-            const shakeY = screenShake > 0 ? Math.random() * 10 - 5 : 0;
-            ctx.save();
-            ctx.translate(shakeX, shakeY);
-            
-            // Draw gravity wells
-            drawGravityWells();
-            
-            // Draw time warps
-            drawTimeWarps();
-            
-            // Draw dimension portals
-            drawDimensionPortals();
-            
-            // Draw quantum particles
-            drawQuantumParticles();
-            
-            // Draw player trail
-            player.trail.forEach((pos, i) => {
-                const alpha = i / player.trail.length;
-                ctx.fillStyle = pos.color.replace(')', `, ${alpha})`).replace('rgb', 'rgba');
-                ctx.fillRect(pos.x, pos.y, player.width, player.height);
-            });
-            
-            // Draw player with rotation
-            ctx.save();
-            ctx.translate(player.x + player.width/2, player.y + player.height/2);
-            ctx.rotate(player.rotation);
-            ctx.fillStyle = player.color;
-            if (player.isDashing) {
-                ctx.fillStyle = '#f0f';
-                ctx.shadowBlur = 20;
-                ctx.shadowColor = '#f0f';
-            }
-            ctx.fillRect(-player.width/2, -player.height/2, player.width, player.height);
-            
-            // Dash effect
-            if (player.isDashing) {
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 3;
-                ctx.strokeRect(-player.width/2, -player.height/2, player.width, player.height);
-            }
-            ctx.restore();
-            
-            // Draw obstacles with special effects
-            obstacles.forEach(obstacle => {
-                ctx.save();
-                ctx.translate(obstacle.x + obstacle.width/2, obstacle.y + obstacle.height/2);
-                ctx.rotate(obstacle.rotation);
-                
-                if (obstacle.type === 'explosive') {
-                    const pulse = Math.sin(Date.now() * 0.01) * 5;
-                    ctx.shadowBlur = 10 + pulse;
-                    ctx.shadowColor = obstacle.color;
-                }
-                
-                ctx.fillStyle = obstacle.color;
-                ctx.fillRect(-obstacle.width/2, -obstacle.height/2, obstacle.width, obstacle.height);
-                
-                if (obstacle.type === 'explosive') {
-                    ctx.strokeStyle = '#fff';
-                    ctx.lineWidth = 2;
-                    ctx.strokeRect(-obstacle.width/2, -obstacle.height/2, obstacle.width, obstacle.height);
-                }
-                
-                ctx.restore();
-            });
-            
-            // Draw power-ups
-            powerUps.forEach(powerUp => {
-                ctx.fillStyle = powerUp.type === 'phantom' ? '#0f0' : '#f0f';
-                ctx.beginPath();
-                ctx.arc(powerUp.x, powerUp.y, powerUp.width/2, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Pulsing effect
-                const pulse = Math.sin(Date.now() * 0.01) * 3;
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.arc(powerUp.x, powerUp.y, powerUp.width/2 + pulse, 0, Math.PI * 2);
-                ctx.stroke();
-            });
-            
-            // Draw Black Hole with accretion disk
-            if (blackHoleActive) {
-                ctx.fillStyle = '#000';
-                ctx.beginPath();
-                ctx.arc(blackHole.x, blackHole.y, blackHole.radius, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Accretion disk
-                for (let i = 0; i < 3; i++) {
-                    ctx.strokeStyle = `hsla(${blackHole.hue + i * 120}, 100%, 50%, 0.5)`;
-                    ctx.lineWidth = 3 + i * 2;
-                    ctx.beginPath();
-                    ctx.arc(blackHole.x, blackHole.y, blackHole.radius + 10 + i * 15, 0, Math.PI * 2);
-                    ctx.stroke();
-                }
-                
-                // Gravitational lensing effect
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(blackHole.x, blackHole.y, blackHole.radius * 3, 0, Math.PI * 2);
-                ctx.clip();
-                
-                ctx.fillStyle = 'rgba(0,0,0,0.7)';
-                ctx.fillRect(blackHole.x - blackHole.radius * 3, blackHole.y - blackHole.radius * 3, 
-                             blackHole.radius * 6, blackHole.radius * 6);
-                
-                // Distort background
-                const distortion = blackHole.radius * 2;
-                for (let y = blackHole.y - distortion; y < blackHole.y + distortion; y += 5) {
-                    for (let x = blackHole.x - distortion; x < blackHole.x + distortion; x += 5) {
-                        const dx = x - blackHole.x;
-                        const dy = y - blackHole.y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        const angle = Math.atan2(dy, dx);
-                        
-                        if (dist < blackHole.radius * 2 && dist > blackHole.radius) {
-                            const newDist = dist + (blackHole.radius * 2 - dist) * 0.5;
-                            const newX = blackHole.x + Math.cos(angle) * newDist;
-                            const newY = blackHole.y + Math.sin(angle) * newDist;
-                            
-                            ctx.drawImage(canvas, x, y, 5, 5, newX, newY, 5, 5);
-                        }
-                    }
-                }
-                ctx.restore();
-            }
-            
-            // Glitch Effect
-            if (glitchEffect) {
-                canvas.classList.add('glitch');
-                setTimeout(() => {
-                    canvas.classList.remove('glitch');
-                    glitchEffect = false;
-                }, 500);
-            }
-            
-            // Rainbow mode overlay
-            if (rainbowMode) {
-                ctx.fillStyle = `hsla(${Date.now() % 360}, 70%, 50%, 0.1)`;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
-            
-            ctx.restore(); // Restore from screen shake
-            
-            // Draw particles on top
-            drawParticles();
-        }
-        
-        // ==== STARFIELD BACKGROUND ====
-        function drawStarfield() {
-            if (!this.stars) {
-                this.stars = [];
-                for (let i = 0; i < 200; i++) {
-                    this.stars.push({
+                for (let i = 0; i < starCount; i++) {
+                    stars.push({
                         x: Math.random() * canvas.width,
                         y: Math.random() * canvas.height,
-                        size: Math.random() * 2,
-                        speed: Math.random() * 0.5,
-                        alpha: Math.random()
+                        size: Math.random() * 3,
+                        speed: 0.2 + Math.random() * 0.8
                     });
                 }
             }
             
-            this.stars.forEach(star => {
-                star.x -= star.speed * timeWarp;
-                if (star.x < 0) {
-                    star.x = canvas.width;
-                    star.y = Math.random() * canvas.height;
-                }
+            // Draw stars
+            function drawStars() {
+                ctx.fillStyle = '#fff';
                 
-                ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
-                ctx.fillRect(star.x, star.y, star.size, star.size);
-            });
-        }
-        
-        // ==== GRAVITY WELLS ====
-        function updateGravityWells() {
-            if (blackHoleActive) {
-                // Black hole gravity
-                const dx = player.x + player.width/2 - blackHole.x;
-                const dy = player.y + player.height/2 - blackHole.y;
-                const distSq = dx * dx + dy * dy;
-                const force = (blackHole.radius * 100) / distSq;
-                
-                if (distSq < blackHole.radius * blackHole.radius) {
-                    // Inside black hole - game over with special effect
-                    createParticles(player.x, player.y, 500, '#000');
-                    screenShake = 30;
-                    endGame();
-                    return;
-                }
-                
-                player.velocity += dy * 0.0001 * force * timeWarp;
-                player.x -= dx * 0.0001 * force * timeWarp;
-            }
-            
-            // Update other gravity wells
-            for (let i = gravityWells.length - 1; i >= 0; i--) {
-                gravityWells[i].life--;
-                if (gravityWells[i].life <= 0) {
-                    gravityWells.splice(i, 1);
-                }
-            }
-        }
-        
-        function drawGravityWells() {
-            gravityWells.forEach(well => {
-                const alpha = well.life / 100;
-                ctx.strokeStyle = `rgba(0, 255, 255, ${alpha})`;
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.arc(well.x, well.y, well.radius, 0, Math.PI * 2);
-                ctx.stroke();
-            });
-        }
-        
-        // ==== TIME WARPS ====
-        function updateTimeWarps() {
-            if (Math.random() < 0.0003 * timeWarp && timeWarps.length < 3) {
-                timeWarps.push({
-                    x: canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: 30 + Math.random() * 50,
-                    speed: 2 + Math.random() * 3,
-                    type: Math.random() > 0.5 ? 'slow' : 'fast'
+                stars.forEach(star => {
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Move stars
+                    star.x -= star.speed;
+                    
+                    // Reset star position when it goes off screen
+                    if (star.x < 0) {
+                        star.x = canvas.width;
+                        star.y = Math.random() * canvas.height;
+                    }
                 });
             }
             
-            for (let i = timeWarps.length - 1; i >= 0; i--) {
-                timeWarps[i].x -= timeWarps[i].speed * timeWarp;
+            // Astronaut
+            const astronaut = {
+                x: 100,
+                y: canvas.height - 100,
+                width: 60,
+                height: 80,
+                isJumping: false,
+                gravity: 1.5,
+                velocity: 0,
+                jumpForce: -20,
+                groundY: canvas.height - 100,
                 
-                // Check collision with player
-                const dx = player.x + player.width/2 - timeWarps[i].x;
-                const dy = player.y + player.height/2 - timeWarps[i].y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
+                draw() {
+                    // Body
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                    
+                    // Helmet
+                    ctx.beginPath();
+                    ctx.arc(this.x + this.width/2, this.y - 15, 25, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ccc';
+                    ctx.fill();
+                    
+                    // Oxygen tank
+                    ctx.fillStyle = '#555';
+                    ctx.fillRect(this.x - 15, this.y + 10, 15, 50);
+                },
                 
-                if (dist < timeWarps[i].radius) {
-                    timeWarp = timeWarps[i].type === 'slow' ? 0.5 : 2.0;
-                    document.getElementById('timeWarp').textContent = `${Math.round(timeWarp * 100)}%`;
-                    createParticles(timeWarps[i].x, timeWarps[i].y, 50, timeWarps[i].type === 'slow' ? '#00f' : '#f00');
-                    timeWarps.splice(i, 1);
-                    setTimeout(() => {
-                        timeWarp = 1.0;
-                        document.getElementById('timeWarp').textContent = '100%';
-                    }, 3000);
-                }
+                jump() {
+                    if (!this.isJumping) {
+                        this.velocity = this.jumpForce;
+                        this.isJumping = true;
+                    }
+                },
                 
-                if (timeWarps[i].x + timeWarps[i].radius < 0) {
-                    timeWarps.splice(i, 1);
-                }
-            }
-        }
-        
-        function drawTimeWarps() {
-            timeWarps.forEach(warp => {
-                ctx.fillStyle = warp.type === 'slow' ? 'rgba(0,0,255,0.3)' : 'rgba(255,0,0,0.3)';
-                ctx.beginPath();
-                ctx.arc(warp.x, warp.y, warp.radius, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.strokeStyle = warp.type === 'slow' ? '#00f' : '#f00';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.arc(warp.x, warp.y, warp.radius, 0, Math.PI * 2);
-                ctx.stroke();
-                
-                // Spiral effect
-                ctx.beginPath();
-                for (let a = 0; a < Math.PI * 4; a += 0.1) {
-                    const r = warp.radius * (1 - a / (Math.PI * 4));
-                    const x = warp.x + Math.cos(a + Date.now() * 0.005) * r;
-                    const y = warp.y + Math.sin(a + Date.now() * 0.005) * r;
-                    if (a === 0) {
-                        ctx.moveTo(x, y);
-                    } else {
-                        ctx.lineTo(x, y);
+                update() {
+                    // Apply gravity
+                    this.velocity += this.gravity;
+                    this.y += this.velocity;
+                    
+                    // Check if landed
+                    if (this.y >= this.groundY) {
+                        this.y = this.groundY;
+                        this.velocity = 0;
+                        this.isJumping = false;
                     }
                 }
-                ctx.strokeStyle = warp.type === 'slow' ? 'rgba(0,0,255,0.7)' : 'rgba(255,0,0,0.7)';
-                ctx.lineWidth = 1;
-                ctx.stroke();
-            });
-        }
-        
-        // ==== DIMENSION PORTALS ====
-        function updateDimensionPortals() {
-            if (Math.random() < 0.0002 * timeWarp && dimensionPortals.length < 2) {
-                dimensionPortals.push({
-                    x: canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: 40,
-                    speed: 3,
-                    targetDimension: Math.floor(Math.random() * 5) + 1
-                });
-            }
-            
-            for (let i = dimensionPortals.length - 1; i >= 0; i--) {
-                dimensionPortals[i].x -= dimensionPortals[i].speed * timeWarp;
-                
-                // Check collision with player
-                const dx = player.x + player.width/2 - dimensionPortals[i].x;
-                const dy = player.y + player.height/2 - dimensionPortals[i].y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                
-                if (dist < dimensionPortals[i].radius) {
-                    dimension = dimensionPortals[i].targetDimension;
-                    shiftDimension();
-                    createParticles(dimensionPortals[i].x, dimensionPortals[i].y, 100, '#ff0');
-                    dimensionPortals.splice(i, 1);
-                }
-                
-                if (dimensionPortals[i].x + dimensionPortals[i].radius < 0) {
-                    dimensionPortals.splice(i, 1);
-                }
-            }
-        }
-        
-        function drawDimensionPortals() {
-            dimensionPortals.forEach(portal => {
-                // Portal glow
-                const gradient = ctx.createRadialGradient(
-                    portal.x, portal.y, 0,
-                    portal.x, portal.y, portal.radius
-                );
-                gradient.addColorStop(0, `hsl(${portal.targetDimension * 60}, 100%, 50%)`);
-                gradient.addColorStop(1, 'rgba(0,0,0,0)');
-                
-                ctx.fillStyle = gradient;
-                ctx.beginPath();
-                ctx.arc(portal.x, portal.y, portal.radius, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Portal ring
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.arc(portal.x, portal.y, portal.radius, 0, Math.PI * 2);
-                ctx.stroke();
-                
-                // Dimension number
-                ctx.fillStyle = '#fff';
-                ctx.font = '20px Arial';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(portal.targetDimension, portal.x, portal.y);
-            });
-        }
-        
-        // ==== QUANTUM PARTICLES ====
-        function updateQuantumParticles() {
-            if (Math.random() < 0.01 * timeWarp) {
-                quantumParticles.push({
-                    x: canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: 3 + Math.random() * 5,
-                    speed: 2 + Math.random() * 3,
-                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                    life: 100 + Math.random() * 100,
-                    angle: 0,
-                    spin: Math.random() * 0.1 - 0.05
-                });
-            }
-            
-            for (let i = quantumParticles.length - 1; i >= 0; i--) {
-                quantumParticles[i].x -= quantumParticles[i].speed * timeWarp;
-                quantumParticles[i].angle += quantumParticles[i].spin * timeWarp;
-                quantumParticles[i].life--;
-                
-                if (quantumParticles[i].life <= 0 || quantumParticles[i].x + quantumParticles[i].size < 0) {
-                    quantumParticles.splice(i, 1);
-                }
-            }
-        }
-        
-        function drawQuantumParticles() {
-            quantumParticles.forEach(particle => {
-                ctx.save();
-                ctx.translate(particle.x, particle.y);
-                ctx.rotate(particle.angle);
-                
-                ctx.fillStyle = particle.color;
-                ctx.fillRect(-particle.size/2, -particle.size/2, particle.size, particle.size);
-                
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(-particle.size/2, -particle.size/2, particle.size, particle.size);
-                
-                ctx.restore();
-            });
-        }
-        
-        // ==== SHIFT DIMENSION (CHANGES PHYSICS AND VISUALS) ====
-        function shiftDimension() {
-            dimension = (dimension % 10) + 1;
-            document.getElementById('dimension').textContent = dimension;
-            glitchEffect = true;
-            screenShake = 10;
-            
-            // Create gravity well at player position
-            gravityWells.push({
-                x: player.x + player.width/2,
-                y: player.y + player.height/2,
-                radius: 100,
-                life: 100
-            });
-            
-            // Play dimension shift sound
-            playSound(dimensionSound);
-            
-            // Show dimension name
-            const dimensionNames = [
-                "NORMAL SPACE",
-                "LOW-G DIMENSION",
-                "ANTI-GRAVITY ZONE",
-                "HYPERSPACE",
-                "MIRROR UNIVERSE",
-                "QUANTUM REALM",
-                "DARK MATTER PLANE",
-                "TIME VORTEX",
-                "CHAOS DIMENSION",
-                "NULL SPACE"
-            ];
-            showNarration(`DIMENSION ${dimension}: ${dimensionNames[dimension-1]}`);
-            
-            // Change player color based on dimension
-            player.color = `hsl(${dimension * 36}, 100%, 50%)`;
-            
-            // Change game mechanics based on dimension
-            switch (dimension) {
-                case 1: // Normal
-                    player.gravity = 0.5;
-                    player.jumpForce = -12;
-                    invertedControls = false;
-                    break;
-                case 2: // Low Gravity
-                    player.gravity = 0.2;
-                    player.jumpForce = -8;
-                    invertedControls = false;
-                    break;
-                case 3: // Reverse Gravity
-                    player.gravity = -0.5;
-                    player.jumpForce = 12;
-                    invertedControls = false;
-                    break;
-                case 4: // Hyper Speed
-                    player.gravity = 0.5;
-                    player.jumpForce = -15;
-                    invertedControls = false;
-                    break;
-                case 5: // Mirror Mode (Controls Inverted)
-                    player.gravity = 0.5;
-                    player.jumpForce = -12;
-                    invertedControls = true;
-                    break;
-                case 6: // Quantum Realm (Tiny player)
-                    player.gravity = 0.3;
-                    player.jumpForce = -10;
-                    player.width = 15;
-                    player.height = 15;
-                    invertedControls = false;
-                    break;
-                case 7: // Giant Mode
-                    player.gravity = 0.7;
-                    player.jumpForce = -14;
-                    player.width = 60;
-                    player.height = 60;
-                    invertedControls = false;
-                    break;
-                case 8: // Bouncy
-                    player.gravity = 0.4;
-                    player.jumpForce = -12;
-                    player.velocity *= 1.5;
-                    invertedControls = false;
-                    break;
-                case 9: // Chaotic
-                    player.gravity = Math.random() * 0.8 - 0.4;
-                    player.jumpForce = -10 + Math.random() * 10 - 5;
-                    invertedControls = Math.random() > 0.5;
-                    break;
-                case 10: // Null Space (No gravity)
-                    player.gravity = 0;
-                    player.jumpForce = -8;
-                    invertedControls = false;
-                    break;
-            }
-        }
-        
-        // ==== SPAWN BLACK HOLE (BOSS BATTLE) ====
-        function spawnBlackHole() {
-            blackHoleActive = true;
-            blackHole = {
-                x: canvas.width + 100,
-                y: canvas.height / 2,
-                radius: 50,
-                speed: 3,
-                hue: Math.random() * 360
             };
             
-            showNarration("WARNING: SINGULARITY DETECTED!", 2000);
+            // Asteroids
+            let asteroids = [];
             
-            // Black Hole Movement
-            const blackHoleInterval = setInterval(() => {
-                blackHole.x -= blackHole.speed * timeWarp;
-                blackHole.hue = (blackHole.hue + 1) % 360;
+            function createAsteroid() {
+                const size = 30 + Math.random() * 50;
+                const asteroid = {
+                    x: canvas.width,
+                    y: canvas.height - size - 10,
+                    width: size,
+                    height: size,
+                    speed: gameSpeed + Math.random() * 2,
+                    color: `hsl(${Math.random() * 60 + 10}, 70%, 50%)`
+                };
                 
-                // Create particles for accretion disk
+                // Occasionally create a flying asteroid
                 if (Math.random() < 0.3) {
-                    createParticles(
-                        blackHole.x + Math.cos(Math.random() * Math.PI * 2) * blackHole.radius * 1.5,
-                        blackHole.y + Math.sin(Math.random() * Math.PI * 2) * blackHole.radius * 1.5,
-                        1,
-                        `hsl(${blackHole.hue}, 100%, 50%)`
+                    asteroid.y = canvas.height - size - 50 - Math.random() * 100;
+                }
+                
+                asteroids.push(asteroid);
+            }
+            
+            function drawAsteroids() {
+                asteroids.forEach((asteroid, index) => {
+                    ctx.fillStyle = asteroid.color;
+                    ctx.beginPath();
+                    ctx.arc(
+                        asteroid.x + asteroid.width/2,
+                        asteroid.y + asteroid.height/2,
+                        asteroid.width/2,
+                        0,
+                        Math.PI * 2
                     );
-                }
-                
-                if (blackHole.x + blackHole.radius < 0) {
-                    clearInterval(blackHoleInterval);
-                    blackHoleActive = false;
-                    showNarration("SINGULARITY ESCAPED", 1500);
-                }
-            }, 16);
-        }
-        
-        // ==== SPAWN POWER-UP ====
-        function spawnPowerUp() {
-            powerUpActive = true;
-            const powerUp = {
-                x: canvas.width,
-                y: Math.random() * (canvas.height - 30),
-                width: 30,
-                height: 30,
-                speed: 5,
-                type: Math.random() > 0.5 ? 'phantom' : 'hyper'
-            };
-            
-            powerUps.push(powerUp);
-            playSound(powerupSound);
-            
-            // Power-Up movement
-            const powerUpInterval = setInterval(() => {
-                powerUp.x -= powerUp.speed * timeWarp;
-                
-                if (powerUp.x + powerUp.width < 0) {
-                    clearInterval(powerUpInterval);
-                    powerUps.splice(powerUps.indexOf(powerUp), 1);
-                }
-            }, 16);
-            
-            // Power-Up Effect
-            setTimeout(() => {
-                powerUpActive = false;
-                showNarration(powerUp.type === 'phantom' ? "PHANTOM MODE ENDED" : "HYPER MODE ENDED", 1500);
-            }, 5000);
-        }
-        
-        // ==== END GAME WITH CRAZY EFFECTS ====
-        function endGame() {
-            gameOver = true;
-            if (score > highScore) {
-                highScore = score;
-                localStorage.setItem('highScore', highScore);
+                    ctx.fill();
+                    
+                    // Move asteroid
+                    asteroid.x -= asteroid.speed;
+                    
+                    // Remove asteroid if off screen
+                    if (asteroid.x + asteroid.width < 0) {
+                        asteroids.splice(index, 1);
+                        score++;
+                        scoreDisplay.textContent = `Score: ${score}`;
+                        
+                        // Increase game speed every 10 points
+                        if (score % 10 === 0) {
+                            gameSpeed += 0.5;
+                        }
+                    }
+                    
+                    // Check collision
+                    if (
+                        astronaut.x + astronaut.width > asteroid.x &&
+                        astronaut.x < asteroid.x + asteroid.width &&
+                        astronaut.y + astronaut.height > asteroid.y &&
+                        astronaut.y < asteroid.y + asteroid.height
+                    ) {
+                        gameOver();
+                    }
+                });
             }
             
-            // Create explosion effect
-            createParticles(player.x + player.width/2, player.y + player.height/2, 200, '#f00');
-            screenShake = 20;
-            
-            // Play death sound
-            playSound(deathSound);
-            
-            // Update UI
-            document.getElementById('finalScore').textContent = score;
-            document.getElementById('finalDimension').textContent = dimension;
-            document.getElementById('finalJumps').textContent = jumps;
-            document.getElementById('gameOver').style.display = 'block';
-            
-            // Stop music
-            bgMusic.pause();
-        }
-        
-        // ==== RESTART GAME ====
-        document.getElementById('restartBtn').addEventListener('click', () => {
-            // Reset everything
-            score = 0;
-            obstacles = [];
-            powerUps = [];
-            blackHoleActive = false;
-            powerUpActive = false;
-            player.y = 300;
-            player.velocity = 0;
-            player.width = 30;
-            player.height = 30;
-            dimension = 1;
-            gameOver = false;
-            timeWarp = 1.0;
-            combo = 1;
-            jumps = 0;
-            player.trail = [];
-            gravityWells = [];
-            timeWarps = [];
-            dimensionPortals = [];
-            quantumParticles = [];
-            invertedControls = false;
-            
-            // Update UI
-            document.getElementById('score').textContent = score;
-            document.getElementById('combo').textContent = 'x1';
-            document.getElementById('dimension').textContent = dimension;
-            document.getElementById('timeWarp').textContent = '100%';
-            document.getElementById('gameOver').style.display = 'none';
-            
-            // Reset player color
-            player.color = '#0FF';
-            
-            // Start music
-            if (soundOn) {
-                bgMusic.currentTime = 0;
-                bgMusic.play().catch(e => console.log("Audio play prevented:", e));
+            // Game loop
+            function gameLoop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw background
+                drawStars();
+                
+                // Update and draw astronaut
+                astronaut.update();
+                astronaut.draw();
+                
+                // Create new asteroids randomly
+                if (Math.random() < 0.02) {
+                    createAsteroid();
+                }
+                
+                // Draw asteroids
+                drawAsteroids();
+                
+                if (!isGameOver) {
+                    animationId = requestAnimationFrame(gameLoop);
+                }
             }
             
-            // Restart game loop
+            // Game over
+            function gameOver() {
+                isGameOver = true;
+                cancelAnimationFrame(animationId);
+                finalScoreDisplay.textContent = `Score: ${score}`;
+                gameOverDisplay.style.display = 'block';
+            }
+            
+            // Restart game
+            function restartGame() {
+                isGameOver = false;
+                score = 0;
+                gameSpeed = 5;
+                asteroids = [];
+                astronaut.y = astronaut.groundY;
+                astronaut.isJumping = false;
+                astronaut.velocity = 0;
+                scoreDisplay.textContent = `Score: ${score}`;
+                gameOverDisplay.style.display = 'none';
+                createStars();
+                gameLoop();
+            }
+            
+            // Event listeners
+            document.addEventListener('keydown', (e) => {
+                if ((e.code === 'Space' || e.key === 'ArrowUp') && !isGameOver) {
+                    astronaut.jump();
+                }
+                
+                if (e.code === 'Space' && isGameOver) {
+                    restartGame();
+                }
+            });
+            
+            restartBtn.addEventListener('click', restartGame);
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                astronaut.groundY = canvas.height - 100;
+                astronaut.y = astronaut.groundY;
+                createStars();
+            });
+            
+            // Start game
+            createStars();
             gameLoop();
         });
-        
-        // ==== KEYBOARD CONTROLS WITH KONAMI CODE ====
-        const keys = {};
-        document.addEventListener('keydown', (e) => {
-            keys[e.key] = true;
-            checkKonamiCode(e.key);
-            
-            // Cheat codes
-            if (e.key === '`') toggleCheatMode();
-            if (e.key === '1' && cheatMode) dimension = 1, shiftDimension();
-            if (e.key === '2' && cheatMode) dimension = 2, shiftDimension();
-            if (e.key === '3' && cheatMode) dimension = 3, shiftDimension();
-            if (e.key === '4' && cheatMode) dimension = 4, shiftDimension();
-            if (e.key === '5' && cheatMode) dimension = 5, shiftDimension();
-            if (e.key === '0' && cheatMode) score += 100;
-        });
-        
-        document.addEventListener('keyup', (e) => {
-            keys[e.key] = false;
-        });
-        
-        // Touch controls for mobile
-        document.addEventListener('touchstart', (e) => {
-            keys[' '] = true;
-            e.preventDefault();
-        });
-        
-        document.addEventListener('touchend', (e) => {
-            keys[' '] = false;
-            e.preventDefault();
-        });
-        
-        // ==== START THE INSANITY ====
-        showNarration("QUANTUM JUMPER: EXTREME EDITION", 2000);
-        setTimeout(() => {
-            showNarration("WARP DRIVE INITIATED", 1500);
-        }, 2500);
-        
-        // Start music
-        if (soundOn) {
-            bgMusic.volume = 0.5;
-            bgMusic.play().catch(e => console.log("Audio play prevented:", e));
-        }
-        
-        gameLoop();
     </script>
 </body>
 </html>
