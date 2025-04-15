@@ -167,23 +167,29 @@
             let powerUpActive = false;
             let powerUpEndTime = 0;
             
-            // Load images
-            const astronautImg = new Image();
-            astronautImg.src = 'https://cdn.pixabay.com/photo/2020/03/11/17/20/astronaut-4922867_960_720.png';
-            
-            const asteroidImgs = [
-                'https://cdn.pixabay.com/photo/2013/07/12/18/57/asteroid-154615_960_720.png',
-                'https://cdn.pixabay.com/photo/2013/07/12/18/57/asteroid-154616_960_720.png',
-                'https://cdn.pixabay.com/photo/2013/07/12/18/57/asteroid-154617_960_720.png'
-            ].map(src => {
+            // Load high-quality images
+            const assets = {
+                astronaut: 'https://cdn.jsdelivr.net/gh/feversoftspace/spacejumper@main/astronaut.png',
+                comet: 'https://cdn.jsdelivr.net/gh/feversoftspace/spacejumper@main/comet.png',
+                powerup: 'https://cdn.jsdelivr.net/gh/feversoftspace/spacejumper@main/powerup.png'
+            };
+
+            // Preload images
+            const images = {};
+            await Promise.all(Object.entries(assets).map(async ([name, url]) => {
                 const img = new Image();
-                img.src = src;
-                return img;
+                img.src = url;
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = reject;
+                });
+                images[name] = img;
+            })).catch(error => {
+                console.error('Error loading images:', error);
+                alert('Failed to load game assets. Please try refreshing the page.');
+                return;
             });
-            
-            const powerUpImg = new Image();
-            powerUpImg.src = 'https://cdn.pixabay.com/photo/2017/01/31/23/42/decorative-2028039_960_720.png';
-            
+
             // Create background stars
             function createStars() {
                 stars = [];
@@ -233,17 +239,10 @@
                 velocity: 0,
                 jumpForce: -22,
                 groundY: canvas.height - 150,
-                img: astronautImg,
-                imgLoaded: false,
+                img: images.astronaut,
                 
                 draw() {
-                    if (this.imgLoaded) {
-                        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-                    } else {
-                        // Fallback if image doesn't load
-                        ctx.fillStyle = '#fff';
-                        ctx.fillRect(this.x, this.y, this.width, this.height);
-                    }
+                    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
                 },
                 
                 jump() {
@@ -254,11 +253,9 @@
                 },
                 
                 update() {
-                    // Apply gravity
                     this.velocity += this.gravity;
                     this.y += this.velocity;
                     
-                    // Check if landed
                     if (this.y >= this.groundY) {
                         this.y = this.groundY;
                         this.velocity = 0;
@@ -267,35 +264,27 @@
                 }
             };
             
-            astronautImg.onload = () => {
-                astronaut.imgLoaded = true;
-            };
-            
-            // Asteroids
-            let asteroids = [];
+            // Comets
+            let comets = [];
             let powerUps = [];
             
-            function createAsteroid() {
-                const size = 40 + Math.random() * 60;
-                const asteroidType = Math.floor(Math.random() * asteroidImgs.length);
-                const asteroid = {
+            function createComet() {
+                const size = 60 + Math.random() * 60;
+                const comet = {
                     x: canvas.width,
                     y: canvas.height - size - 20,
                     width: size,
                     height: size,
                     speed: gameSpeed + Math.random() * 2,
-                    type: asteroidType,
-                    imgLoaded: asteroidImgs[asteroidType].complete,
                     rotation: 0,
                     rotationSpeed: (Math.random() - 0.5) * 0.1
                 };
                 
-                // Occasionally create a flying asteroid
                 if (Math.random() < 0.3) {
-                    asteroid.y = canvas.height - size - 100 - Math.random() * 150;
+                    comet.y = canvas.height - size - 100 - Math.random() * 150;
                 }
                 
-                asteroids.push(asteroid);
+                comets.push(comet);
             }
             
             function createPowerUp() {
@@ -306,110 +295,74 @@
                         y: canvas.height - size - 150 - Math.random() * 100,
                         width: size,
                         height: size,
-                        speed: gameSpeed + 1,
-                        imgLoaded: powerUpImg.complete
+                        speed: gameSpeed + 1
                     };
                     
                     powerUps.push(powerUp);
                 }
             }
             
-            function drawAsteroids() {
-                asteroids.forEach((asteroid, index) => {
-                    if (asteroid.imgLoaded && asteroidImgs[asteroid.type].complete) {
-                        ctx.save();
-                        ctx.translate(asteroid.x + asteroid.width/2, asteroid.y + asteroid.height/2);
-                        ctx.rotate(asteroid.rotation);
-                        ctx.drawImage(
-                            asteroidImgs[asteroid.type], 
-                            -asteroid.width/2, 
-                            -asteroid.height/2, 
-                            asteroid.width, 
-                            asteroid.height
-                        );
-                        ctx.restore();
-                    } else {
-                        // Fallback if image doesn't load
-                        ctx.fillStyle = `hsl(${Math.random() * 60 + 10}, 70%, 50%)`;
-                        ctx.beginPath();
-                        ctx.arc(
-                            asteroid.x + asteroid.width/2,
-                            asteroid.y + asteroid.height/2,
-                            asteroid.width/2,
-                            0,
-                            Math.PI * 2
-                        );
-                        ctx.fill();
-                    }
+            function drawComets() {
+                comets.forEach((comet, index) => {
+                    ctx.save();
+                    ctx.translate(comet.x + comet.width/2, comet.y + comet.height/2);
+                    ctx.rotate(comet.rotation);
+                    ctx.drawImage(
+                        images.comet, 
+                        -comet.width/2, 
+                        -comet.height/2, 
+                        comet.width, 
+                        comet.height
+                    );
+                    ctx.restore();
                     
-                    // Move asteroid
-                    asteroid.x -= asteroid.speed;
-                    asteroid.rotation += asteroid.rotationSpeed;
+                    comet.x -= comet.speed;
+                    comet.rotation += comet.rotationSpeed;
                     
-                    // Remove asteroid if off screen
-                    if (asteroid.x + asteroid.width < 0) {
-                        asteroids.splice(index, 1);
+                    if (comet.x + comet.width < 0) {
+                        comets.splice(index, 1);
                         score++;
                         scoreDisplay.textContent = `SCORE: ${score}`;
                         
-                        // Increase game speed every 10 points
                         if (score % 10 === 0) {
                             gameSpeed += 0.5;
                         }
                     }
                     
-                    // Check collision
-                    if (
-                        astronaut.x + astronaut.width > asteroid.x &&
-                        astronaut.x < asteroid.x + asteroid.width &&
-                        astronaut.y + astronaut.height > asteroid.y &&
-                        astronaut.y < asteroid.y + asteroid.height
-                    ) {
-                        if (!powerUpActive) {
-                            gameOver();
-                        } else {
-                            // If power-up is active, destroy the asteroid
-                            asteroids.splice(index, 1);
-                            score += 2; // Bonus points for destroying asteroids
-                            scoreDisplay.textContent = `SCORE: ${score}`;
-                        }
+                    if (checkCollision(astronaut, comet)) {
+                        handleCollision(index);
                     }
                 });
             }
             
+            function checkCollision(a, b) {
+                return a.x < b.x + b.width &&
+                       a.x + a.width > b.x &&
+                       a.y < b.y + b.height &&
+                       a.y + a.height > b.y;
+            }
+            
+            function handleCollision(index) {
+                if (!powerUpActive) {
+                    gameOver();
+                } else {
+                    comets.splice(index, 1);
+                    score += 2;
+                    scoreDisplay.textContent = `SCORE: ${score}`;
+                }
+            }
+            
             function drawPowerUps() {
                 powerUps.forEach((powerUp, index) => {
-                    if (powerUp.imgLoaded && powerUpImg.complete) {
-                        ctx.drawImage(powerUpImg, powerUp.x, powerUp.y, powerUp.width, powerUp.height);
-                    } else {
-                        // Fallback if image doesn't load
-                        ctx.fillStyle = '#ff0';
-                        ctx.beginPath();
-                        ctx.arc(
-                            powerUp.x + powerUp.width/2,
-                            powerUp.y + powerUp.height/2,
-                            powerUp.width/2,
-                            0,
-                            Math.PI * 2
-                        );
-                        ctx.fill();
-                    }
+                    ctx.drawImage(images.powerup, powerUp.x, powerUp.y, powerUp.width, powerUp.height);
                     
-                    // Move power-up
                     powerUp.x -= powerUp.speed;
                     
-                    // Remove power-up if off screen
                     if (powerUp.x + powerUp.width < 0) {
                         powerUps.splice(index, 1);
                     }
                     
-                    // Check collision with astronaut
-                    if (
-                        astronaut.x + astronaut.width > powerUp.x &&
-                        astronaut.x < powerUp.x + powerUp.width &&
-                        astronaut.y + astronaut.height > powerUp.y &&
-                        astronaut.y < powerUp.y + powerUp.height
-                    ) {
+                    if (checkCollision(astronaut, powerUp)) {
                         activatePowerUp();
                         powerUps.splice(index, 1);
                     }
@@ -418,8 +371,19 @@
             
             function activatePowerUp() {
                 powerUpActive = true;
-                powerUpEndTime = Date.now() + 5000; // 5 seconds
-                powerUpDisplay.textContent = "SHIELD ACTIVATED!";
+                powerUpEndTime = Date.now() + 5000;
+                showPowerUpMessage("SHIELD ACTIVATED!");
+            }
+            
+            function checkPowerUpStatus() {
+                if (powerUpActive && Date.now() > powerUpEndTime) {
+                    powerUpActive = false;
+                    showPowerUpMessage("SHIELD DEACTIVATED");
+                }
+            }
+            
+            function showPowerUpMessage(message) {
+                powerUpDisplay.textContent = message;
                 powerUpDisplay.style.display = 'block';
                 powerUpDisplay.style.left = (canvas.width/2 - 100) + 'px';
                 powerUpDisplay.style.top = '100px';
@@ -429,81 +393,55 @@
                 }, 2000);
             }
             
-            function checkPowerUpStatus() {
-                if (powerUpActive && Date.now() > powerUpEndTime) {
-                    powerUpActive = false;
-                    powerUpDisplay.textContent = "SHIELD DEACTIVATED";
-                    powerUpDisplay.style.display = 'block';
-                    powerUpDisplay.style.left = (canvas.width/2 - 110) + 'px';
-                    powerUpDisplay.style.top = '100px';
-                    
-                    setTimeout(() => {
-                        powerUpDisplay.style.display = 'none';
-                    }, 2000);
-                }
-            }
-            
             // Game loop
             function gameLoop() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
-                // Draw background
                 drawStars();
-                
-                // Update and draw astronaut
                 astronaut.update();
                 astronaut.draw();
                 
-                // Create new asteroids randomly
-                if (Math.random() < 0.02) {
-                    createAsteroid();
-                }
-                
-                // Create power-ups
+                if (Math.random() < 0.02) createComet();
                 createPowerUp();
                 
-                // Draw asteroids and power-ups
-                drawAsteroids();
+                drawComets();
                 drawPowerUps();
-                
-                // Check power-up status
                 checkPowerUpStatus();
                 
-                // Draw shield effect if power-up is active
-                if (powerUpActive) {
-                    ctx.strokeStyle = '#0ff';
-                    ctx.lineWidth = 3;
-                    ctx.beginPath();
-                    ctx.arc(
-                        astronaut.x + astronaut.width/2,
-                        astronaut.y + astronaut.height/2,
-                        astronaut.width + 20,
-                        0,
-                        Math.PI * 2
-                    );
-                    ctx.stroke();
-                    
-                    // Pulsing effect
-                    const pulseSize = Math.sin(Date.now() / 200) * 5;
-                    ctx.strokeStyle = `rgba(0, 255, 255, ${0.5 + Math.sin(Date.now() / 300) * 0.5})`;
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.arc(
-                        astronaut.x + astronaut.width/2,
-                        astronaut.y + astronaut.height/2,
-                        astronaut.width + 20 + pulseSize,
-                        0,
-                        Math.PI * 2
-                    );
-                    ctx.stroke();
-                }
+                if (powerUpActive) drawShield();
                 
                 if (!isGameOver) {
                     animationId = requestAnimationFrame(gameLoop);
                 }
             }
             
-            // Game over
+            function drawShield() {
+                ctx.strokeStyle = '#0ff';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(
+                    astronaut.x + astronaut.width/2,
+                    astronaut.y + astronaut.height/2,
+                    astronaut.width + 20,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.stroke();
+                
+                const pulseSize = Math.sin(Date.now() / 200) * 5;
+                ctx.strokeStyle = `rgba(0, 255, 255, ${0.5 + Math.sin(Date.now() / 300) * 0.5})`;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(
+                    astronaut.x + astronaut.width/2,
+                    astronaut.y + astronaut.height/2,
+                    astronaut.width + 20 + pulseSize,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.stroke();
+            }
+            
             function gameOver() {
                 isGameOver = true;
                 cancelAnimationFrame(animationId);
@@ -511,12 +449,11 @@
                 gameOverDisplay.style.display = 'block';
             }
             
-            // Restart game
             function restartGame() {
                 isGameOver = false;
                 score = 0;
                 gameSpeed = 5;
-                asteroids = [];
+                comets = [];
                 powerUps = [];
                 powerUpActive = false;
                 astronaut.y = astronaut.groundY;
@@ -529,27 +466,20 @@
                 gameLoop();
             }
             
-            // Event listeners
             function handleJump() {
-                if (!isGameOver) {
-                    astronaut.jump();
-                } else {
-                    restartGame();
-                }
+                if (!isGameOver) astronaut.jump();
+                else restartGame();
             }
             
+            // Event listeners
             document.addEventListener('keydown', (e) => {
-                if (e.code === 'Space' || e.key === 'ArrowUp' || e.key === 'w') {
-                    handleJump();
-                }
+                if (['Space', 'ArrowUp', 'w'].includes(e.code)) handleJump();
             });
             
             document.addEventListener('click', handleJump);
             document.addEventListener('touchstart', handleJump);
-            
             restartBtn.addEventListener('click', restartGame);
             
-            // Handle window resize
             window.addEventListener('resize', () => {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
