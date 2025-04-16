@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bone Cracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+        
+        .skeleton {
+            position: relative;
+            width: 300px;
+            height: 500px;
+            margin: 0 auto;
+            background: url('skeleton.png') no-repeat;
+            background-size: contain;
+        }
+        
+        .bone {
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .bone:hover {
+            transform: scale(1.05);
+        }
+        
+        .crack {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: url('crack.png') no-repeat;
+            background-size: contain;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Click on any bone to crack it!</h1>
+    <div class="skeleton">
+        <!-- Bones will be positioned here -->
+        <div class="bone" id="skull" style="top: 0; left: 120px; width: 60px; height: 80px;"></div>
+        <div class="bone" id="humerus-left" style="top: 80px; left: 80px; width: 20px; height: 100px;"></div>
+        <!-- Add more bones as needed -->
+        
+        <!-- Crack elements will be added dynamically -->
+    </div>
+    
+    <audio id="crackSound" src="bone_crack.mp3" preload="auto"></audio>
+    
+    <script src="script.js"></script>
+</body>
+</html>
