@@ -111,22 +111,17 @@
         }
         
         @keyframes astronaut-jump {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-100px); }
-            100% { transform: translateY(0); }
+            0% { transform: translateY(0) scale(0.9); }
+            50% { transform: translateY(-150px) scale(0.9); }
+            100% { transform: translateY(0) scale(0.9); }
         }
         
-        .jump {
-            animation: astronaut-jump 0.8s linear;
+        .double-jump {
+            animation: astronaut-jump 1s linear;
         }
         
-        #power-up {
-            position: absolute;
-            display: none;
-            color: #ff0;
-            font-size: 24px;
-            text-shadow: 0 0 10px #ff0;
-            z-index: 10;
+        .glow {
+            filter: drop-shadow(0 0 10px #fff) drop-shadow(0 0 20px #fff);
         }
     </style>
 </head>
@@ -135,7 +130,7 @@
         <h1 id="title">SPACE JUMPER</h1>
         <canvas id="game-canvas"></canvas>
         <div id="score-display">SCORE: 0</div>
-        <div id="instructions">SPACE/UP/CLICK to JUMP</div>
+        <div id="instructions">TAP/CLICK to JUMP • DOUBLE TAP for HIGH JUMP</div>
         <div id="power-up"></div>
         <div id="game-over">
             GAME OVER!<br>
@@ -160,21 +155,24 @@
             
             // Game variables
             let score = 0;
-            let gameSpeed = 5;
+            let gameSpeed = 4;
             let isGameOver = false;
             let animationId;
             let stars = [];
             let powerUpActive = false;
             let powerUpEndTime = 0;
+            let lastCometSpawn = 0;
+            let lastTap = 0;
+            const minCometDistance = 400;
             
-            // Load high-quality assets from reliable sources
+            // Load assets
             const assets = {
                 astronaut: 'https://cdn-icons-png.flaticon.com/512/892/892781.png',
-                comet: 'https://cdn-icons-png.flaticon.com/512/2738/2738733.png',
-                powerup: 'https://cdn-icons-png.flaticon.com/512/3520/3520763.png'
+                comet: 'https://cdn-icons-png.flaticon.com/512/892/892762.png',
+                powerup: 'https://cdn-icons-png.flaticon.com/512/4298/4298900.png'
             };
 
-            // Preload images with error handling
+            // Preload images
             const images = {};
             try {
                 await Promise.all(Object.entries(assets).map(async ([name, url]) => {
@@ -232,8 +230,8 @@
             const astronaut = {
                 x: 100,
                 y: canvas.height - 150,
-                width: 80,
-                height: 100,
+                width: 60,
+                height: 80,
                 isJumping: false,
                 gravity: 1.5,
                 velocity: 0,
@@ -269,10 +267,15 @@
             let powerUps = [];
             
             function createComet() {
-                const size = 60 + Math.random() * 60;
+                const now = Date.now();
+                if (comets.length > 0 && 
+                    canvas.width - comets[comets.length-1].x < minCometDistance && 
+                    now - lastCometSpawn < 2000) return;
+
+                const size = 30 + Math.random() * 20;
                 const comet = {
                     x: canvas.width,
-                    y: canvas.height - size - 20,
+                    y: canvas.height - size - (Math.random() * 300),
                     width: size,
                     height: size,
                     speed: gameSpeed + Math.random() * 2,
@@ -280,11 +283,8 @@
                     rotationSpeed: (Math.random() - 0.5) * 0.1
                 };
                 
-                if (Math.random() < 0.3) {
-                    comet.y = canvas.height - size - 100 - Math.random() * 150;
-                }
-                
                 comets.push(comet);
+                lastCometSpawn = now;
             }
             
             function createPowerUp() {
@@ -323,10 +323,6 @@
                         comets.splice(index, 1);
                         score++;
                         scoreDisplay.textContent = `SCORE: ${score}`;
-                        
-                        if (score % 10 === 0) {
-                            gameSpeed += 0.5;
-                        }
                     }
                     
                     if (checkCollision(astronaut, comet)) {
@@ -372,7 +368,7 @@
             function activatePowerUp() {
                 powerUpActive = true;
                 powerUpEndTime = Date.now() + 5000;
-                showPowerUpMessage("SHIELD ACTIVATED!");
+                showPowerUpMessage("STAR SHIELD ACTIVATED!");
             }
             
             function checkPowerUpStatus() {
@@ -397,6 +393,11 @@
             function gameLoop() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 
+                gameSpeed += 0.02;
+                if (score % 100 === 0) {
+                    gameSpeed += 1;
+                }
+                
                 drawStars();
                 astronaut.update();
                 astronaut.draw();
@@ -416,30 +417,35 @@
             }
             
             function drawShield() {
-                ctx.strokeStyle = '#0ff';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.arc(
-                    astronaut.x + astronaut.width/2,
-                    astronaut.y + astronaut.height/2,
-                    astronaut.width + 20,
-                    0,
-                    Math.PI * 2
-                );
-                ctx.stroke();
+                const centerX = astronaut.x + astronaut.width/2;
+                const centerY = astronaut.y + astronaut.height/2;
+                const radius = astronaut.width + 15;
                 
-                const pulseSize = Math.sin(Date.now() / 200) * 5;
-                ctx.strokeStyle = `rgba(0, 255, 255, ${0.5 + Math.sin(Date.now() / 300) * 0.5})`;
-                ctx.lineWidth = 2;
+                // Glowing effect
+                ctx.save();
                 ctx.beginPath();
-                ctx.arc(
-                    astronaut.x + astronaut.width/2,
-                    astronaut.y + astronaut.height/2,
-                    astronaut.width + 20 + pulseSize,
-                    0,
-                    Math.PI * 2
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                const gradient = ctx.createRadialGradient(
+                    centerX, centerY, 0, 
+                    centerX, centerY, radius
                 );
-                ctx.stroke();
+                gradient.addColorStop(0, 'rgba(255,255,150,0.8)');
+                gradient.addColorStop(1, 'rgba(255,255,150,0)');
+                ctx.fillStyle = gradient;
+                ctx.globalCompositeOperation = 'lighter';
+                ctx.fill();
+                ctx.restore();
+
+                // Animated particles
+                for(let i = 0; i < 5; i++) {
+                    const angle = (Date.now()/100 + i * 72) * Math.PI/180;
+                    const x = centerX + Math.cos(angle) * radius;
+                    const y = centerY + Math.sin(angle) * radius;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsl(${Date.now()/10 % 360}, 100%, 50%)`;
+                    ctx.fill();
+                }
             }
             
             function gameOver() {
@@ -452,7 +458,7 @@
             function restartGame() {
                 isGameOver = false;
                 score = 0;
-                gameSpeed = 5;
+                gameSpeed = 4;
                 comets = [];
                 powerUps = [];
                 powerUpActive = false;
@@ -470,14 +476,33 @@
                 if (!isGameOver) astronaut.jump();
                 else restartGame();
             }
+
+            function handleDoubleTap() {
+                const now = Date.now();
+                const timeSinceLastTap = now - lastTap;
+                if (timeSinceLastTap < 300 && !astronaut.isJumping) {
+                    astronaut.jumpForce = -30;
+                    handleJump();
+                    setTimeout(() => { astronaut.jumpForce = -22 }, 100);
+                }
+                lastTap = now;
+            }
             
             // Event listeners
             document.addEventListener('keydown', (e) => {
                 if (['Space', 'ArrowUp', 'w'].includes(e.code)) handleJump();
             });
             
-            document.addEventListener('click', handleJump);
-            document.addEventListener('touchstart', handleJump);
+            document.addEventListener('click', (e) => {
+                if (e.detail === 2) handleDoubleTap();
+                else handleJump();
+            });
+
+            document.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (e.touches.length === 1) handleDoubleTap();
+            });
+            
             restartBtn.addEventListener('click', restartGame);
             
             window.addEventListener('resize', () => {
