@@ -145,7 +145,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const canvas = document.getElementById('game-canvas');
             const ctx = canvas.getContext('2d');
             const scoreDisplay = document.getElementById('score-display');
@@ -167,28 +167,30 @@
             let powerUpActive = false;
             let powerUpEndTime = 0;
             
-            // Load high-quality images
+            // Load high-quality assets from reliable sources
             const assets = {
-                astronaut: 'https://cdn.jsdelivr.net/gh/feversoftspace/spacejumper@main/astronaut.png',
-                comet: 'https://cdn.jsdelivr.net/gh/feversoftspace/spacejumper@main/comet.png',
-                powerup: 'https://cdn.jsdelivr.net/gh/feversoftspace/spacejumper@main/powerup.png'
+                astronaut: 'https://cdn-icons-png.flaticon.com/512/892/892781.png',
+                comet: 'https://cdn-icons-png.flaticon.com/512/2738/2738733.png',
+                powerup: 'https://cdn-icons-png.flaticon.com/512/3520/3520763.png'
             };
 
-            // Preload images
+            // Preload images with error handling
             const images = {};
-            await Promise.all(Object.entries(assets).map(async ([name, url]) => {
-                const img = new Image();
-                img.src = url;
-                await new Promise((resolve, reject) => {
-                    img.onload = resolve;
-                    img.onerror = reject;
-                });
-                images[name] = img;
-            })).catch(error => {
-                console.error('Error loading images:', error);
-                alert('Failed to load game assets. Please try refreshing the page.');
+            try {
+                await Promise.all(Object.entries(assets).map(async ([name, url]) => {
+                    const img = new Image();
+                    img.src = url;
+                    await new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = () => reject(new Error(`Failed to load ${name} image`));
+                    });
+                    images[name] = img;
+                }));
+            } catch (error) {
+                console.error(error);
+                alert('Game assets failed to load. Please refresh the page.');
                 return;
-            });
+            }
 
             // Create background stars
             function createStars() {
@@ -215,10 +217,8 @@
                     ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Move stars
                     star.x -= star.speed;
                     
-                    // Reset star position when it goes off screen
                     if (star.x < 0) {
                         star.x = canvas.width;
                         star.y = Math.random() * canvas.height;
