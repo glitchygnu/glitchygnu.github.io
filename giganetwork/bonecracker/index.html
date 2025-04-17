@@ -1,61 +1,113 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bone Cracker</title>
+    <title>Crack the Skeleton!</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f0f0f0;
-        }
-        
-        .skeleton {
-            position: relative;
-            width: 300px;
-            height: 500px;
-            margin: 0 auto;
-            background: url('skeleton.png') no-repeat;
-            background-size: contain;
-        }
-        
-        .bone {
-            position: absolute;
+            background: #2c3e50;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             cursor: pointer;
-            transition: transform 0.3s;
         }
-        
-        .bone:hover {
-            transform: scale(1.05);
+
+        .skeleton {
+            width: 400px;
+            height: 600px;
+            position: relative;
         }
-        
-        .crack {
+
+        .bone {
+            transition: filter 0.3s;
+            cursor: pointer;
+        }
+
+        .bone.cracked {
+            filter: brightness(1.5) sepia(1) hue-rotate(300deg);
+            animation: crack 0.3s ease-in-out;
+        }
+
+        @keyframes crack {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(3px) rotate(1deg); }
+            50% { transform: translateX(-3px) rotate(-1deg); }
+            75% { transform: translateX(2px) rotate(1deg); }
+            100% { transform: translateX(0); }
+        }
+
+        .crack-effect {
             position: absolute;
             width: 30px;
             height: 30px;
-            background: url('crack.png') no-repeat;
-            background-size: contain;
+            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFXSURBVFiF7ZYxTsNAEEWfQ0gUAaJCFEh0dNwACQkuQENNwQmQOAAXoKJDQqKgQKJAFEiIEKXjX8DKIq+9a1hW+SVL3p2dN7OzM2tDqVQqlf4z4VQHr9c3HWAHrIF3YAHcO+fepnIxqYCIvAD3wB54BJ6cc5+TeZjagYjMgS3w5py7msxARFbAC/AK3Dnn9lM4EJFz4BN4c85dT2IgIhvgFngHls65rykMRKQBFsCnMaaZwkBEPoC5MeZ8CgMRWQNnwMIY8z2FgYjMgMYf/4qDvwSMMW2oQa8DY0wbY9BrYIxpYwx6DYwxbYxBr4Expg01GGJgjGlDDIYYGGPaEIMhBsaYNsRgiIExplUDY0yrBsaYVg2MMa0aGGNaNTDGtGrwYzC2iIhcgDxUfQNLY0w7mYOI3ABPwDewMsZ8TWYgIhfgFfgC1saYj8kMROQSeAP2wMYY8zaZgYhcgTfgG9gaY14mMxCRa+AZ+AG2xpi9/1yKQalUKpX+Mb9TF5+6XZRg9QAAAABJRU5ErkJggg==');
             opacity: 0;
             pointer-events: none;
         }
-        
-        h1 {
-            color: #333;
+
+        .play-sound {
+            animation: crackEffect 0.5s;
+        }
+
+        @keyframes crackEffect {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
         }
     </style>
 </head>
 <body>
-    <h1>Click on any bone to crack it!</h1>
     <div class="skeleton">
-        <!-- Bones will be positioned here -->
-        <div class="bone" id="skull" style="top: 0; left: 120px; width: 60px; height: 80px;"></div>
-        <div class="bone" id="humerus-left" style="top: 80px; left: 80px; width: 20px; height: 100px;"></div>
-        <!-- Add more bones as needed -->
-        
-        <!-- Crack elements will be added dynamically -->
+        <svg viewBox="0 0 400 600">
+            <!-- Skull -->
+            <path class="bone" d="M200 50 Q220 30 240 50 Q260 90 240 130 Q220 150 200 130 Q180 150 160 130 Q140 90 160 50 Q180 30 200 50Z" 
+                  fill="#f0f0f0" onclick="crackBone(event)"/>
+            
+            <!-- Spine -->
+            <rect class="bone" x="195" y="130" width="10" height="200" fill="#f0f0f0" onclick="crackBone(event)"/>
+            
+            <!-- Ribs -->
+            <path class="bone" d="M205 150 l50 -20 l0 40 l-50 20Z" fill="#f0f0f0" onclick="crackBone(event)"/>
+            <path class="bone" d="M195 150 l-50 -20 l0 40 l50 20Z" fill="#f0f0f0" onclick="crackBone(event)"/>
+            
+            <!-- Arms -->
+            <path class="bone" d="M205 180 l30 80 l-20 60" fill="none" stroke="#f0f0f0" stroke-width="8" onclick="crackBone(event)"/>
+            <path class="bone" d="M195 180 l-30 80 l20 60" fill="none" stroke="#f0f0f0" stroke-width="8" onclick="crackBone(event)"/>
+            
+            <!-- Legs -->
+            <path class="bone" d="M205 330 l20 120 l-30 80" fill="none" stroke="#f0f0f0" stroke-width="8" onclick="crackBone(event)"/>
+            <path class="bone" d="M195 330 l-20 120 l30 80" fill="none" stroke="#f0f0f0" stroke-width="8" onclick="crackBone(event)"/>
+        </svg>
     </div>
-    
-    <audio id="crackSound" src="bone_crack.mp3" preload="auto"></audio>
-    
-    <script src="script.js"></script>
+
+    <script>
+        const crackSounds = [
+            "https://assets.mixkit.co/active_storage/sfx/2249/2249-preview.mp3",
+            "https://assets.mixkit.co/active_storage/sfx/2250/2250-preview.mp3",
+            "https://assets.mixkit.co/active_storage/sfx/2251/2251-preview.mp3",
+            "https://assets.mixkit.co/active_storage/sfx/2252/2252-preview.mp3"
+        ];
+
+        function crackBone(event) {
+            const bone = event.target;
+            
+            // Add crack effect
+            const effect = document.createElement('div');
+            effect.className = 'crack-effect play-sound';
+            effect.style.left = `${event.clientX - 15}px`;
+            effect.style.top = `${event.clientY - 15}px`;
+            document.body.appendChild(effect);
+            
+            // Play random crack sound
+            const audio = new Audio(crackSounds[Math.floor(Math.random() * crackSounds.length)]);
+            audio.play();
+            
+            // Add cracked state
+            bone.classList.add('cracked');
+            
+            // Remove effect after animation
+            setTimeout(() => effect.remove(), 500);
+        }
+    </script>
 </body>
 </html>
