@@ -11,10 +11,12 @@
             --bg-color: #111;
             --text-color: #fff;
             --glow-intensity: 0.8;
+            --button-radius: 20px;
+            --container-radius: 25px;
         }
 
         body {
-            font-family: 'Segment7Standard', monospace;
+            font-family: 'Orbitron', 'Segoe UI', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -29,16 +31,14 @@
         }
 
         @font-face {
-            font-family: 'Segment7Standard';
-            src: url('https://cdn.jsdelivr.net/gh/divanvisagie/Segment7@master/Segment7Standard.otf') format('opentype');
-            font-weight: normal;
-            font-style: italic;
+            font-family: 'Orbitron';
+            src: url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
         }
 
         .container {
             text-align: center;
             padding: 2rem;
-            border-radius: 15px;
+            border-radius: var(--container-radius);
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
             background: rgba(20, 20, 20, 0.7);
             backdrop-filter: blur(10px);
@@ -56,6 +56,7 @@
             color: var(--primary-color);
             text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
             letter-spacing: 3px;
+            font-weight: 700;
         }
 
         .clock {
@@ -64,6 +65,7 @@
             color: var(--primary-color);
             text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
             letter-spacing: 5px;
+            font-weight: 500;
         }
 
         .date {
@@ -88,15 +90,36 @@
             padding: 0.8rem 1.5rem;
             font-size: 1rem;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: var(--button-radius);
             transition: all 0.3s ease;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Orbitron', sans-serif;
             text-transform: uppercase;
             letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-color);
+            z-index: -1;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        button:hover::before {
+            transform: scaleX(1);
+            transform-origin: left;
         }
 
         button:hover {
-            background: var(--primary-color);
             color: #000;
             box-shadow: 0 0 15px var(--primary-color);
         }
@@ -168,8 +191,9 @@
             border-bottom: 2px solid transparent;
             color: var(--text-color);
             cursor: pointer;
-            font-family: 'Arial', sans-serif;
+            font-family: 'Orbitron', sans-serif;
             transition: all 0.3s ease;
+            border-radius: var(--button-radius) var(--button-radius) 0 0;
         }
 
         .tab.active {
@@ -207,7 +231,7 @@
             font-size: 1.2rem;
             width: 60px;
             text-align: center;
-            border-radius: 5px;
+            border-radius: var(--button-radius);
         }
 
         .timer-display {
@@ -215,6 +239,89 @@
             margin: 1rem 0;
             color: var(--primary-color);
             text-shadow: 0 0 10px var(--primary-color);
+        }
+
+        /* Theme selector button */
+        .theme-palette-btn {
+            margin-top: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--button-radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-palette-btn:hover {
+            background: var(--primary-color);
+            color: #000;
+        }
+
+        /* Theme palette modal */
+        .theme-palette {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30, 30, 30, 0.9);
+            padding: 2rem;
+            border-radius: var(--container-radius);
+            border: 1px solid var(--primary-color);
+            z-index: 100;
+            max-width: 80%;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.7);
+        }
+
+        .theme-palette.active {
+            display: block;
+        }
+
+        .theme-palette-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Mode selector */
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .mode-btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--button-radius);
+        }
+
+        /* Language selector */
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .language-btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border-radius: var(--button-radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .language-btn:hover {
+            background: var(--primary-color);
+            color: #000;
         }
 
         /* Animation for digital rain effect */
@@ -238,21 +345,27 @@
             button {
                 width: 80%;
             }
+            .language-selector {
+                position: static;
+                margin-top: 1rem;
+            }
         }
-
-        /* Theme specific styles will be added dynamically */
     </style>
 </head>
 <body>
     <div class="particles" id="particles"></div>
     
     <div class="container">
-        <h1 class="title">NEON TIME</h1>
+        <div class="language-selector">
+            <button class="language-btn" id="language-btn">EN</button>
+        </div>
+        
+        <h1 class="title" id="app-title">NEON TIME</h1>
         
         <div class="tab-container">
-            <button class="tab active" data-tab="clock">Digital Clock</button>
-            <button class="tab" data-tab="stopwatch">Stopwatch</button>
-            <button class="tab" data-tab="timer">Timer</button>
+            <button class="tab active" data-tab="clock" id="clock-tab">Digital Clock</button>
+            <button class="tab" data-tab="stopwatch" id="stopwatch-tab">Stopwatch</button>
+            <button class="tab" data-tab="timer" id="timer-tab">Timer</button>
         </div>
         
         <!-- Clock Tab -->
@@ -289,19 +402,160 @@
             </div>
         </div>
         
-        <div class="theme-selector">
-            <button class="theme-btn" data-theme="default" style="background: linear-gradient(135deg, #111, #003);"></button>
-            <button class="theme-btn" data-theme="red" style="background: linear-gradient(135deg, #300, #900);"></button>
-            <button class="theme-btn" data-theme="blue" style="background: linear-gradient(135deg, #003, #009);"></button>
-            <button class="theme-btn" data-theme="green" style="background: linear-gradient(135deg, #030, #090);"></button>
-            <button class="theme-btn" data-theme="purple" style="background: linear-gradient(135deg, #303, #909);"></button>
-            <button class="theme-btn" data-theme="orange" style="background: linear-gradient(135deg, #630, #960);"></button>
-            <button class="theme-btn" data-theme="pink" style="background: linear-gradient(135deg, #603, #906);"></button>
-            <button class="theme-btn" data-theme="cyan" style="background: linear-gradient(135deg, #033, #099);"></button>
+        <div class="mode-selector">
+            <button class="mode-btn" data-mode="dark" id="dark-mode-btn">Dark Mode</button>
+            <button class="mode-btn" data-mode="light" id="light-mode-btn">Light Mode</button>
+            <button class="mode-btn" data-mode="gold" id="gold-mode-btn">Gold Mode</button>
+        </div>
+        
+        <button class="theme-palette-btn" id="theme-palette-btn">Show Color Palette</button>
+        
+        <div class="theme-palette" id="theme-palette">
+            <button class="theme-palette-close" id="theme-palette-close">&times;</button>
+            <h3 id="palette-title">Color Palette</h3>
+            <div class="theme-selector">
+                <button class="theme-btn" data-theme="default" style="background: linear-gradient(135deg, #111, #003);"></button>
+                <button class="theme-btn" data-theme="red" style="background: linear-gradient(135deg, #300, #900);"></button>
+                <button class="theme-btn" data-theme="blue" style="background: linear-gradient(135deg, #003, #009);"></button>
+                <button class="theme-btn" data-theme="green" style="background: linear-gradient(135deg, #030, #090);"></button>
+                <button class="theme-btn" data-theme="purple" style="background: linear-gradient(135deg, #303, #909);"></button>
+                <button class="theme-btn" data-theme="orange" style="background: linear-gradient(135deg, #630, #960);"></button>
+                <button class="theme-btn" data-theme="pink" style="background: linear-gradient(135deg, #603, #906);"></button>
+                <button class="theme-btn" data-theme="cyan" style="background: linear-gradient(135deg, #033, #099);"></button>
+            </div>
         </div>
     </div>
 
     <script>
+        // Language translations
+        const translations = {
+            en: {
+                appTitle: "NEON TIME",
+                clockTab: "Digital Clock",
+                stopwatchTab: "Stopwatch",
+                timerTab: "Timer",
+                start: "Start",
+                stop: "Stop",
+                lap: "Lap",
+                reset: "Reset",
+                pause: "Pause",
+                restart: "Restart",
+                resume: "Resume",
+                darkMode: "Dark Mode",
+                lightMode: "Light Mode",
+                goldMode: "Gold Mode",
+                colorPalette: "Show Color Palette",
+                paletteTitle: "Color Palette",
+                monday: "Monday",
+                tuesday: "Tuesday",
+                wednesday: "Wednesday",
+                thursday: "Thursday",
+                friday: "Friday",
+                saturday: "Saturday",
+                sunday: "Sunday",
+                january: "January",
+                february: "February",
+                march: "March",
+                april: "April",
+                may: "May",
+                june: "June",
+                july: "July",
+                august: "August",
+                september: "September",
+                october: "October",
+                november: "November",
+                december: "December"
+            },
+            de: {
+                appTitle: "NEON UHR",
+                clockTab: "Digitale Uhr",
+                stopwatchTab: "Stoppuhr",
+                timerTab: "Timer",
+                start: "Start",
+                stop: "Stopp",
+                lap: "Runde",
+                reset: "Zurücksetzen",
+                pause: "Pause",
+                restart: "Neustart",
+                resume: "Fortsetzen",
+                darkMode: "Dunkelmodus",
+                lightMode: "Hellmodus",
+                goldMode: "Gold Modus",
+                colorPalette: "Farbpalette zeigen",
+                paletteTitle: "Farbpalette",
+                monday: "Montag",
+                tuesday: "Dienstag",
+                wednesday: "Mittwoch",
+                thursday: "Donnerstag",
+                friday: "Freitag",
+                saturday: "Samstag",
+                sunday: "Sonntag",
+                january: "Januar",
+                february: "Februar",
+                march: "März",
+                april: "April",
+                may: "Mai",
+                june: "Juni",
+                july: "Juli",
+                august: "August",
+                september: "September",
+                october: "Oktober",
+                november: "November",
+                december: "Dezember"
+            }
+        };
+
+        let currentLanguage = 'en';
+
+        // Function to update all text elements
+        function updateLanguage() {
+            document.getElementById('app-title').textContent = translations[currentLanguage].appTitle;
+            document.getElementById('clock-tab').textContent = translations[currentLanguage].clockTab;
+            document.getElementById('stopwatch-tab').textContent = translations[currentLanguage].stopwatchTab;
+            document.getElementById('timer-tab').textContent = translations[currentLanguage].timerTab;
+            
+            const startStopwatchBtn = document.getElementById('start-stopwatch');
+            if (startStopwatchBtn.textContent === 'Stop' || startStopwatchBtn.textContent === translations['en'].stop) {
+                startStopwatchBtn.textContent = translations[currentLanguage].stop;
+            } else {
+                startStopwatchBtn.textContent = translations[currentLanguage].start;
+            }
+            
+            document.getElementById('lap-stopwatch').textContent = translations[currentLanguage].lap;
+            document.getElementById('reset-stopwatch').textContent = translations[currentLanguage].reset;
+            
+            const startTimerBtn = document.getElementById('start-timer');
+            if (startTimerBtn.textContent === 'Restart' || startTimerBtn.textContent === translations['en'].restart) {
+                startTimerBtn.textContent = translations[currentLanguage].restart;
+            } else {
+                startTimerBtn.textContent = translations[currentLanguage].start;
+            }
+            
+            const pauseTimerBtn = document.getElementById('pause-timer');
+            if (pauseTimerBtn.textContent === 'Resume' || pauseTimerBtn.textContent === translations['en'].resume) {
+                pauseTimerBtn.textContent = translations[currentLanguage].resume;
+            } else {
+                pauseTimerBtn.textContent = translations[currentLanguage].pause;
+            }
+            
+            document.getElementById('reset-timer').textContent = translations[currentLanguage].reset;
+            document.getElementById('dark-mode-btn').textContent = translations[currentLanguage].darkMode;
+            document.getElementById('light-mode-btn').textContent = translations[currentLanguage].lightMode;
+            document.getElementById('gold-mode-btn').textContent = translations[currentLanguage].goldMode;
+            document.getElementById('theme-palette-btn').textContent = translations[currentLanguage].colorPalette;
+            document.getElementById('palette-title').textContent = translations[currentLanguage].paletteTitle;
+            document.getElementById('language-btn').textContent = currentLanguage.toUpperCase();
+            
+            // Update date display
+            updateClock();
+        }
+
+        // Language switcher
+        document.getElementById('language-btn').addEventListener('click', function() {
+            currentLanguage = currentLanguage === 'en' ? 'de' : 'en';
+            updateLanguage();
+        });
+
         // Clock functionality
         function updateClock() {
             const now = new Date();
@@ -311,8 +565,37 @@
             
             document.getElementById('digital-clock').textContent = `${hours}:${minutes}:${seconds}`;
             
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('current-date').textContent = now.toLocaleDateString(undefined, options);
+            const dayNames = [
+                translations[currentLanguage].sunday,
+                translations[currentLanguage].monday,
+                translations[currentLanguage].tuesday,
+                translations[currentLanguage].wednesday,
+                translations[currentLanguage].thursday,
+                translations[currentLanguage].friday,
+                translations[currentLanguage].saturday
+            ];
+            
+            const monthNames = [
+                translations[currentLanguage].january,
+                translations[currentLanguage].february,
+                translations[currentLanguage].march,
+                translations[currentLanguage].april,
+                translations[currentLanguage].may,
+                translations[currentLanguage].june,
+                translations[currentLanguage].july,
+                translations[currentLanguage].august,
+                translations[currentLanguage].september,
+                translations[currentLanguage].october,
+                translations[currentLanguage].november,
+                translations[currentLanguage].december
+            ];
+            
+            const dayName = dayNames[now.getDay()];
+            const monthName = monthNames[now.getMonth()];
+            const date = now.getDate();
+            const year = now.getFullYear();
+            
+            document.getElementById('current-date').textContent = `${dayName}, ${monthName} ${date}, ${year}`;
         }
         
         // Stopwatch functionality
@@ -341,12 +624,12 @@
                 stopwatchStartTime = Date.now();
                 stopwatchInterval = setInterval(updateStopwatch, 10);
                 stopwatchRunning = true;
-                this.textContent = 'Stop';
+                this.textContent = translations[currentLanguage].stop;
             } else {
                 clearInterval(stopwatchInterval);
                 stopwatchElapsed += Date.now() - stopwatchStartTime;
                 stopwatchRunning = false;
-                this.textContent = 'Start';
+                this.textContent = translations[currentLanguage].start;
             }
         });
         
@@ -357,7 +640,7 @@
                 
                 const lapItem = document.createElement('div');
                 lapItem.className = 'lap-item';
-                lapItem.textContent = `Lap ${document.getElementById('stopwatch-laps').children.length + 1}: ${lapTime}`;
+                lapItem.textContent = `${translations[currentLanguage].lap} ${document.getElementById('stopwatch-laps').children.length + 1}: ${lapTime}`;
                 
                 document.getElementById('stopwatch-laps').prepend(lapItem);
             }
@@ -368,7 +651,7 @@
             stopwatchRunning = false;
             stopwatchElapsed = 0;
             document.getElementById('stopwatch-display').textContent = '00:00:00.00';
-            document.getElementById('start-stopwatch').textContent = 'Start';
+            document.getElementById('start-stopwatch').textContent = translations[currentLanguage].start;
             document.getElementById('stopwatch-laps').innerHTML = '';
         });
         
@@ -393,9 +676,9 @@
             if (remaining <= 0) {
                 clearInterval(timerInterval);
                 document.getElementById('timer-display').textContent = '00:00:00';
-                document.getElementById('start-timer').textContent = 'Start';
+                document.getElementById('start-timer').textContent = translations[currentLanguage].start;
                 timerRunning = false;
-                alert('Timer finished!');
+                alert(currentLanguage === 'en' ? 'Timer finished!' : 'Timer abgelaufen!');
                 return;
             }
             
@@ -415,8 +698,8 @@
                 timerEndTime = Date.now() + totalMs;
                 timerInterval = setInterval(updateTimer, 1000);
                 timerRunning = true;
-                this.textContent = 'Restart';
-                document.getElementById('pause-timer').textContent = 'Pause';
+                this.textContent = translations[currentLanguage].restart;
+                document.getElementById('pause-timer').textContent = translations[currentLanguage].pause;
             } else {
                 // Restart with current values
                 const hours = parseInt(document.getElementById('hours-input').value) || 0;
@@ -430,7 +713,7 @@
                 clearInterval(timerInterval);
                 timerEndTime = Date.now() + totalMs;
                 timerInterval = setInterval(updateTimer, 1000);
-                document.getElementById('pause-timer').textContent = 'Pause';
+                document.getElementById('pause-timer').textContent = translations[currentLanguage].pause;
             }
         });
         
@@ -439,13 +722,13 @@
                 clearInterval(timerInterval);
                 timerPausedTime = Date.now();
                 timerRunning = false;
-                this.textContent = 'Resume';
+                this.textContent = translations[currentLanguage].resume;
             } else if (timerPausedTime) {
                 const remaining = timerEndTime - timerPausedTime;
                 timerEndTime = Date.now() + remaining;
                 timerInterval = setInterval(updateTimer, 1000);
                 timerRunning = true;
-                this.textContent = 'Pause';
+                this.textContent = translations[currentLanguage].pause;
             }
         });
         
@@ -453,8 +736,8 @@
             clearInterval(timerInterval);
             timerRunning = false;
             document.getElementById('timer-display').textContent = '00:00:00';
-            document.getElementById('start-timer').textContent = 'Start';
-            document.getElementById('pause-timer').textContent = 'Pause';
+            document.getElementById('start-timer').textContent = translations[currentLanguage].start;
+            document.getElementById('pause-timer').textContent = translations[currentLanguage].pause;
             document.getElementById('hours-input').value = '0';
             document.getElementById('minutes-input').value = '0';
             document.getElementById('seconds-input').value = '0';
@@ -546,6 +829,62 @@
             });
         });
         
+        // Mode switching
+        const modes = {
+            dark: {
+                '--primary-color': '#0ff',
+                '--secondary-color': '#f0f',
+                '--bg-color': '#111',
+                '--text-color': '#fff',
+                '--glow-intensity': '0.8'
+            },
+            light: {
+                '--primary-color': '#0066ff',
+                '--secondary-color': '#ff3366',
+                '--bg-color': '#f5f5f5',
+                '--text-color': '#333',
+                '--glow-intensity': '0.5'
+            },
+            gold: {
+                '--primary-color': '#ffd700',
+                '--secondary-color': '#ff9900',
+                '--bg-color': '#1a1a1a',
+                '--text-color': '#fff',
+                '--glow-intensity': '0.7'
+            }
+        };
+        
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const modeName = this.dataset.mode;
+                const mode = modes[modeName];
+                
+                for (const [property, value] of Object.entries(mode)) {
+                    document.documentElement.style.setProperty(property, value);
+                }
+                
+                // Update container glow
+                document.querySelector('.container').style.boxShadow = `0 0 30px rgba(${hexToRgb(mode['--primary-color']).join(', ')}, 0.2)`;
+                document.querySelector('.container').style.borderColor = mode['--primary-color'];
+            });
+        });
+        
+        // Theme palette modal
+        document.getElementById('theme-palette-btn').addEventListener('click', function() {
+            document.getElementById('theme-palette').classList.add('active');
+        });
+        
+        document.getElementById('theme-palette-close').addEventListener('click', function() {
+            document.getElementById('theme-palette').classList.remove('active');
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === document.getElementById('theme-palette')) {
+                document.getElementById('theme-palette').classList.remove('active');
+            }
+        });
+        
         // Helper function to convert hex to rgb
         function hexToRgb(hex) {
             const r = parseInt(hex.slice(1, 3), 16);
@@ -579,6 +918,7 @@
         updateClock();
         setInterval(updateClock, 1000);
         createDigitalRain();
+        updateLanguage();
     </script>
 </body>
 </html>
