@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Time</title>
+    <style>
+        :root {
+            --primary-color: #0ff;
+            --secondary-color: #f0f;
+            --bg-color: #111;
+            --text-color: #fff;
+            --glow-intensity: 0.8;
+        }
+
+        body {
+            font-family: 'Segment7Standard', monospace;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            transition: all 0.5s ease;
+            overflow-x: hidden;
+        }
+
+        @font-face {
+            font-family: 'Segment7Standard';
+            src: url('https://cdn.jsdelivr.net/gh/divanvisagie/Segment7@master/Segment7Standard.otf') format('opentype');
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--primary-color);
+            max-width: 800px;
+            width: 90%;
+            margin: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+            letter-spacing: 3px;
+        }
+
+        .clock {
+            font-size: 5rem;
+            margin: 1rem 0;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+            letter-spacing: 5px;
+        }
+
+        .date {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: var(--secondary-color);
+            text-shadow: 0 0 5px var(--secondary-color);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: rgba(0, 0, 0, 0.5);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-family: 'Arial', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background: var(--primary-color);
+            color: #000;
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+
+        .stopwatch-display {
+            font-size: 3rem;
+            margin: 1rem 0;
+            color: var(--secondary-color);
+            text-shadow: 0 0 10px var(--secondary-color);
+        }
+
+        .laps {
+            margin-top: 1rem;
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 0.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .lap-item {
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        .theme-selector {
+            margin-top: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            max-width: 100%;
+        }
+
+        .theme-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            padding: 0;
+            border: 2px solid #fff;
+            transition: transform 0.2s ease;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-color);
+            cursor: pointer;
+            font-family: 'Arial', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .timer-input {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .timer-input input {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.5rem;
+            font-size: 1.2rem;
+            width: 60px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .timer-display {
+            font-size: 4rem;
+            margin: 1rem 0;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+
+        /* Animation for digital rain effect */
+        @keyframes digitalRain {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .clock {
+                font-size: 3rem;
+            }
+            .stopwatch-display, .timer-display {
+                font-size: 2rem;
+            }
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            button {
+                width: 80%;
+            }
+        }
+
+        /* Theme specific styles will be added dynamically */
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <h1 class="title">NEON TIME</h1>
+        
+        <div class="tab-container">
+            <button class="tab active" data-tab="clock">Digital Clock</button>
+            <button class="tab" data-tab="stopwatch">Stopwatch</button>
+            <button class="tab" data-tab="timer">Timer</button>
+        </div>
+        
+        <!-- Clock Tab -->
+        <div class="tab-content active" id="clock">
+            <div class="clock" id="digital-clock">00:00:00</div>
+            <div class="date" id="current-date">Monday, January 1, 2023</div>
+        </div>
+        
+        <!-- Stopwatch Tab -->
+        <div class="tab-content" id="stopwatch">
+            <div class="stopwatch-display" id="stopwatch-display">00:00:00.00</div>
+            <div class="controls">
+                <button id="start-stopwatch">Start</button>
+                <button id="lap-stopwatch">Lap</button>
+                <button id="reset-stopwatch">Reset</button>
+            </div>
+            <div class="laps" id="stopwatch-laps"></div>
+        </div>
+        
+        <!-- Timer Tab -->
+        <div class="tab-content" id="timer">
+            <div class="timer-display" id="timer-display">00:00:00</div>
+            <div class="timer-input">
+                <input type="number" id="hours-input" min="0" max="23" value="0" placeholder="HH">
+                <span>:</span>
+                <input type="number" id="minutes-input" min="0" max="59" value="0" placeholder="MM">
+                <span>:</span>
+                <input type="number" id="seconds-input" min="0" max="59" value="0" placeholder="SS">
+            </div>
+            <div class="timer-controls">
+                <button id="start-timer">Start</button>
+                <button id="pause-timer">Pause</button>
+                <button id="reset-timer">Reset</button>
+            </div>
+        </div>
+        
+        <div class="theme-selector">
+            <button class="theme-btn" data-theme="default" style="background: linear-gradient(135deg, #111, #003);"></button>
+            <button class="theme-btn" data-theme="red" style="background: linear-gradient(135deg, #300, #900);"></button>
+            <button class="theme-btn" data-theme="blue" style="background: linear-gradient(135deg, #003, #009);"></button>
+            <button class="theme-btn" data-theme="green" style="background: linear-gradient(135deg, #030, #090);"></button>
+            <button class="theme-btn" data-theme="purple" style="background: linear-gradient(135deg, #303, #909);"></button>
+            <button class="theme-btn" data-theme="orange" style="background: linear-gradient(135deg, #630, #960);"></button>
+            <button class="theme-btn" data-theme="pink" style="background: linear-gradient(135deg, #603, #906);"></button>
+            <button class="theme-btn" data-theme="cyan" style="background: linear-gradient(135deg, #033, #099);"></button>
+        </div>
+    </div>
+
+    <script>
+        // Clock functionality
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            
+            document.getElementById('digital-clock').textContent = `${hours}:${minutes}:${seconds}`;
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').textContent = now.toLocaleDateString(undefined, options);
+        }
+        
+        // Stopwatch functionality
+        let stopwatchInterval;
+        let stopwatchStartTime;
+        let stopwatchElapsed = 0;
+        let stopwatchRunning = false;
+        
+        function formatStopwatchTime(ms) {
+            const date = new Date(ms);
+            const hours = date.getUTCHours().toString().padStart(2, '0');
+            const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+            const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+            const milliseconds = Math.floor(date.getUTCMilliseconds() / 10).toString().padStart(2, '0');
+            
+            return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+        }
+        
+        function updateStopwatch() {
+            const elapsed = Date.now() - stopwatchStartTime + stopwatchElapsed;
+            document.getElementById('stopwatch-display').textContent = formatStopwatchTime(elapsed);
+        }
+        
+        document.getElementById('start-stopwatch').addEventListener('click', function() {
+            if (!stopwatchRunning) {
+                stopwatchStartTime = Date.now();
+                stopwatchInterval = setInterval(updateStopwatch, 10);
+                stopwatchRunning = true;
+                this.textContent = 'Stop';
+            } else {
+                clearInterval(stopwatchInterval);
+                stopwatchElapsed += Date.now() - stopwatchStartTime;
+                stopwatchRunning = false;
+                this.textContent = 'Start';
+            }
+        });
+        
+        document.getElementById('lap-stopwatch').addEventListener('click', function() {
+            if (stopwatchRunning) {
+                const elapsed = Date.now() - stopwatchStartTime + stopwatchElapsed;
+                const lapTime = formatStopwatchTime(elapsed);
+                
+                const lapItem = document.createElement('div');
+                lapItem.className = 'lap-item';
+                lapItem.textContent = `Lap ${document.getElementById('stopwatch-laps').children.length + 1}: ${lapTime}`;
+                
+                document.getElementById('stopwatch-laps').prepend(lapItem);
+            }
+        });
+        
+        document.getElementById('reset-stopwatch').addEventListener('click', function() {
+            clearInterval(stopwatchInterval);
+            stopwatchRunning = false;
+            stopwatchElapsed = 0;
+            document.getElementById('stopwatch-display').textContent = '00:00:00.00';
+            document.getElementById('start-stopwatch').textContent = 'Start';
+            document.getElementById('stopwatch-laps').innerHTML = '';
+        });
+        
+        // Timer functionality
+        let timerInterval;
+        let timerEndTime;
+        let timerPausedTime;
+        let timerRunning = false;
+        
+        function formatTimerTime(ms) {
+            const totalSeconds = Math.ceil(ms / 1000);
+            const hours = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+            const minutes = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+            const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+            
+            return `${hours}:${minutes}:${seconds}`;
+        }
+        
+        function updateTimer() {
+            const remaining = timerEndTime - Date.now();
+            
+            if (remaining <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById('timer-display').textContent = '00:00:00';
+                document.getElementById('start-timer').textContent = 'Start';
+                timerRunning = false;
+                alert('Timer finished!');
+                return;
+            }
+            
+            document.getElementById('timer-display').textContent = formatTimerTime(remaining);
+        }
+        
+        document.getElementById('start-timer').addEventListener('click', function() {
+            if (!timerRunning) {
+                const hours = parseInt(document.getElementById('hours-input').value) || 0;
+                const minutes = parseInt(document.getElementById('minutes-input').value) || 0;
+                const seconds = parseInt(document.getElementById('seconds-input').value) || 0;
+                
+                const totalMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
+                
+                if (totalMs <= 0) return;
+                
+                timerEndTime = Date.now() + totalMs;
+                timerInterval = setInterval(updateTimer, 1000);
+                timerRunning = true;
+                this.textContent = 'Restart';
+                document.getElementById('pause-timer').textContent = 'Pause';
+            } else {
+                // Restart with current values
+                const hours = parseInt(document.getElementById('hours-input').value) || 0;
+                const minutes = parseInt(document.getElementById('minutes-input').value) || 0;
+                const seconds = parseInt(document.getElementById('seconds-input').value) || 0;
+                
+                const totalMs = (hours * 3600 + minutes * 60 + seconds) * 1000;
+                
+                if (totalMs <= 0) return;
+                
+                clearInterval(timerInterval);
+                timerEndTime = Date.now() + totalMs;
+                timerInterval = setInterval(updateTimer, 1000);
+                document.getElementById('pause-timer').textContent = 'Pause';
+            }
+        });
+        
+        document.getElementById('pause-timer').addEventListener('click', function() {
+            if (timerRunning) {
+                clearInterval(timerInterval);
+                timerPausedTime = Date.now();
+                timerRunning = false;
+                this.textContent = 'Resume';
+            } else if (timerPausedTime) {
+                const remaining = timerEndTime - timerPausedTime;
+                timerEndTime = Date.now() + remaining;
+                timerInterval = setInterval(updateTimer, 1000);
+                timerRunning = true;
+                this.textContent = 'Pause';
+            }
+        });
+        
+        document.getElementById('reset-timer').addEventListener('click', function() {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            document.getElementById('timer-display').textContent = '00:00:00';
+            document.getElementById('start-timer').textContent = 'Start';
+            document.getElementById('pause-timer').textContent = 'Pause';
+            document.getElementById('hours-input').value = '0';
+            document.getElementById('minutes-input').value = '0';
+            document.getElementById('seconds-input').value = '0';
+        });
+        
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // Theme switching
+        const themes = {
+            default: {
+                '--primary-color': '#0ff',
+                '--secondary-color': '#f0f',
+                '--bg-color': '#111',
+                '--text-color': '#fff',
+                '--glow-intensity': '0.8'
+            },
+            red: {
+                '--primary-color': '#f00',
+                '--secondary-color': '#f90',
+                '--bg-color': '#300',
+                '--text-color': '#fff',
+                '--glow-intensity': '0.7'
+            },
+            blue: {
+                '--primary-color': '#06f',
+                '--secondary-color': '#0af',
+                '--bg-color': '#003',
+                '--text-color': '#fff',
+                '--glow-intensity': '0.9'
+            },
+            green: {
+                '--primary-color': '#0f0',
+                '--secondary-color': '#af0',
+                '--bg-color': '#030',
+                '--text-color': '#fff',
+                '--glow-intensity': '0.7'
+            },
+            purple: {
+                '--primary-color': '#90f',
+                '--secondary-color': '#f0f',
+                '--bg-color': '#303',
+                '--text-color': '#fff',
+                '--glow-intensity': '0.8'
+            },
+            orange: {
+                '--primary-color': '#f90',
+                '--secondary-color': '#fc0',
+                '--bg-color': '#630',
+                '--text-color': '#fff',
+                '--glow-intensity': '0.7'
+            },
+            pink: {
+                '--primary-color': '#f6c',
+                '--secondary-color': '#f9f',
+                '--bg-color': '#603',
+                '--text-color': '#fff',
+                '--glow-intensity': '0.6'
+            },
+            cyan: {
+                '--primary-color': '#0ff',
+                '--secondary-color': '#6ff',
+                '--bg-color': '#033',
+                '--text-color': '#fff',
+                '--glow-intensity': '0.9'
+            }
+        };
+        
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const themeName = this.dataset.theme;
+                const theme = themes[themeName];
+                
+                for (const [property, value] of Object.entries(theme)) {
+                    document.documentElement.style.setProperty(property, value);
+                }
+                
+                // Update container glow
+                document.querySelector('.container').style.boxShadow = `0 0 30px rgba(${hexToRgb(theme['--primary-color']).join(', ')}, 0.2)`;
+                document.querySelector('.container').style.borderColor = theme['--primary-color'];
+            });
+        });
+        
+        // Helper function to convert hex to rgb
+        function hexToRgb(hex) {
+            const r = parseInt(hex.slice(1, 3), 16);
+            const g = parseInt(hex.slice(3, 5), 16);
+            const b = parseInt(hex.slice(5, 7), 16);
+            
+            return [r, g, b];
+        }
+        
+        // Digital rain effect
+        function createDigitalRain() {
+            const particles = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.width = '2px';
+                particle.style.height = `${10 + Math.random() * 20}px`;
+                particle.style.background = 'linear-gradient(to bottom, rgba(0, 255, 255, 0.8), rgba(0, 255, 255, 0)';
+                particle.style.opacity = '0.3';
+                particle.style.animation = `digitalRain ${3 + Math.random() * 5}s linear infinite`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                particles.appendChild(particle);
+            }
+        }
+        
+        // Initialize
+        updateClock();
+        setInterval(updateClock, 1000);
+        createDigitalRain();
+    </script>
+</body>
+</html>
