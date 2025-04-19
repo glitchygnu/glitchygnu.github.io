@@ -3,21 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Time</title>
+    <title>Vision Time</title>
     <style>
+        /* Base Variables */
         :root {
-            --primary-color: #0ff;
-            --secondary-color: #f0f;
-            --bg-color: #111;
-            --text-color: #fff;
-            --glow-intensity: 0.8;
-            --button-radius: 25px;
-            --container-radius: 30px;
-            --button-glow: 0 0 15px currentColor;
+            --primary-color: rgba(255, 255, 255, 0.9);
+            --secondary-color: rgba(255, 255, 255, 0.7);
+            --bg-color: rgba(30, 30, 30, 0.5);
+            --text-color: rgba(255, 255, 255, 0.9);
+            --container-bg: rgba(40, 40, 40, 0.4);
+            --button-bg: rgba(100, 100, 100, 0.2);
+            --button-hover-bg: rgba(120, 120, 120, 0.3);
+            --button-active-bg: rgba(80, 80, 80, 0.3);
+            --border-radius: 24px;
+            --border-radius-small: 18px;
+            --border-radius-large: 32px;
+            --glass-effect: blur(20px);
+            --shadow-intensity: 0.3;
+            --primary-rgb: 255, 255, 255;
+            --transition-duration: 0.4s;
+            --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* Fonts */
+        @font-face {
+            font-family: 'SF Pro Rounded';
+            src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Rounded';
+            src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-medium-webfont.woff2') format('woff2');
+            font-weight: 500;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Rounded';
+            src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-semibold-webfont.woff2') format('woff2');
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        /* Base Styles */
         body {
-            font-family: 'Orbitron', 'Segoe UI', sans-serif;
+            font-family: 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -27,60 +59,66 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            transition: all 0.5s ease;
             overflow-x: hidden;
-            background-image: radial-gradient(circle at 50% 50%, rgba(var(--primary-rgb), 0.03) 0%, transparent 70%);
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(var(--primary-rgb), 0.03) 0%, transparent 70%),
+                linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.5));
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            transition: all var(--transition-duration) var(--transition-timing);
         }
 
-        @font-face {
-            font-family: 'Orbitron';
-            src: url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap');
-        }
-
+        /* Container */
         .container {
             text-align: center;
             padding: 2.5rem;
-            border-radius: var(--container-radius);
-            box-shadow: 0 0 40px rgba(var(--primary-rgb), 0.3), 
-                        inset 0 0 20px rgba(var(--primary-rgb), 0.1);
-            background: rgba(20, 20, 20, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--primary-color);
+            border-radius: var(--border-radius-large);
+            background: var(--container-bg);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            border: 1px solid rgba(var(--primary-rgb), 0.1);
+            box-shadow: 
+                0 8px 32px 0 rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.05),
+                inset 0 0 30px rgba(var(--primary-rgb), 0.03);
             max-width: 850px;
             width: 90%;
             margin: 1.5rem;
             position: relative;
             overflow: hidden;
             z-index: 1;
+            transform-style: preserve-3d;
+            perspective: 1000px;
         }
 
         .container::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(var(--primary-rgb), 0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(var(--primary-rgb), 0.03) 0%,
+                transparent 50%,
+                rgba(var(--primary-rgb), 0.03) 100%
+            );
             z-index: -1;
             opacity: 0.5;
+            pointer-events: none;
         }
 
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        /* Title */
         .title {
             font-size: 2.8rem;
             margin-bottom: 1.8rem;
             color: var(--primary-color);
-            text-shadow: 0 0 15px var(--primary-color), 
-                         0 0 30px rgba(var(--primary-rgb), 0.7);
-            letter-spacing: 3px;
-            font-weight: 700;
+            font-weight: 600;
+            letter-spacing: -0.5px;
             position: relative;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transform: translateZ(20px);
         }
 
         .title::after {
@@ -89,30 +127,36 @@
             bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 80%;
+            width: 60%;
             height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
-            box-shadow: 0 0 10px var(--primary-color);
+            background: linear-gradient(90deg, transparent, rgba(var(--primary-rgb), 0.3), transparent);
+            border-radius: 50%;
+            filter: blur(1px);
         }
 
+        /* Clock */
         .clock {
             font-size: 5.5rem;
             margin: 1.5rem 0;
             color: var(--primary-color);
-            text-shadow: 0 0 15px var(--primary-color), 
-                         0 0 30px rgba(var(--primary-rgb), 0.5);
-            letter-spacing: 5px;
             font-weight: 500;
+            letter-spacing: -1px;
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+            transform: translateZ(30px);
         }
 
+        /* Date */
         .date {
             font-size: 1.6rem;
             margin-bottom: 2.5rem;
             color: var(--secondary-color);
-            text-shadow: 0 0 8px var(--secondary-color);
-            position: relative;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transform: translateZ(20px);
         }
 
+        /* Controls */
         .controls {
             display: flex;
             justify-content: center;
@@ -121,90 +165,114 @@
             flex-wrap: wrap;
         }
 
+        /* Buttons */
         button {
-            background: rgba(var(--primary-rgb), 0.15);
+            background: var(--button-bg);
             color: var(--primary-color);
-            border: 2px solid var(--primary-color);
+            border: none;
             padding: 1rem 2rem;
             font-size: 1.1rem;
             cursor: pointer;
-            border-radius: var(--button-radius);
-            transition: all 0.3s ease;
-            font-family: 'Orbitron', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
+            border-radius: var(--border-radius);
+            transition: all var(--transition-duration) var(--transition-timing);
+            font-family: 'SF Pro Rounded', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.5px;
             position: relative;
             overflow: hidden;
             z-index: 1;
-            box-shadow: var(--button-glow),
-                       inset 0 0 15px rgba(var(--primary-rgb), 0.3);
-            text-shadow: 0 0 5px var(--primary-color);
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.1),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.1);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            transform-style: preserve-3d;
+            transform: translateZ(0);
+            will-change: transform, box-shadow, background;
         }
 
         button::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background: linear-gradient(
                 to bottom right,
                 rgba(var(--primary-rgb), 0.1),
-                rgba(var(--primary-rgb), 0.3),
+                rgba(var(--primary-rgb), 0.05),
                 transparent
             );
-            transform: translate(0%, 0%);
-            transition: transform 0.6s ease;
             z-index: -1;
-        }
-
-        button:hover::before {
-            transform: translate(25%, 25%);
+            transition: opacity var(--transition-duration) var(--transition-timing);
+            opacity: 0;
         }
 
         button:hover {
-            color: #fff;
-            box-shadow: 0 0 25px var(--primary-color),
-                       inset 0 0 20px rgba(var(--primary-rgb), 0.5);
-            transform: translateY(-2px);
+            background: var(--button-hover-bg);
+            transform: translateY(-2px) translateZ(5px);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.15);
+        }
+
+        button:hover::before {
+            opacity: 1;
         }
 
         button:active {
-            transform: translateY(1px);
+            background: var(--button-active-bg);
+            transform: translateY(1px) translateZ(0);
+            box-shadow: 
+                0 2px 10px rgba(0, 0, 0, 0.1),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.1);
+            transition-duration: 0.1s;
         }
 
+        /* Stopwatch Display */
         .stopwatch-display {
             font-size: 3.5rem;
             margin: 1.5rem 0;
-            color: var(--secondary-color);
-            text-shadow: 0 0 15px var(--secondary-color);
-            letter-spacing: 3px;
+            color: var(--primary-color);
+            font-weight: 500;
+            letter-spacing: -1px;
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+            transform: translateZ(30px);
         }
 
+        /* Laps */
         .laps {
             margin-top: 1.5rem;
             max-height: 200px;
             overflow-y: auto;
             padding: 1rem;
-            border-top: 1px solid rgba(var(--primary-rgb), 0.2);
-            border-radius: 0 0 var(--container-radius) var(--container-radius);
-            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--border-radius-small);
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            box-shadow: 
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.05),
+                inset 0 0 20px rgba(0, 0, 0, 0.1);
+            transform: translateZ(20px);
         }
 
         .lap-item {
             padding: 0.8rem;
-            border-bottom: 1px solid rgba(var(--primary-rgb), 0.1);
+            border-bottom: 1px solid rgba(var(--primary-rgb), 0.05);
             font-size: 1.1rem;
             color: var(--text-color);
-            transition: all 0.3s ease;
+            transition: all var(--transition-duration) var(--transition-timing);
+            border-radius: var(--border-radius-small);
+            margin: 0.2rem 0;
         }
 
         .lap-item:hover {
-            background: rgba(var(--primary-rgb), 0.1);
-            transform: translateX(5px);
+            background: rgba(var(--primary-rgb), 0.05);
+            transform: translateX(5px) translateZ(5px);
         }
 
+        /* Theme Selector */
         .theme-selector {
             margin-top: 2rem;
             display: grid;
@@ -218,12 +286,19 @@
             height: 60px;
             border-radius: 50%;
             padding: 0;
-            border: 3px solid #fff;
-            transition: all 0.3s ease;
+            border: none;
+            transition: all var(--transition-duration) var(--transition-timing);
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            transform-style: preserve-3d;
+            transform: translateZ(0);
+            will-change: transform, box-shadow;
         }
 
         .theme-btn::after {
@@ -233,20 +308,24 @@
             left: -10px;
             right: -10px;
             bottom: -10px;
-            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, transparent 70%);
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity var(--transition-duration) var(--transition-timing);
+            pointer-events: none;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1) translateZ(10px);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.15);
         }
 
         .theme-btn:hover::after {
             opacity: 0.3;
         }
 
-        .theme-btn:hover {
-            transform: scale(1.1) rotate(10deg);
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
-        }
-
+        /* Particles */
         .particles {
             position: fixed;
             top: 0;
@@ -257,29 +336,37 @@
             pointer-events: none;
         }
 
+        /* Tab Container */
         .tab-container {
             display: flex;
             justify-content: center;
             margin-bottom: 1.5rem;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: var(--button-radius);
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
             padding: 0.5rem;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            box-shadow: 
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.05),
+                inset 0 0 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            transform: translateZ(20px);
         }
 
         .tab {
             padding: 1rem 2rem;
             background: transparent;
             border: none;
-            border-bottom: 3px solid transparent;
             color: var(--text-color);
             cursor: pointer;
-            font-family: 'Orbitron', sans-serif;
-            transition: all 0.3s ease;
-            border-radius: var(--button-radius);
+            font-family: 'SF Pro Rounded', sans-serif;
+            transition: all var(--transition-duration) var(--transition-timing);
+            border-radius: var(--border-radius);
             margin: 0 0.5rem;
             position: relative;
             overflow: hidden;
+            font-weight: 500;
+            transform: translateZ(0);
+            will-change: transform, background;
         }
 
         .tab::before {
@@ -289,9 +376,10 @@
             left: 0;
             width: 100%;
             height: 0%;
-            background: rgba(var(--primary-rgb), 0.3);
-            transition: height 0.3s ease;
+            background: rgba(var(--primary-rgb), 0.1);
+            transition: height var(--transition-duration) var(--transition-timing);
             z-index: -1;
+            border-radius: var(--border-radius);
         }
 
         .tab:hover::before {
@@ -299,25 +387,27 @@
         }
 
         .tab.active {
-            border-bottom: 3px solid var(--primary-color);
-            color: var(--primary-color);
-            text-shadow: 0 0 10px var(--primary-color);
+            background: rgba(var(--primary-rgb), 0.1);
+            box-shadow: 
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.1),
+                0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .tab-content {
             display: none;
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.5s var(--transition-timing);
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(10px) translateZ(0); }
+            to { opacity: 1; transform: translateY(0) translateZ(0); }
         }
 
         .tab-content.active {
             display: block;
         }
 
+        /* Timer Controls */
         .timer-controls {
             display: flex;
             justify-content: center;
@@ -325,6 +415,7 @@
             margin-top: 1.5rem;
         }
 
+        /* Timer Input */
         .timer-input {
             display: flex;
             justify-content: center;
@@ -334,80 +425,107 @@
         }
 
         .timer-input input {
-            background: rgba(0, 0, 0, 0.5);
-            border: 2px solid var(--primary-color);
+            background: rgba(0, 0, 0, 0.1);
+            border: none;
             color: var(--primary-color);
             padding: 0.8rem;
             font-size: 1.3rem;
             width: 80px;
             text-align: center;
-            border-radius: var(--button-radius);
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-            transition: all 0.3s ease;
+            border-radius: var(--border-radius-small);
+            box-shadow: 
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.1),
+                inset 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: all var(--transition-duration) var(--transition-timing);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            font-family: 'SF Pro Rounded', sans-serif;
+            font-weight: 500;
         }
 
         .timer-input input:focus {
             outline: none;
-            box-shadow: 0 0 15px var(--primary-color),
-                       inset 0 0 10px rgba(0, 0, 0, 0.5);
+            box-shadow: 
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.2),
+                inset 0 0 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px) translateZ(5px);
         }
 
+        .timer-input span {
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+            font-weight: 300;
+        }
+
+        /* Timer Display */
         .timer-display {
             font-size: 4.5rem;
             margin: 1.5rem 0;
             color: var(--primary-color);
-            text-shadow: 0 0 15px var(--primary-color);
-            letter-spacing: 3px;
+            font-weight: 500;
+            letter-spacing: -1px;
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+            transform: translateZ(30px);
         }
 
-        /* Theme palette button */
+        /* Theme Palette Button */
         .theme-palette-btn {
             margin-top: 1.5rem;
-            background: rgba(var(--primary-rgb), 0.2);
-            border: 2px solid var(--primary-color);
+            background: rgba(var(--primary-rgb), 0.1);
+            border: none;
             color: var(--primary-color);
             padding: 1rem 2rem;
-            border-radius: var(--button-radius);
+            border-radius: var(--border-radius);
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            box-shadow: var(--button-glow),
-                       inset 0 0 15px rgba(var(--primary-rgb), 0.2);
-            text-shadow: 0 0 5px var(--primary-color);
+            transition: all var(--transition-duration) var(--transition-timing);
+            font-family: 'SF Pro Rounded', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.1),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.1);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            transform: translateZ(0);
+            will-change: transform, box-shadow;
         }
 
         .theme-palette-btn:hover {
-            background: rgba(var(--primary-rgb), 0.4);
-            box-shadow: 0 0 25px var(--primary-color),
-                       inset 0 0 20px rgba(var(--primary-rgb), 0.4);
-            transform: translateY(-2px);
+            background: rgba(var(--primary-rgb), 0.15);
+            transform: translateY(-2px) translateZ(5px);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.15);
         }
 
-        /* Theme palette modal */
+        /* Theme Palette Modal */
         .theme-palette {
             display: none;
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(30, 30, 30, 0.95);
+            transform: translate(-50%, -50%) translateZ(50px);
+            background: rgba(40, 40, 40, 0.95);
             padding: 2.5rem;
-            border-radius: var(--container-radius);
-            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius-large);
+            border: 1px solid rgba(var(--primary-rgb), 0.1);
             z-index: 1000;
             max-width: 600px;
             width: 90%;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8),
-                       inset 0 0 20px rgba(var(--primary-rgb), 0.3);
-            backdrop-filter: blur(10px);
-            animation: modalFadeIn 0.4s ease;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.05),
+                inset 0 0 30px rgba(var(--primary-rgb), 0.03);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            animation: modalFadeIn 0.4s var(--transition-timing);
+            transform-style: preserve-3d;
+            perspective: 1000px;
         }
 
         @keyframes modalFadeIn {
-            from { opacity: 0; transform: translate(-50%, -60%); }
-            to { opacity: 1; transform: translate(-50%, -50%); }
+            from { opacity: 0; transform: translate(-50%, -60%) translateZ(0); }
+            to { opacity: 1; transform: translate(-50%, -50%) translateZ(50px); }
         }
 
         .theme-palette.active {
@@ -418,8 +536,8 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(var(--primary-rgb), 0.3);
-            border: 2px solid var(--primary-color);
+            background: rgba(var(--primary-rgb), 0.1);
+            border: none;
             color: var(--text-color);
             font-size: 1.5rem;
             width: 40px;
@@ -429,8 +547,14 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            transition: all var(--transition-duration) var(--transition-timing);
+            box-shadow: 
+                0 2px 10px rgba(0, 0, 0, 0.1),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.1);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            transform: translateZ(0);
+            will-change: transform;
         }
 
         .theme-palette-close::before {
@@ -441,29 +565,35 @@
             right: -5px;
             bottom: -5px;
             border-radius: 50%;
-            border: 1px solid var(--primary-color);
+            background: radial-gradient(circle, rgba(var(--primary-rgb), 0.1) 0%, transparent 70%);
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity var(--transition-duration) var(--transition-timing);
+            pointer-events: none;
         }
 
         .theme-palette-close:hover {
-            background: rgba(var(--primary-rgb), 0.5);
-            transform: rotate(90deg);
+            background: rgba(var(--primary-rgb), 0.2);
+            transform: rotate(90deg) translateZ(10px);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.15);
         }
 
         .theme-palette-close:hover::before {
-            opacity: 1;
+            opacity: 0.5;
         }
 
         .palette-title {
             font-size: 1.8rem;
             margin-bottom: 1.5rem;
             color: var(--primary-color);
-            text-shadow: 0 0 10px var(--primary-color);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             text-align: center;
+            font-weight: 600;
+            transform: translateZ(20px);
         }
 
-        /* Mode selector */
+        /* Mode Selector */
         .mode-selector {
             display: flex;
             justify-content: center;
@@ -473,15 +603,21 @@
 
         .mode-btn {
             padding: 0.8rem 1.5rem;
-            border-radius: var(--button-radius);
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1.5px;
-            transition: all 0.3s ease;
+            border-radius: var(--border-radius);
+            font-family: 'SF Pro Rounded', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all var(--transition-duration) var(--transition-timing);
             position: relative;
             overflow: hidden;
             z-index: 1;
-            box-shadow: var(--button-glow),
-                       inset 0 0 15px rgba(var(--primary-rgb), 0.2);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.1),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.1);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            transform: translateZ(0);
+            will-change: transform, box-shadow;
         }
 
         .mode-btn::before {
@@ -497,41 +633,62 @@
                 transparent
             );
             z-index: -1;
+            opacity: 0;
+            transition: opacity var(--transition-duration) var(--transition-timing);
         }
 
         .mode-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 25px currentColor,
-                       inset 0 0 20px rgba(var(--primary-rgb), 0.4);
+            transform: translateY(-3px) translateZ(10px);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.15);
         }
 
-        /* Language selector */
+        .mode-btn:hover::before {
+            opacity: 0.3;
+        }
+
+        /* Language Selector */
         .language-selector {
             position: absolute;
             top: 25px;
             right: 25px;
             z-index: 10;
+            transform: translateZ(20px);
         }
 
         .language-btn {
-            background: rgba(var(--primary-rgb), 0.2);
-            border: 2px solid var(--primary-color);
+            background: rgba(var(--primary-rgb), 0.1);
+            border: none;
             color: var(--primary-color);
             padding: 0.6rem 1.2rem;
-            border-radius: var(--button-radius);
+            border-radius: var(--border-radius);
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Orbitron', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: var(--button-glow);
-            text-shadow: 0 0 5px var(--primary-color);
+            transition: all var(--transition-duration) var(--transition-timing);
+            font-family: 'SF Pro Rounded', sans-serif;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            box-shadow: 
+                0 2px 10px rgba(0, 0, 0, 0.1),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.1);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            transform: translateZ(0);
+            will-change: transform;
         }
 
         .language-btn:hover {
-            background: rgba(var(--primary-rgb), 0.4);
-            box-shadow: 0 0 20px var(--primary-color);
-            transform: translateY(-2px);
+            background: rgba(var(--primary-rgb), 0.2);
+            transform: translateY(-2px) translateZ(5px);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.15);
+        }
+
+        /* Animation for floating effect */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateZ(0); }
+            50% { transform: translateY(-10px) translateZ(5px); }
         }
 
         /* Animation for digital rain effect */
@@ -552,6 +709,60 @@
                 opacity: 0;
                 filter: blur(1px);
             }
+        }
+
+        /* Color Sections */
+        .color-section {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            box-shadow: 
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.05),
+                inset 0 0 20px rgba(0, 0, 0, 0.1);
+            transform: translateZ(20px);
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            font-weight: 500;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Metal Effects */
+        .metal-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metal-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0.3),
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.3),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(30deg);
+            animation: metalShine 4s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes metalShine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
         }
 
         /* Responsive adjustments */
@@ -613,7 +824,7 @@
             <button class="language-btn" id="language-btn">EN</button>
         </div>
         
-        <h1 class="title" id="app-title">NEON TIME</h1>
+        <h1 class="title" id="app-title">VISION TIME</h1>
         
         <div class="tab-container">
             <button class="tab active" data-tab="clock" id="clock-tab">Digital Clock</button>
@@ -658,7 +869,7 @@
         <div class="mode-selector">
             <button class="mode-btn" data-mode="dark" id="dark-mode-btn">Dark Mode</button>
             <button class="mode-btn" data-mode="light" id="light-mode-btn">Light Mode</button>
-            <button class="mode-btn" data-mode="gold" id="gold-mode-btn">Gold Mode</button>
+            <button class="mode-btn" data-mode="gray" id="gray-mode-btn">Gray Mode</button>
         </div>
         
         <button class="theme-palette-btn" id="theme-palette-btn">Show Color Palette</button>
@@ -666,28 +877,55 @@
         <div class="theme-palette" id="theme-palette">
             <button class="theme-palette-close" id="theme-palette-close">&times;</button>
             <h3 class="palette-title" id="palette-title">Color Palette</h3>
-            <div class="theme-selector">
-                <button class="theme-btn" data-theme="default" style="background: linear-gradient(135deg, #111, #003);"></button>
-                <button class="theme-btn" data-theme="red" style="background: linear-gradient(135deg, #300, #900);"></button>
-                <button class="theme-btn" data-theme="blue" style="background: linear-gradient(135deg, #003, #009);"></button>
-                <button class="theme-btn" data-theme="green" style="background: linear-gradient(135deg, #030, #090);"></button>
-                <button class="theme-btn" data-theme="purple" style="background: linear-gradient(135deg, #303, #909);"></button>
-                <button class="theme-btn" data-theme="orange" style="background: linear-gradient(135deg, #630, #960);"></button>
-                <button class="theme-btn" data-theme="pink" style="background: linear-gradient(135deg, #603, #906);"></button>
-                <button class="theme-btn" data-theme="cyan" style="background: linear-gradient(135deg, #033, #099);"></button>
-                <button class="theme-btn" data-theme="gold" style="background: linear-gradient(135deg, #443300, #aa9900);"></button>
+            
+            <!-- Standard Colors -->
+            <div class="color-section">
+                <div class="section-title">Standard Colors</div>
+                <div class="theme-selector">
+                    <button class="theme-btn" data-theme="default" style="background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));"></button>
+                    <button class="theme-btn" data-theme="yellow-black" style="background: linear-gradient(135deg, #FFD700, #FFA500);"></button>
+                    <button class="theme-btn" data-theme="orange-black" style="background: linear-gradient(135deg, #FF8C00, #FF4500);"></button>
+                    <button class="theme-btn" data-theme="red-black" style="background: linear-gradient(135deg, #FF0000, #8B0000);"></button>
+                    <button class="theme-btn" data-theme="pink-black" style="background: linear-gradient(135deg, #FF69B4, #DB7093);"></button>
+                    <button class="theme-btn" data-theme="purple-black" style="background: linear-gradient(135deg, #9370DB, #8A2BE2);"></button>
+                    <button class="theme-btn" data-theme="lightblue-black" style="background: linear-gradient(135deg, #87CEFA, #1E90FF);"></button>
+                    <button class="theme-btn" data-theme="darkblue-black" style="background: linear-gradient(135deg, #00008B, #0000CD);"></button>
+                    <button class="theme-btn" data-theme="turquoise-black" style="background: linear-gradient(135deg, #40E0D0, #00CED1);"></button>
+                    <button class="theme-btn" data-theme="lightgreen-black" style="background: linear-gradient(135deg, #90EE90, #3CB371);"></button>
+                    <button class="theme-btn" data-theme="darkgreen-black" style="background: linear-gradient(135deg, #006400, #008000);"></button>
+                </div>
+            </div>
+            
+            <!-- Metallic Colors -->
+            <div class="color-section">
+                <div class="section-title">Metallic Colors</div>
+                <div class="theme-selector">
+                    <button class="theme-btn metal-effect" data-theme="bronze" style="background: linear-gradient(135deg, #CD7F32, #8B4513);"></button>
+                    <button class="theme-btn metal-effect" data-theme="silver" style="background: linear-gradient(135deg, #C0C0C0, #A9A9A9);"></button>
+                    <button class="theme-btn metal-effect" data-theme="gold" style="background: linear-gradient(135deg, #FFD700, #DAA520);"></button>
+                </div>
+            </div>
+            
+            <!-- Mode Selector -->
+            <div class="color-section">
+                <div class="section-title">Appearance</div>
+                <div class="mode-selector">
+                    <button class="mode-btn" data-mode="dark">Dark Mode</button>
+                    <button class="mode-btn" data-mode="light">Light Mode</button>
+                    <button class="mode-btn" data-mode="gray">Gray Mode</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         // Set initial RGB values
-        document.documentElement.style.setProperty('--primary-rgb', '0, 255, 255');
+        document.documentElement.style.setProperty('--primary-rgb', '255, 255, 255');
         
         // Language translations
         const translations = {
             en: {
-                appTitle: "NEON TIME",
+                appTitle: "VISION TIME",
                 clockTab: "Digital Clock",
                 stopwatchTab: "Stopwatch",
                 timerTab: "Timer",
@@ -700,9 +938,12 @@
                 resume: "Resume",
                 darkMode: "Dark Mode",
                 lightMode: "Light Mode",
-                goldMode: "Gold Mode",
+                grayMode: "Gray Mode",
                 colorPalette: "Show Color Palette",
                 paletteTitle: "Color Palette",
+                standardColors: "Standard Colors",
+                metallicColors: "Metallic Colors",
+                appearance: "Appearance",
                 monday: "Monday",
                 tuesday: "Tuesday",
                 wednesday: "Wednesday",
@@ -724,7 +965,7 @@
                 december: "December"
             },
             de: {
-                appTitle: "NEON UHR",
+                appTitle: "VISION UHR",
                 clockTab: "Digitale Uhr",
                 stopwatchTab: "Stoppuhr",
                 timerTab: "Timer",
@@ -737,9 +978,12 @@
                 resume: "Fortsetzen",
                 darkMode: "Dunkelmodus",
                 lightMode: "Hellmodus",
-                goldMode: "Gold Modus",
+                grayMode: "Graumodus",
                 colorPalette: "Farbpalette zeigen",
                 paletteTitle: "Farbpalette",
+                standardColors: "Standardfarben",
+                metallicColors: "Metallfarben",
+                appearance: "Erscheinungsbild",
                 monday: "Montag",
                 tuesday: "Dienstag",
                 wednesday: "Mittwoch",
@@ -798,10 +1042,26 @@
             document.getElementById('reset-timer').textContent = translations[currentLanguage].reset;
             document.getElementById('dark-mode-btn').textContent = translations[currentLanguage].darkMode;
             document.getElementById('light-mode-btn').textContent = translations[currentLanguage].lightMode;
-            document.getElementById('gold-mode-btn').textContent = translations[currentLanguage].goldMode;
+            document.getElementById('gray-mode-btn').textContent = translations[currentLanguage].grayMode;
             document.getElementById('theme-palette-btn').textContent = translations[currentLanguage].colorPalette;
             document.getElementById('palette-title').textContent = translations[currentLanguage].paletteTitle;
             document.getElementById('language-btn').textContent = currentLanguage.toUpperCase();
+            
+            // Update section titles in color palette
+            const sectionTitles = document.querySelectorAll('.section-title');
+            if (sectionTitles.length >= 3) {
+                sectionTitles[0].textContent = translations[currentLanguage].standardColors;
+                sectionTitles[1].textContent = translations[currentLanguage].metallicColors;
+                sectionTitles[2].textContent = translations[currentLanguage].appearance;
+            }
+            
+            // Update mode buttons in color palette
+            const paletteModeButtons = document.querySelectorAll('.theme-palette .mode-btn');
+            if (paletteModeButtons.length >= 3) {
+                paletteModeButtons[0].textContent = translations[currentLanguage].darkMode;
+                paletteModeButtons[1].textContent = translations[currentLanguage].lightMode;
+                paletteModeButtons[2].textContent = translations[currentLanguage].grayMode;
+            }
             
             // Update date display
             updateClock();
@@ -900,6 +1160,15 @@
                 lapItem.textContent = `${translations[currentLanguage].lap} ${document.getElementById('stopwatch-laps').children.length + 1}: ${lapTime}`;
                 
                 document.getElementById('stopwatch-laps').prepend(lapItem);
+                
+                // Add animation to lap item
+                lapItem.style.opacity = '0';
+                lapItem.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    lapItem.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                    lapItem.style.opacity = '1';
+                    lapItem.style.transform = 'translateY(0)';
+                }, 10);
             }
         });
         
@@ -935,7 +1204,36 @@
                 document.getElementById('timer-display').textContent = '00:00:00';
                 document.getElementById('start-timer').textContent = translations[currentLanguage].start;
                 timerRunning = false;
-                alert(currentLanguage === 'en' ? 'Timer finished!' : 'Timer abgelaufen!');
+                
+                // Create a notification effect
+                const notification = document.createElement('div');
+                notification.style.position = 'fixed';
+                notification.style.top = '0';
+                notification.style.left = '0';
+                notification.style.right = '0';
+                notification.style.padding = '1rem';
+                notification.style.backgroundColor = 'rgba(255, 59, 48, 0.9)';
+                notification.style.color = 'white';
+                notification.style.textAlign = 'center';
+                notification.style.fontWeight = '500';
+                notification.style.zIndex = '1000';
+                notification.style.transform = 'translateY(-100%)';
+                notification.style.transition = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                notification.textContent = currentLanguage === 'en' ? 'Timer finished!' : 'Timer abgelaufen!';
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.transform = 'translateY(0)';
+                }, 10);
+                
+                setTimeout(() => {
+                    notification.style.transform = 'translateY(-100%)';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 400);
+                }, 3000);
+                
                 return;
             }
             
@@ -1008,82 +1306,208 @@
                 
                 this.classList.add('active');
                 document.getElementById(this.dataset.tab).classList.add('active');
+                
+                // Add subtle animation to the active tab
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                    this.style.transform = 'scale(1)';
+                }, 10);
             });
         });
         
         // Theme switching
         const themes = {
             default: {
-                '--primary-color': '#0ff',
-                '--secondary-color': '#f0f',
-                '--bg-color': '#111',
-                '--text-color': '#fff',
-                '--glow-intensity': '0.8',
-                '--primary-rgb': '0, 255, 255'
+                '--primary-color': 'rgba(255, 255, 255, 0.9)',
+                '--secondary-color': 'rgba(255, 255, 255, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(100, 100, 100, 0.2)',
+                '--button-hover-bg': 'rgba(120, 120, 120, 0.3)',
+                '--button-active-bg': 'rgba(80, 80, 80, 0.3)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
+                '--primary-rgb': '255, 255, 255'
             },
-            red: {
-                '--primary-color': '#f00',
-                '--secondary-color': '#f90',
-                '--bg-color': '#300',
-                '--text-color': '#fff',
-                '--glow-intensity': '0.7',
+            'yellow-black': {
+                '--primary-color': 'rgba(255, 215, 0, 0.9)',
+                '--secondary-color': 'rgba(255, 165, 0, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(255, 215, 0, 0.1)',
+                '--button-hover-bg': 'rgba(255, 215, 0, 0.2)',
+                '--button-active-bg': 'rgba(255, 165, 0, 0.2)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
+                '--primary-rgb': '255, 215, 0'
+            },
+            'orange-black': {
+                '--primary-color': 'rgba(255, 140, 0, 0.9)',
+                '--secondary-color': 'rgba(255, 69, 0, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(255, 140, 0, 0.1)',
+                '--button-hover-bg': 'rgba(255, 140, 0, 0.2)',
+                '--button-active-bg': 'rgba(255, 69, 0, 0.2)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
+                '--primary-rgb': '255, 140, 0'
+            },
+            'red-black': {
+                '--primary-color': 'rgba(255, 0, 0, 0.9)',
+                '--secondary-color': 'rgba(139, 0, 0, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(255, 0, 0, 0.1)',
+                '--button-hover-bg': 'rgba(255, 0, 0, 0.2)',
+                '--button-active-bg': 'rgba(139, 0, 0, 0.2)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
                 '--primary-rgb': '255, 0, 0'
             },
-            blue: {
-                '--primary-color': '#06f',
-                '--secondary-color': '#0af',
-                '--bg-color': '#003',
-                '--text-color': '#fff',
-                '--glow-intensity': '0.9',
-                '--primary-rgb': '0, 102, 255'
+            'pink-black': {
+                '--primary-color': 'rgba(255, 105, 180, 0.9)',
+                '--secondary-color': 'rgba(219, 112, 147, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(255, 105, 180, 0.1)',
+                '--button-hover-bg': 'rgba(255, 105, 180, 0.2)',
+                '--button-active-bg': 'rgba(219, 112, 147, 0.2)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
+                '--primary-rgb': '255, 105, 180'
             },
-            green: {
-                '--primary-color': '#0f0',
-                '--secondary-color': '#af0',
-                '--bg-color': '#030',
-                '--text-color': '#fff',
-                '--glow-intensity': '0.7',
-                '--primary-rgb': '0, 255, 0'
+            'purple-black': {
+                '--primary-color': 'rgba(147, 112, 219, 0.9)',
+                '--secondary-color': 'rgba(138, 43, 226, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(147, 112, 219, 0.1)',
+                '--button-hover-bg': 'rgba(147, 112, 219, 0.2)',
+                '--button-active-bg': 'rgba(138, 43, 226, 0.2)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
+                '--primary-rgb': '147, 112, 219'
             },
-            purple: {
-                '--primary-color': '#90f',
-                '--secondary-color': '#f0f',
-                '--bg-color': '#303',
-                '--text-color': '#fff',
-                '--glow-intensity': '0.8',
-                '--primary-rgb': '144, 0, 255'
+            'lightblue-black': {
+                '--primary-color': 'rgba(135, 206, 250, 0.9)',
+                '--secondary-color': 'rgba(30, 144, 255, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(135, 206, 250, 0.1)',
+                '--button-hover-bg': 'rgba(135, 206, 250, 0.2)',
+                '--button-active-bg': 'rgba(30, 144, 255, 0.2)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
+                '--primary-rgb': '135, 206, 250'
             },
-            orange: {
-                '--primary-color': '#f90',
-                '--secondary-color': '#fc0',
-                '--bg-color': '#630',
-                '--text-color': '#fff',
-                '--glow-intensity': '0.7',
-                '--primary-rgb': '255, 153, 0'
+            'darkblue-black': {
+                '--primary-color': 'rgba(0, 0, 139, 0.9)',
+                '--secondary-color': 'rgba(0, 0, 205, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(0, 0, 139, 0.1)',
+                '--button-hover-bg': 'rgba(0, 0, 139, 0.2)',
+                '--button-active-bg': 'rgba(0, 0, 205, 0.2)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
+                '--primary-rgb': '0, 0, 139'
             },
-            pink: {
-                '--primary-color': '#f6c',
-                '--secondary-color': '#f9f',
-                '--bg-color': '#603',
-                '--text-color': '#fff',
-                '--glow-intensity': '0.6',
-                '--primary-rgb': '255, 102, 204'
+            'turquoise-black': {
+                '--primary-color': 'rgba(64, 224, 208, 0.9)',
+                '--secondary-color': 'rgba(0, 206, 209, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(64, 224, 208, 0.1)',
+                '--button-hover-bg': 'rgba(64, 224, 208, 0.2)',
+                '--button-active-bg': 'rgba(0, 206, 209, 0.2)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
+                '--primary-rgb': '64, 224, 208'
             },
-            cyan: {
-                '--primary-color': '#0ff',
-                '--secondary-color': '#6ff',
-                '--bg-color': '#033',
-                '--text-color': '#fff',
-                '--glow-intensity': '0.9',
-                '--primary-rgb': '0, 255, 255'
+            'lightgreen-black': {
+                '--primary-color': 'rgba(144, 238, 144, 0.9)',
+                '--secondary-color': 'rgba(60, 179, 113, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(144, 238, 144, 0.1)',
+                '--button-hover-bg': 'rgba(144, 238, 144, 0.2)',
+                '--button-active-bg': 'rgba(60, 179, 113, 0.2)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
+                '--primary-rgb': '144, 238, 144'
+            },
+            'darkgreen-black': {
+                '--primary-color': 'rgba(0, 100, 0, 0.9)',
+                '--secondary-color': 'rgba(0, 128, 0, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(0, 100, 0, 0.1)',
+                '--button-hover-bg': 'rgba(0, 100, 0, 0.2)',
+                '--button-active-bg': 'rgba(0, 128, 0, 0.2)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
+                '--primary-rgb': '0, 100, 0'
+            },
+            bronze: {
+                '--primary-color': 'rgba(205, 127, 50, 0.9)',
+                '--secondary-color': 'rgba(139, 69, 19, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(205, 127, 50, 0.1)',
+                '--button-hover-bg': 'rgba(205, 127, 50, 0.2)',
+                '--button-active-bg': 'rgba(139, 69, 19, 0.2)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
+                '--primary-rgb': '205, 127, 50'
+            },
+            silver: {
+                '--primary-color': 'rgba(192, 192, 192, 0.9)',
+                '--secondary-color': 'rgba(169, 169, 169, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(192, 192, 192, 0.1)',
+                '--button-hover-bg': 'rgba(192, 192, 192, 0.2)',
+                '--button-active-bg': 'rgba(169, 169, 169, 0.2)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
+                '--primary-rgb': '192, 192, 192'
             },
             gold: {
-                '--primary-color': '#ffd700',
-                '--secondary-color': '#ff9900',
-                '--bg-color': '#1a1a1a',
-                '--text-color': '#fff',
-                '--glow-intensity': '0.7',
+                '--primary-color': 'rgba(255, 215, 0, 0.9)',
+                '--secondary-color': 'rgba(218, 165, 32, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(255, 215, 0, 0.1)',
+                '--button-hover-bg': 'rgba(255, 215, 0, 0.2)',
+                '--button-active-bg': 'rgba(218, 165, 32, 0.2)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
                 '--primary-rgb': '255, 215, 0'
+            }
+        };
+        
+        // Mode switching
+        const modes = {
+            dark: {
+                '--primary-color': 'rgba(255, 255, 255, 0.9)',
+                '--secondary-color': 'rgba(255, 255, 255, 0.7)',
+                '--bg-color': 'rgba(30, 30, 30, 0.5)',
+                '--container-bg': 'rgba(40, 40, 40, 0.4)',
+                '--button-bg': 'rgba(100, 100, 100, 0.2)',
+                '--button-hover-bg': 'rgba(120, 120, 120, 0.3)',
+                '--button-active-bg': 'rgba(80, 80, 80, 0.3)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
+                '--primary-rgb': '255, 255, 255'
+            },
+            light: {
+                '--primary-color': 'rgba(0, 102, 255, 0.9)',
+                '--secondary-color': 'rgba(255, 51, 102, 0.7)',
+                '--bg-color': 'rgba(245, 245, 245, 0.7)',
+                '--container-bg': 'rgba(255, 255, 255, 0.6)',
+                '--button-bg': 'rgba(0, 102, 255, 0.1)',
+                '--button-hover-bg': 'rgba(0, 102, 255, 0.2)',
+                '--button-active-bg': 'rgba(0, 82, 204, 0.2)',
+                '--text-color': 'rgba(51, 51, 51, 0.9)',
+                '--primary-rgb': '0, 102, 255'
+            },
+            gray: {
+                '--primary-color': 'rgba(200, 200, 200, 0.9)',
+                '--secondary-color': 'rgba(170, 170, 170, 0.7)',
+                '--bg-color': 'rgba(60, 60, 60, 0.5)',
+                '--container-bg': 'rgba(80, 80, 80, 0.4)',
+                '--button-bg': 'rgba(150, 150, 150, 0.2)',
+                '--button-hover-bg': 'rgba(170, 170, 170, 0.3)',
+                '--button-active-bg': 'rgba(130, 130, 130, 0.3)',
+                '--text-color': 'rgba(255, 255, 255, 0.9)',
+                '--primary-rgb': '200, 200, 200'
             }
         };
         
@@ -1096,44 +1520,24 @@
                     document.documentElement.style.setProperty(property, value);
                 }
                 
-                // Update container glow
+                // Update container appearance
                 document.querySelector('.container').style.boxShadow = 
-                    `0 0 40px rgba(${theme['--primary-rgb']}, 0.3), 
-                     inset 0 0 20px rgba(${theme['--primary-rgb']}, 0.1)`;
-                document.querySelector('.container').style.borderColor = theme['--primary-color'];
+                    `0 8px 32px 0 rgba(0, 0, 0, 0.2),
+                    inset 0 0 0 1px rgba(var(--primary-rgb), 0.05),
+                    inset 0 0 30px rgba(var(--primary-rgb), 0.03)`;
+                document.querySelector('.container').style.borderColor = `rgba(var(--primary-rgb), 0.1)`;
                 
                 // Regenerate particles with new color
                 createDigitalRain();
+                
+                // Add click animation
+                this.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    this.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                    this.style.transform = 'scale(1)';
+                }, 10);
             });
         });
-        
-        // Mode switching
-        const modes = {
-            dark: {
-                '--primary-color': '#0ff',
-                '--secondary-color': '#f0f',
-                '--bg-color': '#111',
-                '--text-color': '#fff',
-                '--glow-intensity': '0.8',
-                '--primary-rgb': '0, 255, 255'
-            },
-            light: {
-                '--primary-color': '#0066ff',
-                '--secondary-color': '#ff3366',
-                '--bg-color': '#f5f5f5',
-                '--text-color': '#333',
-                '--glow-intensity': '0.5',
-                '--primary-rgb': '0, 102, 255'
-            },
-            gold: {
-                '--primary-color': '#ffd700',
-                '--secondary-color': '#ff9900',
-                '--bg-color': '#1a1a1a',
-                '--text-color': '#fff',
-                '--glow-intensity': '0.7',
-                '--primary-rgb': '255, 215, 0'
-            }
-        };
         
         document.querySelectorAll('.mode-btn').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -1144,30 +1548,59 @@
                     document.documentElement.style.setProperty(property, value);
                 }
                 
-                // Update container glow
+                // Update container appearance
                 document.querySelector('.container').style.boxShadow = 
-                    `0 0 40px rgba(${mode['--primary-rgb']}, 0.3), 
-                     inset 0 0 20px rgba(${mode['--primary-rgb']}, 0.1)`;
-                document.querySelector('.container').style.borderColor = mode['--primary-color'];
+                    `0 8px 32px 0 rgba(0, 0, 0, 0.2),
+                    inset 0 0 0 1px rgba(var(--primary-rgb), 0.05),
+                    inset 0 0 30px rgba(var(--primary-rgb), 0.03)`;
+                document.querySelector('.container').style.borderColor = `rgba(var(--primary-rgb), 0.1)`;
                 
                 // Regenerate particles with new color
                 createDigitalRain();
+                
+                // Add click animation
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                    this.style.transform = 'scale(1)';
+                }, 10);
             });
         });
         
         // Theme palette modal
         document.getElementById('theme-palette-btn').addEventListener('click', function() {
             document.getElementById('theme-palette').classList.add('active');
+            
+            // Add animation to the modal
+            document.getElementById('theme-palette').style.opacity = '0';
+            document.getElementById('theme-palette').style.transform = 'translate(-50%, -60%) translateZ(50px)';
+            setTimeout(() => {
+                document.getElementById('theme-palette').style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                document.getElementById('theme-palette').style.opacity = '1';
+                document.getElementById('theme-palette').style.transform = 'translate(-50%, -50%) translateZ(50px)';
+            }, 10);
         });
         
         document.getElementById('theme-palette-close').addEventListener('click', function() {
-            document.getElementById('theme-palette').classList.remove('active');
+            document.getElementById('theme-palette').style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            document.getElementById('theme-palette').style.opacity = '0';
+            document.getElementById('theme-palette').style.transform = 'translate(-50%, -60%) translateZ(50px)';
+            
+            setTimeout(() => {
+                document.getElementById('theme-palette').classList.remove('active');
+            }, 400);
         });
         
         // Close modal when clicking outside
         window.addEventListener('click', function(event) {
             if (event.target === document.getElementById('theme-palette')) {
-                document.getElementById('theme-palette').classList.remove('active');
+                document.getElementById('theme-palette').style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+                document.getElementById('theme-palette').style.opacity = '0';
+                document.getElementById('theme-palette').style.transform = 'translate(-50%, -60%) translateZ(50px)';
+                
+                setTimeout(() => {
+                    document.getElementById('theme-palette').classList.remove('active');
+                }, 400);
             }
         });
         
@@ -1176,7 +1609,7 @@
             // Erweitert um auch rgb() Werte zu handeln
             if (hex.startsWith('rgb')) {
                 const parts = hex.match(/\d+/g);
-                return parts ? parts.map(Number) : [0, 255, 255];
+                return parts ? parts.map(Number) : [255, 255, 255];
             }
             const r = parseInt(hex.slice(1, 3), 16);
             const g = parseInt(hex.slice(3, 5), 16);
@@ -1188,16 +1621,18 @@
         function createDigitalRain() {
             const particles = document.getElementById('particles');
             particles.innerHTML = ''; // Clear existing particles
-            const particleCount = 200; // Mehr Partikel
+            const particleCount = 150; // Optimized number of particles
             
             // Holen der aktuellen Primärfarbe für den Glitzer
             const primaryColor = getComputedStyle(document.documentElement)
                 .getPropertyValue('--primary-color').trim();
             
             // RGB-Werte aus der Primärfarbe extrahieren
-            const rgb = primaryColor.startsWith('#') 
-                ? hexToRgb(primaryColor)
-                : [0, 255, 255]; // Fallback zu Cyan
+            const rgb = primaryColor.startsWith('rgba') 
+                ? primaryColor.match(/\d+/g).slice(0, 3)
+                : primaryColor.startsWith('#') 
+                    ? hexToRgb(primaryColor)
+                    : [255, 255, 255]; // Fallback zu Weiß
             
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
@@ -1208,6 +1643,7 @@
                 const blur = Math.random() * 4;
                 const left = Math.random() * 100;
                 const animationType = Math.random() > 0.5 ? 'rotate' : 'scale';
+                const animationDirection = Math.random() > 0.5 ? 1 : -1;
                 
                 // Zufällige Position
                 particle.style.position = 'fixed';
@@ -1231,7 +1667,7 @@
                 const keyframes = `
                     @keyframes ${animationName} {
                         0% { 
-                            transform: translateY(-20vh) ${animationType === 'rotate' ? 'rotate(0deg)' : 'scale(0.5)'};
+                            transform: translateY(-20vh) ${animationType === 'rotate' ? `rotate(0deg)` : `scale(0.5)`};
                             opacity: 0;
                         }
                         10% { 
@@ -1242,7 +1678,7 @@
                             opacity: ${opacity};
                         }
                         100% { 
-                            transform: translateY(120vh) ${animationType === 'rotate' ? 'rotate(360deg)' : 'scale(1.5)'};
+                            transform: translateY(120vh) ${animationType === 'rotate' ? `rotate(${360 * animationDirection}deg)` : `scale(1.5)`};
                             opacity: 0;
                             filter: blur(${blur * 0.5}px);
                         }
