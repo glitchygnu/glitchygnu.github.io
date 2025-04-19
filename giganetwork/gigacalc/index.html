@@ -3,248 +3,410 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculator</title>
+    <title>Vision Calculator</title>
     <style>
+        /* Base Variables */
+        :root {
+            --primary-color: rgba(255, 255, 255, 0.9);
+            --secondary-color: rgba(255, 255, 255, 0.7);
+            --bg-color: rgba(30, 30, 30, 0.5);
+            --text-color: rgba(255, 255, 255, 0.9);
+            --container-bg: rgba(40, 40, 40, 0.4);
+            --button-bg: rgba(100, 100, 100, 0.2);
+            --button-hover-bg: rgba(120, 120, 120, 0.3);
+            --button-active-bg: rgba(80, 80, 80, 0.3);
+            --border-radius: 24px;
+            --border-radius-small: 18px;
+            --border-radius-large: 32px;
+            --glass-effect: blur(20px);
+            --shadow-intensity: 0.3;
+            --primary-rgb: 255, 255, 255;
+            --transition-duration: 0.4s;
+            --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+            --number-color: rgba(255, 255, 255, 0.9);
+            --operation-color: rgba(0, 230, 230, 0.9);
+            --equals-color: rgba(255, 59, 48, 0.9);
+            --special-color: rgba(170, 170, 170, 0.9);
+        }
+
+        /* Fonts */
+        @font-face {
+            font-family: 'SF Pro Rounded';
+            src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Rounded';
+            src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-medium-webfont.woff2') format('woff2');
+            font-weight: 500;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Rounded';
+            src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-semibold-webfont.woff2') format('woff2');
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        /* Base Styles */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
+            font-family: 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            transition: background-color 0.3s ease;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(var(--primary-rgb), 0.03) 0%, transparent 70%),
+                linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.5));
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            transition: all var(--transition-duration) var(--transition-timing);
         }
 
-        body.dark-mode {
-            background-color: #222;
-            color: #fff;
-        }
-
+        /* Calculator Container */
         .calculator {
             width: 320px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: var(--container-bg);
+            border-radius: var(--border-radius-large);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            border: 1px solid rgba(var(--primary-rgb), 0.1);
+            box-shadow: 
+                0 8px 32px 0 rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.05),
+                inset 0 0 30px rgba(var(--primary-rgb), 0.03);
             overflow: hidden;
-            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            transform-style: preserve-3d;
+            perspective: 1000px;
         }
 
-        body.dark-mode .calculator {
-            background-color: #333;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        .calculator::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(var(--primary-rgb), 0.03) 0%,
+                transparent 50%,
+                rgba(var(--primary-rgb), 0.03) 100%
+            );
+            z-index: -1;
+            opacity: 0.5;
+            pointer-events: none;
         }
 
+        /* Display */
         .display {
-            padding: 20px;
+            padding: 25px 20px;
             text-align: right;
-            background-color: #f9f9f9;
-            border-bottom: 1px solid #eee;
-        }
-
-        body.dark-mode .display {
-            background-color: #444;
-            border-bottom: 1px solid #555;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            border-bottom: 1px solid rgba(var(--primary-rgb), 0.05);
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
         }
 
         .previous-operand {
             font-size: 1.2rem;
-            color: #777;
+            color: var(--secondary-color);
             height: 24px;
             overflow: hidden;
-        }
-
-        body.dark-mode .previous-operand {
-            color: #aaa;
+            font-weight: 400;
+            opacity: 0.8;
         }
 
         .current-operand {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             margin-top: 10px;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-weight: 500;
+            letter-spacing: -1px;
+            transform: translateZ(10px);
         }
 
+        /* Buttons Grid */
         .buttons {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 1px;
-            background-color: #ddd;
+            gap: 12px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
         }
 
-        body.dark-mode .buttons {
-            background-color: #555;
-        }
-
+        /* Button Styles */
         button {
             border: none;
             outline: none;
-            padding: 20px;
-            font-size: 1.2rem;
+            padding: 18px 0;
+            font-size: 1.4rem;
             cursor: pointer;
-            background-color: #f0f0f0;
-            transition: all 0.2s ease;
+            background: var(--button-bg);
+            color: var(--primary-color);
+            border-radius: var(--border-radius);
+            transition: all var(--transition-duration) var(--transition-timing);
+            font-family: 'SF Pro Rounded', sans-serif;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.1),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.1);
+            transform: translateZ(0);
+            will-change: transform, box-shadow, background;
         }
 
-        body.dark-mode button {
-            background-color: #444;
-            color: #fff;
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                to bottom right,
+                rgba(var(--primary-rgb), 0.1),
+                rgba(var(--primary-rgb), 0.05),
+                transparent
+            );
+            z-index: -1;
+            transition: opacity var(--transition-duration) var(--transition-timing);
+            opacity: 0;
         }
 
         button:hover {
-            background-color: #e0e0e0;
+            background: var(--button-hover-bg);
+            transform: translateY(-2px) translateZ(5px);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.15);
         }
 
-        body.dark-mode button:hover {
-            background-color: #555;
+        button:hover::before {
+            opacity: 1;
         }
 
         button:active {
-            background-color: #d0d0d0;
+            background: var(--button-active-bg);
+            transform: translateY(1px) translateZ(0);
+            box-shadow: 
+                0 2px 10px rgba(0, 0, 0, 0.1),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.1);
+            transition-duration: 0.1s;
         }
 
-        body.dark-mode button:active {
-            background-color: #666;
-        }
-
+        /* Number Buttons */
         .number {
-            background-color: #f5f5f5;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--number-color);
         }
 
-        body.dark-mode .number {
-            background-color: #3a3a3a;
+        .number:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
+        .number:active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Operation Buttons */
         .operation {
-            background-color: #e0f7fa;
+            background: rgba(0, 230, 230, 0.1);
+            color: var(--operation-color);
         }
 
-        body.dark-mode .operation {
-            background-color: #006064;
+        .operation:hover {
+            background: rgba(0, 230, 230, 0.2);
         }
 
+        .operation:active {
+            background: rgba(0, 200, 200, 0.2);
+        }
+
+        /* Special Buttons (AC, DEL, %) */
+        .special {
+            background: rgba(170, 170, 170, 0.1);
+            color: var(--special-color);
+        }
+
+        .special:hover {
+            background: rgba(170, 170, 170, 0.2);
+        }
+
+        .special:active {
+            background: rgba(150, 150, 150, 0.2);
+        }
+
+        /* Equals Button */
         .equals {
-            background-color: #ffcdd2;
+            background: rgba(255, 59, 48, 0.1);
+            color: var(--equals-color);
         }
 
-        body.dark-mode .equals {
-            background-color: #b71c1c;
+        .equals:hover {
+            background: rgba(255, 59, 48, 0.2);
         }
 
+        .equals:active {
+            background: rgba(220, 50, 40, 0.2);
+        }
+
+        /* Span 2 columns */
         .span-2 {
             grid-column: span 2;
         }
 
-        /* Animation and Language buttons */
-        #animation-btn {
+        /* Control Buttons (Animation, Language) */
+        .control-btn {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #1a73e8;
-            color: white;
             border: none;
+            outline: none;
             padding: 12px 25px;
             font-size: 16px;
             border-radius: 50px;
             cursor: pointer;
             z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            font-family: 'SF Pro Rounded', sans-serif;
+            font-weight: 500;
+            transition: all var(--transition-duration) var(--transition-timing);
+            backdrop-filter: var(--glass-effect);
+            -webkit-backdrop-filter: var(--glass-effect);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.1),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.1);
+            transform: translateZ(0);
+            will-change: transform, box-shadow;
         }
 
-        body.animation-mode #animation-btn {
-            background: linear-gradient(90deg, #ff00ff, #00ffff);
-            color: #000;
-            font-weight: bold;
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
-            animation: rainbowButton 5s infinite;
+        .control-btn:hover {
+            transform: translateY(-2px) translateZ(5px);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.15);
+        }
+
+        .control-btn:active {
+            transform: translateY(1px) translateZ(0);
+            box-shadow: 
+                0 2px 10px rgba(0, 0, 0, 0.1),
+                inset 0 0 0 1px rgba(var(--primary-rgb), 0.1);
+        }
+
+        #animation-btn {
+            bottom: 20px;
+            right: 20px;
+            background: rgba(26, 115, 232, 0.2);
+            color: rgba(138, 180, 248, 0.9);
         }
 
         #language-btn {
-            position: fixed;
             bottom: 80px;
             right: 20px;
-            background: #34a853;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 16px;
-            border-radius: 50px;
-            cursor: pointer;
-            z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        body.animation-mode #language-btn {
-            background: linear-gradient(90deg, #ff9900, #ff3399);
-            color: #000;
-            font-weight: bold;
-            box-shadow: 0 0 20px rgba(255, 153, 0, 0.5);
-            animation: languageButtonPulse 3s infinite alternate;
-        }
-
-        @keyframes rainbowButton {
-            0% { background: linear-gradient(90deg, #ff00ff, #00ffff); }
-            25% { background: linear-gradient(90deg, #00ffff, #ffff00); }
-            50% { background: linear-gradient(90deg, #ffff00, #ff00ff); }
-            75% { background: linear-gradient(90deg, #ff00ff, #00ffff); }
-            100% { background: linear-gradient(90deg, #00ffff, #ffff00); }
-        }
-
-        @keyframes languageButtonPulse {
-            0% { box-shadow: 0 0 20px rgba(255, 153, 0, 0.5); }
-            100% { box-shadow: 0 0 30px rgba(255, 51, 153, 0.8); }
+            background: rgba(52, 168, 83, 0.2);
+            color: rgba(129, 214, 153, 0.9);
         }
 
         /* Animation mode styles */
         body.animation-mode {
-            animation: bgColorChange 10s infinite alternate;
+            animation: bgColorChange 30s infinite alternate;
         }
 
         @keyframes bgColorChange {
-            0% { background-color: #f5f5f5; }
-            25% { background-color: #ffe0f0; }
-            50% { background-color: #e0f0ff; }
-            75% { background-color: #f0ffe0; }
-            100% { background-color: #fff0e0; }
-        }
-
-        body.animation-mode.dark-mode {
-            animation: bgColorChangeDark 10s infinite alternate;
-        }
-
-        @keyframes bgColorChangeDark {
-            0% { background-color: #222; }
-            25% { background-color: #300022; }
-            50% { background-color: #002230; }
-            75% { background-color: #203000; }
-            100% { background-color: #301800; }
+            0% { background-color: rgba(30, 30, 30, 0.5); }
+            25% { background-color: rgba(48, 0, 34, 0.5); }
+            50% { background-color: rgba(0, 34, 48, 0.5); }
+            75% { background-color: rgba(32, 48, 0, 0.5); }
+            100% { background-color: rgba(48, 24, 0, 0.5); }
         }
 
         body.animation-mode .calculator {
-            animation: float 3s ease-in-out infinite;
+            animation: float 6s ease-in-out infinite;
         }
 
         @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+            0% { transform: translateY(0px) translateZ(0); }
+            50% { transform: translateY(-10px) translateZ(10px); }
+            100% { transform: translateY(0px) translateZ(0); }
         }
 
+        /* Floating shapes for animation mode */
         .floating-shape {
             position: fixed;
             z-index: -1;
             animation: floatShape linear infinite;
+            pointer-events: none;
         }
 
         @keyframes floatShape {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(50px, 50px) rotate(90deg); }
-            50% { transform: translate(100px, 0) rotate(180deg); }
-            75% { transform: translate(50px, -50px) rotate(270deg); }
-            100% { transform: translate(0, 0) rotate(360deg); }
+            0% { transform: translate(0, 0) rotate(0deg) translateZ(0); }
+            25% { transform: translate(50px, 50px) rotate(90deg) translateZ(20px); }
+            50% { transform: translate(100px, 0) rotate(180deg) translateZ(0); }
+            75% { transform: translate(50px, -50px) rotate(270deg) translateZ(20px); }
+            100% { transform: translate(0, 0) rotate(360deg) translateZ(0); }
+        }
+
+        /* Particles for animation mode */
+        .particle {
+            position: fixed;
+            z-index: -1;
+            animation: fall linear forwards;
+            pointer-events: none;
+            border-radius: 50%;
+            transform: translateZ(0);
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) scale(0) translateZ(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1) translateZ(0);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .calculator {
+                width: 90%;
+                max-width: 320px;
+            }
+            
+            button {
+                padding: 16px 0;
+                font-size: 1.3rem;
+            }
+            
+            .current-operand {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
@@ -255,9 +417,9 @@
             <div class="current-operand" id="current-operand">0</div>
         </div>
         <div class="buttons">
-            <button class="operation" data-action="clear">AC</button>
-            <button class="operation" data-action="delete">DEL</button>
-            <button class="operation" data-action="percentage">%</button>
+            <button class="special" data-action="clear">AC</button>
+            <button class="special" data-action="delete">DEL</button>
+            <button class="special" data-action="percentage">%</button>
             <button class="operation" data-action="divide">÷</button>
             <button class="number" data-number="7">7</button>
             <button class="number" data-number="8">8</button>
@@ -277,8 +439,8 @@
         </div>
     </div>
 
-    <button id="animation-btn">Toggle Animation Mode</button>
-    <button id="language-btn">Deutsch / German</button>
+    <button id="animation-btn" class="control-btn">Toggle Animation Mode</button>
+    <button id="language-btn" class="control-btn">Deutsch / German</button>
 
     <script>
         // Calculator functionality
@@ -385,6 +547,13 @@
             button.addEventListener('click', () => {
                 calculator.appendNumber(button.innerText);
                 calculator.updateDisplay();
+                
+                // Add click animation
+                button.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    button.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                    button.style.transform = 'scale(1)';
+                }, 10);
             });
         });
 
@@ -392,27 +561,62 @@
             button.addEventListener('click', () => {
                 calculator.chooseOperation(button.innerText);
                 calculator.updateDisplay();
+                
+                // Add click animation
+                button.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    button.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                    button.style.transform = 'scale(1)';
+                }, 10);
             });
         });
 
         equalsButton.addEventListener('click', () => {
             calculator.compute();
             calculator.updateDisplay();
+            
+            // Add click animation
+            equalsButton.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                equalsButton.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                equalsButton.style.transform = 'scale(1)';
+            }, 10);
         });
 
         clearButton.addEventListener('click', () => {
             calculator.clear();
             calculator.updateDisplay();
+            
+            // Add click animation
+            clearButton.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                clearButton.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                clearButton.style.transform = 'scale(1)';
+            }, 10);
         });
 
         deleteButton.addEventListener('click', () => {
             calculator.delete();
             calculator.updateDisplay();
+            
+            // Add click animation
+            deleteButton.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                deleteButton.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                deleteButton.style.transform = 'scale(1)';
+            }, 10);
         });
 
         percentageButton.addEventListener('click', () => {
             calculator.calculatePercentage();
             calculator.updateDisplay();
+            
+            // Add click animation
+            percentageButton.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                percentageButton.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                percentageButton.style.transform = 'scale(1)';
+            }, 10);
         });
 
         // Theme and language functionality
@@ -420,7 +624,7 @@
         const languageBtn = document.getElementById('language-btn');
         let currentLanguage = 'en';
         let animationMode = false;
-        let darkMode = false;
+        let floatingShapes = [];
 
         // Translations for UI elements
         const translations = {
@@ -466,13 +670,29 @@
             } else {
                 stopAnimations();
             }
+            
+            // Update button text
             animationBtn.textContent = translations[currentLanguage].animationBtn;
+            
+            // Add click animation
+            animationBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                animationBtn.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                animationBtn.style.transform = 'scale(1)';
+            }, 10);
         }
 
         // Language toggle function
         function toggleLanguage() {
             currentLanguage = currentLanguage === 'en' ? 'de' : 'en';
             updateLanguageUI();
+            
+            // Add click animation
+            languageBtn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                languageBtn.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                languageBtn.style.transform = 'scale(1)';
+            }, 10);
         }
 
         // Update all UI elements with current language
@@ -485,22 +705,8 @@
                 translations[currentLanguage].calculatorButtons.decimal;
         }
 
-        // Toggle dark mode
-        function toggleDarkMode() {
-            darkMode = !darkMode;
-            document.body.classList.toggle('dark-mode', darkMode);
-        }
-
-        // Event listeners
-        animationBtn.addEventListener('click', toggleAnimationMode);
-        languageBtn.addEventListener('click', toggleLanguage);
-
-        // Initialize UI with default language
-        updateLanguageUI();
-
         // Animation helper functions
         let animationInterval;
-        let floatingShapes = [];
 
         function startAnimations() {
             // Create floating shapes
@@ -527,20 +733,21 @@
         }
 
         function createFloatingShapes() {
-            const colors = ['#00ff9d', '#00b8ff', '#ff00ff', '#ffff00', '#ff4d4d'];
-            const shapes = ['circle', 'triangle', 'square', 'pentagon'];
+            const colors = ['rgba(0, 230, 230, 0.3)', 'rgba(255, 59, 48, 0.3)', 'rgba(255, 255, 255, 0.3)'];
+            const shapes = ['circle', 'square'];
             
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 10; i++) {
                 const shape = document.createElement('div');
                 shape.className = 'floating-shape';
                 
                 // Random properties
-                const size = Math.random() * 50 + 20;
+                const size = Math.random() * 60 + 30;
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 const shapeType = shapes[Math.floor(Math.random() * shapes.length)];
                 const left = Math.random() * 100;
                 const top = Math.random() * 100;
-                const animationDuration = Math.random() * 20 + 10;
+                const animationDuration = Math.random() * 30 + 20;
+                const opacity = Math.random() * 0.1 + 0.05;
                 
                 // Style the shape
                 shape.style.width = `${size}px`;
@@ -548,19 +755,17 @@
                 shape.style.left = `${left}%`;
                 shape.style.top = `${top}%`;
                 shape.style.animationDuration = `${animationDuration}s`;
-                shape.style.opacity = Math.random() * 0.1 + 0.05;
+                shape.style.opacity = opacity;
                 
                 // Different shapes
                 if (shapeType === 'circle') {
                     shape.style.borderRadius = '50%';
                     shape.style.background = `radial-gradient(circle, ${color}, transparent)`;
-                } else if (shapeType === 'triangle') {
-                    shape.style.width = '0';
-                    shape.style.height = '0';
-                    shape.style.background = 'transparent';
-                    shape.style.borderLeft = `${size/2}px solid transparent`;
-                    shape.style.borderRight = `${size/2}px solid transparent`;
-                    shape.style.borderBottom = `${size}px solid ${color}`;
+                    shape.style.boxShadow = `0 0 ${size}px ${size/2}px ${color}`;
+                } else if (shapeType === 'square') {
+                    shape.style.borderRadius = '20%';
+                    shape.style.background = `linear-gradient(135deg, ${color}, transparent)`;
+                    shape.style.boxShadow = `0 0 ${size}px ${size/2}px ${color}`;
                 }
                 
                 document.body.appendChild(shape);
@@ -569,7 +774,7 @@
         }
 
         function createParticles() {
-            const particleCount = 30;
+            const particleCount = 20;
             const container = document.body;
             
             for (let i = 0; i < particleCount; i++) {
@@ -577,8 +782,8 @@
                 particle.className = 'particle';
                 
                 // Random properties
-                const size = Math.random() * 10 + 2;
-                const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                const size = Math.random() * 8 + 2;
+                const color = `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.5)`;
                 const left = Math.random() * 100;
                 const duration = Math.random() * 3 + 1;
                 
@@ -607,36 +812,41 @@
             }
         }
 
-        // Add styles for particles
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fall {
-                0% {
-                    transform: translateY(0) scale(0);
-                    opacity: 0;
-                }
-                10% {
-                    opacity: 1;
-                }
-                90% {
-                    opacity: 1;
-                }
-                100% {
-                    transform: translateY(-100vh) scale(1);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
+        // Event listeners
+        animationBtn.addEventListener('click', toggleAnimationMode);
+        languageBtn.addEventListener('click', toggleLanguage);
+
+        // Initialize UI with default language
+        updateLanguageUI();
 
         // Keyboard support
         document.addEventListener('keydown', (e) => {
             if (e.key >= '0' && e.key <= '9') {
                 calculator.appendNumber(e.key);
                 calculator.updateDisplay();
+                
+                // Find and animate the pressed button
+                const button = document.querySelector(`[data-number="${e.key}"]`);
+                if (button) {
+                    button.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        button.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                        button.style.transform = 'scale(1)';
+                    }, 10);
+                }
             } else if (e.key === '.') {
                 calculator.appendNumber(translations[currentLanguage].calculatorButtons.decimal);
                 calculator.updateDisplay();
+                
+                // Animate decimal button
+                const button = document.querySelector('[data-number="."]');
+                if (button) {
+                    button.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        button.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                        button.style.transform = 'scale(1)';
+                    }, 10);
+                }
             } else if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') {
                 let operation;
                 switch (e.key) {
@@ -647,25 +857,68 @@
                 }
                 calculator.chooseOperation(operation);
                 calculator.updateDisplay();
+                
+                // Find and animate the pressed button
+                const button = document.querySelector(`[data-action="${e.key === '*' ? 'multiply' : e.key === '/' ? 'divide' : e.key === '+' ? 'add' : 'subtract'}"]`);
+                if (button) {
+                    button.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        button.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                        button.style.transform = 'scale(1)';
+                    }, 10);
+                }
             } else if (e.key === '%') {
                 calculator.calculatePercentage();
                 calculator.updateDisplay();
+                
+                // Animate percentage button
+                const button = document.querySelector('[data-action="percentage"]');
+                if (button) {
+                    button.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        button.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                        button.style.transform = 'scale(1)';
+                    }, 10);
+                }
             } else if (e.key === 'Enter' || e.key === '=') {
                 calculator.compute();
                 calculator.updateDisplay();
+                
+                // Animate equals button
+                const button = document.querySelector('[data-action="equals"]');
+                if (button) {
+                    button.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        button.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                        button.style.transform = 'scale(1)';
+                    }, 10);
+                }
             } else if (e.key === 'Backspace') {
                 calculator.delete();
                 calculator.updateDisplay();
+                
+                // Animate delete button
+                const button = document.querySelector('[data-action="delete"]');
+                if (button) {
+                    button.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        button.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                        button.style.transform = 'scale(1)';
+                    }, 10);
+                }
             } else if (e.key === 'Escape') {
                 calculator.clear();
                 calculator.updateDisplay();
-            }
-        });
-
-        // Toggle dark mode on 'd' key press
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'd') {
-                toggleDarkMode();
+                
+                // Animate clear button
+                const button = document.querySelector('[data-action="clear"]');
+                if (button) {
+                    button.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        button.style.transition = 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                        button.style.transform = 'scale(1)';
+                    }, 10);
+                }
             }
         });
     </script>
