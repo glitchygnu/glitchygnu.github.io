@@ -1,1 +1,320 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liegestütz-Zähler</title>
+    <style>
+        :root {
+            --glass-color: rgba(200, 200, 200, 0.15);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --glass-backdrop: blur(16px);
+            --highlight-color: #ff5e7d;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a, #2c2c2e);
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            align-items: center;
+            background: var(--glass-color);
+            backdrop-filter: var(--glass-backdrop);
+            -webkit-backdrop-filter: var(--glass-backdrop);
+            border-bottom: var(--glass-border);
+            z-index: 10;
+        }
+
+        .counter {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(45deg, #fff, #ddd);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-fill-color: transparent;
+        }
+
+        .mode-switch {
+            padding: 10px 15px;
+            border-radius: 50px;
+            background: var(--glass-color);
+            backdrop-filter: var(--glass-backdrop);
+            -webkit-backdrop-filter: var(--glass-backdrop);
+            border: var(--glass-border);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mode-switch:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .main-button {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--glass-color);
+            backdrop-filter: var(--glass-backdrop);
+            -webkit-backdrop-filter: var(--glass-backdrop);
+            border: var(--glass-border);
+            margin: 10px;
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.1s ease;
+            user-select: none;
+        }
+
+        .main-button:active {
+            transform: scale(0.98);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .motivation-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+            color: var(--highlight-color);
+            text-shadow: 0 0 10px rgba(255, 94, 125, 0.7);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 25px;
+            border-radius: 20px;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            animation: popInOut 3s ease forwards;
+        }
+
+        @keyframes popInOut {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            20% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 1;
+            }
+            80% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* iPad Layout */
+        .ipad-layout .main-button {
+            margin: 20px;
+        }
+
+        /* iPhone Layout (default) */
+        .iphone-layout .main-button {
+            margin: 10px;
+        }
+
+        /* Hide the appropriate layout based on initial mode */
+        .ipad-layout {
+            display: none;
+        }
+
+        /* Show the appropriate layout when the mode is active */
+        .mode-active.iphone-layout {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .mode-active.ipad-layout {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="counter">0</div>
+        <button class="mode-switch">iPad Modus</button>
+    </div>
+
+    <div class="iphone-layout mode-active">
+        <div class="main-button" id="mainButton">
+            <div class="button-text">Berühre mich mit deiner Nase!</div>
+        </div>
+    </div>
+
+    <div class="ipad-layout">
+        <div class="main-button" id="mainButtonIpad">
+            <div class="button-text">Berühre mich mit deiner Nase!</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const counterElement = document.querySelector('.counter');
+            const mainButton = document.getElementById('mainButton');
+            const mainButtonIpad = document.getElementById('mainButtonIpad');
+            const modeSwitch = document.querySelector('.mode-switch');
+            const iphoneLayout = document.querySelector('.iphone-layout');
+            const ipadLayout = document.querySelector('.ipad-layout');
+            
+            let count = 0;
+            let isIpadMode = false;
+            let lastMessageTime = 0;
+            
+            const messages = [
+                "Weiter so! 💪",
+                "Du schaffst das! 🔥",
+                "Auf, komm Bro! 👊",
+                "Stark! 💯",
+                "Bleib dran! 🚀",
+                "Ja! Weiter So! 👍",
+                "Nicht aufgeben! ✨",
+                "Weiter, Auf! 🏆",
+                "Atmen nicht vergessen! 🌬️",
+                "Komm schon, Digga! 👌",
+                "Langsam und kontrolliert! Auf! 👍🔥",
+                "Jede zählt! ➕",
+                "Konzentration! 🙏",
+                "Schweiß ist flüssiger Erfolg! 💦",
+                "Come on! Push it! 🔥🔥🔥"
+            ];
+            
+            // Initialize from localStorage
+            if (localStorage.getItem('pushupCount')) {
+                count = parseInt(localStorage.getItem('pushupCount'));
+                counterElement.textContent = count;
+            }
+            
+            // Check screen size to set initial mode
+            if (window.innerWidth >= 768) {
+                toggleMode();
+            }
+            
+            // Handle mode switch
+            modeSwitch.addEventListener('click', toggleMode);
+            
+            function toggleMode() {
+                isIpadMode = !isIpadMode;
+                
+                if (isIpadMode) {
+                    iphoneLayout.classList.remove('mode-active');
+                    ipadLayout.classList.add('mode-active');
+                    modeSwitch.textContent = 'iPhone Modus';
+                } else {
+                    ipadLayout.classList.remove('mode-active');
+                    iphoneLayout.classList.add('mode-active');
+                    modeSwitch.textContent = 'iPad Modus';
+                }
+            }
+            
+            // Handle button clicks
+            mainButton.addEventListener('click', handleClick);
+            mainButtonIpad.addEventListener('click', handleClick);
+            
+            // Also respond to touch events for mobile
+            mainButton.addEventListener('touchend', handleClick);
+            mainButtonIpad.addEventListener('touchend', handleClick);
+            
+            function handleClick(e) {
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                
+                // Position the ripple at the click/touch point
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = e.clientX ? e.clientX - rect.left : e.touches[0].clientX - rect.left;
+                const y = e.clientY ? e.clientY - rect.top : e.touches[0].clientY - rect.top;
+                
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                e.currentTarget.appendChild(ripple);
+                
+                // Remove ripple after animation
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+                
+                // Increment counter
+                count++;
+                counterElement.textContent = count;
+                localStorage.setItem('pushupCount', count);
+                
+                // Random chance to show motivation message
+                const now = Date.now();
+                if (now - lastMessageTime > 2000 && (Math.random() < 0.3 || now - lastMessageTime > 6000)) {
+                    showMotivationMessage();
+                    lastMessageTime = now;
+                }
+            }
+            
+            function showMotivationMessage() {
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('motivation-message');
+                messageElement.textContent = message;
+                document.body.appendChild(messageElement);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    messageElement.remove();
+                }, 3000);
+            }
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth >= 768 && !isIpadMode) {
+                    toggleMode();
+                } else if (window.innerWidth < 768 && isIpadMode) {
+                    toggleMode();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
