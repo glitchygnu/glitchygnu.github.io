@@ -71,6 +71,24 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
+        .reset-button {
+            padding: 10px 15px;
+            border-radius: 50px;
+            background: var(--glass-color);
+            backdrop-filter: var(--glass-backdrop);
+            -webkit-backdrop-filter: var(--glass-backdrop);
+            border: var(--glass-border);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .reset-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .main-button {
             flex: 1;
             display: flex;
@@ -174,12 +192,20 @@
             flex-direction: column;
             height: 100%;
         }
+
+        .header-buttons {
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="counter">0</div>
-        <button class="mode-switch">iPad Modus</button>
+        <div class="header-buttons">
+            <button class="reset-button">Reset</button>
+            <button class="mode-switch">iPad Modus</button>
+        </div>
     </div>
 
     <div class="iphone-layout mode-active">
@@ -200,6 +226,7 @@
             const mainButton = document.getElementById('mainButton');
             const mainButtonIpad = document.getElementById('mainButtonIpad');
             const modeSwitch = document.querySelector('.mode-switch');
+            const resetButton = document.querySelector('.reset-button');
             const iphoneLayout = document.querySelector('.iphone-layout');
             const ipadLayout = document.querySelector('.ipad-layout');
             
@@ -238,6 +265,13 @@
             
             // Handle mode switch
             modeSwitch.addEventListener('click', toggleMode);
+            
+            // Handle reset button
+            resetButton.addEventListener('click', function() {
+                count = 0;
+                counterElement.textContent = count;
+                localStorage.setItem('pushupCount', count);
+            });
             
             function toggleMode() {
                 isIpadMode = !isIpadMode;
