@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Car Brands Encyclopedia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: rgba(255, 255, 255, 0.9);
+            --secondary: rgba(255, 255, 255, 0.7);
+            --tertiary: rgba(255, 255, 255, 0.5);
+            --background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-highlight: rgba(255, 255, 255, 0.3);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        header {
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #fff, #aaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            border: none;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: var(--glass-highlight);
+            transform: scale(1.02);
+        }
+
+        .search-input::placeholder {
+            color: var(--tertiary);
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--glass-highlight);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .main-container {
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .brands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .brand-card {
+            background: var(--glass);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            transform-style: preserve-3d;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .brand-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+            transition: var(--transition);
+            opacity: 0;
+        }
+
+        .brand-card:hover {
+            transform: translateY(-10px) scale(1.02) rotateX(5deg) rotateY(5deg);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            background: var(--glass-highlight);
+        }
+
+        .brand-card:hover::before {
+            opacity: 1;
+        }
+
+        .brand-logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin: 0 auto 1.5rem;
+            display: block;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+            transition: var(--transition);
+        }
+
+        .brand-card:hover .brand-logo {
+            transform: scale(1.1);
+        }
+
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .brand-origin {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .brand-flag {
+            width: 20px;
+            height: 15px;
+            border-radius: 2px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .brand-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+
+        .brand-detail {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--primary);
+            margin-top: 0.3rem;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: var(--glass);
+            border-radius: 30px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 3rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            transform-style: preserve-3d;
+            transform: translateY(20px) rotateX(5deg);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0) rotateX(0);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--glass-highlight);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            transform: rotate(90deg);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-brand-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .modal-logo {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-right: 2rem;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+        }
+
+        .modal-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-subtitle {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .modal-flag {
+            width: 25px;
+            height: 18px;
+            border-radius: 3px;
+        }
+
+        .modal-description {
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            color: var(--secondary);
+        }
+
+        .modal-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .modal-detail {
+            background: var(--glass-highlight);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: var(--tertiary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-info {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .modal-gallery {
+            margin-top: 2rem;
+        }
+
+        .gallery-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .gallery-item {
+            height: 150px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.1);
+        }
+
+        .no-results {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 3rem;
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .brands-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .modal-brand-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .modal-logo {
+                margin-right: 0;
+                margin-bottom: 1.5rem;
+            }
+            
+            .modal-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation classes */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <header>
+        <h1 class="float-animation">World Car Brands</h1>
+        <p class="subtitle">Explore the complete encyclopedia of automotive manufacturers from around the globe with detailed information about each brand's history and models.</p>
+        
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search car brands...">
+        </div>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="europe">Europe</button>
+            <button class="filter-btn" data-filter="asia">Asia</button>
+            <button class="filter-btn" data-filter="america">America</button>
+            <button class="filter-btn" data-filter="luxury">Luxury</button>
+            <button class="filter-btn" data-filter="electric">Electric</button>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <div class="brands-grid" id="brandsContainer">
+            <!-- Brands will be inserted here by JavaScript -->
+        </div>
+    </div>
+    
+    <div class="modal" id="brandModal">
+        <div class="modal-content">
+            <div class="close-modal" id="closeModal">
+                <i class="fas fa-times"></i>
+            </div>
+            <div class="modal-brand-header">
+                <img src="" alt="Brand Logo" class="modal-logo" id="modalLogo">
+                <div>
+                    <h2 class="modal-title" id="modalTitle"></h2>
+                    <div class="modal-subtitle">
+                        <span id="modalFounded"></span>
+                        <img src="" alt="Country Flag" class="modal-flag" id="modalFlag">
+                        <span id="modalCountry"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="modal-description" id="modalDescription"></p>
+            
+            <div class="modal-details">
+                <div class="modal-detail">
+                    <div class="detail-label">Headquarters</div>
+                    <div class="detail-info" id="modalHeadquarters"></div>
+                </div>
+                <div class="modal-detail">
+                    <div class="detail-label">Parent Company</div>
+                    <div class="detail-info" id="modalParent"></div>
+                </div>
+                <div class="modal-detail">
+                    <div class="detail-label">CEO</div>
+                    <div class="detail-info" id="modalCeo"></div>
+                </div>
+                <div class="modal-detail">
+                    <div class="detail-label">Revenue</div>
+                    <div class="detail-info" id="modalRevenue"></div>
+                </div>
+            </div>
+            
+            <div class="modal-gallery">
+                <h3 class="gallery-title">Popular Models</h3>
+                <div class="gallery-grid" id="modalGallery">
+                    <!-- Gallery items will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random size between 1px and 3px
+                const size = Math.random() * 2 + 1;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random position
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Random animation
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 5;
+                particle.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Car brands data
+        const carBrands = [
+            {
+                id: 1,
+                name: "Toyota",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Toyota_carlogo.svg/800px-Toyota_carlogo.svg.png",
+                founded: "1937",
+                country: "Japan",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/1200px-Flag_of_Japan.svg.png",
+                headquarters: "Toyota City, Japan",
+                parent: "Toyota Motor Corporation",
+                ceo: "Akio Toyoda",
+                revenue: "$275 billion",
+                description: "Toyota is the world's largest automobile manufacturer, known for its reliable and fuel-efficient vehicles like the Corolla and Camry. The company pioneered hybrid technology with the Prius.",
+                tags: ["asia"],
+                models: [
+                    { name: "Corolla", image: "https://www.toyota.com/imgix/responsive/images/mlp/colorizer/2023/corolla/1H5/1.png" },
+                    { name: "Camry", image: "https://www.toyota.com/imgix/responsive/images/mlp/colorizer/2023/camry/4T4/1.png" },
+                    { name: "RAV4", image: "https://www.toyota.com/imgix/responsive/images/mlp/colorizer/2023/rav4/3T3/1.png" },
+                    { name: "Prius", image: "https://www.toyota.com/imgix/responsive/images/mlp/colorizer/2023/prius/8R2/1.png" },
+                    { name: "Land Cruiser", image: "https://www.toyota.com/imgix/responsive/images/mlp/colorizer/2023/land-cruiser/1D6/1.png" }
+                ]
+            },
+            {
+                id: 2,
+                name: "Volkswagen",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Volkswagen_logo_2019.svg/800px-Volkswagen_logo_2019.svg.png",
+                founded: "1937",
+                country: "Germany",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/1200px-Flag_of_Germany.svg.png",
+                headquarters: "Wolfsburg, Germany",
+                parent: "Volkswagen Group",
+                ceo: "Oliver Blume",
+                revenue: "$295 billion",
+                description: "Volkswagen is Europe's largest car manufacturer and owns several other brands. Known for the iconic Beetle and Golf models, VW is transitioning to electric vehicles with its ID series.",
+                tags: ["europe"],
+                models: [
+                    { name: "Golf", image: "https://www.vw.com/content/dam/vwcom/models/golf/2022/overview/hero/2022-golf-overview-hero-01-desktop.jpg" },
+                    { name: "Passat", image: "https://www.vw.com/content/dam/vwcom/models/passat/2022/overview/hero/2022-passat-overview-hero-01-desktop.jpg" },
+                    { name: "Tiguan", image: "https://www.vw.com/content/dam/vwcom/models/tiguan/2022/overview/hero/2022-tiguan-overview-hero-01-desktop.jpg" },
+                    { name: "ID.4", image: "https://www.vw.com/content/dam/vwcom/models/id4/2022/overview/hero/2022-id4-overview-hero-01-desktop.jpg" },
+                    { name: "Beetle", image: "https://www.vw.com/content/dam/vwcom/models/beetle/2019/overview/hero/2019-beetle-overview-hero-01-desktop.jpg" }
+                ]
+            },
+            {
+                id: 3,
+                name: "Ford",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Ford_logo_flat.svg/800px-Ford_logo_flat.svg.png",
+                founded: "1903",
+                country: "United States",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1200px-Flag_of_the_United_States.svg.png",
+                headquarters: "Dearborn, Michigan, USA",
+                parent: "Ford Motor Company",
+                ceo: "Jim Farley",
+                revenue: "$136 billion",
+                description: "Ford revolutionized the automotive industry with assembly line production. Known for the F-Series trucks and Mustang, Ford is investing heavily in electric vehicles like the Mustang Mach-E.",
+                tags: ["america"],
+                models: [
+                    { name: "F-150", image: "https://www.ford.com/content/dam/ford-websites/us/product/2021/f150/overview/01-images/2021-f-150-overview-hero-01.jpg" },
+                    { name: "Mustang", image: "https://www.ford.com/content/dam/ford-websites/us/product/2021/mustang/overview/01-images/2021-mustang-overview-hero-01.jpg" },
+                    { name: "Explorer", image: "https://www.ford.com/content/dam/ford-websites/us/product/2021/explorer/overview/01-images/2021-explorer-overview-hero-01.jpg" },
+                    { name: "Bronco", image: "https://www.ford.com/content/dam/ford-websites/us/product/2021/bronco/overview/01-images/2021-bronco-overview-hero-01.jpg" },
+                    { name: "Mustang Mach-E", image: "https://www.ford.com/content/dam/ford-websites/us/product/2021/mustang-mach-e/overview/01-images/2021-mustang-mach-e-overview-hero-01.jpg" }
+                ]
+            },
+            {
+                id: 4,
+                name: "Mercedes-Benz",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Logo.svg/800px-Mercedes-Logo.svg.png",
+                founded: "1926",
+                country: "Germany",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/1200px-Flag_of_Germany.svg.png",
+                headquarters: "Stuttgart, Germany",
+                parent: "Daimler AG",
+                ceo: "Ola Källenius",
+                revenue: "$175 billion",
+                description: "Mercedes-Benz is synonymous with luxury and innovation, introducing many automotive firsts. Known for the S-Class and AMG performance models, Mercedes is a leader in autonomous driving technology.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "S-Class", image: "https://www.mbusa.com/content/dam/mb-nafta/us/myco/my22/s/sedan/class-page/2022-S-CLASS-SEDAN-CLASS-NAV-D.png" },
+                    { name: "E-Class", image: "https://www.mbusa.com/content/dam/mb-nafta/us/myco/my22/e/sedan/class-page/2022-E-CLASS-SEDAN-CLASS-NAV-D.png" },
+                    { name: "GLE", image: "https://www.mbusa.com/content/dam/mb-nafta/us/myco/my22/gle/suv/class-page/2022-GLE-SUV-CLASS-NAV-D.png" },
+                    { name: "AMG GT", image: "https://www.mbusa.com/content/dam/mb-nafta/us/myco/my22/amg-gt/coupe/class-page/2022-AMG-GT-COUPE-CLASS-NAV-D.png" },
+                    { name: "EQS", image: "https://www.mbusa.com/content/dam/mb-nafta/us/myco/my22/eqs/sedan/class-page/2022-EQS-SEDAN-CLASS-NAV-D.png" }
+                ]
+            },
+            {
+                id: 5,
+                name: "BMW",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BMW.svg/800px-BMW.svg.png",
+                founded: "1916",
+                country: "Germany",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/1200px-Flag_of_Germany.svg.png",
+                headquarters: "Munich, Germany",
+                parent: "BMW Group",
+                ceo: "Oliver Zipse",
+                revenue: "$120 billion",
+                description: "BMW is known for its 'Ultimate Driving Machine' philosophy, combining luxury with sporty performance. The company is a leader in electric vehicles with its i-Series and plans to go fully electric by 2030.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "3 Series", image: "https://www.bmwusa.com/content/dam/bmwusa/3-series/2022/overview/BMW-3-Series-Overview-Hero-Desktop.jpg" },
+                    { name: "5 Series", image: "https://www.bmwusa.com/content/dam/bmwusa/5-series/2022/overview/BMW-5-Series-Overview-Hero-Desktop.jpg" },
+                    { name: "X5", image: "https://www.bmwusa.com/content/dam/bmwusa/x-models/x5/2022/overview/BMW-X5-Overview-Hero-Desktop.jpg" },
+                    { name: "i4", image: "https://www.bmwusa.com/content/dam/bmwusa/i-models/i4/2022/overview/BMW-i4-Overview-Hero-Desktop.jpg" },
+                    { name: "M8", image: "https://www.bmwusa.com/content/dam/bmwusa/m-models/m8/2022/overview/BMW-M8-Overview-Hero-Desktop.jpg" }
+                ]
+            },
+            {
+                id: 6,
+                name: "Tesla",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Tesla_Motors.svg/800px-Tesla_Motors.svg.png",
+                founded: "2003",
+                country: "United States",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1200px-Flag_of_the_United_States.svg.png",
+                headquarters: "Austin, Texas, USA",
+                parent: "Tesla, Inc.",
+                ceo: "Elon Musk",
+                revenue: "$81 billion",
+                description: "Tesla revolutionized the automotive industry with premium electric vehicles and advanced autonomous driving technology. The company also produces solar products and battery storage systems.",
+                tags: ["america", "electric"],
+                models: [
+                    { name: "Model 3", image: "https://www.tesla.com/sites/default/files/models/images/model-3-social.jpg" },
+                    { name: "Model S", image: "https://www.tesla.com/sites/default/files/models/images/model-s-social.jpg" },
+                    { name: "Model X", image: "https://www.tesla.com/sites/default/files/models/images/model-x-social.jpg" },
+                    { name: "Model Y", image: "https://www.tesla.com/sites/default/files/models/images/model-y-social.jpg" },
+                    { name: "Cybertruck", image: "https://www.tesla.com/sites/default/files/cybertruck-social.jpg" }
+                ]
+            },
+            {
+                id: 7,
+                name: "Honda",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Honda.svg/800px-Honda.svg.png",
+                founded: "1948",
+                country: "Japan",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/1200px-Flag_of_Japan.svg.png",
+                headquarters: "Tokyo, Japan",
+                parent: "Honda Motor Co., Ltd.",
+                ceo: "Toshihiro Mibe",
+                revenue: "$138 billion",
+                description: "Honda is known for reliable, fuel-efficient vehicles and innovative engines. The company is a leader in hybrid technology and also produces motorcycles, power equipment, and even humanoid robots.",
+                tags: ["asia"],
+                models: [
+                    { name: "Civic", image: "https://automobiles.honda.com/images/2022/civic-sedan/overview/civic-sedan-overview-hero-desktop.jpg" },
+                    { name: "Accord", image: "https://automobiles.honda.com/images/2022/accord/overview/accord-overview-hero-desktop.jpg" },
+                    { name: "CR-V", image: "https://automobiles.honda.com/images/2022/cr-v/overview/cr-v-overview-hero-desktop.jpg" },
+                    { name: "Pilot", image: "https://automobiles.honda.com/images/2022/pilot/overview/pilot-overview-hero-desktop.jpg" },
+                    { name: "NSX", image: "https://automobiles.honda.com/images/2022/nsx/overview/nsx-overview-hero-desktop.jpg" }
+                ]
+            },
+            {
+                id: 8,
+                name: "Hyundai",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Hyundai_Motor_Company_logo.svg/800px-Hyundai_Motor_Company_logo.svg.png",
+                founded: "1967",
+                country: "South Korea",
+                flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_South_Korea.svg/1200px-Flag_of_South_Korea.svg.png",
+                headquarters: "Seoul, South Korea",
+                parent: "Hyundai Motor Group",
+                ceo: "Jaehoon Chang",
+                revenue: "$105 billion",
+                description: "Hyundai has transformed from a budget brand to a leader in quality and innovation, offering industry-leading warranties. The company is investing heavily in electric vehicles and hydrogen fuel cell technology.",
+                tags: ["asia"],
+                models: [
+                    { name: "Tucson", image: "https://www.hyundai.com/content/hyundai/ww/data/news/data/2021/0000016949/image/newsroom-0112-ph01-1024x576.jpg" },
+                    { name: "Santa Fe", image: "https://www.hyundai.com/content/hyundai/ww/data/news/data/2020/0000016184/image/newsroom-1110-ph01-1024x576.jpg" },
+                    { name: "Kona", image: "https://www.hyundai.com/content/hyundai/ww/data/news/data/2021/0000016949/image/newsroom-0112-ph02-1024x576.jpg" },
+                    { name: "Ioniq 5", image: "https://www.hyundai.com/content/hyundai/ww/data/news/data/2021/0000016949/image/newsroom-0112-ph03-1024x576.jpg" },
+                    { name: "Palisade", image: "https://www.hyundai.com/content/hyundai/ww/data/news/data/2021/0000016949/image/newsroom-0112-ph04-1024x576.jpg" }
+                ]
+            },
+            {
+                id: 9,
+                name: "Audi",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Audi-Logo_2016.svg/800px-Audi-Logo_2016.svg.png",
+                founded: "1909",
+                country: "Germany",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/1200px-Flag_of_Germany.svg.png",
+                headquarters: "Ingolstadt, Germany",
+                parent: "Volkswagen Group",
+                ceo: "Markus Duesmann",
+                revenue: "$70 billion",
+                description: "Audi is known for its quattro all-wheel-drive system and premium vehicles with cutting-edge technology. The brand emphasizes 'Vorsprung durch Technik' (Progress through Technology) and is transitioning to electric mobility.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "A4", image: "https://www.audi.com/content/dam/gbp2/models/a4/a4-sedan/overview/1920x1080-desktop/1920x1080_desktop_AA4_181003.jpg" },
+                    { name: "Q5", image: "https://www.audi.com/content/dam/gbp2/models/q5/q5/overview/1920x1080-desktop/1920x1080_desktop_AQ5_181003.jpg" },
+                    { name: "A6", image: "https://www.audi.com/content/dam/gbp2/models/a6/a6-sedan/overview/1920x1080-desktop/1920x1080_desktop_AA6_181003.jpg" },
+                    { name: "e-tron", image: "https://www.audi.com/content/dam/gbp2/models/e-tron/e-tron/overview/1920x1080-desktop/1920x1080_desktop_AE_181003.jpg" },
+                    { name: "R8", image: "https://www.audi.com/content/dam/gbp2/models/r8/r8-coupe/overview/1920x1080-desktop/1920x1080_desktop_AR8_181003.jpg" }
+                ]
+            },
+            {
+                id: 10,
+                name: "Porsche",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Porsche_logo.png/800px-Porsche_logo.png",
+                founded: "1931",
+                country: "Germany",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/1200px-Flag_of_Germany.svg.png",
+                headquarters: "Stuttgart, Germany",
+                parent: "Volkswagen Group",
+                ceo: "Oliver Blume",
+                revenue: "$42 billion",
+                description: "Porsche is synonymous with high-performance sports cars that combine everyday usability with track capability. The brand has successfully expanded into SUVs and electric vehicles with the Taycan.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "911", image: "https://www.porsche.com/international/_miami_/models/911/911-turbo-s/feature-teaser/911-turbo-s-feature-teaser-desktop.jpg" },
+                    { name: "Taycan", image: "https://www.porsche.com/international/_miami_/models/taycan/taycan-models/feature-teaser/taycan-feature-teaser-desktop.jpg" },
+                    { name: "Cayenne", image: "https://www.porsche.com/international/_miami_/models/cayenne/cayenne-models/feature-teaser/cayenne-feature-teaser-desktop.jpg" },
+                    { name: "Panamera", image: "https://www.porsche.com/international/_miami_/models/panamera/panamera-models/feature-teaser/panamera-feature-teaser-desktop.jpg" },
+                    { name: "Macan", image: "https://www.porsche.com/international/_miami_/models/macan/macan-models/feature-teaser/macan-feature-teaser-desktop.jpg" }
+                ]
+            },
+            {
+                id: 11,
+                name: "Ferrari",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Ferrari_Logo.svg/800px-Ferrari_Logo.svg.png",
+                founded: "1939",
+                country: "Italy",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/0/03/Flag_of_Italy.svg/1200px-Flag_of_Italy.svg.png",
+                headquarters: "Maranello, Italy",
+                parent: "Ferrari N.V.",
+                ceo: "Benedetto Vigna",
+                revenue: "$5 billion",
+                description: "Ferrari is the world's most powerful luxury brand, producing exclusive high-performance sports cars and competing in Formula 1. Each Ferrari is a blend of cutting-edge technology and Italian craftsmanship.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "SF90 Stradale", image: "https://www.ferrari.com/en-EN/auto/sf90-stradale" },
+                    { name: "F8 Tributo", image: "https://www.ferrari.com/en-EN/auto/f8-tributo" },
+                    { name: "Roma", image: "https://www.ferrari.com/en-EN/auto/roma" },
+                    { name: "Portofino M", image: "https://www.ferrari.com/en-EN/auto/portofino-m" },
+                    { name: "812 Superfast", image: "https://www.ferrari.com/en-EN/auto/812-superfast" }
+                ]
+            },
+            {
+                id: 12,
+                name: "Lamborghini",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Lamborghini_Logo.svg/800px-Lamborghini_Logo.svg.png",
+                founded: "1963",
+                country: "Italy",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/0/03/Flag_of_Italy.svg/1200px-Flag_of_Italy.svg.png",
+                headquarters: "Sant'Agata Bolognese, Italy",
+                parent: "Volkswagen Group",
+                ceo: "Stephan Winkelmann",
+                revenue: "$2 billion",
+                description: "Lamborghini creates extreme supercars with dramatic styling and powerful engines. Known for models like the Countach and Aventador, Lamborghini represents the pinnacle of Italian automotive passion.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "Aventador", image: "https://www.lamborghini.com/sites/it-en/files/DAM/lamborghini/facelift_2019/models/aventador/aventador-svj/overview-s/gallery/M.jpg" },
+                    { name: "Huracán", image: "https://www.lamborghini.com/sites/it-en/files/DAM/lamborghini/facelift_2019/models/huracan/huracan-evo/overview-s/gallery/M.jpg" },
+                    { name: "Urus", image: "https://www.lamborghini.com/sites/it-en/files/DAM/lamborghini/facelift_2019/models/urus/overview-s/gallery/M.jpg" },
+                    { name: "Countach LPI 800-4", image: "https://www.lamborghini.com/sites/it-en/files/DAM/lamborghini/facelift_2021/model_gw/images-s/overview-s/gallery/M.jpg" },
+                    { name: "Sian", image: "https://www.lamborghini.com/sites/it-en/files/DAM/lamborghini/facelift_2019/models/sian/overview-s/gallery/M.jpg" }
+                ]
+            },
+            {
+                id: 13,
+                name: "Chevrolet",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Chevrolet-logo-2013-1920x1080.png/800px-Chevrolet-logo-2013-1920x1080.png",
+                founded: "1911",
+                country: "United States",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1200px-Flag_of_the_United_States.svg.png",
+                headquarters: "Detroit, Michigan, USA",
+                parent: "General Motors",
+                ceo: "Mary Barra",
+                revenue: "$122 billion",
+                description: "Chevrolet is General Motors' mainstream brand, offering everything from affordable cars to high-performance Corvettes. Known for its 'Bowtie' logo, Chevy has a strong presence in trucks and SUVs.",
+                tags: ["america"],
+                models: [
+                    { name: "Silverado", image: "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/trucks/2022-silverado-1500/overview/01-images/2022-silverado-1500-overview.jpg" },
+                    { name: "Equinox", image: "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/suvs/2022-equinox/overview/01-images/2022-equinox-overview.jpg" },
+                    { name: "Malibu", image: "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/cars/2022-malibu/overview/01-images/2022-malibu-overview.jpg" },
+                    { name: "Corvette", image: "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/performance/2022-corvette/overview/01-images/2022-corvette-overview.jpg" },
+                    { name: "Bolt EV", image: "https://www.chevrolet.com/content/dam/chevrolet/na/us/english/index/electrified/2022-bolt-ev/overview/01-images/2022-bolt-ev-overview.jpg" }
+                ]
+            },
+            {
+                id: 14,
+                name: "Nissan",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Nissan_2020_logo.svg/800px-Nissan_2020_logo.svg.png",
+                founded: "1933",
+                country: "Japan",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/1200px-Flag_of_Japan.svg.png",
+                headquarters: "Yokohama, Japan",
+                parent: "Renault-Nissan-Mitsubishi Alliance",
+                ceo: "Makoto Uchida",
+                revenue: "$78 billion",
+                description: "Nissan is known for innovative models like the Z sports car and Leaf electric vehicle. The company was an early leader in mass-market electric vehicles and continues to develop autonomous driving technology.",
+                tags: ["asia"],
+                models: [
+                    { name: "Rogue", image: "https://www.nissanusa.com/content/dam/Nissan/us/vehicles/rogue/2022/overview/2022-nissan-rogue-overview-hero-desktop.jpg" },
+                    { name: "Altima", image: "https://www.nissanusa.com/content/dam/Nissan/us/vehicles/altima/2022/overview/2022-nissan-altima-overview-hero-desktop.jpg" },
+                    { name: "Sentra", image: "https://www.nissanusa.com/content/dam/Nissan/us/vehicles/sentra/2022/overview/2022-nissan-sentra-overview-hero-desktop.jpg" },
+                    { name: "Leaf", image: "https://www.nissanusa.com/content/dam/Nissan/us/vehicles/leaf/2022/overview/2022-nissan-leaf-overview-hero-desktop.jpg" },
+                    { name: "Z", image: "https://www.nissanusa.com/content/dam/Nissan/us/vehicles/z/2023/overview/2023-nissan-z-overview-hero-desktop.jpg" }
+                ]
+            },
+            {
+                id: 15,
+                name: "Volvo",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Volvo_Logo_Blue.png/800px-Volvo_Logo_Blue.png",
+                founded: "1927",
+                country: "Sweden",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4c/Flag_of_Sweden.svg/1200px-Flag_of_Sweden.svg.png",
+                headquarters: "Gothenburg, Sweden",
+                parent: "Geely",
+                ceo: "Jim Rowan",
+                revenue: "$35 billion",
+                description: "Volvo is synonymous with safety, having invented the three-point seatbelt. The Swedish brand now focuses on premium vehicles with Scandinavian design and plans to go fully electric by 2030.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "XC90", image: "https://www.volvocars.com/images/v/-/media/project/contentplatform/data/media/my22/xc90-hybrid/overview/xc90-recharge-gallery-1-16x9.jpg" },
+                    { name: "XC60", image: "https://www.volvocars.com/images/v/-/media/project/contentplatform/data/media/my22/xc60-hybrid/overview/xc60-recharge-gallery-1-16x9.jpg" },
+                    { name: "S90", image: "https://www.volvocars.com/images/v/-/media/project/contentplatform/data/media/my22/s90-hybrid/overview/s90-recharge-gallery-1-16x9.jpg" },
+                    { name: "XC40", image: "https://www.volvocars.com/images/v/-/media/project/contentplatform/data/media/my22/xc40-hybrid/overview/xc40-recharge-gallery-1-16x9.jpg" },
+                    { name: "C40", image: "https://www.volvocars.com/images/v/-/media/project/contentplatform/data/media/my22/c40-recharge/overview/c40-recharge-gallery-1-16x9.jpg" }
+                ]
+            },
+            {
+                id: 16,
+                name: "Kia",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Kia_logo_%282021%29.svg/800px-Kia_logo_%282021%29.svg.png",
+                founded: "1944",
+                country: "South Korea",
+                flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_South_Korea.svg/1200px-Flag_of_South_Korea.svg.png",
+                headquarters: "Seoul, South Korea",
+                parent: "Hyundai Motor Group",
+                ceo: "Ho Sung Song",
+                revenue: "$65 billion",
+                description: "Kia has transformed from a budget brand to a design leader with premium features at accessible prices. The company offers one of the best warranties in the industry and is expanding its electric vehicle lineup.",
+                tags: ["asia"],
+                models: [
+                    { name: "Sorento", image: "https://www.kia.com/content/dam/kia/us/en/vehicles/sorento/2022/overview/sorento-overview-hero-desktop.jpg" },
+                    { name: "Telluride", image: "https://www.kia.com/content/dam/kia/us/en/vehicles/telluride/2022/overview/telluride-overview-hero-desktop.jpg" },
+                    { name: "Sportage", image: "https://www.kia.com/content/dam/kia/us/en/vehicles/sportage/2022/overview/sportage-overview-hero-desktop.jpg" },
+                    { name: "Soul", image: "https://www.kia.com/content/dam/kia/us/en/vehicles/soul/2022/overview/soul-overview-hero-desktop.jpg" },
+                    { name: "EV6", image: "https://www.kia.com/content/dam/kia/us/en/vehicles/ev6/2022/overview/ev6-overview-hero-desktop.jpg" }
+                ]
+            },
+            {
+                id: 17,
+                name: "Lexus",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Lexus_division_emblem.svg/800px-Lexus_division_emblem.svg.png",
+                founded: "1989",
+                country: "Japan",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/1200px-Flag_of_Japan.svg.png",
+                headquarters: "Nagoya, Japan",
+                parent: "Toyota Motor Corporation",
+                ceo: "Koji Sato",
+                revenue: "$75 billion",
+                description: "Lexus is Toyota's luxury division, known for exceptional build quality and customer service. The brand pioneered hybrid luxury vehicles and continues to emphasize craftsmanship and refinement.",
+                tags: ["asia", "luxury"],
+                models: [
+                    { name: "RX", image: "https://www.lexus.com/content/dam/lexus/images/models/RX/2022/overview/lexus-2022-rx-350-overview-hero-desktop.jpg" },
+                    { name: "ES", image: "https://www.lexus.com/content/dam/lexus/images/models/ES/2022/overview/lexus-2022-es-350-overview-hero-desktop.jpg" },
+                    { name: "NX", image: "https://www.lexus.com/content/dam/lexus/images/models/NX/2022/overview/lexus-2022-nx-350-overview-hero-desktop.jpg" },
+                    { name: "LS", image: "https://www.lexus.com/content/dam/lexus/images/models/LS/2022/overview/lexus-2022-ls-500-overview-hero-desktop.jpg" },
+                    { name: "LC", image: "https://www.lexus.com/content/dam/lexus/images/models/LC/2022/overview/lexus-2022-lc-500-overview-hero-desktop.jpg" }
+                ]
+            },
+            {
+                id: 18,
+                name: "Subaru",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Subaru_logo.png/800px-Subaru_logo.png",
+                founded: "1953",
+                country: "Japan",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/1200px-Flag_of_Japan.svg.png",
+                headquarters: "Tokyo, Japan",
+                parent: "Subaru Corporation",
+                ceo: "Tomomi Nakamura",
+                revenue: "$30 billion",
+                description: "Subaru is known for its symmetrical all-wheel-drive system and boxer engines. The brand has a loyal following among outdoor enthusiasts and emphasizes safety with its EyeSight driver assistance technology.",
+                tags: ["asia"],
+                models: [
+                    { name: "Outback", image: "https://www.subaru.com/content/dam/subaru/vehicles/outback/2022/overview/hero/2022-outback-overview-hero-desktop.jpg" },
+                    { name: "Forester", image: "https://www.subaru.com/content/dam/subaru/vehicles/forester/2022/overview/hero/2022-forester-overview-hero-desktop.jpg" },
+                    { name: "Crosstrek", image: "https://www.subaru.com/content/dam/subaru/vehicles/crosstrek/2022/overview/hero/2022-crosstrek-overview-hero-desktop.jpg" },
+                    { name: "Ascent", image: "https://www.subaru.com/content/dam/subaru/vehicles/ascent/2022/overview/hero/2022-ascent-overview-hero-desktop.jpg" },
+                    { name: "WRX", image: "https://www.subaru.com/content/dam/subaru/vehicles/wrx/2022/overview/hero/2022-wrx-overview-hero-desktop.jpg" }
+                ]
+            },
+            {
+                id: 19,
+                name: "Mazda",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Mazda_logo_2018.svg/800px-Mazda_logo_2018.svg.png",
+                founded: "1920",
+                country: "Japan",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/1200px-Flag_of_Japan.svg.png",
+                headquarters: "Hiroshima, Japan",
+                parent: "Mazda Motor Corporation",
+                ceo: "Akira Marumoto",
+                revenue: "$32 billion",
+                description: "Mazda emphasizes 'Jinba Ittai' (horse and rider as one) driving dynamics and distinctive Kodo design. The company developed innovative Skyactiv technology and is transitioning to premium positioning.",
+                tags: ["asia"],
+                models: [
+                    { name: "CX-5", image: "https://www.mazdausa.com/siteassets/vehicles/2022/cx-5/gallery/exterior/2022-mazda-cx-5-gallery-exterior-01.jpg" },
+                    { name: "CX-30", image: "https://www.mazdausa.com/siteassets/vehicles/2022/cx-30/gallery/exterior/2022-mazda-cx-30-gallery-exterior-01.jpg" },
+                    { name: "3", image: "https://www.mazdausa.com/siteassets/vehicles/2022/mazda3/gallery/exterior/2022-mazda3-gallery-exterior-01.jpg" },
+                    { name: "MX-5 Miata", image: "https://www.mazdausa.com/siteassets/vehicles/2022/mx-5-miata/gallery/exterior/2022-mazda-mx-5-miata-gallery-exterior-01.jpg" },
+                    { name: "CX-9", image: "https://www.mazdausa.com/siteassets/vehicles/2022/cx-9/gallery/exterior/2022-mazda-cx-9-gallery-exterior-01.jpg" }
+                ]
+            },
+            {
+                id: 20,
+                name: "Jaguar",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Jaguar_logo.svg/800px-Jaguar_logo.svg.png",
+                founded: "1922",
+                country: "United Kingdom",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/1200px-Flag_of_the_United_Kingdom.svg.png",
+                headquarters: "Coventry, UK",
+                parent: "Jaguar Land Rover",
+                ceo: "Thierry Bolloré",
+                revenue: "$25 billion",
+                description: "Jaguar combines British luxury with sporting performance in its sedans and SUVs. The brand is transitioning to become all-electric by 2025 while maintaining its distinctive design language.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "F-PACE", image: "https://www.jaguar.com/jaguar-range/f-pace/overview/_jcr_content/par1/hero/hero.img.jpg" },
+                    { name: "XE", image: "https://www.jaguar.com/jaguar-range/xe/overview/_jcr_content/par1/hero/hero.img.jpg" },
+                    { name: "XF", image: "https://www.jaguar.com/jaguar-range/xf/overview/_jcr_content/par1/hero/hero.img.jpg" },
+                    { name: "I-PACE", image: "https://www.jaguar.com/jaguar-range/i-pace/overview/_jcr_content/par1/hero/hero.img.jpg" },
+                    { name: "F-TYPE", image: "https://www.jaguar.com/jaguar-range/f-type/overview/_jcr_content/par1/hero/hero.img.jpg" }
+                ]
+            },
+            {
+                id: 21,
+                name: "Land Rover",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Land_Rover_logo.svg/800px-Land_Rover_logo.svg.png",
+                founded: "1948",
+                country: "United Kingdom",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/1200px-Flag_of_the_United_Kingdom.svg.png",
+                headquarters: "Coventry, UK",
+                parent: "Jaguar Land Rover",
+                ceo: "Thierry Bolloré",
+                revenue: "$25 billion",
+                description: "Land Rover specializes in premium SUVs with exceptional off-road capability. The brand's vehicles combine ruggedness with luxury and are popular in urban and adventurous settings alike.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "Range Rover", image: "https://www.landrover.com/content/dam/landrover/range-rover/range-rover/overview/range-rover-overview-1.jpg" },
+                    { name: "Range Rover Sport", image: "https://www.landrover.com/content/dam/landrover/range-rover/range-rover-sport/overview/range-rover-sport-overview-1.jpg" },
+                    { name: "Discovery", image: "https://www.landrover.com/content/dam/landrover/discovery/discovery/overview/discovery-overview-1.jpg" },
+                    { name: "Defender", image: "https://www.landrover.com/content/dam/landrover/defender/defender/overview/defender-overview-1.jpg" },
+                    { name: "Range Rover Velar", image: "https://www.landrover.com/content/dam/landrover/range-rover/range-rover-velar/overview/range-rover-velar-overview-1.jpg" }
+                ]
+            },
+            {
+                id: 22,
+                name: "Jeep",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Jeep_logo.svg/800px-Jeep_logo.svg.png",
+                founded: "1941",
+                country: "United States",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1200px-Flag_of_the_United_States.svg.png",
+                headquarters: "Toledo, Ohio, USA",
+                parent: "Stellantis",
+                ceo: "Christian Meunier",
+                revenue: "$22 billion",
+                description: "Jeep pioneered the SUV category with rugged, capable vehicles like the Wrangler. The brand represents adventure and freedom with its 'Go Anywhere, Do Anything' philosophy and Trail Rated certification.",
+                tags: ["america"],
+                models: [
+                    { name: "Wrangler", image: "https://www.jeep.com/content/dam/jeep/badged/2022/wrangler/overview/desktop/2022-jeep-wrangler-overview-desktop-01.jpg" },
+                    { name: "Grand Cherokee", image: "https://www.jeep.com/content/dam/jeep/badged/2022/grand-cherokee/overview/desktop/2022-jeep-grand-cherokee-overview-desktop-01.jpg" },
+                    { name: "Cherokee", image: "https://www.jeep.com/content/dam/jeep/badged/2022/cherokee/overview/desktop/2022-jeep-cherokee-overview-desktop-01.jpg" },
+                    { name: "Compass", image: "https://www.jeep.com/content/dam/jeep/badged/2022/compass/overview/desktop/2022-jeep-compass-overview-desktop-01.jpg" },
+                    { name: "Gladiator", image: "https://www.jeep.com/content/dam/jeep/badged/2022/gladiator/overview/desktop/2022-jeep-gladiator-overview-desktop-01.jpg" }
+                ]
+            },
+            {
+                id: 23,
+                name: "Mitsubishi",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Mitsubishi_logo.svg/800px-Mitsubishi_logo.svg.png",
+                founded: "1870",
+                country: "Japan",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/1200px-Flag_of_Japan.svg.png",
+                headquarters: "Tokyo, Japan",
+                parent: "Renault-Nissan-Mitsubishi Alliance",
+                ceo: "Takao Kato",
+                revenue: "$18 billion",
+                description: "Mitsubishi offers capable SUVs and crossovers with advanced all-wheel-drive systems. The brand emphasizes durability and value, with models like the Outlander PHEV leading in plug-in hybrid technology.",
+                tags: ["asia"],
+                models: [
+                    { name: "Outlander", image: "https://www.mitsubishicars.com/content/dam/mitsubishi-motors-us/vehicles/outlander/2022/gallery/exterior/2022-outlander-gallery-exterior-01.jpg" },
+                    { name: "Eclipse Cross", image: "https://www.mitsubishicars.com/content/dam/mitsubishi-motors-us/vehicles/eclipse-cross/2022/gallery/exterior/2022-eclipse-cross-gallery-exterior-01.jpg" },
+                    { name: "Outlander Sport", image: "https://www.mitsubishicars.com/content/dam/mitsubishi-motors-us/vehicles/outlander-sport/2022/gallery/exterior/2022-outlander-sport-gallery-exterior-01.jpg" },
+                    { name: "Mirage", image: "https://www.mitsubishicars.com/content/dam/mitsubishi-motors-us/vehicles/mirage/2022/gallery/exterior/2022-mirage-gallery-exterior-01.jpg" },
+                    { name: "Outlander PHEV", image: "https://www.mitsubishicars.com/content/dam/mitsubishi-motors-us/vehicles/outlander-phev/2022/gallery/exterior/2022-outlander-phev-gallery-exterior-01.jpg" }
+                ]
+            },
+            {
+                id: 24,
+                name: "Mini",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/MINI_logo.svg/800px-MINI_logo.svg.png",
+                founded: "1969",
+                country: "United Kingdom",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/1200px-Flag_of_the_United_Kingdom.svg.png",
+                headquarters: "Oxford, UK",
+                parent: "BMW Group",
+                ceo: "Bernd Körber",
+                revenue: "$3 billion",
+                description: "Mini produces small cars with distinctive styling and go-kart-like handling. The brand emphasizes customization and fun-to-drive characteristics while maintaining British heritage under BMW ownership.",
+                tags: ["europe"],
+                models: [
+                    { name: "Cooper", image: "https://www.miniusa.com/content/dam/mini/vehicles/2022/cooper-hardtop/overview/2022-mini-cooper-hardtop-overview-1.jpg" },
+                    { name: "Countryman", image: "https://www.miniusa.com/content/dam/mini/vehicles/2022/countryman/overview/2022-mini-countryman-overview-1.jpg" },
+                    { name: "Clubman", image: "https://www.miniusa.com/content/dam/mini/vehicles/2022/clubman/overview/2022-mini-clubman-overview-1.jpg" },
+                    { name: "Convertible", image: "https://www.miniusa.com/content/dam/mini/vehicles/2022/convertible/overview/2022-mini-convertible-overview-1.jpg" },
+                    { name: "Electric", image: "https://www.miniusa.com/content/dam/mini/vehicles/2022/electric-hardtop/overview/2022-mini-electric-hardtop-overview-1.jpg" }
+                ]
+            },
+            {
+                id: 25,
+                name: "Genesis",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Genesis_Motors_logo.png/800px-Genesis_Motors_logo.png",
+                founded: "2015",
+                country: "South Korea",
+                flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_South_Korea.svg/1200px-Flag_of_South_Korea.svg.png",
+                headquarters: "Seoul, South Korea",
+                parent: "Hyundai Motor Group",
+                ceo: "Jay Chang",
+                revenue: "$10 billion",
+                description: "Genesis is Hyundai's luxury division, offering premium vehicles with distinctive design and advanced technology. The brand emphasizes Korean hospitality and provides exceptional ownership experiences.",
+                tags: ["asia", "luxury"],
+                models: [
+                    { name: "G80", image: "https://www.genesis.com/content/dam/genesis-p2/worldwide/images/vehicles/2023/g80/sedan/overview/desktop/2023-genesis-g80-sedan-overview-desktop-01.jpg" },
+                    { name: "GV80", image: "https://www.genesis.com/content/dam/genesis-p2/worldwide/images/vehicles/2023/gv80/suv/overview/desktop/2023-genesis-gv80-suv-overview-desktop-01.jpg" },
+                    { name: "G70", image: "https://www.genesis.com/content/dam/genesis-p2/worldwide/images/vehicles/2023/g70/sedan/overview/desktop/2023-genesis-g70-sedan-overview-desktop-01.jpg" },
+                    { name: "GV70", image: "https://www.genesis.com/content/dam/genesis-p2/worldwide/images/vehicles/2023/gv70/suv/overview/desktop/2023-genesis-gv70-suv-overview-desktop-01.jpg" },
+                    { name: "GV60", image: "https://www.genesis.com/content/dam/genesis-p2/worldwide/images/vehicles/2023/gv60/suv/overview/desktop/2023-genesis-gv60-suv-overview-desktop-01.jpg" }
+                ]
+            },
+            {
+                id: 26,
+                name: "Alfa Romeo",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Alfa_Romeo_Logo.svg/800px-Alfa_Romeo_Logo.svg.png",
+                founded: "1910",
+                country: "Italy",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/0/03/Flag_of_Italy.svg/1200px-Flag_of_Italy.svg.png",
+                headquarters: "Turin, Italy",
+                parent: "Stellantis",
+                ceo: "Jean-Philippe Imparato",
+                revenue: "$6 billion",
+                description: "Alfa Romeo combines Italian passion with racing heritage in its sporty sedans and SUVs. The brand is known for distinctive styling and engaging driving dynamics, with a history in Formula 1.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "Giulia", image: "https://www.alfaromeousa.com/content/dam/alfausa/vehicles/giulia/2022/overview/2022-alfa-romeo-giulia-overview-desktop.jpg" },
+                    { name: "Stelvio", image: "https://www.alfaromeousa.com/content/dam/alfausa/vehicles/stelvio/2022/overview/2022-alfa-romeo-stelvio-overview-desktop.jpg" },
+                    { name: "Tonale", image: "https://www.alfaromeousa.com/content/dam/alfausa/vehicles/tonale/2023/overview/2023-alfa-romeo-tonale-overview-desktop.jpg" },
+                    { name: "4C", image: "https://www.alfaromeousa.com/content/dam/alfausa/vehicles/4c-spider/2020/overview/2020-alfa-romeo-4c-spider-overview-desktop.jpg" },
+                    { name: "8C", image: "https://www.alfaromeousa.com/content/dam/alfausa/vehicles/8c-competizione/2010/overview/2010-alfa-romeo-8c-competizione-overview-desktop.jpg" }
+                ]
+            },
+            {
+                id: 27,
+                name: "Bentley",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Bentley_logo.svg/800px-Bentley_logo.svg.png",
+                founded: "1919",
+                country: "United Kingdom",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/1200px-Flag_of_the_United_Kingdom.svg.png",
+                headquarters: "Crewe, UK",
+                parent: "Volkswagen Group",
+                ceo: "Adrian Hallmark",
+                revenue: "$3 billion",
+                description: "Bentley crafts ultra-luxury vehicles with hand-built quality and immense power. The British marque combines traditional craftsmanship with modern technology, offering bespoke customization options.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "Continental GT", image: "https://www.bentleymotors.com/content/dam/bentley/Master/Models/continental-gt/continental-gt-models/continental-gt/overview/Continental-GT-Overview-01.jpg" },
+                    { name: "Bentayga", image: "https://www.bentleymotors.com/content/dam/bentley/Master/Models/bentayga/bentayga-models/bentayga/overview/Bentayga-Overview-01.jpg" },
+                    { name: "Flying Spur", image: "https://www.bentleymotors.com/content/dam/bentley/Master/Models/flying-spur/flying-spur-models/flying-spur/overview/Flying-Spur-Overview-01.jpg" },
+                    { name: "Mulsanne", image: "https://www.bentleymotors.com/content/dam/bentley/Master/Models/mulsanne/mulsanne-models/mulsanne/overview/Mulsanne-Overview-01.jpg" },
+                    { name: "Continental GT Convertible", image: "https://www.bentleymotors.com/content/dam/bentley/Master/Models/continental-gt/continental-gt-models/continental-gt-convertible/overview/Continental-GT-Convertible-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 28,
+                name: "Bugatti",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Bugatti_logo.svg/800px-Bugatti_logo.svg.png",
+                founded: "1909",
+                country: "France",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Flag_of_France.svg/1200px-Flag_of_France.svg.png",
+                headquarters: "Molsheim, France",
+                parent: "Volkswagen Group",
+                ceo: "Stephan Winkelmann",
+                revenue: "$1 billion",
+                description: "Bugatti produces the world's fastest and most exclusive hypercars, pushing automotive engineering boundaries. Each vehicle is a masterpiece of performance and luxury, with prices exceeding millions.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "Chiron", image: "https://www.bugatti.com/fileadmin/_processed_/1/1/csm_chiron_sport_blue_01_1920x1080_4b5c7b3c1e.jpg" },
+                    { name: "Veyron", image: "https://www.bugatti.com/fileadmin/_processed_/1/1/csm_veyron_16.4_grand_sport_vitesse_01_1920x1080_5c5b5b5b5b.jpg" },
+                    { name: "Divo", image: "https://www.bugatti.com/fileadmin/_processed_/1/1/csm_divo_01_1920x1080_5c5b5b5b5b.jpg" },
+                    { name: "Centodieci", image: "https://www.bugatti.com/fileadmin/_processed_/1/1/csm_centodieci_01_1920x1080_5c5b5b5b5b.jpg" },
+                    { name: "Bolide", image: "https://www.bugatti.com/fileadmin/_processed_/1/1/csm_bolide_01_1920x1080_5c5b5b5b5b.jpg" }
+                ]
+            },
+            {
+                id: 29,
+                name: "Maserati",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Maserati_logo.svg/800px-Maserati_logo.svg.png",
+                founded: "1914",
+                country: "Italy",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/0/03/Flag_of_Italy.svg/1200px-Flag_of_Italy.svg.png",
+                headquarters: "Modena, Italy",
+                parent: "Stellantis",
+                ceo: "Davide Grasso",
+                revenue: "$2 billion",
+                description: "Maserati combines Italian luxury with high performance in its sedans and SUVs. The brand is known for its distinctive trident logo, sonorous engines, and racing heritage.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "Ghibli", image: "https://www.maserati.com/content/dam/maserati/international/Models/ghibli/ghibli-models/my22/ghibli-overview.jpg" },
+                    { name: "Quattroporte", image: "https://www.maserati.com/content/dam/maserati/international/Models/quattroporte/quattroporte-models/my22/quattroporte-overview.jpg" },
+                    { name: "Levante", image: "https://www.maserati.com/content/dam/maserati/international/Models/levante/levante-models/my22/levante-overview.jpg" },
+                    { name: "MC20", image: "https://www.maserati.com/content/dam/maserati/international/Models/mc20/mc20-models/my22/mc20-overview.jpg" },
+                    { name: "GranTurismo", image: "https://www.maserati.com/content/dam/maserati/international/Models/granturismo/granturismo-models/my22/granturismo-overview.jpg" }
+                ]
+            },
+            {
+                id: 30,
+                name: "Rolls-Royce",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Rolls-Royce_logo_2011.svg/800px-Rolls-Royce_logo_2011.svg.png",
+                founded: "1906",
+                country: "United Kingdom",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/1200px-Flag_of_the_United_Kingdom.svg.png",
+                headquarters: "Goodwood, UK",
+                parent: "BMW Group",
+                ceo: "Torsten Müller-Ötvös",
+                revenue: "$2 billion",
+                description: "Rolls-Royce represents the pinnacle of automotive luxury, with hand-built vehicles offering peerless refinement. Each car can be extensively customized through the Bespoke program for ultimate exclusivity.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "Phantom", image: "https://www.rolls-roycemotorcars.com/content/dam/rrmc/marketUK/rollsroycemotorcars_com/phantom-series-ii/overview/Phantom-Series-II-Overview-01.jpg" },
+                    { name: "Ghost", image: "https://www.rolls-roycemotorcars.com/content/dam/rrmc/marketUK/rollsroycemotorcars_com/ghost/overview/Ghost-Overview-01.jpg" },
+                    { name: "Cullinan", image: "https://www.rolls-roycemotorcars.com/content/dam/rrmc/marketUK/rollsroycemotorcars_com/cullinan/overview/Cullinan-Overview-01.jpg" },
+                    { name: "Wraith", image: "https://www.rolls-roycemotorcars.com/content/dam/rrmc/marketUK/rollsroycemotorcars_com/wraith/overview/Wraith-Overview-01.jpg" },
+                    { name: "Dawn", image: "https://www.rolls-roycemotorcars.com/content/dam/rrmc/marketUK/rollsroycemotorcars_com/dawn/overview/Dawn-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 31,
+                name: "Aston Martin",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Aston_Martin_Lagonda_brand_logo.svg/800px-Aston_Martin_Lagonda_brand_logo.svg.png",
+                founded: "1913",
+                country: "United Kingdom",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/1200px-Flag_of_the_United_Kingdom.svg.png",
+                headquarters: "Gaydon, UK",
+                parent: "Aston Martin Lagonda",
+                ceo: "Amedeo Felisa",
+                revenue: "$1 billion",
+                description: "Aston Martin creates beautiful, high-performance grand tourers with British elegance. Famous for its James Bond association, the brand combines racing pedigree with luxurious craftsmanship.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "DB11", image: "https://www.astonmartin.com/content/dam/aston-martin/models/db11/db11-amr/overview/DB11-AMR-Overview-01.jpg" },
+                    { name: "Vantage", image: "https://www.astonmartin.com/content/dam/aston-martin/models/vantage/vantage/overview/Vantage-Overview-01.jpg" },
+                    { name: "DBS Superleggera", image: "https://www.astonmartin.com/content/dam/aston-martin/models/dbs-superleggera/dbs-superleggera/overview/DBS-Superleggera-Overview-01.jpg" },
+                    { name: "Valhalla", image: "https://www.astonmartin.com/content/dam/aston-martin/models/valhalla/valhalla/overview/Valhalla-Overview-01.jpg" },
+                    { name: "Valkyrie", image: "https://www.astonmartin.com/content/dam/aston-martin/models/valkyrie/valkyrie/overview/Valkyrie-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 32,
+                name: "McLaren",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/McLaren_logo.svg/800px-McLaren_logo.svg.png",
+                founded: "1963",
+                country: "United Kingdom",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/1200px-Flag_of_the_United_Kingdom.svg.png",
+                headquarters: "Woking, UK",
+                parent: "McLaren Group",
+                ceo: "Michael Leiters",
+                revenue: "$1 billion",
+                description: "McLaren applies Formula 1 technology to its road cars, creating ultra-high-performance supercars. The brand emphasizes lightweight construction, aerodynamics, and blistering acceleration.",
+                tags: ["europe", "luxury"],
+                models: [
+                    { name: "720S", image: "https://cars.mclaren.com/content/dam/mclaren-automotive/models/720s/720s-coupe/overview/720S-Coupe-Overview-01.jpg" },
+                    { name: "GT", image: "https://cars.mclaren.com/content/dam/mclaren-automotive/models/gt/gt/overview/GT-Overview-01.jpg" },
+                    { name: "Artura", image: "https://cars.mclaren.com/content/dam/mclaren-automotive/models/artura/artura/overview/Artura-Overview-01.jpg" },
+                    { name: "Senna", image: "https://cars.mclaren.com/content/dam/mclaren-automotive/models/senna/senna/overview/Senna-Overview-01.jpg" },
+                    { name: "Elva", image: "https://cars.mclaren.com/content/dam/mclaren-automotive/models/elva/elva/overview/Elva-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 33,
+                name: "Lotus",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Lotus_Cars_logo.svg/800px-Lotus_Cars_logo.svg.png",
+                founded: "1948",
+                country: "United Kingdom",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/1200px-Flag_of_the_United_Kingdom.svg.png",
+                headquarters: "Norfolk, UK",
+                parent: "Geely",
+                ceo: "Qingfeng Feng",
+                revenue: "$500 million",
+                description: "Lotus builds lightweight sports cars focused on pure driving enjoyment. The brand's philosophy of 'simplify, then add lightness' results in agile, engaging vehicles with minimal weight.",
+                tags: ["europe"],
+                models: [
+                    { name: "Emira", image: "https://www.lotuscars.com/content/dam/lotus-cars/vehicles/emira/overview/Emira-Overview-01.jpg" },
+                    { name: "Evija", image: "https://www.lotuscars.com/content/dam/lotus-cars/vehicles/evija/overview/Evija-Overview-01.jpg" },
+                    { name: "Exige", image: "https://www.lotuscars.com/content/dam/lotus-cars/vehicles/exige/overview/Exige-Overview-01.jpg" },
+                    { name: "Elise", image: "https://www.lotuscars.com/content/dam/lotus-cars/vehicles/elise/overview/Elise-Overview-01.jpg" },
+                    { name: "Evora", image: "https://www.lotuscars.com/content/dam/lotus-cars/vehicles/evora/overview/Evora-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 34,
+                name: "Polestar",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Polestar_logo.svg/800px-Polestar_logo.svg.png",
+                founded: "2017",
+                country: "Sweden",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/4/4c/Flag_of_Sweden.svg/1200px-Flag_of_Sweden.svg.png",
+                headquarters: "Gothenburg, Sweden",
+                parent: "Volvo Cars",
+                ceo: "Thomas Ingenlath",
+                revenue: "$1 billion",
+                description: "Polestar is Volvo's electric performance brand, combining Scandinavian design with cutting-edge technology. The company focuses on sustainability throughout its vehicles' lifecycle.",
+                tags: ["europe", "electric"],
+                models: [
+                    { name: "Polestar 2", image: "https://www.polestar.com/content/dam/polestar/global/en/vehicles/polestar-2/overview/Polestar-2-Overview-01.jpg" },
+                    { name: "Polestar 1", image: "https://www.polestar.com/content/dam/polestar/global/en/vehicles/polestar-1/overview/Polestar-1-Overview-01.jpg" },
+                    { name: "Polestar 3", image: "https://www.polestar.com/content/dam/polestar/global/en/vehicles/polestar-3/overview/Polestar-3-Overview-01.jpg" },
+                    { name: "Polestar Precept", image: "https://www.polestar.com/content/dam/polestar/global/en/vehicles/polestar-precept/overview/Polestar-Precept-Overview-01.jpg" },
+                    { name: "Polestar O2", image: "https://www.polestar.com/content/dam/polestar/global/en/vehicles/polestar-o2/overview/Polestar-O2-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 35,
+                name: "Rivian",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Rivian_Automotive_logo.svg/800px-Rivian_Automotive_logo.svg.png",
+                founded: "2009",
+                country: "United States",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1200px-Flag_of_the_United_States.svg.png",
+                headquarters: "Irvine, California, USA",
+                parent: "Independent",
+                ceo: "RJ Scaringe",
+                revenue: "$1 billion",
+                description: "Rivian specializes in electric adventure vehicles designed for outdoor enthusiasts. The company's R1T pickup and R1S SUV combine impressive off-road capability with zero-emissions performance.",
+                tags: ["america", "electric"],
+                models: [
+                    { name: "R1T", image: "https://rivian.com/content/dam/rivian/vehicles/r1t/overview/R1T-Overview-01.jpg" },
+                    { name: "R1S", image: "https://rivian.com/content/dam/rivian/vehicles/r1s/overview/R1S-Overview-01.jpg" },
+                    { name: "EDV", image: "https://rivian.com/content/dam/rivian/vehicles/edv/overview/EDV-Overview-01.jpg" },
+                    { name: "Amazon Delivery Van", image: "https://rivian.com/content/dam/rivian/vehicles/amazon-delivery-van/overview/Amazon-Delivery-Van-Overview-01.jpg" },
+                    { name: "Adventure Network", image: "https://rivian.com/content/dam/rivian/vehicles/adventure-network/overview/Adventure-Network-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 36,
+                name: "Lucid Motors",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Lucid_Motors_logo.svg/800px-Lucid_Motors_logo.svg.png",
+                founded: "2007",
+                country: "United States",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1200px-Flag_of_the_United_States.svg.png",
+                headquarters: "Newark, California, USA",
+                parent: "Independent",
+                ceo: "Peter Rawlinson",
+                revenue: "$500 million",
+                description: "Lucid Motors produces luxury electric vehicles with industry-leading range and performance. The company's Air sedan features groundbreaking battery technology and spacious interior packaging.",
+                tags: ["america", "electric", "luxury"],
+                models: [
+                    { name: "Air", image: "https://www.lucidmotors.com/content/dam/lucid/vehicles/air/overview/Air-Overview-01.jpg" },
+                    { name: "Air Dream Edition", image: "https://www.lucidmotors.com/content/dam/lucid/vehicles/air-dream-edition/overview/Air-Dream-Edition-Overview-01.jpg" },
+                    { name: "Air Grand Touring", image: "https://www.lucidmotors.com/content/dam/lucid/vehicles/air-grand-touring/overview/Air-Grand-Touring-Overview-01.jpg" },
+                    { name: "Air Touring", image: "https://www.lucidmotors.com/content/dam/lucid/vehicles/air-touring/overview/Air-Touring-Overview-01.jpg" },
+                    { name: "Air Pure", image: "https://www.lucidmotors.com/content/dam/lucid/vehicles/air-pure/overview/Air-Pure-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 37,
+                name: "Fisker",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Fisker_Automotive_logo.svg/800px-Fisker_Automotive_logo.svg.png",
+                founded: "2016",
+                country: "United States",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/1200px-Flag_of_the_United_States.svg.png",
+                headquarters: "Los Angeles, California, USA",
+                parent: "Fisker Inc.",
+                ceo: "Henrik Fisker",
+                revenue: "$100 million",
+                description: "Fisker focuses on sustainable electric vehicles with emotional design. The company emphasizes eco-friendly materials and solar roof technology in its Ocean SUV.",
+                tags: ["america", "electric"],
+                models: [
+                    { name: "Ocean", image: "https://www.fiskerinc.com/content/dam/fisker/vehicles/ocean/overview/Ocean-Overview-01.jpg" },
+                    { name: "Pear", image: "https://www.fiskerinc.com/content/dam/fisker/vehicles/pear/overview/Pear-Overview-01.jpg" },
+                    { name: "Ronin", image: "https://www.fiskerinc.com/content/dam/fisker/vehicles/ronin/overview/Ronin-Overview-01.jpg" },
+                    { name: "Alaska", image: "https://www.fiskerinc.com/content/dam/fisker/vehicles/alaska/overview/Alaska-Overview-01.jpg" },
+                    { name: "EMotion", image: "https://www.fiskerinc.com/content/dam/fisker/vehicles/emotion/overview/EMotion-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 38,
+                name: "BYD",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/BYD_Company_Limited_logo.svg/800px-BYD_Company_Limited_logo.svg.png",
+                founded: "1995",
+                country: "China",
+                flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/1200px-Flag_of_the_People%27s_Republic_of_China.svg.png",
+                headquarters: "Shenzhen, China",
+                parent: "BYD Company",
+                ceo: "Wang Chuanfu",
+                revenue: "$30 billion",
+                description: "BYD is a leader in electric vehicles and battery technology, producing affordable EVs for global markets. The company also manufactures electric buses and energy storage systems.",
+                tags: ["asia", "electric"],
+                models: [
+                    { name: "Han", image: "https://www.byd.com/content/dam/byd/vehicles/han/overview/Han-Overview-01.jpg" },
+                    { name: "Tang", image: "https://www.byd.com/content/dam/byd/vehicles/tang/overview/Tang-Overview-01.jpg" },
+                    { name: "Song", image: "https://www.byd.com/content/dam/byd/vehicles/song/overview/Song-Overview-01.jpg" },
+                    { name: "Qin", image: "https://www.byd.com/content/dam/byd/vehicles/qin/overview/Qin-Overview-01.jpg" },
+                    { name: "Yuan", image: "https://www.byd.com/content/dam/byd/vehicles/yuan/overview/Yuan-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 39,
+                name: "NIO",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/NIO_logo.svg/800px-NIO_logo.svg.png",
+                founded: "2014",
+                country: "China",
+                flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/1200px-Flag_of_the_People%27s_Republic_of_China.svg.png",
+                headquarters: "Shanghai, China",
+                parent: "NIO Inc.",
+                ceo: "William Li",
+                revenue: "$5 billion",
+                description: "NIO produces premium electric vehicles with innovative battery swapping technology. The Chinese brand emphasizes user experience through its NIO Houses and Power mobile charging solutions.",
+                tags: ["asia", "electric", "luxury"],
+                models: [
+                    { name: "ET7", image: "https://www.nio.com/content/dam/nio/vehicles/et7/overview/ET7-Overview-01.jpg" },
+                    { name: "ES8", image: "https://www.nio.com/content/dam/nio/vehicles/es8/overview/ES8-Overview-01.jpg" },
+                    { name: "ES6", image: "https://www.nio.com/content/dam/nio/vehicles/es6/overview/ES6-Overview-01.jpg" },
+                    { name: "EC6", image: "https://www.nio.com/content/dam/nio/vehicles/ec6/overview/EC6-Overview-01.jpg" },
+                    { name: "ET5", image: "https://www.nio.com/content/dam/nio/vehicles/et5/overview/ET5-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 40,
+                name: "Tata Motors",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Tata_Motors.svg/800px-Tata_Motors.svg.png",
+                founded: "1945",
+                country: "India",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/1200px-Flag_of_India.svg.png",
+                headquarters: "Mumbai, India",
+                parent: "Tata Group",
+                ceo: "Guenter Butschek",
+                revenue: "$35 billion",
+                description: "Tata Motors is India's largest automobile manufacturer, producing affordable cars, trucks, and buses. The company owns Jaguar Land Rover and is expanding its electric vehicle lineup.",
+                tags: ["asia"],
+                models: [
+                    { name: "Nexon", image: "https://www.tatamotors.com/content/dam/tata/vehicles/nexon/overview/Nexon-Overview-01.jpg" },
+                    { name: "Harrier", image: "https://www.tatamotors.com/content/dam/tata/vehicles/harrier/overview/Harrier-Overview-01.jpg" },
+                    { name: "Safari", image: "https://www.tatamotors.com/content/dam/tata/vehicles/safari/overview/Safari-Overview-01.jpg" },
+                    { name: "Tiago", image: "https://www.tatamotors.com/content/dam/tata/vehicles/tiago/overview/Tiago-Overview-01.jpg" },
+                    { name: "Tigor EV", image: "https://www.tatamotors.com/content/dam/tata/vehicles/tigor-ev/overview/Tigor-EV-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 41,
+                name: "Mahindra",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Mahindra_%26_Mahindra_Logo.svg/800px-Mahindra_%26_Mahindra_Logo.svg.png",
+                founded: "1945",
+                country: "India",
+                flag: "https://upload.wikimedia.org/wikipedia/en/thumb/4/41/Flag_of_India.svg/1200px-Flag_of_India.svg.png",
+                headquarters: "Mumbai, India",
+                parent: "Mahindra Group",
+                ceo: "Anish Shah",
+                revenue: "$15 billion",
+                description: "Mahindra produces rugged SUVs and electric vehicles for Indian and global markets. The company is known for its durable off-road vehicles and is expanding into premium segments.",
+                tags: ["asia"],
+                models: [
+                    { name: "Thar", image: "https://www.mahindra.com/content/dam/mahindra/vehicles/thar/overview/Thar-Overview-01.jpg" },
+                    { name: "XUV700", image: "https://www.mahindra.com/content/dam/mahindra/vehicles/xuv700/overview/XUV700-Overview-01.jpg" },
+                    { name: "Scorpio", image: "https://www.mahindra.com/content/dam/mahindra/vehicles/scorpio/overview/Scorpio-Overview-01.jpg" },
+                    { name: "Bolero", image: "https://www.mahindra.com/content/dam/mahindra/vehicles/bolero/overview/Bolero-Overview-01.jpg" },
+                    { name: "eVerito", image: "https://www.mahindra.com/content/dam/mahindra/vehicles/everito/overview/eVerito-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 42,
+                name: "Geely",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Geely_Logo.svg/800px-Geely_Logo.svg.png",
+                founded: "1986",
+                country: "China",
+                flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/1200px-Flag_of_the_People%27s_Republic_of_China.svg.png",
+                headquarters: "Hangzhou, China",
+                parent: "Zhejiang Geely Holding Group",
+                ceo: "An Conghui",
+                revenue: "$20 billion",
+                description: "Geely is a rapidly growing Chinese automaker that owns Volvo, Lotus, and Polestar. The company produces affordable vehicles for emerging markets while investing in premium and electric brands.",
+                tags: ["asia"],
+                models: [
+                    { name: "Emgrand", image: "https://www.geely.com/content/dam/geely/vehicles/emgrand/overview/Emgrand-Overview-01.jpg" },
+                    { name: "Boyue", image: "https://www.geely.com/content/dam/geely/vehicles/boyue/overview/Boyue-Overview-01.jpg" },
+                    { name: "Coolray", image: "https://www.geely.com/content/dam/geely/vehicles/coolray/overview/Coolray-Overview-01.jpg" },
+                    { name: "Geometry C", image: "https://www.geely.com/content/dam/geely/vehicles/geometry-c/overview/Geometry-C-Overview-01.jpg" },
+                    { name: "Vision", image: "https://www.geely.com/content/dam/geely/vehicles/vision/overview/Vision-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 43,
+                name: "Great Wall Motors",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Great_Wall_Motors_logo.svg/800px-Great_Wall_Motors_logo.svg.png",
+                founded: "1984",
+                country: "China",
+                flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/1200px-Flag_of_the_People%27s_Republic_of_China.svg.png",
+                headquarters: "Baoding, China",
+                parent: "Great Wall Motor Company",
+                ceo: "Wang Fengying",
+                revenue: "$15 billion",
+                description: "Great Wall Motors specializes in SUVs and pickup trucks for Chinese and global markets. The company's Haval brand is China's best-selling SUV marque.",
+                tags: ["asia"],
+                models: [
+                    { name: "Haval H6", image: "https://www.gwm-global.com/content/dam/gwm/vehicles/haval-h6/overview/Haval-H6-Overview-01.jpg" },
+                    { name: "Wey VV7", image: "https://www.gwm-global.com/content/dam/gwm/vehicles/wey-vv7/overview/Wey-VV7-Overview-01.jpg" },
+                    { name: "Poer", image: "https://www.gwm-global.com/content/dam/gwm/vehicles/poer/overview/Poer-Overview-01.jpg" },
+                    { name: "Ora R1", image: "https://www.gwm-global.com/content/dam/gwm/vehicles/ora-r1/overview/Ora-R1-Overview-01.jpg" },
+                    { name: "Tank 300", image: "https://www.gwm-global.com/content/dam/gwm/vehicles/tank-300/overview/Tank-300-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 44,
+                name: "SAIC Motor",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/SAIC_Motor_logo.svg/800px-SAIC_Motor_logo.svg.png",
+                founded: "1955",
+                country: "China",
+                flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/1200px-Flag_of_the_People%27s_Republic_of_China.svg.png",
+                headquarters: "Shanghai, China",
+                parent: "SAIC Group",
+                ceo: "Chen Hong",
+                revenue: "$100 billion",
+                description: "SAIC Motor is China's largest automaker, producing vehicles under its own brands and through joint ventures with GM and Volkswagen. The company is investing heavily in electric and connected vehicles.",
+                tags: ["asia"],
+                models: [
+                    { name: "Roewe RX5", image: "https://www.saicmotor.com/content/dam/saic/vehicles/roewe-rx5/overview/Roewe-RX5-Overview-01.jpg" },
+                    { name: "MG ZS", image: "https://www.saicmotor.com/content/dam/saic/vehicles/mg-zs/overview/MG-ZS-Overview-01.jpg" },
+                    { name: "Maxus D90", image: "https://www.saicmotor.com/content/dam/saic/vehicles/maxus-d90/overview/Maxus-D90-Overview-01.jpg" },
+                    { name: "Wuling Hongguang Mini EV", image: "https://www.saicmotor.com/content/dam/saic/vehicles/wuling-hongguang-mini-ev/overview/Wuling-Hongguang-Mini-EV-Overview-01.jpg" },
+                    { name: "IM L7", image: "https://www.saicmotor.com/content/dam/saic/vehicles/im-l7/overview/IM-L7-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 45,
+                name: "Dongfeng Motor",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Dongfeng_Motor_Corporation_logo.svg/800px-Dongfeng_Motor_Corporation_logo.svg.png",
+                founded: "1969",
+                country: "China",
+                flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/1200px-Flag_of_the_People%27s_Republic_of_China.svg.png",
+                headquarters: "Wuhan, China",
+                parent: "Dongfeng Motor Group",
+                ceo: "Zhu Yanfeng",
+                revenue: "$60 billion",
+                description: "Dongfeng is one of China's 'Big Four' automakers, producing vehicles through joint ventures with Honda, Nissan, and PSA. The company manufactures commercial vehicles and passenger cars.",
+                tags: ["asia"],
+                models: [
+                    { name: "Aeolus E70", image: "https://www.dfmc.com.cn/content/dam/dfmc/vehicles/aeolus-e70/overview/Aeolus-E70-Overview-01.jpg" },
+                    { name: "Venucia T90", image: "https://www.dfmc.com.cn/content/dam/dfmc/vehicles/venucia-t90/overview/Venucia-T90-Overview-01.jpg" },
+                    { name: "Fengon 580", image: "https://www.dfmc.com.cn/content/dam/dfmc/vehicles/fengon-580/overview/Fengon-580-Overview-01.jpg" },
+                    { name: "Joyear X5", image: "https://www.dfmc.com.cn/content/dam/dfmc/vehicles/joyear-x5/overview/Joyear-X5-Overview-01.jpg" },
+                    { name: "Rich 6", image: "https://www.dfmc.com.cn/content/dam/dfmc/vehicles/rich-6/overview/Rich-6-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 46,
+                name: "Changan Automobile",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Changan_Automobile_logo.svg/800px-Changan_Automobile_logo.svg.png",
+                founded: "1862",
+                country: "China",
+                flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/1200px-Flag_of_the_People%27s_Republic_of_China.svg.png",
+                headquarters: "Chongqing, China",
+                parent: "China South Industries Group",
+                ceo: "Zhu Huarong",
+                revenue: "$15 billion",
+                description: "Changan is one of China's oldest and largest automakers, producing passenger cars and commercial vehicles. The company has joint ventures with Ford and Mazda and is investing in autonomous driving.",
+                tags: ["asia"],
+                models: [
+                    { name: "CS75 Plus", image: "https://www.globalchangan.com/content/dam/changan/vehicles/cs75-plus/overview/CS75-Plus-Overview-01.jpg" },
+                    { name: "UNI-T", image: "https://www.globalchangan.com/content/dam/changan/vehicles/uni-t/overview/UNI-T-Overview-01.jpg" },
+                    { name: "Eado", image: "https://www.globalchangan.com/content/dam/changan/vehicles/eado/overview/Eado-Overview-01.jpg" },
+                    { name: "BenBen", image: "https://www.globalchangan.com/content/dam/changan/vehicles/benben/overview/BenBen-Overview-01.jpg" },
+                    { name: "Raeton", image: "https://www.globalchangan.com/content/dam/changan/vehicles/raeton/overview/Raeton-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 47,
+                name: "Chery",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Chery_Logo.svg/800px-Chery_Logo.svg.png",
+                founded: "1997",
+                country: "China",
+                flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/1200px-Flag_of_the_People%27s_Republic_of_China.svg.png",
+                headquarters: "Wuhu, China",
+                parent: "Chery Automobile",
+                ceo: "Yin Tongyue",
+                revenue: "$12 billion",
+                description: "Chery is China's largest passenger car exporter, selling vehicles in over 80 countries. The company focuses on affordable, reliable cars and is expanding its electric vehicle lineup.",
+                tags: ["asia"],
+                models: [
+                    { name: "Tiggo 8", image: "https://www.cheryinternational.com/content/dam/chery/vehicles/tiggo-8/overview/Tiggo-8-Overview-01.jpg" },
+                    { name: "Arrizo 5", image: "https://www.cheryinternational.com/content/dam/chery/vehicles/arrizo-5/overview/Arrizo-5-Overview-01.jpg" },
+                    { name: "QQ", image: "https://www.cheryinternational.com/content/dam/chery/vehicles/qq/overview/QQ-Overview-01.jpg" },
+                    { name: "eQ1", image: "https://www.cheryinternational.com/content/dam/chery/vehicles/eq1/overview/eQ1-Overview-01.jpg" },
+                    { name: "Exeed TX", image: "https://www.cheryinternational.com/content/dam/chery/vehicles/exeed-tx/overview/Exeed-TX-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 48,
+                name: "BAIC Group",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/BAIC_Group_logo.svg/800px-BAIC_Group_logo.svg.png",
+                founded: "1958",
+                country: "China",
+                flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/1200px-Flag_of_the_People%27s_Republic_of_China.svg.png",
+                headquarters: "Beijing, China",
+                parent: "Beijing Automotive Group",
+                ceo: "Xu Heyi",
+                revenue: "$50 billion",
+                description: "BAIC Group is one of China's largest state-owned automakers, with joint ventures with Mercedes-Benz and Hyundai. The company produces passenger cars, commercial vehicles, and electric vehicles.",
+                tags: ["asia"],
+                models: [
+                    { name: "BJ40", image: "https://www.baicgroup.com/content/dam/baic/vehicles/bj40/overview/BJ40-Overview-01.jpg" },
+                    { name: "Senova D50", image: "https://www.baicgroup.com/content/dam/baic/vehicles/senova-d50/overview/Senova-D50-Overview-01.jpg" },
+                    { name: "Arcfox αT", image: "https://www.baicgroup.com/content/dam/baic/vehicles/arcfox-at/overview/Arcfox-AT-Overview-01.jpg" },
+                    { name: "Beijing X7", image: "https://www.baicgroup.com/content/dam/baic/vehicles/beijing-x7/overview/Beijing-X7-Overview-01.jpg" },
+                    { name: "EU5", image: "https://www.baicgroup.com/content/dam/baic/vehicles/eu5/overview/EU5-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 49,
+                name: "GAC Group",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/GAC_Group_logo.svg/800px-GAC_Group_logo.svg.png",
+                founded: "1955",
+                country: "China",
+                flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/1200px-Flag_of_the_People%27s_Republic_of_China.svg.png",
+                headquarters: "Guangzhou, China",
+                parent: "Guangzhou Automobile Group",
+                ceo: "Feng Xingya",
+                revenue: "$60 billion",
+                description: "GAC Group manufactures vehicles through joint ventures with Honda, Toyota, and Mitsubishi. The company's Trumpchi brand produces domestic models with increasingly competitive quality.",
+                tags: ["asia"],
+                models: [
+                    { name: "Trumpchi GS4", image: "https://www.gacmotor.com/content/dam/gac/vehicles/trumpchi-gs4/overview/Trumpchi-GS4-Overview-01.jpg" },
+                    { name: "Aion S", image: "https://www.gacmotor.com/content/dam/gac/vehicles/aion-s/overview/Aion-S-Overview-01.jpg" },
+                    { name: "GN8", image: "https://www.gacmotor.com/content/dam/gac/vehicles/gn8/overview/GN8-Overview-01.jpg" },
+                    { name: "GS8", image: "https://www.gacmotor.com/content/dam/gac/vehicles/gs8/overview/GS8-Overview-01.jpg" },
+                    { name: "M8", image: "https://www.gacmotor.com/content/dam/gac/vehicles/m8/overview/M8-Overview-01.jpg" }
+                ]
+            },
+            {
+                id: 50,
+                name: "Proton",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Proton_logo.svg/800px-Proton_logo.svg.png",
+                founded: "1983",
+                country: "Malaysia",
+                flag: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Flag_of_Malaysia.svg/1200px-Flag_of_Malaysia.svg.png",
+                headquarters: "Shah Alam, Malaysia",
+                parent: "DRB-HICOM",
+                ceo: "Li Chunrong",
+                revenue: "$2 billion",
+                description: "Proton is Malaysia's national car company, producing affordable vehicles for Southeast Asian markets. The brand has a partnership with Geely and is improving quality and technology.",
+                tags: ["asia"],
+                models: [
+                    { name: "Saga", image: "https://www.proton.com/content/dam/proton/vehicles/saga/overview/Saga-Overview-01.jpg" },
+                    { name: "Persona", image: "https://www.proton.com/content/dam/proton/vehicles/persona/overview/Persona-Overview-01.jpg" },
+                    { name: "X70", image: "https://www.proton.com/content/dam/proton/vehicles/x70/overview/X70-Overview-01.jpg" },
+                    { name: "X50", image: "https://www.proton.com/content/dam/proton/vehicles/x50/overview/X50-Overview-01.jpg" },
+                    { name: "Iriz", image: "https://www.proton.com/content/dam/proton/vehicles/iriz/overview/Iriz-Overview-01.jpg" }
+                ]
+            }
+        ];
+
+        // Function to render brand cards
+        function renderBrands(brands) {
+            const brandsContainer = document.getElementById('brandsContainer');
+            brandsContainer.innerHTML = '';
+            
+            if (brands.length === 0) {
+                brandsContainer.innerHTML = '<div class="no-results">No brands found matching your search</div>';
+                return;
+            }
+            
+            brands.forEach((brand, index) => {
+                const brandCard = document.createElement('div');
+                brandCard.className = 'brand-card fade-in';
+                brandCard.style.animationDelay = `${index * 0.1}s`;
+                brandCard.setAttribute('data-tags', brand.tags.join(' '));
+                brandCard.innerHTML = `
+                    <img src="${brand.logo}" alt="${brand.name} Logo" class="brand-logo">
+                    <h3 class="brand-name">${brand.name}</h3>
+                    <div class="brand-origin">
+                        <span>${brand.founded}</span>
+                        <img src="${brand.flag}" alt="${brand.country} Flag" class="brand-flag">
+                        <span>${brand.country}</span>
+                    </div>
+                    <div class="brand-details">
+                        <div class="brand-detail">
+                            <span>Headquarters</span>
+                            <span class="detail-value">${brand.headquarters.split(',')[0]}</span>
+                        </div>
+                        <div class="brand-detail">
+                            <span>Revenue</span>
+                            <span class="detail-value">${brand.revenue}</span>
+                        </div>
+                    </div>
+                `;
+                
+                brandCard.addEventListener('click', () => openModal(brand));
+                brandsContainer.appendChild(brandCard);
+            });
+        }
+
+        // Function to open modal with brand details
+        function openModal(brand) {
+            const modal = document.getElementById('brandModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalLogo = document.getElementById('modalLogo');
+            const modalFounded = document.getElementById('modalFounded');
+            const modalFlag = document.getElementById('modalFlag');
+            const modalCountry = document.getElementById('modalCountry');
+            const modalDescription = document.getElementById('modalDescription');
+            const modalHeadquarters = document.getElementById('modalHeadquarters');
+            const modalParent = document.getElementById('modalParent');
+            const modalCeo = document.getElementById('modalCeo');
+            const modalRevenue = document.getElementById('modalRevenue');
+            const modalGallery = document.getElementById('modalGallery');
+            
+            modalTitle.textContent = brand.name;
+            modalLogo.src = brand.logo;
+            modalLogo.alt = `${brand.name} Logo`;
+            modalFounded.textContent = brand.founded;
+            modalFlag.src = brand.flag;
+            modalFlag.alt = `${brand.country} Flag`;
+            modalCountry.textContent = brand.country;
+            modalDescription.textContent = brand.description;
+            modalHeadquarters.textContent = brand.headquarters;
+            modalParent.textContent = brand.parent;
+            modalCeo.textContent = brand.ceo;
+            modalRevenue.textContent = brand.revenue;
+            
+            modalGallery.innerHTML = '';
+            brand.models.forEach(model => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                galleryItem.innerHTML = `
+                    <img src="${model.image}" alt="${brand.name} ${model.name}" class="gallery-img">
+                    <div class="gallery-overlay">${model.name}</div>
+                `;
+                modalGallery.appendChild(galleryItem);
+            });
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Function to close modal
+        function closeModal() {
+            const modal = document.getElementById('brandModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Function to filter brands
+        function filterBrands() {
+            const searchTerm = document.querySelector('.search-input').value.toLowerCase();
+            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            
+            const filteredBrands = carBrands.filter(brand => {
+                const matchesSearch = brand.name.toLowerCase().includes(searchTerm) || 
+                                     brand.country.toLowerCase().includes(searchTerm) ||
+                                     brand.description.toLowerCase().includes(searchTerm);
+                
+                const matchesFilter = activeFilter === 'all' || 
+                                    (activeFilter === 'luxury' && brand.tags.includes('luxury')) ||
+                                    (activeFilter === 'electric' && brand.tags.includes('electric')) ||
+                                    (activeFilter === 'europe' && brand.tags.includes('europe')) ||
+                                    (activeFilter === 'asia' && brand.tags.includes('asia')) ||
+                                    (activeFilter === 'america' && brand.tags.includes('america'));
+                
+                return matchesSearch && matchesFilter;
+            });
+            
+            renderBrands(filteredBrands);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            renderBrands(carBrands);
+            
+            // Search functionality
+            document.querySelector('.search-input').addEventListener('input', filterBrands);
+            
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    filterBrands();
+                });
+            });
+            
+            // Modal close button
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            
+            // Close modal when clicking outside
+            document.getElementById('brandModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
