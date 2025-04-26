@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUANTUM NEXUS AUTH</title>
+    <style>
+        :root {
+            --quantum-blue: #00f7ff;
+            --quantum-purple: #9d00ff;
+            --dark-space: #0a0a20;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--dark-space);
+            color: white;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .auth-container {
+            width: 90%;
+            max-width: 500px;
+            background: rgba(10, 10, 40, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(157, 0, 255, 0.3);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--quantum-blue);
+        }
+        
+        .auth-container::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 247, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        h1 {
+            text-align: center;
+            color: var(--quantum-blue);
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px var(--quantum-blue);
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--quantum-blue);
+            font-weight: bold;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 30, 0.7);
+            border: 1px solid var(--quantum-purple);
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .input-group input:focus {
+            border-color: var(--quantum-blue);
+            box-shadow: 0 0 15px var(--quantum-blue);
+        }
+        
+        .password-visualizer {
+            height: 50px;
+            margin-top: 10px;
+            background: rgba(0, 10, 30, 0.5);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .visualizer-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--quantum-blue);
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--quantum-purple), var(--quantum-blue));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+            box-shadow: 0 0 20px rgba(157, 0, 255, 0.5);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(0, 247, 255, 0.7);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .neuro-taptics-container {
+            margin-top: 30px;
+            height: 200px;
+            background: rgba(0, 0, 30, 0.5);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--quantum-purple);
+        }
+        
+        .neuro-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--quantum-blue);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .neuro-taptics-instruction {
+            text-align: center;
+            margin-top: 10px;
+            color: var(--quantum-blue);
+            font-size: 14px;
+        }
+        
+        .security-level {
+            margin-top: 20px;
+            height: 5px;
+            background: linear-gradient(to right, #ff0000, #ff9900, #33cc33);
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .security-level::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(to right, #33cc33, #00ffcc);
+            animation: securityScan 3s infinite;
+        }
+        
+        @keyframes securityScan {
+            0% { width: 0%; left: 0; }
+            50% { width: 100%; left: 0; }
+            100% { width: 0%; left: 100%; }
+        }
+        
+        .quantum-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="quantum-bg" id="quantumBg"></div>
+    
+    <div class="auth-container">
+        <h1>QUANTUM NEXUS AUTH</h1>
+        
+        <div class="input-group">
+            <label for="username">Benutzername</label>
+            <input type="text" id="username" autocomplete="off" spellcheck="false">
+        </div>
+        
+        <div class="input-group">
+            <label for="password">Passwort</label>
+            <input type="password" id="password" autocomplete="off" spellcheck="false">
+            <div class="password-visualizer" id="passwordVisualizer"></div>
+        </div>
+        
+        <div class="neuro-taptics-container" id="neuroTaptics">
+            <div class="neuro-taptics-instruction">Zeichne dein Sicherheitsmuster in das Feld</div>
+        </div>
+        
+        <div class="security-level"></div>
+        
+        <button class="submit-btn" id="submitBtn">QUANTUM AUTHENTIFIZIERUNG</button>
+    </div>
+
+    <script>
+        // Quantum Background Animation
+        const quantumBg = document.getElementById('quantumBg');
+        for (let i = 0; i < 100; i++) {
+            const particle = document.createElement('div');
+            particle.style.position = 'absolute';
+            particle.style.width = `${Math.random() * 5 + 1}px`;
+            particle.style.height = particle.style.width;
+            particle.style.background = `rgba(${Math.floor(Math.random() * 100 + 155)}, ${Math.floor(Math.random() * 255)}, 255, ${Math.random() * 0.3 + 0.1})`;
+            particle.style.borderRadius = '50%';
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.boxShadow = `0 0 ${Math.random() * 10 + 5}px rgba(0, 247, 255, 0.7)`;
+            
+            // Animation
+            const duration = Math.random() * 20 + 10;
+            particle.style.animation = `float ${duration}s infinite linear`;
+            
+            const keyframes = `
+                @keyframes float {
+                    0% { transform: translate(0, 0) rotate(0deg); opacity: ${Math.random() * 0.5 + 0.1}; }
+                    50% { transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(180deg); opacity: ${Math.random() * 0.7 + 0.3}; }
+                    100% { transform: translate(0, 0) rotate(360deg); opacity: ${Math.random() * 0.5 + 0.1}; }
+                }
+            `;
+            
+            const style = document.createElement('style');
+            style.innerHTML = keyframes;
+            document.head.appendChild(style);
+            
+            quantumBg.appendChild(particle);
+        }
+        
+        // Password Visualizer
+        const passwordInput = document.getElementById('password');
+        const passwordVisualizer = document.getElementById('passwordVisualizer');
+        
+        passwordInput.addEventListener('input', (e) => {
+            // Clear previous particles
+            passwordVisualizer.innerHTML = '';
+            
+            const value = e.target.value;
+            if (!value) return;
+            
+            // Create particles based on password
+            for (let i = 0; i < value.length * 5; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'visualizer-particle';
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.background = `hsl(${value.charCodeAt(i % value.length) % 360}, 100%, 70%)`;
+                particle.style.width = `${Math.random() * 6 + 2}px`;
+                particle.style.height = particle.style.width;
+                particle.style.opacity = Math.random() * 0.7 + 0.3;
+                
+                // Animation
+                particle.style.transition = `all ${Math.random() * 0.5 + 0.2}s`;
+                setTimeout(() => {
+                    particle.style.transform = `translate(${Math.random() * 20 - 10}px, ${Math.random() * 20 - 10}px)`;
+                    particle.style.opacity = '0';
+                }, 10);
+                
+                passwordVisualizer.appendChild(particle);
+            }
+        });
+        
+        // Neuro-Taptics
+        const neuroTaptics = document.getElementById('neuroTaptics');
+        const particles = [];
+        let drawing = false;
+        let path = [];
+        
+        neuroTaptics.addEventListener('mousedown', (e) => {
+            drawing = true;
+            path = [];
+            particles.forEach(p => p.style.opacity = '0');
+        });
+        
+        neuroTaptics.addEventListener('mousemove', (e) => {
+            if (!drawing) return;
+            
+            const rect = neuroTaptics.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            path.push({ x, y });
+            
+            // Create particle trail
+            for (let i = 0; i < 3; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'neuro-particle';
+                particle.style.left = `${x + Math.random() * 10 - 5}px`;
+                particle.style.top = `${y + Math.random() * 10 - 5}px`;
+                particle.style.background = `hsl(${Math.floor(Date.now() / 100) % 360}, 100%, 70%)`;
+                particle.style.width = `${Math.random() * 8 + 4}px`;
+                particle.style.height = particle.style.width;
+                particle.style.opacity = '0.8';
+                
+                neuroTaptics.appendChild(particle);
+                particles.push(particle);
+                
+                // Fade out
+                setTimeout(() => {
+                    particle.style.opacity = '0';
+                    setTimeout(() => {
+                        particle.remove();
+                    }, 1000);
+                }, 500);
+            }
+        });
+        
+        neuroTaptics.addEventListener('mouseup', () => {
+            drawing = false;
+            // In a real app, you'd send the path data to the server for verification
+            console.log('Neuro-Taptics Path:', path);
+        });
+        
+        neuroTaptics.addEventListener('mouseleave', () => {
+            drawing = false;
+        });
+        
+        // Submit Button
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.addEventListener('click', () => {
+            // Quantum encryption animation
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'QUANTUM-VERSCHLÜSSELUNG...';
+            
+            // Flash animation
+            submitBtn.style.animation = 'none';
+            setTimeout(() => {
+                submitBtn.style.animation = 'quantumPulse 0.5s';
+            }, 10);
+            
+            // Simulate quantum encryption
+            setTimeout(() => {
+                submitBtn.innerHTML = 'ERFOLGREICH AUTHENTIFIZIERT!';
+                submitBtn.style.background = 'linear-gradient(45deg, #00ff88, #00ffcc)';
+                
+                // Create explosion of particles
+                for (let i = 0; i < 50; i++) {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'absolute';
+                    particle.style.width = `${Math.random() * 10 + 5}px`;
+                    particle.style.height = particle.style.width;
+                    particle.style.background = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                    particle.style.borderRadius = '50%';
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    particle.style.pointerEvents = 'none';
+                    particle.style.transform = 'translate(-50%, -50%)';
+                    particle.style.boxShadow = `0 0 ${Math.random() * 15 + 5}px currentColor`;
+                    particle.style.animation = `explode ${Math.random() * 1 + 0.5}s forwards`;
+                    
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = Math.random() * 100 + 50;
+                    
+                    const keyframes = `
+                        @keyframes explode {
+                            to {
+                                transform: translate(
+                                    ${Math.cos(angle) * distance}px, 
+                                    ${Math.sin(angle) * distance}px
+                                );
+                                opacity: 0;
+                            }
+                        }
+                    `;
+                    
+                    const style = document.createElement('style');
+                    style.innerHTML = keyframes;
+                    document.head.appendChild(style);
+                    
+                    document.body.appendChild(particle);
+                    
+                    setTimeout(() => {
+                        particle.remove();
+                        style.remove();
+                    }, 1000);
+                }
+            }, 2000);
+        });
+        
+        // Security features
+        let failedAttempts = 0;
+        
+        function checkCredentials(username, password, pattern) {
+            // In a real app, this would be server-side with proper hashing
+            return false; // Simulate failed attempt for demo
+        }
+    </script>
+</body>
+</html>
