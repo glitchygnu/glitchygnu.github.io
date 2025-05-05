@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dino Jump</title>
     <style>
         body {
@@ -11,16 +11,19 @@
             overflow: hidden;
             font-family: Arial, sans-serif;
             background-color: #f7f7f7;
+            touch-action: manipulation;
         }
         
         #gameContainer {
             position: relative;
-            width: 800px;
+            width: 100%;
+            max-width: 800px;
             height: 300px;
             margin: 50px auto;
             background-color: white;
             border: 2px solid #333;
             overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
         
         #dino {
@@ -65,6 +68,7 @@
             font-weight: bold;
             color: red;
             display: none;
+            text-align: center;
         }
         
         #startScreen {
@@ -95,6 +99,49 @@
             margin-top: 20px;
             font-size: 18px;
             text-align: center;
+            padding: 0 20px;
+        }
+        
+        #restartButton {
+            padding: 10px 20px;
+            font-size: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        @media (max-width: 600px) {
+            #gameContainer {
+                height: 200px;
+                margin: 20px auto;
+            }
+            
+            #dino {
+                width: 30px;
+                height: 50px;
+                left: 30px;
+            }
+            
+            .cactus {
+                width: 20px;
+                height: 40px;
+            }
+            
+            #score {
+                font-size: 18px;
+            }
+            
+            #gameOver {
+                font-size: 36px;
+            }
+            
+            #instructions {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -103,12 +150,15 @@
         <div id="dino"></div>
         <div id="ground"></div>
         <div id="score">0</div>
-        <div id="gameOver">GAME OVER</div>
+        <div id="gameOver">
+            GAME OVER<br>
+            <button id="restartButton">Play Again</button>
+        </div>
         <div id="startScreen">
             <h1>Dino Jump</h1>
             <button id="startButton">Start Game</button>
             <div id="instructions">
-                Press SPACE or UP ARROW to jump<br>
+                Press SPACE, UP ARROW or TAP to jump<br>
                 Avoid the cacti!
             </div>
         </div>
@@ -122,6 +172,7 @@
         const gameOverElement = document.getElementById('gameOver');
         const startScreen = document.getElementById('startScreen');
         const startButton = document.getElementById('startButton');
+        const restartButton = document.getElementById('restartButton');
         
         let isJumping = false;
         let isGameOver = false;
@@ -136,11 +187,31 @@
         
         // Event listeners
         startButton.addEventListener('click', startGame);
+        restartButton.addEventListener('click', resetGame);
+        
+        // Keyboard controls
         document.addEventListener('keydown', function(event) {
             if ((event.code === 'Space' || event.key === ' ' || event.key === 'ArrowUp') && !isJumping && isGameStarted && !isGameOver) {
                 jump();
             } else if ((event.code === 'Space' || event.key === ' ' || event.key === 'ArrowUp') && isGameOver) {
                 resetGame();
+            }
+        });
+        
+        // Touch controls
+        gameContainer.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            if (!isJumping && isGameStarted && !isGameOver) {
+                jump();
+            } else if (isGameOver) {
+                resetGame();
+            }
+        });
+        
+        // Click/tap controls (for devices that don't properly handle touchstart)
+        gameContainer.addEventListener('click', function(e) {
+            if (!isJumping && isGameStarted && !isGameOver) {
+                jump();
             }
         });
         
@@ -154,6 +225,7 @@
             obstacles = [];
             scoreElement.textContent = score;
             gameOverElement.style.display = 'none';
+            restartButton.style.display = 'none';
             
             // Clear any existing obstacles
             document.querySelectorAll('.cactus').forEach(cactus => cactus.remove());
@@ -273,6 +345,7 @@
             clearInterval(gameInterval);
             clearInterval(scoreInterval);
             gameOverElement.style.display = 'block';
+            restartButton.style.display = 'block';
         }
     </script>
 </body>
