@@ -33,6 +33,7 @@
             bottom: 0;
             left: 50px;
             background-color: #555;
+            transition: bottom 0.1s ease-out;
         }
         
         .cactus {
@@ -64,11 +65,11 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 48px;
+            font-size: 36px;
             font-weight: bold;
             color: red;
-            display: none;
             text-align: center;
+            display: none;
         }
         
         #startScreen {
@@ -77,7 +78,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.9);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -85,14 +86,15 @@
             z-index: 10;
         }
         
-        #startButton {
-            padding: 10px 20px;
-            font-size: 24px;
+        #startButton, #restartButton {
+            padding: 12px 24px;
+            font-size: 20px;
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin-top: 20px;
         }
         
         #instructions {
@@ -102,18 +104,6 @@
             padding: 0 20px;
         }
         
-        #restartButton {
-            padding: 10px 20px;
-            font-size: 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 20px;
-            display: none;
-        }
-        
         @media (max-width: 600px) {
             #gameContainer {
                 height: 200px;
@@ -121,22 +111,22 @@
             }
             
             #dino {
-                width: 30px;
-                height: 50px;
+                width: 40px;
+                height: 60px;
                 left: 30px;
             }
             
             .cactus {
-                width: 20px;
-                height: 40px;
+                width: 25px;
+                height: 50px;
             }
             
             #score {
-                font-size: 18px;
+                font-size: 20px;
             }
             
             #gameOver {
-                font-size: 36px;
+                font-size: 28px;
             }
             
             #instructions {
@@ -158,14 +148,15 @@
             <h1>Dino Jump</h1>
             <button id="startButton">Start Game</button>
             <div id="instructions">
-                Press SPACE, UP ARROW or TAP to jump<br>
+                <strong>Desktop:</strong> Press SPACE or UP ARROW to jump<br>
+                <strong>Mobile:</strong> Tap anywhere to jump<br>
                 Avoid the cacti!
             </div>
         </div>
     </div>
 
     <script>
-        // Game variables
+        // Game elements
         const dino = document.getElementById('dino');
         const gameContainer = document.getElementById('gameContainer');
         const scoreElement = document.getElementById('score');
@@ -174,12 +165,12 @@
         const startButton = document.getElementById('startButton');
         const restartButton = document.getElementById('restartButton');
         
+        // Game state
         let isJumping = false;
         let isGameOver = false;
-        let isGameStarted = false;
+        let isGameRunning = false;
         let score = 0;
         let gameSpeed = 5;
-        let gravity = 0.9;
         let dinoPosition = 0;
         let obstacles = [];
         let gameInterval;
@@ -190,95 +181,96 @@
         restartButton.addEventListener('click', resetGame);
         
         // Keyboard controls
-        document.addEventListener('keydown', function(event) {
-            if ((event.code === 'Space' || event.key === ' ' || event.key === 'ArrowUp') && !isJumping && isGameStarted && !isGameOver) {
+        document.addEventListener('keydown', function(e) {
+            if ((e.code === 'Space' || e.key === ' ' || e.key === 'ArrowUp') && !isJumping && isGameRunning) {
                 jump();
-            } else if ((event.code === 'Space' || event.key === ' ' || event.key === 'ArrowUp') && isGameOver) {
-                resetGame();
             }
         });
         
-        // Touch controls
+        // Touch controls (mobile)
         gameContainer.addEventListener('touchstart', function(e) {
             e.preventDefault();
-            if (!isJumping && isGameStarted && !isGameOver) {
+            if (!isJumping && isGameRunning) {
                 jump();
-            } else if (isGameOver) {
-                resetGame();
             }
         });
         
-        // Click/tap controls (for devices that don't properly handle touchstart)
+        // Click controls (fallback)
         gameContainer.addEventListener('click', function(e) {
-            if (!isJumping && isGameStarted && !isGameOver) {
+            if (!isJumping && isGameRunning) {
                 jump();
             }
         });
         
-        // Game functions
+        // Start the game
         function startGame() {
             startScreen.style.display = 'none';
-            isGameStarted = true;
             isGameOver = false;
+            isGameRunning = true;
             score = 0;
             gameSpeed = 5;
+            dinoPosition = 0;
             obstacles = [];
             scoreElement.textContent = score;
             gameOverElement.style.display = 'none';
-            restartButton.style.display = 'none';
             
-            // Clear any existing obstacles
+            // Clear existing obstacles
             document.querySelectorAll('.cactus').forEach(cactus => cactus.remove());
             
             // Start game loop
             gameInterval = setInterval(updateGame, 20);
             scoreInterval = setInterval(updateScore, 100);
+            
+            // Spawn first obstacle after a delay
+            setTimeout(createObstacle, 1000);
         }
         
+        // Reset the game
         function resetGame() {
             clearInterval(gameInterval);
             clearInterval(scoreInterval);
             startGame();
         }
         
+        // Make the dino jump
         function jump() {
-            if (isJumping) return;
+            if (isJumping || !isGameRunning) return;
+            
             isJumping = true;
-            let jumpCount = 0;
-            let jumpInterval = setInterval(function() {
-                // Move up
-                if (jumpCount < 15) {
+            let jumpHeight = 0;
+            const jumpUp = setInterval(() => {
+                if (jumpHeight < 15) {
                     dinoPosition += 4;
                     dino.style.bottom = dinoPosition + 'px';
+                    jumpHeight++;
+                } else {
+                    clearInterval(jumpUp);
+                    const fallDown = setInterval(() => {
+                        if (jumpHeight > 0 && dinoPosition > 0) {
+                            dinoPosition -= 4;
+                            dino.style.bottom = dinoPosition + 'px';
+                            jumpHeight--;
+                        } else {
+                            clearInterval(fallDown);
+                            isJumping = false;
+                            dinoPosition = 0;
+                            dino.style.bottom = '0px';
+                        }
+                    }, 20);
                 }
-                // Move down
-                else if (jumpCount >= 15 && jumpCount < 30) {
-                    dinoPosition -= 4;
-                    dino.style.bottom = dinoPosition + 'px';
-                }
-                // End jump
-                else {
-                    clearInterval(jumpInterval);
-                    isJumping = false;
-                    dinoPosition = 0;
-                    dino.style.bottom = '0px';
-                }
-                jumpCount++;
             }, 20);
         }
         
+        // Create a new cactus obstacle
         function createObstacle() {
-            if (isGameOver) return;
+            if (isGameOver || !isGameRunning) return;
             
             const obstacle = document.createElement('div');
-            obstacle.classList.add('cactus');
+            obstacle.className = 'cactus';
             gameContainer.appendChild(obstacle);
             
-            // Random height for variety
             const height = Math.random() * 30 + 40;
             obstacle.style.height = height + 'px';
-            
-            // Position at right edge of container
             obstacle.style.left = gameContainer.offsetWidth + 'px';
             
             obstacles.push({
@@ -288,64 +280,61 @@
                 passed: false
             });
             
-            // Random interval for next obstacle
+            // Randomly spawn next obstacle
             if (Math.random() > 0.7) {
-                setTimeout(createObstacle, Math.random() * 2000 + 1000);
+                setTimeout(createObstacle, Math.random() * 1500 + 800);
             }
         }
         
+        // Update game state
         function updateGame() {
             if (isGameOver) return;
             
-            // Move obstacles
             obstacles.forEach(obstacle => {
                 obstacle.left -= gameSpeed;
                 obstacle.element.style.left = obstacle.left + 'px';
                 
-                // Check for collision
+                // Check collision
                 if (
                     obstacle.left < 100 && 
-                    obstacle.left > 50 && 
+                    obstacle.left > 30 && 
                     dinoPosition < obstacle.height
                 ) {
                     gameOver();
                 }
                 
-                // Check if obstacle passed
-                if (!obstacle.passed && obstacle.left < 50) {
+                // Increase score when passing obstacle
+                if (!obstacle.passed && obstacle.left < 30) {
                     obstacle.passed = true;
-                    score += 1;
+                    score += 5; // Bonus for passing
                     scoreElement.textContent = score;
                 }
                 
-                // Remove obstacle if off screen
+                // Remove off-screen obstacles
                 if (obstacle.left < -30) {
                     obstacle.element.remove();
                     obstacles.shift();
                 }
             });
             
-            // Randomly create new obstacles
-            if (Math.random() > 0.98 && obstacles.length < 3) {
-                createObstacle();
-            }
-            
-            // Increase game speed as score increases
-            gameSpeed = 5 + Math.floor(score / 10);
+            // Increase difficulty
+            gameSpeed = 5 + Math.floor(score / 50);
         }
         
+        // Update score over time
         function updateScore() {
             if (isGameOver) return;
-            score += 1;
+            score++;
             scoreElement.textContent = score;
         }
         
+        // End the game
         function gameOver() {
             isGameOver = true;
+            isGameRunning = false;
             clearInterval(gameInterval);
             clearInterval(scoreInterval);
             gameOverElement.style.display = 'block';
-            restartButton.style.display = 'block';
         }
     </script>
 </body>
