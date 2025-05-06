@@ -3,52 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Dino Game</title>
+    <title>Advanced Dino Game</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-color: #f0f0f0;
             touch-action: manipulation;
             overflow: hidden;
+            background: #f7f7f7;
         }
 
         #game-container {
             width: 100vw;
             height: 100vh;
             position: relative;
-            background-color: white;
+            overflow: hidden;
         }
 
         #dino {
-            width: 40px;
-            height: 40px;
+            width: 60px;
+            height: 60px;
             position: absolute;
-            bottom: 50px;
+            bottom: 60px;
             left: 50px;
-            background-color: #666;
-            transition: transform 0.3s;
+            z-index: 2;
         }
 
-        .jump {
-            transform: translateY(-80px);
-        }
-
-        #obstacle {
-            width: 20px;
-            height: 40px;
+        .dino-body {
+            width: 40px;
+            height: 60px;
+            background: #535353;
             position: absolute;
-            bottom: 50px;
-            right: -20px;
-            background-color: #444;
+            bottom: 0;
+            border-radius: 5px;
+        }
+
+        .dino-leg {
+            width: 15px;
+            height: 25px;
+            background: #535353;
+            position: absolute;
+            bottom: 0;
         }
 
         #ground {
             position: absolute;
             bottom: 0;
             width: 100%;
-            height: 50px;
-            background-color: #888;
+            height: 60px;
+            background: #999;
+            z-index: 1;
+        }
+
+        .cactus {
+            position: absolute;
+            bottom: 60px;
+            right: -50px;
+            width: 30px;
+            background: #4a4a4a;
+            z-index: 2;
         }
 
         #score {
@@ -56,7 +69,8 @@
             top: 20px;
             right: 20px;
             font-size: 24px;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
+            color: #666;
         }
 
         #game-over {
@@ -67,13 +81,18 @@
             transform: translate(-50%, -50%);
             text-align: center;
             font-family: Arial, sans-serif;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div id="game-container">
         <div id="score">0</div>
-        <div id="dino"></div>
+        <div id="dino">
+            <div class="dino-body"></div>
+            <div class="dino-leg" style="left: -10px;"></div>
+            <div class="dino-leg" style="right: -10px;"></div>
+        </div>
         <div id="ground"></div>
         <div id="game-over">
             <h2>Game Over!</h2>
@@ -85,88 +104,133 @@
         const dino = document.getElementById('dino');
         const scoreElement = document.getElementById('score');
         const gameOverScreen = document.getElementById('game-over');
+        const groundHeight = 60;
+        const dinoStartBottom = 60;
+        
         let isJumping = false;
+        let isGameOver = false;
         let score = 0;
-        let gameActive = true;
+        let velocity = 0;
+        let gravity = 0.6;
+        let jumpForce = -15;
+        let baseSpeed = 8;
+        let currentSpeed = baseSpeed;
+        let obstacleInterval = 2000;
+        let minObstacleInterval = 1000;
+        let lastObstacleTime = 0;
 
-        // Touch controls
-        document.addEventListener('touchstart', handleJump);
-        document.addEventListener('click', handleJump);
-
-        function handleJump() {
-            if (!gameActive) {
-                resetGame();
-                return;
-            }
-            
-            if (!isJumping) {
+        // Physics-based jump
+        function jump() {
+            if (!isJumping && !isGameOver) {
                 isJumping = true;
-                dino.style.transform = 'translateY(-80px)';
-                setTimeout(() => {
-                    dino.style.transform = 'translateY(0)';
-                    isJumping = false;
-                }, 500);
+                velocity = jumpForce;
+                requestAnimationFrame(updateDino);
             }
         }
 
-        // Obstacle creation
-        function createObstacle() {
-            if (!gameActive) return;
+        function updateDino() {
+            if (isGameOver) return;
             
+            const dinoBottom = parseFloat(dino.style.bottom) || dinoStartBottom;
+            velocity += gravity;
+            let newBottom = dinoBottom + velocity;
+
+            if (newBottom <= dinoStartBottom) {
+                newBottom = dinoStartBottom;
+                velocity = 0;
+                isJumping = false;
+            }
+
+            dino.style.bottom = newBottom + 'px';
+
+            if (isJumping) {
+                requestAnimationFrame(updateDino);
+            }
+        }
+
+        // Obstacle management
+        function createObstacle() {
             const obstacle = document.createElement('div');
-            obstacle.id = 'obstacle';
+            obstacle.className = 'cactus';
+            obstacle.style.height = `${Math.random() < 0.5 ? 50 : 80}px`;
             document.getElementById('game-container').appendChild(obstacle);
 
-            let position = 100;
-            const moveInterval = setInterval(() => {
-                if (position < -20) {
+            let position = -50;
+            const move = () => {
+                if (isGameOver) {
                     obstacle.remove();
-                    clearInterval(moveInterval);
-                } else if (gameActive) {
-                    position -= 8;
-                    obstacle.style.right = position + 'px';
-                    
-                    // Collision detection
-                    const dinoRect = dino.getBoundingClientRect();
-                    const obstacleRect = obstacle.getBoundingClientRect();
-                    
-                    if (
-                        dinoRect.left < obstacleRect.right &&
-                        dinoRect.right > obstacleRect.left &&
-                        dinoRect.top < obstacleRect.bottom &&
-                        dinoRect.bottom > obstacleRect.top
-                    ) {
-                        endGame();
-                    }
+                    return;
                 }
-            }, 20);
+
+                position -= currentSpeed;
+                obstacle.style.right = position + 'px';
+
+                // Collision detection
+                const dinoRect = dino.getBoundingClientRect();
+                const obstacleRect = obstacle.getBoundingClientRect();
+
+                if (
+                    dinoRect.left < obstacleRect.right &&
+                    dinoRect.right > obstacleRect.left &&
+                    dinoRect.top < obstacleRect.bottom &&
+                    dinoRect.bottom > obstacleRect.top
+                ) {
+                    endGame();
+                }
+
+                if (position < -100) {
+                    obstacle.remove();
+                } else {
+                    requestAnimationFrame(move);
+                }
+            };
+            requestAnimationFrame(move);
         }
 
         // Game loop
-        function gameLoop() {
-            if (gameActive) {
-                score++;
-                scoreElement.textContent = Math.floor(score / 5);
-                requestAnimationFrame(gameLoop);
+        function gameLoop(timestamp) {
+            if (isGameOver) return;
+
+            // Update score and difficulty
+            score++;
+            scoreElement.textContent = Math.floor(score / 5);
+            
+            // Increase speed gradually
+            currentSpeed = baseSpeed + Math.floor(score / 500);
+            
+            // Increase obstacle frequency
+            if (timestamp - lastObstacleTime > obstacleInterval) {
+                createObstacle();
+                lastObstacleTime = timestamp;
+                obstacleInterval = Math.max(minObstacleInterval, 2000 - (score / 10));
             }
+
+            requestAnimationFrame(gameLoop);
         }
 
         function endGame() {
-            gameActive = false;
+            isGameOver = true;
             gameOverScreen.style.display = 'block';
         }
 
         function resetGame() {
-            gameActive = true;
+            isGameOver = false;
             score = 0;
+            currentSpeed = baseSpeed;
+            obstacleInterval = 2000;
+            lastObstacleTime = 0;
             gameOverScreen.style.display = 'none';
-            document.querySelectorAll('#obstacle').forEach(obs => obs.remove());
-            gameLoop();
+            dino.style.bottom = dinoStartBottom + 'px';
+            document.querySelectorAll('.cactus').forEach(obs => obs.remove());
+            requestAnimationFrame(gameLoop);
         }
 
+        // Controls
+        document.addEventListener('touchstart', jump);
+        document.addEventListener('click', jump);
+
         // Start game
-        setInterval(createObstacle, 2000);
-        gameLoop();
+        requestAnimationFrame(gameLoop);
     </script>
 </body>
 </html>
