@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Move Assistant</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #1a252f;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #e8f4f8;
+            display: none;
+        }
+        #board {
+            width: 400px;
+            height: 400px;
+            margin: 20px auto;
+        }
+        .move-explanation {
+            margin-top: 10px;
+            font-style: italic;
+            color: #555;
+        }
+        .error {
+            color: #e74c3c;
+            margin-top: 5px;
+        }
+        .success {
+            color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chess Move Assistant</h1>
+        
+        <div class="form-group">
+            <label for="color">I am playing as:</label>
+            <select id="color">
+                <option value="white">White</option>
+                <option value="black">Black</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="fen">Starting Position (FEN notation - leave empty for standard chess):</label>
+            <input type="text" id="fen" placeholder="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1">
+        </div>
+        
+        <div class="form-group">
+            <label for="opponentMove">Opponent's Last Move (e.g., e4, Nf3, exd5):</label>
+            <input type="text" id="opponentMove" placeholder="Enter opponent's move">
+            <div id="moveError" class="error"></div>
+        </div>
+        
+        <button id="calculateBtn">Calculate Best Move</button>
+        
+        <div id="board"></div>
+        
+        <div id="result">
+            <h3>Recommended Move:</h3>
+            <div id="bestMove" class="success"></div>
+            <div id="moveExplanation" class="move-explanation"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chess = new Chess();
+            const board = Chessboard('board', {
+                position: 'start',
+                draggable: false
+            });
+            
+            const colorSelect = document.getElementById('color');
+            const fenInput = document.getElementById('fen');
+            const opponentMoveInput = document.getElementById('opponentMove');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resultDiv = document.getElementById('result');
+            const bestMoveDiv = document.getElementById('bestMove');
+            const moveExplanationDiv = document.getElementById('moveExplanation');
+            const moveErrorDiv = document.getElementById('moveError');
+            
+            // Initialize with standard position
+            updateBoard();
+            
+            calculateBtn.addEventListener('click', function() {
+                moveErrorDiv.textContent = '';
+                resultDiv.style.display = 'none';
+                
+                try {
+                    // Reset the game
+                    const fen = fenInput.value.trim() || 'start';
+                    chess.load(fen);
+                    
+                    // If not starting position, apply opponent's move
+                    const opponentMove = opponentMoveInput.value.trim();
+                    if (opponentMove) {
+                        const move = chess.move(opponentMove, {sloppy: true});
+                        if (!move) {
+                            throw new Error('Invalid move: ' + opponentMove);
+                        }
+                    }
+                    
+                    // Calculate best move
+                    const playerColor = colorSelect.value;
+                    if (chess.turn() !== playerColor[0]) {
+                        throw new Error(`It's not your turn (current turn: ${chess.turn() === 'w' ? 'White' : 'Black'})`);
+                    }
+                    
+                    const bestMove = findBestMove(chess, 3); // Depth 3 for reasonable performance
+                    
+                    // Display results
+                    bestMoveDiv.textContent = bestMove.san;
+                    moveExplanationDiv.textContent = getMoveExplanation(bestMove, playerColor);
+                    resultDiv.style.display = 'block';
+                    
+                    // Update board to show the move
+                    chess.move(bestMove);
+                    updateBoard();
+                    chess.undo(); // Undo so player can see position before their move
+                    
+                } catch (error) {
+                    moveErrorDiv.textContent = error.message;
+                    console.error(error);
+                }
+            });
+            
+            function updateBoard() {
+                board.position(chess.fen());
+            }
+            
+            function findBestMove(game, depth) {
+                // This is a simplified evaluation function
+                // In a real application, you would use a more sophisticated algorithm
+                
+                const moves = game.moves({verbose: true});
+                let bestMove = null;
+                let bestValue = -Infinity;
+                
+                for (const move of moves) {
+                    game.move(move);
+                    
+                    let moveValue;
+                    if (depth <= 1 || game.game_over()) {
+                        moveValue = evaluateBoard(game);
+                    } else {
+                        // Recursively evaluate opponent's best reply
+                        const replyValue = findBestMove(game, depth - 1).value;
+                        moveValue = -replyValue; // Negamax approach
+                    }
+                    
+                    game.undo();
+                    
+                    if (moveValue > bestValue || !bestMove) {
+                        bestValue = moveValue;
+                        bestMove = move;
+                        bestMove.value = moveValue;
+                    }
+                }
+                
+                return bestMove;
+            }
+            
+            function evaluateBoard(game) {
+                // Very simple evaluation function
+                // Piece values: pawn=1, knight/bishop=3, rook=5, queen=9
+                
+                if (game.in_checkmate()) {
+                    return game.turn() === colorSelect.value[0] ? -1000 : 1000;
+                }
+                
+                if (game.in_draw() || game.in_stalemate() || game.in_threefold_repetition()) {
+                    return 0;
+                }
+                
+                let score = 0;
+                const pieceValues = {
+                    p: -1, n: -3, b: -3, r: -5, q: -9, k: 0,
+                    P: 1, N: 3, B: 3, R: 5, Q: 9, K: 0
+                };
+                
+                const fen = game.fen().split(' ')[0];
+                for (const char of fen) {
+                    if (pieceValues[char]) {
+                        score += pieceValues[char];
+                    }
+                }
+                
+                // Adjust for player color
+                return colorSelect.value === 'white' ? score : -score;
+            }
+            
+            function getMoveExplanation(move, playerColor) {
+                const pieceMap = {
+                    P: playerColor === 'white' ? '♙' : '♟',
+                    N: playerColor === 'white' ? '♘' : '♞',
+                    B: playerColor === 'white' ? '♗' : '♝',
+                    R: playerColor === 'white' ? '♖' : '♜',
+                    Q: playerColor === 'white' ? '♕' : '♛',
+                    K: playerColor === 'white' ? '♔' : '♚'
+                };
+                
+                const pieceSymbol = pieceMap[move.piece.toUpperCase()] || '';
+                const pieceName = getPieceName(move.piece, playerColor);
+                
+                let explanation = `Move your ${pieceName} (${pieceSymbol}) from ${move.from} to ${move.to}`;
+                
+                if (move.captured) {
+                    const capturedName = getPieceName(move.captured, playerColor === 'white' ? 'black' : 'white');
+                    explanation += `, capturing opponent's ${capturedName}`;
+                }
+                
+                if (move.promotion) {
+                    const promoName = getPieceName(move.promotion, playerColor);
+                    explanation += ` and promoting to ${promoName}`;
+                }
+                
+                if (move.flags.includes('k')) {
+                    explanation += " (kingside castling)";
+                } else if (move.flags.includes('q')) {
+                    explanation += " (queenside castling)";
+                } else if (move.flags.includes('e')) {
+                    explanation += " (en passant capture)";
+                }
+                
+                return explanation;
+            }
+            
+            function getPieceName(piece, color) {
+                const isWhite = piece === piece.toUpperCase();
+                const effectiveColor = isWhite ? 'white' : 'black';
+                const pieceLower = piece.toLowerCase();
+                
+                const names = {
+                    p: effectiveColor === 'white' ? 'white pawn' : 'black pawn',
+                    n: effectiveColor === 'white' ? 'white knight' : 'black knight',
+                    b: effectiveColor === 'white' ? 'white bishop' : 'black bishop',
+                    r: effectiveColor === 'white' ? 'white rook' : 'black rook',
+                    q: effectiveColor === 'white' ? 'white queen' : 'black queen',
+                    k: effectiveColor === 'white' ? 'white king' : 'black king'
+                };
+                
+                return names[pieceLower] || piece;
+            }
+        });
+    </script>
+</body>
+</html>
