@@ -1,1 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess with Move Suggestions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .chess-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        #chessboard {
+            width: 400px;
+            height: 400px;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            border: 2px solid #333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .square {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .light {
+            background-color: #f0d9b5;
+        }
+        
+        .dark {
+            background-color: #b58863;
+        }
+        
+        .piece {
+            width: 80%;
+            height: 80%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            cursor: grab;
+            z-index: 10;
+        }
+        
+        .piece.dragging {
+            opacity: 0.8;
+            cursor: grabbing;
+        }
+        
+        .highlight {
+            background-color: rgba(0, 255, 0, 0.3);
+        }
+        
+        .possible-move {
+            position: absolute;
+            width: 25%;
+            height: 25%;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            z-index: 5;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .status {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .suggested-move {
+            background-color: rgba(255, 215, 0, 0.5) !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chess with Move Suggestions</h1>
+    
+    <div class="chess-container">
+        <div id="chessboard"></div>
+        <div class="controls">
+            <button id="suggestMoveBtn">Suggest Move</button>
+            <button id="resetBtn">Reset Game</button>
+        </div>
+        <div class="status" id="status">White's turn</div>
+    </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Chess piece images (base64 encoded)
+            const pieceImages = {
+                'white': {
+                    'pawn': 'data:image/png;base64,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',
+                    'rook': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NSA0NSI+PHBhdGggZD0iTTkgMzZoMjh2N0g5eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTEyLjUgMzJjMC0xLjUgMS0yLjUgMi0yLjVoMTdjMSAwIDIgMSAyIDIuNXYyLjVoLTIxdjIuNXoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMiAzNnYtNGgydjRoLTJ6IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTkgMzZ2LTRoMnY0aC0yeiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTI2IDM2di00aDJ2NGgtMnoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zMyAzNnYtNGgydjRoLTJ6IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTIgMzZ2LTRoMnY0aC0yeiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTkgMzBoMjd2M0g5eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTEwLjUgMjNoM3Y2aC0zeiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE1LjUgMjNoM3Y2aC0zeiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTIwLjUgMjNoM3Y2aC0zeiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTI1LjUgMjNoM3Y2aC0zeiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTMwLjUgMjNoM3Y2aC0zeiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTkgMjBoMjd2M0g5eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTkuNSAxNmMwLTEgMS0yIDItMnMyIDEgMiAyYzAgMi0xIDMtMSAzcy0xLTEtMS0zeiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTMxLjUgMTZjMC0xLTEtMi0yLTJzLTIgMS0yIDJjMCAyIDEgMyAxIDNzMS0xIDEtM3oiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==',
+                    'knight': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NSA0NSI+PHBhdGggZD0iTTIyIDEwYzEwIDAgMTEgOCAxMSA4LTEgMS0xIDItMiAyLTEgMS0yIDEtMyAxLTQgMC02LTYtNi02LTZzLTQgMC02IDZjMCAwLTYgMC02IDZsLTQgMTJoMTBsLTItMTBjMC0yIDItMiAyLTJzMiAwIDIgMnoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOCAzM2MtMi0xLTMtMi0zLTMgMC0xIDEtMiAyLTItMS0xLTEtMi0xLTIgMC0yIDEtMyAyLTMgMSAwIDIgMSAyIDMgMCAxIDAgMi0xIDMtMSAxIDAgMiAxIDIgMiAwIDEtMSAyLTIgMi0xIDAtMiAwLTMtMXoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik05IDM2YzItMSAxMC0xIDEyIDAgMiAxIDIgMSAyIDFIMnMxLTEgNy0xeiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTExIDEzLjVjMCAuOC0uNyAxLjUtMS41IDEuNXMtMS41LS43LTEuNS0xLjUuNy0xLjUgMS41LTEuNSAxLjUuNyAxLjUgMS41eiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+',
+                    'bishop': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NSA0NSI+PHBhdGggZD0iTTkgMzZoMjd2M0g5eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTEyIDM2di0zaDIxdjNIMTJ6IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTEgMzBoOHYzaC04eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTI2IDMwaDh2M2gtOHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNiAxOGMwIDUgMyA2IDYgNnM2LTEgNi02YzAtMy0zLTUtNi01cy02IDItNiA1eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE1IDE4YzAtMiAxLTIgMi0yIDIgMCAyIDIgMiAyaDJjMC0yIDAtMiAyLTIgMSAwIDIgMCAyIDIgMCAyLTEgMi0yIDJoLTJjLTIgMC0yIDAtMi0yeiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE1IDE1YzAtMiAxLTIgMi0yIDIgMCAyIDIgMiAyaDJjMC0yIDAtMiAyLTIgMSAwIDIgMCAyIDIgMCAyLTEgMi0yIDJoLTJjLTIgMC0yIDAtMi0yeiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE1IDEyYzAtMiAxLTIgMi0yIDIgMCAyIDIgMiAyaDJjMC0yIDAtMiAyLTIgMSAwIDIgMCAyIDIgMCAyLTEgMi0yIDJoLTJjLTIgMC0yIDAtMi0yeiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE1IDljMC0yIDEtMiAyLTIgMiAwIDIgMiAyIDJoMmMwLTIgMC0yIDItMiAxIDAgMiAwIDIgMiAwIDItMSAyLTIgMmgtMmMtMiAwLTIgMC0yLTJ6IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTUgNmMwLTIgMS0yIDItMiAyIDAgMiAyIDIgMmgyYzAtMiAwLTIgMi0yIDEgMCAyIDAgMiAyIDAgMi0xIDItMiAyaC0yYy0yIDAtMiAwLTItMnoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==',
+                    'queen': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NSA0NSI+PHBhdGggZD0iTTkgMzZoMjd2M0g5eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTEyIDM2di0zaDIxdjNIMTJ6IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTEgMzBoOHYzaC04eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTI2IDMwaDh2M2gtOHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAyM2MwIDQgMSA2IDMgNnMzLTIgMy02LTEtNi0zLTYtMyAyLTMgNnoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNiAxOGMwIDQgMSA2IDMgNnMzLTIgMy02LTEtNi0zLTYtMyAyLTMgNnoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNiAxNWMwIDQgMSA2IDMgNnMzLTIgMy02LTEtNi0zLTYtMyAyLTMgNnoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNiAxMmMwIDQgMSA2IDMgNnMzLTIgMy02LTEtNi0zLTYtMyAyLTMgNnoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNiA5YzAgNCAxIDYgMyA2czMtMiAzLTYtMS02LTMtNi0zIDItMyA2eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE2IDZjMCA0IDEgNiAzIDZzMy0yIDMtNi0xLTYtMy02LTMgMi0zIDZ6IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=',
+                    'king': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NSA0NSI+PHBhdGggZD0iTTIyLjUgMTFjLTIgMC0zIDEuNS0zIDMgMiAwIDMgMS41IDMgM3MxLTMgMy0zYzAtMS41LTEtMy0zLTN6IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMjIgMTBoM3YzaC0zeiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTkgMzZoMjd2M0g5eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTEyIDM2di0zaDIxdjNIMTJ6IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTEgMzBoOHYzaC04eiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTI2IDMwaDh2M2gtOHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxOWMwLTkgOC0xMCA4LTEwczggMSA4IDEwYzAgOC0xOCA4LTE4IDB6IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTkgMTljMC05IDgtMTAgOC0xMHM4IDEgOCAxMGMwIDgtMTggOC0xOCAweiIgZmlsbD0iI2ZmZiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE5IDE5YzAtOSA4LTEwIDgtMTBzOCAxIDggMTBjMCA4LTE4IDgtMTggMHoiIGZpbGw9IiNmZmYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxOWMwLTkgOC0xMCA4LTEwczggMSA4IDEwYzAgOC0xOCA4LTE4IDB6IiBmaWxsPSIjZmZmIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4='
+                },
+                'black': {
+                    'pawn': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NSA0NSI+PHBhdGggZD0iTTIyIDljLTIgMC0yIDEtMiAxczEgMSAyIDFjMiAwIDMtMSAzLTFzMC0xLTMtMXoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0yNCAxMGMwLTEgMS0xIDEtMWgzYzIgMSAyIDIgMSA0LTEgMi0xIDMtMSAzaC0zcy0xLTEtMi0yLTEtMi0xLTJ6IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNOSAxM2MtMS0xLTEtMiAwLTJzMSAwIDIgMC0xIDEgMCAyYzAgMi0xIDMtMSAzaC0zcy0xLTEtMS0yYzAtMiAxLTMgMy0zeiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTIzIDEzYzAgMS0xIDItMiAyLTEgMS0xIDItMSAyaC0zcy0xLTEtMS0yYzAtMiAxLTMgMy0zaDNjMCAwIDAgMS0xIDJ6IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTUgMTVjLTEgMC0xIDEtMSAxczEgMSAyIDFjMiAwIDMtMSAzLTFzMC0xLTMtMXoiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNS41IDMwYzAtMS41LjUtMi41LjUtMi41cy0xLjUtMS0yLjUtMS0yIDAtMi41IDEgMS41IDEgMS41IDIuNXYxMGgzdi0xMHoiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0yMCA4YzAgMi0xIDMtMyAzLTItMS0zLTEtMy0xcy0xLTEgMC0yYzAtMSAxLTIgMy0yIDIgMCAzIDEgMyAyeiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTkgMTNjMS0xIDMtMSA1IDAgMiAxIDMgMSAzIDFzMS0xIDAtMmMtMS0xLTMtMi01LTItMiAwLTMgMS0zIDJ6IiBmaWxsPSIjMDAwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=',
+                    'rook': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NSA0NSI+PHBhdGggZD0iTTkgMzZoMjh2N0g5eiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTEyLjUgMzJjMC0xLjUgMS0yLjUgMi0yLjVoMTdjMSAwIDIgMSAyIDIuNXYyLjVoLTIxdjIuNXoiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMiAzNnYtNGgydjRoLTJ6IiBmaWxsPSIjMDAwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTkgMzZ2LTRoMnY0aC0yeiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTI2IDM2di00aDJ2NGgtMnoiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zMyAzNnYtNGgydjRoLTJ6IiBmaWxsPSIjMDAwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTIgMzZ2LTRoMnY0aC0yeiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTkgMzBoMjd2M0g5eiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTEwLjUgMjNoM3Y2aC0zeiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE1LjUgMjNoM3Y2aC0zeiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTIwLjUgMjNoM3Y2aC0zeiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTI1LjUgMjNoM3Y2aC0zeiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTMwLjUgMjNoM3Y2aC0zeiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTkgMjBoMjd2M0g5eiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTkuNSAxNmMwLTEgMS0yIDItMnMyIDEgMiAyYzAgMi0xIDMtMSAzcy0xLTEtMS0zeiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTMxLjUgMTZjMC0xLTEtMi0yLTJzLTIgMS0yIDJjMCAyIDEgMyAxIDNzMS0xIDEtM3oiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==',
+                    'knight': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NSA0NSI+PHBhdGggZD0iTTIyIDEwYzEwIDAgMTEgOCAxMSA4LTEgMS0xIDItMiAyLTEgMS0yIDEtMyAxLTQgMC02LTYtNi02LTZzLTQgMC02IDZjMCAwLTYgMC02IDZsLTQgMTJoMTBsLTItMTBjMC0yIDItMiAyLTJzMiAwIDIgMnoiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOCAzM2MtMi0xLTMtMi0zLTMgMC0xIDEtMiAyLTItMS0xLTEtMi0xLTIgMC0yIDEtMyAyLTMgMSAwIDIgMSAyIDMgMCAxIDAgMi0xIDMtMSAxIDAgMiAxIDIgMiAwIDEtMSAyLTIgMi0xIDAtMiAwLTMtMXoiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik05IDM2YzItMSAxMC0xIDEyIDAgMiAxIDIgMSAyIDFIMnMxLTEgNy0xeiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTExIDEzLjVjMCAuOC0uNyAxLjUtMS41IDEuNXMtMS41LS43LTEuNS0xLjUuNy0xLjUgMS41LTEuNSAxLjUuNyAxLjUgMS41eiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+',
+                    'bishop': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NSA0NSI+PHBhdGggZD0iTTkgMzZoMjd2M0g5eiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTEyIDM2di0zaDIxdjNIMTJ6IiBmaWxsPSIjMDAwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTEgMzBoOHYzaC04eiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTI2IDMwaDh2M2gtOHoiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNiAxOGMwIDUgMyA2IDYgNnM2LTEgNi02YzAtMy0zLTUtNi01cy02IDItNiA1eiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE1IDE4YzAtMiAxLTIgMi0yIDIgMCAyIDIgMiAyaDJjMC0yIDAtMiAyLTIgMSAwIDIgMCAyIDIgMCAyLTEgMi0yIDJoLTJjLTIgMC0yIDAtMi0yeiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE1IDE1YzAtMiAxLTIgMi0yIDIgMCAyIDIgMiAyaDJjMC0yIDAtMiAyLTIgMSAwIDIgMCAyIDIgMCAyLTEgMi0yIDJoLTJjLTIgMC0yIDAtMi0yeiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE1IDEyYzAtMiAxLTIgMi0yIDIgMCAyIDIgMiAyaDJjMC0yIDAtMiAyLTIgMSAwIDIgMCAyIDIgMCAyLTEgMi0yIDJoLTJjLTIgMC0yIDAtMi0yeiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE1IDljMC0yIDEtMiAyLTIgMiAwIDIgMiAyIDJoMmMwLTIgMC0yIDItMiAxIDAgMiAwIDIgMiAwIDItMSAyLTIgMmgtMmMtMiAwLTIgMC0yLTJ6IiBmaWxsPSIjMDAwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTUgNmMwLTIgMS0yIDItMiAyIDAgMiAyIDIgMmgyYzAtMiAwLTIgMi0yIDEgMCAyIDAgMiAyIDAgMi0xIDItMiAyaC0yYy0yIDAtMiAwLTItMnoiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==',
+                    'queen': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NSA0NSI+PHBhdGggZD0iTTkgMzZoMjd2M0g5eiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTEyIDM2di0zaDIxdjNIMTJ6IiBmaWxsPSIjMDAwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTEgMzBoOHYzaC04eiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTI2IDMwaDh2M2gtOHoiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAyM2MwIDQgMSA2IDMgNnMzLTIgMy02LTEtNi0zLTYtMyAyLTMgNnoiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNiAxOGMwIDQgMSA2IDMgNnMzLTIgMy02LTEtNi0zLTYtMyAyLTMgNnoiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNiAxNWMwIDQgMSA2IDMgNnMzLTIgMy02LTEtNi0zLTYtMyAyLTMgNnoiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNiAxMmMwIDQgMSA2IDMgNnMzLTIgMy02LTEtNi0zLTYtMyAyLTMgNnoiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xNiA5YzAgNCAxIDYgMyA2czMtMiAzLTYtMS02LTMtNi0zIDItMyA2eiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE2IDZjMCA0IDEgNiAzIDZzMy0yIDMtNi0xLTYtMy02LTMgMi0zIDZ6IiBmaWxsPSIjMDAwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=',
+                    'king': 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NSA0NSI+PHBhdGggZD0iTTIyLjUgMTFjLTIgMC0zIDEuNS0zIDMgMiAwIDMgMS41IDMgM3MxLTMgMy0zYzAtMS41LTEtMy0zLTN6IiBmaWxsPSJub25lIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMjIgMTBoM3YzaC0zeiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTkgMzZoMjd2M0g5eiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTEyIDM2di0zaDIxdjNIMTJ6IiBmaWxsPSIjMDAwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTEgMzBoOHYzaC04eiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTI2IDMwaDh2M2gtOHoiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxOWMwLTkgOC0xMCA4LTEwczggMSA4IDEwYzAgOC0xOCA4LTE4IDB6IiBmaWxsPSIjMDAwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMTkgMTljMC05IDgtMTAgOC0xMHM4IDEgOCAxMGMwIDgtMTggOC0xOCAweiIgZmlsbD0iIzAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTE5IDE5YzAtOSA4LTEwIDgtMTBzOCAxIDggMTBjMCA4LTE4IDgtMTggMHoiIGZpbGw9IiMwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xOSAxOWMwLTkgOC0xMCA4LTEwczggMSA4IDEwYzAgOC0xOCA4LTE4IDB6IiBmaWxsPSIjMDAwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMS41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4='
+                }
+            };
+
+            // Chess game state
+            const game = {
+                board: Array(8).fill().map(() => Array(8).fill(null)),
+                currentPlayer: 'white',
+                selectedPiece: null,
+                possibleMoves: [],
+                suggestedMove: null,
+                gameOver: false,
+                
+                // Initialize the board
+                init() {
+                    // Set up pawns
+                    for (let i = 0; i < 8; i++) {
+                        this.board[1][i] = { type: 'pawn', color: 'black' };
+                        this.board[6][i] = { type: 'pawn', color: 'white' };
+                    }
+                    
+                    // Set up rooks
+                    this.board[0][0] = { type: 'rook', color: 'black' };
+                    this.board[0][7] = { type: 'rook', color: 'black' };
+                    this.board[7][0] = { type: 'rook', color: 'white' };
+                    this.board[7][7] = { type: 'rook', color: 'white' };
+                    
+                    // Set up knights
+                    this.board[0][1] = { type: 'knight', color: 'black' };
+                    this.board[0][6] = { type: 'knight', color: 'black' };
+                    this.board[7][1] = { type: 'knight', color: 'white' };
+                    this.board[7][6] = { type: 'knight', color: 'white' };
+                    
+                    // Set up bishops
+                    this.board[0][2] = { type: 'bishop', color: 'black' };
+                    this.board[0][5] = { type: 'bishop', color: 'black' };
+                    this.board[7][2] = { type: 'bishop', color: 'white' };
+                    this.board[7][5] = { type: 'bishop', color: 'white' };
+                    
+                    // Set up queens
+                    this.board[0][3] = { type: 'queen', color: 'black' };
+                    this.board[7][3] = { type: 'queen', color: 'white' };
+                    
+                    // Set up kings
+                    this.board[0][4] = { type: 'king', color: 'black' };
+                    this.board[7][4] = { type: 'king', color: 'white' };
+                    
+                    this.renderBoard();
+                },
+                
+                // Render the board to the HTML
+                renderBoard() {
+                    const chessboard = document.getElementById('chessboard');
+                    chessboard.innerHTML = '';
+                    
+                    for (let row = 0; row < 8; row++) {
+                        for (let col = 0; col < 8; col++) {
+                            const square = document.createElement('div');
+                            square.className = `square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
+                            square.dataset.row = row;
+                            square.dataset.col = col;
+                            
+                            // Highlight suggested move
+                            if (this.suggestedMove && 
+                                this.suggestedMove.from.row === row && 
+                                this.suggestedMove.from.col === col) {
+                                square.classList.add('suggested-move');
+                            }
+                            
+                            // Add piece if exists
+                            const piece = this.board[row][col];
+                            if (piece) {
+                                const pieceElement = document.createElement('div');
+                                pieceElement.className = `piece ${piece.color}`;
+                                pieceElement.dataset.type = piece.type;
+                                pieceElement.dataset.color = piece.color;
+                                pieceElement.style.backgroundImage = `url('${pieceImages[piece.color][piece.type]}')`;
+                                square.appendChild(pieceElement);
+                            }
+                            
+                            // Highlight possible moves
+                            if (this.possibleMoves.some(move => move.row === row && move.col === col)) {
+                                const moveIndicator = document.createElement('div');
+                                moveIndicator.className = 'possible-move';
+                                square.appendChild(moveIndicator);
+                            }
+                            
+                            chessboard.appendChild(square);
+                        }
+                    }
+                    
+                    // Update status
+                    document.getElementById('status').textContent = this.gameOver ? 
+                        `Game over - ${this.currentPlayer === 'white' ? 'Black' : 'White'} wins!` : 
+                        `${this.currentPlayer === 'white' ? 'White' : 'Black'}'s turn`;
+                },
+                
+                // Select a piece
+                selectPiece(row, col) {
+                    if (this.gameOver) return;
+                    
+                    const piece = this.board[row][col];
+                    
+                    // If no piece selected and clicked on a piece of current player's color
+                    if (!this.selectedPiece && piece && piece.color === this.currentPlayer) {
+                        this.selectedPiece = { row, col };
+                        this.possibleMoves = this.getPossibleMoves(row, col);
+                        this.renderBoard();
+                    }
+                    // If a piece is already selected
+                    else if (this.selectedPiece) {
+                        // If clicked on the same piece, deselect it
+                        if (this.selectedPiece.row === row && this.selectedPiece.col === col) {
+                            this.selectedPiece = null;
+                            this.possibleMoves = [];
+                            this.renderBoard();
+                        }
+                        // If clicked on a possible move, move the piece
+                        else if (this.possibleMoves.some(move => move.row === row && move.col === col)) {
+                            this.movePiece(this.selectedPiece.row, this.selectedPiece.col, row, col);
+                            this.selectedPiece = null;
+                            this.possibleMoves = [];
+                            this.suggestedMove = null;
+                            this.currentPlayer = this.currentPlayer === 'white' ? 'black' : 'white';
+                            this.renderBoard();
+                        }
+                        // If clicked on another piece of current player's color, select that piece
+                        else if (piece && piece.color === this.currentPlayer) {
+                            this.selectedPiece = { row, col };
+                            this.possibleMoves = this.getPossibleMoves(row, col);
+                            this.renderBoard();
+                        }
+                    }
+                },
+                
+                // Move a piece
+                movePiece(fromRow, fromCol, toRow, toCol) {
+                    const piece = this.board[fromRow][fromCol];
+                    
+                    // Check if it's a pawn promotion
+                    if (piece.type === 'pawn' && (toRow === 0 || toRow === 7)) {
+                        // For simplicity, we'll always promote to queen
+                        piece.type = 'queen';
+                    }
+                    
+                    // Check if it's a castling move
+                    if (piece.type === 'king' && Math.abs(fromCol - toCol) === 2) {
+                        // Move the rook
+                        if (toCol === 6) { // Kingside castle
+                            this.board[toRow][5] = this.board[toRow][7];
+                            this.board[toRow][7] = null;
+                        } else if (toCol === 2) { // Queenside castle
+                            this.board[toRow][3] = this.board[toRow][0];
+                            this.board[toRow][0] = null;
+                        }
+                    }
+                    
+                    // Move the piece
+                    this.board[toRow][toCol] = piece;
+                    this.board[fromRow][fromCol] = null;
+                    
+                    // Check if the game is over (king captured)
+                    this.checkGameOver();
+                },
+                
+                // Check if the game is over (king captured)
+                checkGameOver() {
+                    let whiteKingFound = false;
+                    let blackKingFound = false;
+                    
+                    for (let row = 0; row < 8; row++) {
+                        for (let col = 0; col < 8; col++) {
+                            const piece = this.board[row][col];
+                            if (piece && piece.type === 'king') {
+                                if (piece.color === 'white') whiteKingFound = true;
+                                if (piece.color === 'black') blackKingFound = true;
+                            }
+                        }
+                    }
+                    
+                    if (!whiteKingFound || !blackKingFound) {
+                        this.gameOver = true;
+                    }
+                },
+                
+                // Get all possible moves for a piece
+                getPossibleMoves(row, col) {
+                    const piece = this.board[row][col];
+                    if (!piece) return [];
+                    
+                    const moves = [];
+                    
+                    switch (piece.type) {
+                        case 'pawn':
+                            this.getPawnMoves(row, col, piece.color, moves);
+                            break;
+                        case 'rook':
+                            this.getRookMoves(row, col, piece.color, moves);
+                            break;
+                        case 'knight':
+                            this.getKnightMoves(row, col, piece.color, moves);
+                            break;
+                        case 'bishop':
+                            this.getBishopMoves(row, col, piece.color, moves);
+                            break;
+                        case 'queen':
+                            this.getRookMoves(row, col, piece.color, moves);
+                            this.getBishopMoves(row, col, piece.color, moves);
+                            break;
+                        case 'king':
+                            this.getKingMoves(row, col, piece.color, moves);
+                            break;
+                    }
+                    
+                    return moves;
+                },
+                
+                // Pawn movement rules
+                getPawnMoves(row, col, color, moves) {
+                    const direction = color === 'white' ? -1 : 1;
+                    const startRow = color === 'white' ? 6 : 1;
+                    
+                    // Move forward one square
+                    if (this.isValidSquare(row + direction, col) && !this.board[row + direction][col]) {
+                        moves.push({ row: row + direction, col });
+                        
+                        // Move forward two squares from starting position
+                        if (row === startRow && !this.board[row + 2 * direction][col]) {
+                            moves.push({ row: row + 2 * direction, col });
+                        }
+                    }
+                    
+                    // Capture diagonally
+                    for (const dc of [-1, 1]) {
+                        if (this.isValidSquare(row + direction, col + dc)) {
+                            const target = this.board[row + direction][col + dc];
+                            if (target && target.color !== color) {
+                                moves.push({ row: row + direction, col: col + dc });
+                            }
+                        }
+                    }
+                },
+                
+                // Rook movement rules
+                getRookMoves(row, col, color, moves) {
+                    const directions = [
+                        { dr: -1, dc: 0 }, // up
+                        { dr: 1, dc: 0 },  // down
+                        { dr: 0, dc: -1 }, // left
+                        { dr: 0, dc: 1 }   // right
+                    ];
+                    
+                    for (const dir of directions) {
+                        let r = row + dir.dr;
+                        let c = col + dir.dc;
+                        
+                        while (this.isValidSquare(r, c)) {
+                            if (!this.board[r][c]) {
+                                moves.push({ row: r, col: c });
+                            } else {
+                                if (this.board[r][c].color !== color) {
+                                    moves.push({ row: r, col: c });
+                                }
+                                break;
+                            }
+                            
+                            r += dir.dr;
+                            c += dir.dc;
+                        }
+                    }
+                },
+                
+                // Knight movement rules
+                getKnightMoves(row, col, color, moves) {
+                    const knightMoves = [
+                        { dr: -2, dc: -1 }, { dr: -2, dc: 1 },
+                        { dr: -1, dc: -2 }, { dr: -1, dc: 2 },
+                        { dr: 1, dc: -2 },  { dr: 1, dc: 2 },
+                        { dr: 2, dc: -1 },  { dr: 2, dc: 1 }
+                    ];
+                    
+                    for (const move of knightMoves) {
+                        const r = row + move.dr;
+                        const c = col + move.dc;
+                        
+                        if (this.isValidSquare(r, c)) {
+                            if (!this.board[r][c] || this.board[r][c].color !== color) {
+                                moves.push({ row: r, col: c });
+                            }
+                        }
+                    }
+                },
+                
+                // Bishop movement rules
+                getBishopMoves(row, col, color, moves) {
+                    const directions = [
+                        { dr: -1, dc: -1 }, // up-left
+                        { dr: -1, dc: 1 },  // up-right
+                        { dr: 1, dc: -1 },   // down-left
+                        { dr: 1, dc: 1 }     // down-right
+                    ];
+                    
+                    for (const dir of directions) {
+                        let r = row + dir.dr;
+                        let c = col + dir.dc;
+                        
+                        while (this.isValidSquare(r, c)) {
+                            if (!this.board[r][c]) {
+                                moves.push({ row: r, col: c });
+                            } else {
+                                if (this.board[r][c].color !== color) {
+                                    moves.push({ row: r, col: c });
+                                }
+                                break;
+                            }
+                            
+                            r += dir.dr;
+                            c += dir.dc;
+                        }
+                    }
+                },
+                
+                // King movement rules (including castling)
+                getKingMoves(row, col, color, moves) {
+                    const kingMoves = [
+                        { dr: -1, dc: -1 }, { dr: -1, dc: 0 }, { dr: -1, dc: 1 },
+                        { dr: 0, dc: -1 },                     { dr: 0, dc: 1 },
+                        { dr: 1, dc: -1 },  { dr: 1, dc: 0 },  { dr: 1, dc: 1 }
+                    ];
+                    
+                    // Normal moves
+                    for (const move of kingMoves) {
+                        const r = row + move.dr;
+                        const c = col + move.dc;
+                        
+                        if (this.isValidSquare(r, c)) {
+                            if (!this.board[r][c] || this.board[r][c].color !== color) {
+                                moves.push({ row: r, col: c });
+                            }
+                        }
+                    }
+                    
+                    // Castling
+                    if (row === (color === 'white' ? 7 : 0) && col === 4) {
+                        // Kingside castle
+                        if (this.canCastle(color, 'kingside')) {
+                            moves.push({ row, col: 6, isCastle: true });
+                        }
+                        
+                        // Queenside castle
+                        if (this.canCastle(color, 'queenside')) {
+                            moves.push({ row, col: 2, isCastle: true });
+                        }
+                    }
+                },
+                
+                // Check if castling is possible
+                canCastle(color, side) {
+                    // For simplicity, we'll assume castling is always possible
+                    // In a real implementation, you'd need to track if king/rook have moved
+                    // and check that the squares between are empty and not under attack
+                    return true;
+                },
+                
+                // Check if a square is valid (on the board)
+                isValidSquare(row, col) {
+                    return row >= 0 && row < 8 && col >= 0 && col < 8;
+                },
+                
+                // Suggest the best move for the current player
+                suggestMove() {
+                    if (this.gameOver) return;
+                    
+                    const allPossibleMoves = this.getAllPossibleMovesForCurrentPlayer();
+                    
+                    if (allPossibleMoves.length === 0) {
+                        alert("No moves available!");
+                        return;
+                    }
+                    
+                    // Simple evaluation function
+                    const evaluateMove = (move) => {
+                        let score = 0;
+                        
+                        // Capture opponent's piece
+                        const targetPiece = this.board[move.to.row][move.to.col];
+                        if (targetPiece) {
+                            // Assign values to pieces
+                            const pieceValues = {
+                                pawn: 1,
+                                knight: 3,
+                                bishop: 3,
+                                rook: 5,
+                                queen: 9,
+                                king: 100
+                            };
+                            
+                            score += pieceValues[targetPiece.type];
+                        }
+                        
+                        // Center control for pawns
+                        if (move.piece.type === 'pawn') {
+                            if (move.to.col >= 3 && move.to.col <= 4) {
+                                score += 0.1;
+                            }
+                        }
+                        
+                        // Development for knights/bishops
+                        if ((move.piece.type === 'knight' || move.piece.type === 'bishop') && 
+                            (move.from.row === (this.currentPlayer === 'white' ? 7 : 0))) {
+                            score += 0.1;
+                        }
+                        
+                        // Castling is good
+                        if (move.isCastle) {
+                            score += 0.5;
+                        }
+                        
+                        // Check if move puts opponent in check
+                        // (For simplicity, we're not implementing full check detection)
+                        
+                        return score;
+                    };
+                    
+                    // Evaluate all possible moves
+                    const evaluatedMoves = allPossibleMoves.map(move => ({
+                        move,
+                        score: evaluateMove(move)
+                    }));
+                    
+                    // Sort by score (highest first)
+                    evaluatedMoves.sort((a, b) => b.score - a.score);
+                    
+                    // Select the best move
+                    const bestMove = evaluatedMoves[0].move;
+                    
+                    // Highlight the suggested move
+                    this.suggestedMove = {
+                        from: bestMove.from,
+                        to: bestMove.to
+                    };
+                    
+                    this.renderBoard();
+                },
+                
+                // Get all possible moves for the current player
+                getAllPossibleMovesForCurrentPlayer() {
+                    const allMoves = [];
+                    
+                    for (let row = 0; row < 8; row++) {
+                        for (let col = 0; col < 8; col++) {
+                            const piece = this.board[row][col];
+                            if (piece && piece.color === this.currentPlayer) {
+                                const moves = this.getPossibleMoves(row, col);
+                                
+                                for (const move of moves) {
+                                    allMoves.push({
+                                        from: { row, col },
+                                        to: move,
+                                        piece,
+                                        isCastle: move.isCastle || false
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    
+                    return allMoves;
+                },
+                
+                // Reset the game
+                reset() {
+                    this.board = Array(8).fill().map(() => Array(8).fill(null));
+                    this.currentPlayer = 'white';
+                    this.selectedPiece = null;
+                    this.possibleMoves = [];
+                    this.suggestedMove = null;
+                    this.gameOver = false;
+                    this.init();
+                }
+            };
+            
+            // Initialize the game
+            game.init();
+            
+            // Event listeners
+            document.getElementById('chessboard').addEventListener('click', (e) => {
+                let target = e.target;
+                
+                // Find the square element (might have clicked on a piece inside the square)
+                while (target && !target.classList.contains('square')) {
+                    target = target.parentElement;
+                }
+                
+                if (target) {
+                    const row = parseInt(target.dataset.row);
+                    const col = parseInt(target.dataset.col);
+                    game.selectPiece(row, col);
+                }
+            });
+            
+            document.getElementById('suggestMoveBtn').addEventListener('click', () => {
+                game.suggestMove();
+            });
+            
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                game.reset();
+            });
+        });
+    </script>
+</body>
+</html>
