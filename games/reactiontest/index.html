@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reaction Test</title>
+    <style>
+        body {
+            background: black;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        #circle {
+            background: transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            position: absolute;        
+        }
+    </style>
+</head>
+<body onload="moveCircle()">
+    <h1>Click the Circle as fast as possible!</h1>
+    <p id="message">Ready?</p>
+    <div id="circle" onclick="measureTime()"></div>
+    <script>
+        let startTime;
+
+        function resizeCircle() {
+            const circle = document.getElementById('circle');
+            const size = Math.random() * 100 + 20;
+            circle.style.width = `${size}px`;
+            circle.style.height = `${size}px`;
+            return size;
+        }
+
+        function moveCircle() {
+            const circle = document.getElementById('circle');
+            const size = resizeCircle();
+
+            const maxLeft = window.innerWidth - size;
+            const maxTop = window.innerHeight - size;
+            circle.style.left = `${Math.random() * maxLeft}px`;
+            circle.style.top = `${Math.random() * maxTop}px`;
+
+            circle.style.background = `hsl(${Math.random() * 360}, 100%, 60%)`;
+            startTime = Date.now();
+        }
+
+        function measureTime() {
+            const reactionTime = Date.now() - startTime;
+            document.getElementById('message').innerHTML = `Reaktionszeit: ${reactionTime / 1000} Sekunden`;
+            moveCircle();
+        }
+    </script>
+</body>
+</html>
