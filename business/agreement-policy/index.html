@@ -3,119 +3,608 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agreement for Purchase of Goods</title>
+    <title>SnackKids - Terms of Sale</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #3b82f6;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --background: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-highlight: rgba(255, 255, 255, 0.8);
+            --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
             line-height: 1.6;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f9f9f9;
-            color: #333;
+            overflow-x: hidden;
+            padding: 0;
+            background-image: linear-gradient(to bottom right, #f9fafb, #f3f4f6);
         }
-        h1 {
-            text-align: center;
-            color: #444;
-            font-size: 2.5em;
-        }
-        h2 {
-            color: #555;
-            margin-top: 30px;
-            font-size: 1.8em;
-            font-weight: bold;
-        }
-        p {
-            margin: 10px 0;
-            font-size: 1em;
-        }
-        ul {
-            margin: 10px 0;
-            padding-left: 20px;
-        }
-        li {
-            margin: 10px 0;
-            font-size: 1em;
-        }
+
         .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .last-updated {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .policy-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .policy-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg,
+                var(--glass-highlight) 0%,
+                transparent 50%,
+                var(--glass-highlight) 100%
+            );
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .policy-container::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 24px;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.8) 0%,
+                rgba(255, 255, 255, 0) 50%,
+                rgba(255, 255, 255, 0.8) 100%
+            );
+            z-index: -2;
+            animation: liquidReflection 8s linear infinite;
+        }
+
+        @keyframes liquidReflection {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--text);
+            position: relative;
+        }
+
+        h2:first-child {
+            margin-top: 0;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--text);
+        }
+
+        p, ul, ol {
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        ul, ol {
+            padding-left: 2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        strong {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .highlight-box {
+            background: rgba(37, 99, 235, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            margin: 1.5rem 0;
+        }
+
+        .debt-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .debt-table th, .debt-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .debt-table th {
+            background: rgba(37, 99, 235, 0.1);
+            font-weight: 600;
+        }
+
+        .debt-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .about-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .about-button:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .about-modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px 24px 0 0;
+            padding: 2rem;
+            z-index: 1000;
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .about-modal.active {
+            transform: translateY(0);
+        }
+
+        .about-modal::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 24px 24px 0 0;
+        }
+
+        .about-content {
             max-width: 800px;
             margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 0.9em;
-            color: #777;
+
+        .about-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
         }
-        .important {
-            font-weight: bold;
-            color: #d9534f;
+
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-backdrop.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .policy-container {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        /* Liquid glass effect for modal opening */
+        @keyframes liquidOpen {
+            0% {
+                transform: translateY(100%) scale(0.8);
+                opacity: 0;
+                border-radius: 50%;
+            }
+            60% {
+                transform: translateY(20%) scale(1.05);
+                border-radius: 24px 24px 12px 12px;
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+                border-radius: 24px 24px 0 0;
+            }
+        }
+
+        .about-modal.active {
+            animation: liquidOpen 0.7s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Agreement for Purchase of Goods</h1>
-        <p>This Agreement is entered into between the Seller and the Customer. By purchasing any product from us, you confirm that you have read, understood, and agreed to all of the above terms and conditions. Your purchase constitutes acceptance of this Agreement and signifies your commitment to adhere to the regulations outlined herein.</p>
+        <header>
+            <h1>SnackKids – Comprehensive Terms of Sale & Purchase Agreement</h1>
+            <div class="subtitle">Last Updated: 24.06.2025 | Jurisdiction: Darmstadt, Hessen, Germany</div>
+        </header>
 
-        <h2>1. Product Pricing</h2>
-        <ul>
-            <li>You acknowledge and agree that the prices for the products, including but not limited to Coca-Cola or any other items we sell, may be slightly higher than those typically found in retail outlets. The price difference reflects various factors, including but not limited to convenience and service provided by us.</li>
-        </ul>
+        <div class="policy-container">
+            <!-- Section 1 -->
+            <h2>1. Introduction, Definitions, and Scope of Agreement</h2>
+            <h3>1.1 Purpose of This Agreement</h3>
+            <p>This legally binding <strong>SnackKids Purchase Agreement</strong> ("Agreement") governs <strong>all transactions, debts, and interactions</strong> between <strong>SnackKids</strong> (referred to as "Seller," "We," "Us," "Our") and the <strong>Customer</strong> (referred to as "Buyer," "You," "Your"), including <strong>minors (under 18 years of age)</strong> who engage in purchases from SnackKids.</p>
+            
+            <div class="highlight-box">
+                <p>By purchasing, ordering, or accepting products from SnackKids, <strong>You (and Your Guardian, if applicable) irrevocably agree</strong> to comply with <strong>all terms, conditions, penalties, and enforcement mechanisms</strong> outlined in this Agreement. <strong>No exceptions or verbal agreements override this document.</strong></p>
+            </div>
 
-        <h2>2. Recycling and Waste Disposal</h2>
-        <ul>
-            <li>You agree to properly recycle all packaging and waste materials associated with the product(s) you purchase from us. This includes the return of bottles for “Pfand” (deposit) as applicable under the German recycling system.</li>
-            <li>Customers who return eligible Pfand bottles may receive a discount of between €0.10 and €0.20 off their next purchase, depending on the specific product and its associated discount criteria. This offer is only applicable to products with a purchase price of €1.50 or more. For products priced below €1.50, this policy does not apply. The discount is non-transferable and may be subject to change at the discretion of the business. By participating in this offer, customers acknowledge and agree to the terms outlined.</li>
-            <li>You commit to adhering to local recycling laws and disposing of packaging responsibly to minimize environmental impact.</li>
-        </ul>
+            <h3>1.2 Definitions & Interpretations</h3>
+            <p>For absolute clarity, the following terms shall hold these meanings:</p>
+            <ul>
+                <li><strong>"Seller" (SnackKids):</strong> A private, unregistered business operating in Darmstadt, Hessen, Germany, selling exotic snacks and beverages via <strong>in-person, cash-based transactions</strong> at a designated selling location.</li>
+                <li><strong>"Buyer":</strong> Any individual, <strong>regardless of age</strong>, who acquires products from SnackKids.</li>
+                <li><strong>"Guardian":</strong> A legally recognized parent, custodian, or adult supervisor responsible for a minor Buyer.</li>
+                <li><strong>"Products":</strong> All consumable goods sold by SnackKids, including but not limited to:
+                    <ul>
+                        <li>Imported candies (e.g., Japanese Kit Kats, American Reese's)</li>
+                        <li>Specialty soft drinks (e.g., Japanese sodas, limited-edition Coca-Cola variants)</li>
+                        <li>Any other snacks or beverages stocked by SnackKids</li>
+                    </ul>
+                </li>
+                <li><strong>"Debt":</strong> Any unpaid balance owed by a Buyer to SnackKids, whether due at the time of purchase or deferred under SnackKids' <strong>conditional credit policy</strong>.</li>
+                <li><strong>"MHD" (Mindesthaltbarkeitsdatum):</strong> The expiration date printed on products, which SnackKids tracks to ensure freshness.</li>
+                <li><strong>"Grace Period":</strong> The <strong>50-day window</strong> granted for repayment before penalties apply.</li>
+                <li><strong>"Default":</strong> Failure to repay a debt within the Grace Period.</li>
+                <li><strong>"Blacklist":</strong> A record of Buyers banned from future purchases due to payment violations.</li>
+            </ul>
 
-        <h2>3. Parental Consent for Purchase</h2>
-        <ul>
-            <li>By purchasing any goods sold by us, if you are under the age of 18, you confirm that you have received consent from your parent(s) or legal guardian(s) to purchase and consume such items.</li>
-            <li>Our products may be purchased by individuals under the age of 18. As such, we do not require explicit authorization from a guardian or parent to complete a purchase. However, by making a purchase, the customer confirms that they have obtained the necessary approval from their guardian or parent. In the event that it is later determined that a guardian has not authorized such purchases, this will not affect the validity of the transaction or the terms of sale. Customers and their guardians assume full responsibility for ensuring that any purchases made comply with relevant rules and parental consent.</li>
-        </ul>
+            <div class="highlight-box">
+                <p><strong>Any ambiguity in interpretation shall favor SnackKids.</strong></p>
+            </div>
 
-        <h2>4. Health and Liability Disclaimer</h2>
-        <ul>
-            <li>By purchasing any product from us, you acknowledge and agree that we, as a business, are not responsible for any medical issues or health-related concerns that may arise from the consumption of the goods sold, including but not limited to allergic reactions, sensitivities, or other health-related issues.</li>
-            <li>When we sell products to customers under the age of 18, we are assuming that the parent(s) or guardian(s) have given their consent for the consumption of these products. It is the responsibility of the customer to ensure that they have received the appropriate consent from their parent(s) or guardian(s).</li>
-        </ul>
+            <!-- Section 2 -->
+            <h2>2. Parental Consent & Minor Transactions (Extreme Detail)</h2>
+            <h3>2.1 Legal Assumption of Guardian Approval</h3>
+            <p>SnackKids operates under the <strong>strict legal presumption</strong> that any minor (under 18) purchasing products has obtained <strong>full, explicit, and voluntary consent</strong> from their Guardian.</p>
+            
+            <ul>
+                <li><strong>By completing a purchase (whether paid immediately or deferred), the Buyer and Guardian (if applicable) confirm that:</strong>
+                    <ul>
+                        <li>The Guardian is fully aware of the transaction.</li>
+                        <li>The Guardian approves of the minor's consumption of the products.</li>
+                        <li>The Guardian assumes <strong>all liability</strong> for the minor's actions related to the purchase.</li>
+                    </ul>
+                </li>
+                <li><strong>SnackKids does not, under any circumstances:</strong>
+                    <ul>
+                        <li>Request physical proof of parental consent.</li>
+                        <li>Contact Guardians to verify transactions.</li>
+                        <li>Accept liability for unauthorized purchases by minors.</li>
+                    </ul>
+                </li>
+            </ul>
 
-        <h2>5. No Refund or Return Policy</h2>
-        <ul>
-            <li>Due to the nature of the goods we sell, <span class="important">NO refunds or returns</span> are allowed except where required by law, such as in cases where a product is damaged or defective upon receipt.</li>
-        </ul>
+            <h3>2.2 Guardian Responsibility & No Recourse Policy</h3>
+            <ul>
+                <li>If a Guardian later claims that a minor purchased without permission:
+                    <ul>
+                        <li><strong>The transaction remains valid.</strong></li>
+                        <li><strong>No refunds, reversals, or cancellations will be issued.</strong></li>
+                        <li>The Guardian is <strong>still financially responsible</strong> for repayment of any debts.</li>
+                    </ul>
+                </li>
+                <li><strong>Legal Precedent:</strong> Under German civil law (§§ 104-113 BGB), minors may lack full contractual capacity, but <strong>SnackKids explicitly operates on the assumption of Guardian ratification.</strong></li>
+            </ul>
 
-        <h2>6. Product Quality and Description</h2>
-        <ul>
-            <li>We strive to ensure that all products are described accurately and are of the highest quality. However, we do not guarantee that the products will always meet specific expectations as these can vary from customer to customer. Should there be an issue with the quality of the product upon receipt, please inform us immediately to address the situation appropriately.</li>
-        </ul>
+            <h3>2.3 Record-Keeping for Minor Purchases</h3>
+            <ul>
+                <li>SnackKids <strong>logs the following details</strong> for all minor Buyers:
+                    <ul>
+                        <li>Full name.</li>
+                        <li>Contact details (if available).</li>
+                        <li>Purchase history (products, dates, amounts owed).</li>
+                    </ul>
+                </li>
+                <li>This data <strong>may be used in debt collection</strong> and is stored indefinitely.</li>
+            </ul>
 
-        <h2>7. Limitation of Liability</h2>
-        <ul>
-            <li><span class="important">Limitation of Claims:</span> To the fullest extent permitted by applicable law, our liability for any claim arising out of this Agreement or the sale of products is limited to the amount paid by you for the specific product(s) related to the claim.</li>
-            <li>We are not responsible for any direct, indirect, incidental, special, or consequential damages, including but not limited to medical expenses or personal injury that may result from the use of any products purchased from us.</li>
-        </ul>
+            <!-- Section 3 -->
+            <h2>3. Health Disclaimers & Liability Waivers (Fully Expanded)</h2>
+            <h3>3.1 Absolute Exclusion of Medical Liability</h3>
+            <p>SnackKids <strong>explicitly denies all responsibility</strong> for health outcomes related to product consumption.</p>
+            
+            <ul>
+                <li><strong>Buyers (and Guardians) acknowledge and accept the following risks:</strong>
+                    <ul>
+                        <li><strong>Allergic Reactions:</strong> Products may contain nuts, dairy, gluten, artificial dyes, or other allergens.</li>
+                        <li><strong>Choking Hazards:</strong> Small candies or hard snacks may pose risks to young children.</li>
+                        <li><strong>Caffeine/Sugar Content:</strong> Excessive consumption may cause health issues.</li>
+                        <li><strong>Unfamiliar Ingredients:</strong> Imported products may contain additives not common in Germany.</li>
+                    </ul>
+                </li>
+                <li><strong>By purchasing, You agree that:</strong>
+                    <ul>
+                        <li>You have consulted a medical professional if You have known allergies.</li>
+                        <li>SnackKids <strong>is not liable</strong> for hospitalizations, illnesses, or injuries.</li>
+                        <li>You will <strong>not sue, demand compensation, or hold SnackKids responsible</strong> for health effects.</li>
+                    </ul>
+                </li>
+            </ul>
 
-        <h2>8. School Regulations and Liability</h2>
-        <ul>
-            <li>By purchasing any products from us, you acknowledge and agree that, to the best of your knowledge, the sale of such products is not prohibited by any specific rules or regulations set forth by the school.</li>
-            <li>You confirm that you have reviewed the school rules and regulations, and to your understanding, there are no explicit restrictions on selling or distributing goods such as those offered by us (e.g., Coca-Cola or other similar items) to fellow students.</li>
-            <li>In the event of any legal claims made by the school or school authorities regarding the sale of our products, we disclaim any responsibility or liability for disputes arising from the school’s internal regulations. We encourage parents and students to review the school’s policies to ensure compliance with any specific school rules or guidelines that may apply.</li>
-        </ul>
+            <h3>3.2 Expiration Dates (MHD) & Product Integrity</h3>
+            <ul>
+                <li>SnackKids <strong>guarantees</strong> that products are sold <strong>before their printed expiration date (MHD).</strong></li>
+                <li><strong>Buyer's Responsibility:</strong>
+                    <ul>
+                        <li>Check MHD upon receipt.</li>
+                        <li>Store products properly (e.g., away from heat/moisture).</li>
+                    </ul>
+                </li>
+                <li><strong>No claims</strong> will be accepted for:
+                    <ul>
+                        <li>Products consumed after expiration.</li>
+                        <li>Buyer's improper storage.</li>
+                    </ul>
+                </li>
+            </ul>
 
-        <h2>Important Notes for Legal Protection</h2>
-        <ul>
-            <li><span class="important">Governing Law and Jurisdiction:</span> This Agreement shall be governed by the laws of Germany, and any disputes arising from this Agreement shall be resolved in the competent courts of Darmstadt, Landkreis Darmstadt-Dieburg, Hesse, Germany.</li>
-            <li><span class="important">Force Majeure:</span> We are not liable for failure to fulfill any obligations under this Agreement due to events beyond our control, including but not limited to natural disasters, strikes, governmental actions, pandemics, or any other force majeure event as defined under German law. In such cases, the affected party shall notify the other party as soon as reasonably possible.</li>
-        </ul>
+            <!-- Section 4 -->
+            <h2>4. Debt Enforcement & Penalties (Ultra-Detailed)</h2>
+            <h3>4.1 Conditional Credit Policy (Pay Later Allowed)</h3>
+            <p>SnackKids <strong>permits deferred payment</strong> under strict conditions:</p>
+            
+            <ul>
+                <li><strong>Debt Recording System:</strong>
+                    <ul>
+                        <li>Buyer's name, owed amount, and due date are logged.</li>
+                        <li><strong>Verbal promises are irrelevant—only SnackKids' written records count.</strong></li>
+                    </ul>
+                </li>
+                <li><strong>Grace Period:</strong>
+                    <ul>
+                        <li><strong>50 full days</strong> from purchase date to repay.</li>
+                        <li>After this, the debt <strong>DOUBLES</strong> as a penalty.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>4.2 Examples of Debt Escalation</h3>
+            <table class="debt-table">
+                <thead>
+                    <tr>
+                        <th>Original Debt</th>
+                        <th>After 50 Days</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>€5</td>
+                        <td>€10</td>
+                    </tr>
+                    <tr>
+                        <td>€20</td>
+                        <td>€40</td>
+                    </tr>
+                    <tr>
+                        <td>€50</td>
+                        <td>€100</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>4.3 Legal Enforcement of Debts</h3>
+            <ul>
+                <li><strong>Step 1: Written Warning</strong> (Sent after 30 days)</li>
+                <li><strong>Step 2: Debt Doubling</strong> (Day 51)</li>
+                <li><strong>Step 3: Amtsgericht Darmstadt Lawsuit</strong> (If unpaid after 90 days)</li>
+            </ul>
+
+            <h3>4.4 Blacklisting & Social Enforcement</h3>
+            <ul>
+                <li>Delinquent Buyers' names are <strong>shared with other local sellers</strong> to prevent further credit abuse.</li>
+            </ul>
+
+            <!-- Section 5 -->
+            <h2>5. Data Collection & Privacy (GDPR Loophole Exploitation)</h2>
+            <h3>5.1 Information Stored Indefinitely</h3>
+            <ul>
+                <li><strong>SnackKids is a private seller, not a registered business</strong>, thus <strong>exempt from full GDPR compliance.</strong></li>
+                <li>Data is used <strong>solely for debt collection</strong> and is <strong>never sold.</strong></li>
+            </ul>
+
+            <h3>5.2 Buyer Consent to Surveillance</h3>
+            <p>By purchasing, You agree that SnackKids may:</p>
+            <ul>
+                <li><strong>Record Your face</strong> (via security cameras).</li>
+                <li><strong>Track Your purchase history.</strong></li>
+                <li><strong>Contact You via any available means</strong> for debt repayment.</li>
+            </ul>
+
+            <!-- Section 6 -->
+            <h2>6. Dispute Resolution & Legal Jurisdiction</h2>
+            <h3>6.1 Exclusive Venue for Legal Action</h3>
+            <ul>
+                <li><strong>All lawsuits must be filed at Amtsgericht Darmstadt.</strong></li>
+                <li><strong>No class actions permitted—individual cases only.</strong></li>
+            </ul>
+
+            <h3>6.2 Buyer Pays Legal Fees</h3>
+            <ul>
+                <li>If SnackKids wins a lawsuit, the Buyer <strong>must reimburse all legal costs.</strong></li>
+            </ul>
+
+            <!-- Final Agreement -->
+            <h2>Final Agreement & Signature Clause</h2>
+            <div class="highlight-box">
+                <p><strong>By purchasing from SnackKids, You affirm that:</strong></p>
+                <ul>
+                    <li>You have read this <strong>entire document.</strong></li>
+                    <li>You surrender all rights to contest its terms.</li>
+                    <li>You will <strong>never dispute SnackKids' enforcement actions.</strong></li>
+                </ul>
+            </div>
+
+            <p style="text-align: center; margin-top: 2rem;"><strong>SnackKids – [Adrian Berndt, Muhammed Imtiyaz Sidheek]<br>Darmstadt, Germany</strong></p>
+        </div>
     </div>
-    <div class="footer">
-        &copy; 2025 Your Business Name. All rights reserved.
+
+    <button class="about-button">About</button>
+
+    <div class="modal-backdrop"></div>
+    <div class="about-modal">
+        <div class="about-content">
+            <h3 class="about-title">Example Title</h3>
+            <p>Example text</p>
+        </div>
     </div>
+
+    <script>
+        // About modal functionality
+        const aboutButton = document.querySelector('.about-button');
+        const aboutModal = document.querySelector('.about-modal');
+        const modalBackdrop = document.querySelector('.modal-backdrop');
+
+        aboutButton.addEventListener('click', () => {
+            aboutModal.classList.add('active');
+            modalBackdrop.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        modalBackdrop.addEventListener('click', () => {
+            aboutModal.classList.remove('active');
+            modalBackdrop.classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        // Liquid glass effect for policy container
+        const policyContainer = document.querySelector('.policy-container');
+        
+        policyContainer.addEventListener('mousemove', (e) => {
+            const rect = policyContainer.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            policyContainer.style.setProperty('--mouse-x', `${x}px`);
+            policyContainer.style.setProperty('--mouse-y', `${y}px`);
+            
+            // Create liquid droplet effect
+            const droplet = document.createElement('div');
+            droplet.style.position = 'absolute';
+            droplet.style.left = `${x}px`;
+            droplet.style.top = `${y}px`;
+            droplet.style.width = '10px';
+            droplet.style.height = '10px';
+            droplet.style.background = 'rgba(37, 99, 235, 0.2)';
+            droplet.style.borderRadius = '50%';
+            droplet.style.pointerEvents = 'none';
+            droplet.style.transform = 'scale(0)';
+            droplet.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+            
+            policyContainer.appendChild(droplet);
+            
+            setTimeout(() => {
+                droplet.style.transform = 'scale(10)';
+                droplet.style.opacity = '0';
+            }, 10);
+            
+            setTimeout(() => {
+                droplet.remove();
+            }, 600);
+        });
+    </script>
 </body>
 </html>
