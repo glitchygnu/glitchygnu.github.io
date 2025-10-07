@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS 16 Minimal Expandable Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .trigger-element {
+            width: 120px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .trigger-element:hover {
+            transform: scale(1.05);
+        }
+        
+        .trigger-element:active {
+            transform: scale(0.98);
+        }
+        
+        /* Expanded Window Styles */
+        .expanded-window {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .expanded-window.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .expanded-window.active ~ .container .trigger-element {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .window-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+        
+        .window-content {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            width: 90%;
+            max-width: 400px;
+            padding: 40px 30px;
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                0 0 0 1px rgba(255, 255, 255, 0.3);
+            transform: scale(0.5);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .expanded-window.active .window-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: rgba(0, 0, 0, 0.05);
+            color: #666;
+            font-size: 18px;
+        }
+        
+        .close-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        .window-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .window-text {
+            color: #666;
+            line-height: 1.6;
+            text-align: center;
+        }
+        
+        .instruction {
+            margin-top: 30px;
+            color: #999;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Expanded Window -->
+    <div class="expanded-window" id="expandedWindow">
+        <div class="window-backdrop" id="windowBackdrop"></div>
+        <div class="window-content">
+            <div class="close-btn" id="closeBtn">×</div>
+            <h2 class="window-title">Example Title</h2>
+            <p class="window-text">Example text for the expanded window. This demonstrates the iOS 16-style animation with frosted glass effect.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="trigger-element" id="triggerElement">
+            Btn1
+        </div>
+        <p class="instruction">Click the button to see the animation</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const triggerElement = document.getElementById('triggerElement');
+            const expandedWindow = document.getElementById('expandedWindow');
+            const closeBtn = document.getElementById('closeBtn');
+            const windowBackdrop = document.getElementById('windowBackdrop');
+            const windowContent = document.querySelector('.window-content');
+            
+            // Add click event to trigger element
+            triggerElement.addEventListener('click', function() {
+                // Get the position of the trigger element
+                const rect = triggerElement.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                // Set the transform origin to the center of the trigger element
+                windowContent.style.transformOrigin = `${centerX}px ${centerY}px`;
+                
+                // First contract the trigger element slightly
+                triggerElement.style.transform = 'scale(0.9)';
+                
+                // Then expand the window with a slight delay
+                setTimeout(() => {
+                    expandedWindow.classList.add('active');
+                }, 100);
+            });
+            
+            // Close expanded window
+            function closeWindow() {
+                expandedWindow.classList.remove('active');
+                
+                // Reset trigger element transform and make it immediately visible
+                triggerElement.style.transform = '';
+            }
+            
+            closeBtn.addEventListener('click', closeWindow);
+            windowBackdrop.addEventListener('click', closeWindow);
+        });
+    </script>
+</body>
+</html>
