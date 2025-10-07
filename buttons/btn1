@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iOS 16 Minimal Expandable Animation</title>
+    <title>iOS Expandable Button</title>
     <style>
         * {
             margin: 0;
@@ -163,8 +163,8 @@
         <div class="window-backdrop" id="windowBackdrop"></div>
         <div class="window-content">
             <div class="close-btn" id="closeBtn">×</div>
-            <h2 class="window-title">Example Title</h2>
-            <p class="window-text">Example text for the expanded window. This demonstrates the iOS 16-style animation with frosted glass effect.</p>
+            <h2 class="window-title">Welcome</h2>
+            <p class="window-text">This is the expanded view with iOS-style frosted glass effect. The animation smoothly expands from the button position.</p>
         </div>
     </div>
 
