@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator v0.1b</title>
+    <style>
+        body {
+            background-color: #c0c0c0;
+            font-family: "Courier New", monospace;
+            margin: 0;
+            padding: 20px;
+            color: #000;
+        }
+        
+        .window {
+            background-color: #c0c0c0;
+            border: 2px outset #c0c0c0;
+            margin: 20px auto;
+            width: 700px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            color: white;
+            padding: 2px 4px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .title-text {
+            font-size: 13px;
+        }
+        
+        .window-controls {
+            display: flex;
+        }
+        
+        .control {
+            width: 16px;
+            height: 14px;
+            background-color: #c0c0c0;
+            border: 1px outset #c0c0c0;
+            margin-left: 2px;
+            text-align: center;
+            font-size: 10px;
+            line-height: 12px;
+            cursor: pointer;
+        }
+        
+        .content {
+            padding: 10px;
+            border: 1px inset #c0c0c0;
+        }
+        
+        .password-display {
+            background-color: white;
+            border: 2px inset #c0c0c0;
+            padding: 8px;
+            margin: 10px 0;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+            min-height: 20px;
+            word-break: break-all;
+        }
+        
+        .button {
+            background-color: #c0c0c0;
+            border: 2px outset #c0c0c0;
+            padding: 4px 12px;
+            font-family: "Courier New", monospace;
+            font-size: 12px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .button:active {
+            border: 2px inset #c0c0c0;
+        }
+        
+        .options {
+            margin: 15px 0;
+            font-size: 12px;
+        }
+        
+        .option-row {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        input[type="number"] {
+            width: 40px;
+            background-color: white;
+            border: 1px inset #c0c0c0;
+            font-family: "Courier New", monospace;
+        }
+        
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        
+        .status-bar {
+            background-color: #c0c0c0;
+            border-top: 1px inset #c0c0c0;
+            padding: 2px 4px;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .beta-label {
+            background-color: red;
+            color: white;
+            padding: 1px 4px;
+            font-weight: bold;
+            font-size: 10px;
+            margin-left: 5px;
+        }
+        
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            margin-top: 20px;
+            color: #808080;
+        }
+        
+        .pixel-font {
+            font-family: "MS Sans Serif", "Chicago", "Courier New", monospace;
+            font-size: 12px;
+            image-rendering: pixelated;
+        }
+        
+        /* Command Interface Styles */
+        .command-window {
+            margin-top: 20px;
+            height: 400px;
+            overflow-y: auto;
+            background-color: #000;
+            color: #0f0;
+            font-family: "Courier New", monospace;
+            font-size: 12px;
+            padding: 5px;
+            border: 2px inset #c0c0c0;
+        }
+        
+        .command-line {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .prompt {
+            color: #0f0;
+            margin-right: 5px;
+            white-space: nowrap;
+        }
+        
+        .command-input {
+            background-color: transparent;
+            border: none;
+            color: #0f0;
+            font-family: "Courier New", monospace;
+            font-size: 12px;
+            width: 100%;
+            outline: none;
+        }
+        
+        .command-output {
+            margin-bottom: 5px;
+            white-space: pre-wrap;
+        }
+        
+        /* Syntax highlighting colors */
+        .keyword { color: #00aaff; }
+        .string { color: #ffaa00; }
+        .number { color: #ff00aa; }
+        .comment { color: #00aa00; }
+        .function { color: #ffff00; }
+        .operator { color: #ffffff; }
+        .variable { color: #00ffff; }
+        .error { color: #ff0000; }
+        .type { color: #aa00ff; }
+        .constant { color: #ff5500; }
+        .module { color: #00ffaa; }
+        
+        .blink {
+            animation: blink 1s step-end infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .progress-bar {
+            width: 100%;
+            background-color: #333;
+            border: 1px inset #c0c0c0;
+            margin: 5px 0;
+        }
+        
+        .progress {
+            height: 12px;
+            background-color: #0f0;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .memory-display {
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            gap: 1px;
+            margin: 5px 0;
+        }
+        
+        .memory-cell {
+            width: 20px;
+            height: 20px;
+            background-color: #222;
+            color: #0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            border: 1px solid #333;
+        }
+        
+        .memory-cell.active {
+            background-color: #0f0;
+            color: #000;
+        }
+        
+        .matrix {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body>
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-text">Password Generator v0.1b</div>
+            <div class="window-controls">
+                <div class="control">_</div>
+                <div class="control">□</div>
+                <div class="control">×</div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="pixel-font">
+                <div class="password-display" id="passwordDisplay">Click "Generate" to create a password</div>
+                
+                <div style="text-align: center;">
+                    <button class="button" id="generateBtn">Generate</button>
+                    <button class="button" id="copyBtn">Copy</button>
+                    <button class="button" id="advancedBtn">Advanced</button>
+                </div>
+                
+                <div class="options">
+                    <div class="option-row">
+                        <label>Password Length:</label>
+                        <input type="number" id="lengthInput" value="12" min="4" max="50">
+                    </div>
+                    
+                    <div class="option-row">
+                        <input type="checkbox" id="uppercaseCheck" checked>
+                        <label>Include Uppercase Letters (A-Z)</label>
+                    </div>
+                    
+                    <div class="option-row">
+                        <input type="checkbox" id="lowercaseCheck" checked>
+                        <label>Include Lowercase Letters (a-z)</label>
+                    </div>
+                    
+                    <div class="option-row">
+                        <input type="checkbox" id="numbersCheck" checked>
+                        <label>Include Numbers (0-9)</label>
+                    </div>
+                    
+                    <div class="option-row">
+                        <input type="checkbox" id="symbolsCheck">
+                        <label>Include Symbols (!@#$% etc.)</label>
+                    </div>
+                </div>
+                
+                <div class="status-bar">
+                    <div>Status: <span id="statusText">Ready</span></div>
+                    <div>Passwords Generated: <span id="counter">0</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Command Interface -->
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-text">Advanced Command Interface v1.0b</div>
+            <div class="window-controls">
+                <div class="control">_</div>
+                <div class="control">□</div>
+                <div class="control">×</div>
+            </div>
+        </div>
+        <div class="command-window" id="commandWindow">
+            <div class="command-output">
+<span class="comment">// PASSWORD GENERATOR COMMAND INTERFACE v1.0b</span>
+<span class="comment">// Type 'help' for available commands</span>
+<span class="comment">// Type 'sysinfo' for system information</span>
+<span class="comment">// Type 'tutorial' for a guided tutorial</span>
+
+<span class="keyword">Initializing</span> system modules...
+<span class="string">Crypto Engine</span> <span class="operator">-></span> <span class="string">ONLINE</span>
+<span class="string">Memory Manager</span> <span class="operator">-></span> <span class="string">ONLINE</span>
+<span class="string">Command Parser</span> <span class="operator">-></span> <span class="string">ONLINE</span>
+<span class="string">Security Module</span> <span class="operator">-></span> <span class="string">ONLINE</span>
+
+<span class="keyword">System ready.</span> Type <span class="function">'help'</span> to begin.
+            </div>
+            <div class="command-line">
+                <span class="prompt">C:\PASSWORD\SYSTEM&gt;</span>
+                <input type="text" class="command-input" id="commandInput" autocomplete="off">
+                <span class="blink">_</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer pixel-font">
+        <div>BETA SOFTWARE - FOR TESTING PURPOSES ONLY</div>
+        <div>© 1995 PasswordSoft Inc. All rights reserved.</div>
+        <div class="beta-label">BETA</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordDisplay = document.getElementById('passwordDisplay');
+            const generateBtn = document.getElementById('generateBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const advancedBtn = document.getElementById('advancedBtn');
+            const lengthInput = document.getElementById('lengthInput');
+            const uppercaseCheck = document.getElementById('uppercaseCheck');
+            const lowercaseCheck = document.getElementById('lowercaseCheck');
+            const numbersCheck = document.getElementById('numbersCheck');
+            const symbolsCheck = document.getElementById('symbolsCheck');
+            const statusText = document.getElementById('statusText');
+            const counter = document.getElementById('counter');
+            const commandInput = document.getElementById('commandInput');
+            const commandWindow = document.getElementById('commandWindow');
+            
+            let passwordCount = 0;
+            let commandHistory = [];
+            let historyIndex = -1;
+            let sessionStart = new Date();
+            let memory = new Array(256).fill(0);
+            let variables = {};
+            let scripts = {};
+            let securityLevel = 1;
+            
+            // Character sets
+            const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+            const numbers = '0123456789';
+            const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            
+            function generatePassword() {
+                let charset = '';
+                let password = '';
+                
+                // Build character set based on selected options
+                if (uppercaseCheck.checked) charset += uppercase;
+                if (lowercaseCheck.checked) charset += lowercase;
+                if (numbersCheck.checked) charset += numbers;
+                if (symbolsCheck.checked) charset += symbols;
+                
+                // If no character set is selected, use lowercase as default
+                if (charset === '') {
+                    charset = lowercase;
+                    lowercaseCheck.checked = true;
+                }
+                
+                const length = parseInt(lengthInput.value);
+                
+                // Generate password
+                for (let i = 0; i < length; i++) {
+                    const randomIndex = Math.floor(Math.random() * charset.length);
+                    password += charset[randomIndex];
+                }
+                
+                passwordDisplay.textContent = password;
+                passwordCount++;
+                counter.textContent = passwordCount;
+                statusText.textContent = 'Password Generated';
+                
+                // Add some retro-style visual feedback
+                passwordDisplay.style.backgroundColor = '#ffffcc';
+                setTimeout(() => {
+                    passwordDisplay.style.backgroundColor = 'white';
+                }, 300);
+                
+                return password;
+            }
+            
+            function copyPassword() {
+                if (passwordDisplay.textContent && passwordDisplay.textContent !== 'Click "Generate" to create a password') {
+                    navigator.clipboard.writeText(passwordDisplay.textContent)
+                        .then(() => {
+                            statusText.textContent = 'Copied to Clipboard';
+                        })
+                        .catch(err => {
+                            statusText.textContent = 'Copy Failed';
+                            console.error('Failed to copy: ', err);
+                        });
+                } else {
+                    statusText.textContent = 'No Password to Copy';
+                }
+            }
+            
+            // Advanced command processing functions
+            function processCommand(command) {
+                const outputDiv = document.createElement('div');
+                outputDiv.className = 'command-output';
+                
+                // Add command to history
+                commandHistory.push(command);
+                historyIndex = commandHistory.length;
+                
+                // Process the command
+                const parts = command.trim().split(' ');
+                const cmd = parts[0].toLowerCase();
+                
+                switch(cmd) {
+                    case 'help':
+                        outputDiv.innerHTML = `<span class="keyword">ADVANCED COMMAND INTERFACE v1.0b</span>
+<span class="comment">// Type commands followed by Enter. Use Up/Down arrows for history.</span>
+
+<span class="keyword">SYSTEM COMMANDS:</span>
+<span class="function">help</span> - Display this help message
+<span class="function">clear</span> - Clear the console
+<span class="function">sysinfo</span> - Display system information
+<span class="function">time</span> - Show current system time
+<span class="function">uptime</span> - Show system uptime
+<span class="function">echo</span> [text] - Echo text to console
+<span class="function">calc</span> [expression] - Evaluate mathematical expression
+<span class="function">mem</span> - Display memory usage
+<span class="function">memview</span> - View memory contents
+<span class="function">security</span> [level] - Set security level (1-5)
+
+<span class="keyword">PASSWORD COMMANDS:</span>
+<span class="function">generate</span> - Generate a new password
+<span class="function">copy</span> - Copy current password to clipboard
+<span class="function">length</span> [number] - Set password length
+<span class="function">uppercase</span> [on|off] - Toggle uppercase letters
+<span class="function">lowercase</span> [on|off] - Toggle lowercase letters
+<span class="function">numbers</span> [on|off] - Toggle numbers
+<span class="function">symbols</span> [on|off] - Toggle symbols
+<span class="function">count</span> - Show password generation count
+<span class="function">status</span> - Show current generator status
+<span class="function">analyze</span> - Analyze password strength
+<span class="function">batch</span> [count] - Generate multiple passwords
+
+<span class="keyword">ADVANCED COMMANDS:</span>
+<span class="function">encrypt</span> - Encrypt current password (simulated)
+<span class="function">decrypt</span> [password] - Decrypt password (simulated)
+<span class="function">hash</span> - Generate hash of current password
+<span class="function">export</span> - Export generated passwords (simulated)
+<span class="function">import</span> - Import passwords (simulated)
+<span class="function">theme</span> [dark|light|retro|matrix] - Change interface theme
+<span class="function">save</span> - Save settings (simulated)
+<span class="function">load</span> - Load settings (simulated)
+<span class="function">version</span> - Display version information
+<span class="function">debug</span> - Show debug information
+<span class="function">tutorial</span> - Start interactive tutorial
+<span class="function">script</span> [name] [code] - Create and run scripts
+<span class="function">run</span> [script] - Execute saved script
+<span class="function">var</span> [name] [value] - Set variable
+<span class="function">vars</span> - List all variables
+
+<span class="keyword">NETWORK COMMANDS (SIMULATED):</span>
+<span class="function">connect</span> [host] - Connect to remote host
+<span class="function">disconnect</span> - Disconnect from remote host
+<span class="function">ping</span> [host] - Ping remote host
+<span class="function">upload</span> [file] - Upload file (simulated)
+<span class="function">download</span> [file] - Download file (simulated)
+
+<span class="comment">// Type any command followed by --help for detailed information</span>`;
+                        break;
+                        
+                    case 'clear':
+                        const outputs = commandWindow.querySelectorAll('.command-output');
+                        outputs.forEach(output => {
+                            if (output.previousElementSibling) {
+                                output.remove();
+                            }
+                        });
+                        return; // Skip adding this command to output
+                        
+                    case 'sysinfo':
+                        outputDiv.innerHTML = `<span class="keyword">SYSTEM INFORMATION</span>
+<span class="string">OS:</span> PasswordOS 1.0b
+<span class="string">Kernel:</span> 1.0.5-rc2
+<span class="string">CPU:</span> Virtual Password Processor @ 2.4MHz
+<span class="string">Memory:</span> 640KB total, ${Math.floor(Math.random() * 100) + 500}KB free
+<span class="string">Storage:</span> 20MB HDD, ${Math.floor(Math.random() * 5) + 2}MB free
+<span class="string">Network:</span> ${navigator.onLine ? 'ONLINE' : 'OFFLINE'}
+<span class="string">Security Level:</span> ${securityLevel}/5
+<span class="string">Uptime:</span> ${Math.floor((new Date() - sessionStart) / 1000)} seconds
+<span class="string">User:</span> ${prompt('Enter your username:') || 'GUEST'}`;
+                        break;
+                        
+                    case 'time':
+                        outputDiv.innerHTML = `<span class="string">System Time:</span> ${new Date().toLocaleString()}`;
+                        break;
+                        
+                    case 'uptime':
+                        const uptime = Math.floor((new Date() - sessionStart) / 1000);
+                        const hours = Math.floor(uptime / 3600);
+                        const minutes = Math.floor((uptime % 3600) / 60);
+                        const seconds = uptime % 60;
+                        outputDiv.innerHTML = `<span class="string">System Uptime:</span> ${hours}h ${minutes}m ${seconds}s`;
+                        break;
+                        
+                    case 'echo':
+                        outputDiv.textContent = parts.slice(1).join(' ');
+                        break;
+                        
+                    case 'calc':
+                        try {
+                            const expression = parts.slice(1).join('');
+                            const result = eval(expression);
+                            outputDiv.innerHTML = `<span class="string">${expression} =</span> <span class="number">${result}</span>`;
+                        } catch (e) {
+                            outputDiv.innerHTML = `<span class="error">Calculation error: ${e.message}</span>`;
+                        }
+                        break;
+                        
+                    case 'mem':
+                        outputDiv.innerHTML = `<span class="keyword">MEMORY USAGE</span>
+<span class="string">Passwords Generated:</span> ${passwordCount}
+<span class="string">Command History:</span> ${commandHistory.length} entries
+<span class="string">Variables Stored:</span> ${Object.keys(variables).length}
+<span class="string">Scripts Stored:</span> ${Object.keys(scripts).length}
+<span class="string">Security Level:</span> ${securityLevel}`;
+                        break;
+                        
+                    case 'memview':
+                        outputDiv.innerHTML = `<span class="keyword">MEMORY VIEWER</span>`;
+                        const memDiv = document.createElement('div');
+                        memDiv.className = 'memory-display';
+                        
+                        // Fill memory with some data
+                        for (let i = 0; i < 256; i++) {
+                            if (i % 16 === 0) memory[i] = Math.floor(Math.random() * 256);
+                            const cell = document.createElement('div');
+                            cell.className = 'memory-cell';
+                            cell.textContent = memory[i].toString(16).padStart(2, '0').toUpperCase();
+                            if (i === passwordCount % 256) cell.classList.add('active');
+                            memDiv.appendChild(cell);
+                        }
+                        
+                        outputDiv.appendChild(memDiv);
+                        break;
+                        
+                    case 'security':
+                        if (parts.length > 1) {
+                            const level = parseInt(parts[1]);
+                            if (level >= 1 && level <= 5) {
+                                securityLevel = level;
+                                outputDiv.innerHTML = `<span class="keyword">Security level set to:</span> <span class="number">${level}</span>`;
+                            } else {
+                                outputDiv.innerHTML = `<span class="error">Error: Security level must be between 1 and 5</span>`;
+                            }
+                        } else {
+                            outputDiv.innerHTML = `<span class="keyword">Current security level:</span> <span class="number">${securityLevel}</span>`;
+                        }
+                        break;
+                        
+                    case 'generate':
+                        const password = generatePassword();
+                        outputDiv.innerHTML = `<span class="keyword">Generating password...</span>
+<span class="string">Password:</span> <span class="constant">${password}</span>
+<span class="comment">// Password successfully generated at security level ${securityLevel}</span>`;
+                        break;
+                        
+                    case 'copy':
+                        copyPassword();
+                        outputDiv.innerHTML = `<span class="keyword">Copying password to clipboard...</span>
+<span class="comment">// Password copied to clipboard</span>`;
+                        break;
+                        
+                    case 'length':
+                        if (parts.length > 1) {
+                            const len = parseInt(parts[1]);
+                            if (len >= 4 && len <= 50) {
+                                lengthInput.value = len;
+                                outputDiv.innerHTML = `<span class="keyword">Password length set to:</span> <span class="number">${len}</span>`;
+                            } else {
+                                outputDiv.innerHTML = `<span class="error">Error: Length must be between 4 and 50</span>`;
+                            }
+                        } else {
+                            outputDiv.innerHTML = `<span class="keyword">Current password length:</span> <span class="number">${lengthInput.value}</span>`;
+                        }
+                        break;
+                        
+                    case 'uppercase':
+                    case 'lowercase':
+                    case 'numbers':
+                    case 'symbols':
+                        const checkbox = document.getElementById(cmd + 'Check');
+                        if (parts.length > 1) {
+                            const state = parts[1].toLowerCase();
+                            if (state === 'on' || state === 'true' || state === '1') {
+                                checkbox.checked = true;
+                                outputDiv.innerHTML = `<span class="keyword">${cmd} enabled</span>`;
+                            } else if (state === 'off' || state === 'false' || state === '0') {
+                                checkbox.checked = false;
+                                outputDiv.innerHTML = `<span class="keyword">${cmd} disabled</span>`;
+                            } else {
+                                outputDiv.innerHTML = `<span class="error">Error: Invalid state. Use 'on' or 'off'</span>`;
+                            }
+                        } else {
+                            outputDiv.innerHTML = `<span class="keyword">${cmd}:</span> <span class="string">${checkbox.checked ? 'enabled' : 'disabled'}</span>`;
+                        }
+                        break;
+                        
+                    case 'count':
+                        outputDiv.innerHTML = `<span class="keyword">Passwords generated:</span> <span class="number">${passwordCount}</span>`;
+                        break;
+                        
+                    case 'status':
+                        outputDiv.innerHTML = `<span class="keyword">Current Status:</span>
+<span class="string">Length:</span> ${lengthInput.value}
+<span class="string">Uppercase:</span> ${uppercaseCheck.checked ? 'enabled' : 'disabled'}
+<span class="string">Lowercase:</span> ${lowercaseCheck.checked ? 'enabled' : 'disabled'}
+<span class="string">Numbers:</span> ${numbersCheck.checked ? 'enabled' : 'disabled'}
+<span class="string">Symbols:</span> ${symbolsCheck.checked ? 'enabled' : 'disabled'}
+<span class="string">Security Level:</span> ${securityLevel}`;
+                        break;
+                        
+                    case 'export':
+                        outputDiv.innerHTML = `<span class="keyword">Exporting passwords...</span>
+<span class="comment">// Connecting to server...</span>
+<span class="comment">// Compressing data...</span>
+<span class="string">Export complete! File: passwords_${new Date().toISOString().slice(0,10)}.dat</span>`;
+                        break;
+                        
+                    case 'encrypt':
+                        outputDiv.innerHTML = `<span class="keyword">Encrypting password...</span>
+<span class="comment">// Initializing encryption module...</span>
+<span class="comment">// Generating encryption key...</span>
+<span class="string">Encryption complete! Security level: ${securityLevel === 5 ? 'MAXIMUM' : 'HIGH'}</span>`;
+                        break;
+                        
+                    case 'decrypt':
+                        if (parts.length > 1) {
+                            outputDiv.innerHTML = `<span class="keyword">Decrypting password...</span>
+<span class="comment">// Initializing decryption module...</span>
+<span class="comment">// Applying decryption key...</span>
+<span class="string">Decryption complete! Password: ${parts[1]}</span>`;
+                        } else {
+                            outputDiv.innerHTML = `<span class="error">Error: No password provided to decrypt</span>`;
+                        }
+                        break;
+                        
+                    case 'hash':
+                        const currentPassword = passwordDisplay.textContent;
+                        if (currentPassword && currentPassword !== 'Click "Generate" to create a password') {
+                            // Simple hash simulation
+                            let hash = '';
+                            for (let i = 0; i < currentPassword.length; i++) {
+                                hash += currentPassword.charCodeAt(i).toString(16);
+                            }
+                            outputDiv.innerHTML = `<span class="keyword">Password Hash (SHA-256 simulated):</span>
+<span class="string">${hash.slice(0, 64)}</span>`;
+                        } else {
+                            outputDiv.innerHTML = `<span class="error">Error: No password to hash. Generate one first.</span>`;
+                        }
+                        break;
+                        
+                    case 'analyze':
+                        const pwd = passwordDisplay.textContent;
+                        if (pwd && pwd !== 'Click "Generate" to create a password') {
+                            let strength = 'WEAK';
+                            let score = 0;
+                            
+                            if (pwd.length >= 8) score++;
+                            if (pwd.length >= 12) score++;
+                            if (/[A-Z]/.test(pwd)) score++;
+                            if (/[a-z]/.test(pwd)) score++;
+                            if (/[0-9]/.test(pwd)) score++;
+                            if (/[^A-Za-z0-9]/.test(pwd)) score++;
+                            
+                            if (score >= 5) strength = 'STRONG';
+                            else if (score >= 3) strength = 'MEDIUM';
+                            
+                            outputDiv.innerHTML = `<span class="keyword">Password Analysis:</span>
+<span class="string">Length:</span> ${pwd.length}
+<span class="string">Uppercase:</span> ${/[A-Z]/.test(pwd) ? 'Yes' : 'No'}
+<span class="string">Lowercase:</span> ${/[a-z]/.test(pwd) ? 'Yes' : 'No'}
+<span class="string">Numbers:</span> ${/[0-9]/.test(pwd) ? 'Yes' : 'No'}
+<span class="string">Symbols:</span> ${/[^A-Za-z0-9]/.test(pwd) ? 'Yes' : 'No'}
+<span class="string">Entropy:</span> ${(pwd.length * 4.7).toFixed(1)} bits
+<span class="string">Strength:</span> <span class="${strength === 'STRONG' ? 'string' : strength === 'MEDIUM' ? 'number' : 'error'}">${strength}</span>`;
+                        } else {
+                            outputDiv.innerHTML = `<span class="error">Error: No password to analyze. Generate one first.</span>`;
+                        }
+                        break;
+                        
+                    case 'batch':
+                        if (parts.length > 1) {
+                            const count = parseInt(parts[1]);
+                            if (count > 0 && count <= 20) {
+                                outputDiv.innerHTML = `<span class="keyword">Generating ${count} passwords...</span>`;
+                                
+                                // Simulate batch generation with progress
+                                const progressDiv = document.createElement('div');
+                                progressDiv.className = 'progress-bar';
+                                const progress = document.createElement('div');
+                                progress.className = 'progress';
+                                progressDiv.appendChild(progress);
+                                outputDiv.appendChild(progressDiv);
+                                
+                                let generated = 0;
+                                const interval = setInterval(() => {
+                                    generated++;
+                                    progress.style.width = `${(generated / count) * 100}%`;
+                                    if (generated >= count) {
+                                        clearInterval(interval);
+                                        const batchOutput = document.createElement('div');
+                                        batchOutput.innerHTML = `<span class="string">Batch generation complete! ${count} passwords generated.</span>`;
+                                        outputDiv.appendChild(batchOutput);
+                                    }
+                                }, 200);
+                            } else {
+                                outputDiv.innerHTML = `<span class="error">Error: Count must be between 1 and 20</span>`;
+                            }
+                        } else {
+                            outputDiv.innerHTML = `<span class="error">Error: No count specified. Usage: batch [count]</span>`;
+                        }
+                        break;
+                        
+                    case 'theme':
+                        if (parts.length > 1) {
+                            const theme = parts[1].toLowerCase();
+                            if (theme === 'dark') {
+                                document.body.style.backgroundColor = '#000';
+                                document.body.style.color = '#0f0';
+                                outputDiv.innerHTML = `<span class="keyword">Theme set to:</span> <span class="string">Dark</span>`;
+                            } else if (theme === 'light') {
+                                document.body.style.backgroundColor = '#fff';
+                                document.body.style.color = '#000';
+                                outputDiv.innerHTML = `<span class="keyword">Theme set to:</span> <span class="string">Light</span>`;
+                            } else if (theme === 'retro') {
+                                document.body.style.backgroundColor = '#c0c0c0';
+                                document.body.style.color = '#000';
+                                outputDiv.innerHTML = `<span class="keyword">Theme set to:</span> <span class="string">Retro</span>`;
+                            } else if (theme === 'matrix') {
+                                document.body.style.backgroundColor = '#000';
+                                document.body.style.color = '#0f0';
+                                createMatrixEffect();
+                                outputDiv.innerHTML = `<span class="keyword">Theme set to:</span> <span class="string">Matrix</span>`;
+                            } else {
+                                outputDiv.innerHTML = `<span class="error">Error: Unknown theme. Available: dark, light, retro, matrix</span>`;
+                            }
+                        } else {
+                            outputDiv.innerHTML = `<span class="keyword">Current theme:</span> <span class="string">Retro</span>`;
+                        }
+                        break;
+                        
+                    case 'save':
+                        outputDiv.innerHTML = `<span class="keyword">Saving settings...</span>
+<span class="comment">// Writing to config file...</span>
+<span class="string">Settings saved to: C:\\PASSWORD\\config.ini</span>`;
+                        break;
+                        
+                    case 'load':
+                        outputDiv.innerHTML = `<span class="keyword">Loading settings...</span>
+<span class="comment">// Reading config file...</span>
+<span class="string">Settings loaded successfully</span>`;
+                        break;
+                        
+                    case 'version':
+                        outputDiv.innerHTML = `<span class="keyword">Password Generator v0.1b</span>
+<span class="comment">// Build: 1995-12-01</span>
+<span class="comment">// Copyright (c) 1995 PasswordSoft Inc.</span>
+<span class="comment">// Advanced Command Interface v1.0b</span>`;
+                        break;
+                        
+                    case 'debug':
+                        outputDiv.innerHTML = `<span class="keyword">Debug Information:</span>
+<span class="string">User Agent:</span> ${navigator.userAgent}
+<span class="string">Screen:</span> ${screen.width}x${screen.height}
+<span class="string">Command History:</span> ${commandHistory.length} entries
+<span class="string">Generated Passwords:</span> ${passwordCount}
+<span class="string">Security Level:</span> ${securityLevel}
+<span class="string">Session Start:</span> ${sessionStart.toLocaleString()}`;
+                        break;
+                        
+                    case 'tutorial':
+                        outputDiv.innerHTML = `<span class="keyword">PASSWORD GENERATOR TUTORIAL</span>
+<span class="comment">// Welcome to the Password Generator tutorial!</span>
+<span class="comment">// This system helps you create secure passwords.</span>
+
+<span class="string">Step 1:</span> Type <span class="function">'generate'</span> to create a password
+<span class="string">Step 2:</span> Type <span class="function">'analyze'</span> to check password strength
+<span class="string">Step 3:</span> Type <span class="function">'length 16'</span> to change password length
+<span class="string">Step 4:</span> Type <span class="function">'batch 5'</span> to generate multiple passwords
+<span class="string">Step 5:</span> Type <span class="function">'security 3'</span> to increase security level
+
+<span class="comment">// For more commands, type 'help'</span>`;
+                        break;
+                        
+                    case 'script':
+                        if (parts.length > 2) {
+                            const scriptName = parts[1];
+                            const scriptCode = parts.slice(2).join(' ');
+                            scripts[scriptName] = scriptCode;
+                            outputDiv.innerHTML = `<span class="keyword">Script '${scriptName}' saved.</span>`;
+                        } else {
+                            outputDiv.innerHTML = `<span class="error">Error: Usage: script [name] [code]</span>`;
+                        }
+                        break;
+                        
+                    case 'run':
+                        if (parts.length > 1) {
+                            const scriptName = parts[1];
+                            if (scripts[scriptName]) {
+                                outputDiv.innerHTML = `<span class="keyword">Running script '${scriptName}'...</span>`;
+                                // In a real implementation, you would execute the script code
+                                setTimeout(() => {
+                                    const scriptOutput = document.createElement('div');
+                                    scriptOutput.className = 'command-output';
+                                    scriptOutput.innerHTML = `<span class="string">Script '${scriptName}' executed successfully.</span>`;
+                                    commandWindow.insertBefore(scriptOutput, commandWindow.lastElementChild);
+                                    commandWindow.scrollTop = commandWindow.scrollHeight;
+                                }, 1000);
+                            } else {
+                                outputDiv.innerHTML = `<span class="error">Error: Script '${scriptName}' not found.</span>`;
+                            }
+                        } else {
+                            outputDiv.innerHTML = `<span class="error">Error: Usage: run [script-name]</span>`;
+                        }
+                        break;
+                        
+                    case 'var':
+                        if (parts.length > 2) {
+                            const varName = parts[1];
+                            const varValue = parts.slice(2).join(' ');
+                            variables[varName] = varValue;
+                            outputDiv.innerHTML = `<span class="keyword">Variable '${varName}' set to:</span> <span class="string">${varValue}</span>`;
+                        } else if (parts.length > 1) {
+                            const varName = parts[1];
+                            if (variables[varName]) {
+                                outputDiv.innerHTML = `<span class="keyword">Variable '${varName}':</span> <span class="string">${variables[varName]}</span>`;
+                            } else {
+                                outputDiv.innerHTML = `<span class="error">Error: Variable '${varName}' not found.</span>`;
+                            }
+                        } else {
+                            outputDiv.innerHTML = `<span class="error">Error: Usage: var [name] [value]</span>`;
+                        }
+                        break;
+                        
+                    case 'vars':
+                        outputDiv.innerHTML = `<span class="keyword">STORED VARIABLES:</span>`;
+                        for (const [key, value] of Object.entries(variables)) {
+                            const varDiv = document.createElement('div');
+                            varDiv.innerHTML = `<span class="string">${key}</span> = <span class="constant">${value}</span>`;
+                            outputDiv.appendChild(varDiv);
+                        }
+                        if (Object.keys(variables).length === 0) {
+                            outputDiv.innerHTML += `<span class="comment">// No variables stored</span>`;
+                        }
+                        break;
+                        
+                    case 'connect':
+                        if (parts.length > 1) {
+                            outputDiv.innerHTML = `<span class="keyword">Connecting to ${parts[1]}...</span>
+<span class="comment">// Establishing connection...</span>
+<span class="comment">// Authenticating...</span>
+<span class="string">Connected to ${parts[1]} successfully.</span>`;
+                        } else {
+                            outputDiv.innerHTML = `<span class="error">Error: Usage: connect [host]</span>`;
+                        }
+                        break;
+                        
+                    case 'disconnect':
+                        outputDiv.innerHTML = `<span class="keyword">Disconnecting...</span>
+<span class="string">Disconnected from remote host.</span>`;
+                        break;
+                        
+                    case 'ping':
+                        if (parts.length > 1) {
+                            outputDiv.innerHTML = `<span class="keyword">Pinging ${parts[1]}...</span>
+<span class="string">Reply from ${parts[1]}: time=24ms</span>
+<span class="string">Reply from ${parts[1]}: time=27ms</span>
+<span class="string">Reply from ${parts[1]}: time=23ms</span>
+<span class="string">Reply from ${parts[1]}: time=25ms</span>`;
+                        } else {
+                            outputDiv.innerHTML = `<span class="error">Error: Usage: ping [host]</span>`;
+                        }
+                        break;
+                        
+                    case 'upload':
+                        if (parts.length > 1) {
+                            outputDiv.innerHTML = `<span class="keyword">Uploading ${parts[1]}...</span>
+<span class="comment">// Establishing FTP connection...</span>
+<span class="comment">// Transferring data...</span>
+<span class="string">Upload complete: ${parts[1]}</span>`;
+                        } else {
+                            outputDiv.innerHTML = `<span class="error">Error: Usage: upload [file]</span>`;
+                        }
+                        break;
+                        
+                    case 'download':
+                        if (parts.length > 1) {
+                            outputDiv.innerHTML = `<span class="keyword">Downloading ${parts[1]}...</span>
+<span class="comment">// Establishing FTP connection...</span>
+<span class="comment">// Receiving data...</span>
+<span class="string">Download complete: ${parts[1]}</span>`;
+                        } else {
+                            outputDiv.innerHTML = `<span class="error">Error: Usage: download [file]</span>`;
+                        }
+                        break;
+                        
+                    case '':
+                        // Empty command, do nothing
+                        return;
+                        
+                    default:
+                        outputDiv.innerHTML = `<span class="error">Error: Unknown command '${cmd}'. Type 'help' for available commands.</span>`;
+                        break;
+                }
+                
+                commandWindow.insertBefore(outputDiv, commandWindow.lastElementChild);
+                commandWindow.scrollTop = commandWindow.scrollHeight;
+            }
+            
+            // Matrix effect for matrix theme
+            function createMatrixEffect() {
+                const canvas = document.createElement('canvas');
+                canvas.className = 'matrix';
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                document.body.appendChild(canvas);
+                
+                const ctx = canvas.getContext('2d');
+                const chars = "01010101010101010101010101010101";
+                const columns = canvas.width / 20;
+                const drops = [];
+                
+                for (let i = 0; i < columns; i++) {
+                    drops[i] = 1;
+                }
+                
+                function draw() {
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    ctx.fillStyle = '#0F0';
+                    ctx.font = '20px monospace';
+                    
+                    for (let i = 0; i < drops.length; i++) {
+                        const text = chars[Math.floor(Math.random() * chars.length)];
+                        ctx.fillText(text, i * 20, drops[i] * 20);
+                        
+                        if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+                            drops[i] = 0;
+                        }
+                        
+                        drops[i]++;
+                    }
+                }
+                
+                setInterval(draw, 33);
+            }
+            
+            // Event listeners for command interface
+            commandInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    const command = commandInput.value;
+                    commandInput.value = '';
+                    
+                    // Add command to output
+                    const commandLine = document.createElement('div');
+                    commandLine.className = 'command-output';
+                    commandLine.innerHTML = `<span class="prompt">C:\\PASSWORD\\SYSTEM&gt;</span> ${command}`;
+                    commandWindow.insertBefore(commandLine, commandWindow.lastElementChild);
+                    
+                    // Process command
+                    processCommand(command);
+                    
+                    // Scroll to bottom
+                    commandWindow.scrollTop = commandWindow.scrollHeight;
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (historyIndex > 0) {
+                        historyIndex--;
+                        commandInput.value = commandHistory[historyIndex];
+                    }
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (historyIndex < commandHistory.length - 1) {
+                        historyIndex++;
+                        commandInput.value = commandHistory[historyIndex];
+                    } else {
+                        historyIndex = commandHistory.length;
+                        commandInput.value = '';
+                    }
+                }
+            });
+            
+            // Focus on command input
+            commandInput.focus();
+            
+            // Event listeners for buttons
+            generateBtn.addEventListener('click', generatePassword);
+            copyBtn.addEventListener('click', copyPassword);
+            advancedBtn.addEventListener('click', function() {
+                processCommand('help');
+                commandInput.focus();
+            });
+            
+            // Generate initial password
+            generatePassword();
+        });
+    </script>
+</body>
+</html>
