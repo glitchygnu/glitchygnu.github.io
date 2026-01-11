@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Simple Website</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #808080; /* Grauer Hintergrund */
+            font-family: sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        /* Runder Button */
+        .round-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #505050;
+            border: 2px solid #303030;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .round-button:active {
+            background-color: #404040;
+        }
+        
+        /* Toggle Switch */
+      /* Runder Button - Premium Design */
+.round-button {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #6d6d6d, #525252);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.3),
+        0 15px 20px rgba(0, 0, 0, 0.2),
+        inset 0 2px 4px rgba(255, 255, 255, 0.2),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: center;
+}
+
+.round-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 60%);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.round-button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    background: linear-gradient(145deg, #5a5a5a, #474747);
+    border-radius: 50%;
+    box-shadow: 
+        inset 0 2px 8px rgba(255, 255, 255, 0.1),
+        inset 0 -2px 8px rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+.round-button:hover {
+    transform: scale(1.08);
+    box-shadow: 
+        0 15px 40px rgba(0, 0, 0, 0.4),
+        0 20px 30px rgba(0, 0, 0, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.2),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(145deg, #727272, #575757);
+}
+
+.round-button:active {
+    transform: scale(0.92);
+    box-shadow: 
+        0 5px 15px rgba(0, 0, 0, 0.2),
+        0 8px 10px rgba(0, 0, 0, 0.15),
+        inset 0 2px 4px rgba(255, 255, 255, 0.1),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Druck-sensitiver Effekt */
+.round-button.depth-0 {
+    transform: scale(0.95);
+    box-shadow: 
+        0 5px 15px rgba(0, 0, 0, 0.25),
+        0 8px 12px rgba(0, 0, 0, 0.2),
+        inset 0 2px 4px rgba(255, 255, 255, 0.15),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.35);
+}
+
+.round-button.depth-1 {
+    transform: scale(0.97);
+    box-shadow: 
+        0 8px 22px rgba(0, 0, 0, 0.3),
+        0 12px 15px rgba(0, 0, 0, 0.25),
+        inset 0 2px 4px rgba(255, 255, 255, 0.18),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.38);
+}
+
+.round-button.depth-2 {
+    transform: scale(0.99);
+    box-shadow: 
+        0 10px 26px rgba(0, 0, 0, 0.35),
+        0 15px 18px rgba(0, 0, 0, 0.28),
+        inset 0 2px 4px rgba(255, 255, 255, 0.19),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.39);
+}
+
+/* Innerer Punkt im Button */
+.button-inner {
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(145deg, #404040, #303030);
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    box-shadow: 
+        inset 0 1px 3px rgba(0, 0, 0, 0.5),
+        inset 0 -1px 3px rgba(255, 255, 255, 0.1);
+}
+
+/* Glanz-Effekt oben links */
+.round-button .shine {
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 30%;
+    height: 30%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Mikro-Animation für den Button beim Laden */
+@keyframes button-appear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(-180deg);
+    }
+    60% {
+        opacity: 1;
+        transform: scale(1.1) rotate(10deg);
+    }
+    80% {
+        transform: scale(0.95) rotate(-5deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.round-button {
+    animation: button-appear 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}        
+        .toggle-switch {
+            width: 26px;
+            height: 26px;
+            background-color: #303030;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: left 0.1s;
+        }
+        
+        .toggle-container.active .toggle-switch {
+            left: 32px;
+        }
+        
+        /* Slider */
+        .slider-container {
+            width: 200px;
+        }
+        
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            background-color: #505050;
+            border-radius: 5px;
+            border: 2px solid #303030;
+            outline: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #303030;
+            cursor: pointer;
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #303030;
+            cursor: pointer;
+            border: none;
+        }
+        
+        /* Modal Fenster */
+        /* Modal Fenster mit erweiterter Apple-Animation */
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.01);
+    width: 0;
+    height: 0;
+    background-color: #505050;
+    border-radius: 20px;
+    border: 2px solid #303030;
+    z-index: 1000;
+    opacity: 0;
+    overflow: hidden;
+    box-shadow: 
+        0 50px 100px rgba(0, 0, 0, 0.5),
+        0 30px 60px rgba(0, 0, 0, 0.4),
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 10px 20px rgba(0, 0, 0, 0.2),
+        inset 0 1px 2px rgba(255, 255, 255, 0.1);
+    will-change: transform, width, height, opacity, border-radius;
+}
+
+.modal-content {
+    padding: 40px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: #f0f0f0;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    will-change: transform, opacity;
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 30px;
+    height: 30px;
+    background-color: #303030;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1001;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.3),
+        inset 0 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+.close-button:hover {
+    background-color: #404040;
+    transform: scale(1.1);
+}
+
+.close-button:active {
+    transform: scale(0.9);
+}
+
+.close-button::before, .close-button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60%;
+    height: 2px;
+    background-color: #f0f0f0;
+}
+
+.close-button::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.close-button::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.modal.active .close-button {
+    opacity: 1;
+    transform: scale(1);
+    transition-delay: 0.6s;
+}
+
+.modal.active .modal-content {
+    opacity: 1;
+    transform: scale(1);
+    transition-delay: 0.4s;
+}
+
+/* Haupt-Animation für das Öffnen des Modals */
+@keyframes appleModalOpen {
+    0% {
+        transform: translate(-50%, -50%) scale(0.01) rotateX(90deg) rotateY(90deg);
+        width: 0;
+        height: 0;
+        opacity: 0;
+        border-radius: 50%;
+        box-shadow: 
+            0 0 0 rgba(0, 0, 0, 0),
+            0 0 0 rgba(0, 0, 0, 0),
+            0 0 0 rgba(0, 0, 0, 0);
+    }
+    5% {
+        transform: translate(-50%, -50%) scale(0.02) rotateX(85deg) rotateY(85deg);
+        width: 5px;
+        height: 5px;
+        opacity: 0.1;
+        border-radius: 48%;
+        box-shadow: 
+            0 1px 2px rgba(0, 0, 0, 0.1),
+            0 2px 4px rgba(0, 0, 0, 0.05),
+            0 4px 8px rgba(0, 0, 0, 0.02);
+    }
+    10% {
+        transform: translate(-50%, -50%) scale(0.04) rotateX(80deg) rotateY(80deg);
+        width: 10px;
+        height: 10px;
+        opacity: 0.15;
+        border-radius: 46%;
+        box-shadow: 
+            0 2px 4px rgba(0, 0, 0, 0.15),
+            0 4px 8px rgba(0, 0, 0, 0.08),
+            0 8px 16px rgba(0, 0, 0, 0.04);
+    }
+    15% {
+        transform: translate(-50%, -50%) scale(0.08) rotateX(75deg) rotateY(75deg);
+        width: 20px;
+        height: 20px;
+        opacity: 0.2;
+        border-radius: 44%;
+        box-shadow: 
+            0 3px 6px rgba(0, 0, 0, 0.2),
+            0 6px 12px rgba(0, 0, 0, 0.1),
+            0 12px 24px rgba(0, 0, 0, 0.05);
+    }
+    20% {
+        transform: translate(-50%, -50%) scale(0.12) rotateX(70deg) rotateY(70deg);
+        width: 30px;
+        height: 30px;
+        opacity: 0.25;
+        border-radius: 42%;
+        box-shadow: 
+            0 4px 8px rgba(0, 0, 0, 0.25),
+            0 8px 16px rgba(0, 0, 0, 0.12),
+            0 16px 32px rgba(0, 0, 0, 0.06);
+    }
+    25% {
+        transform: translate(-50%, -50%) scale(0.18) rotateX(65deg) rotateY(65deg);
+        width: 45px;
+        height: 45px;
+        opacity: 0.3;
+        border-radius: 40%;
+        box-shadow: 
+            0 5px 10px rgba(0, 0, 0, 0.3),
+            0 10px 20px rgba(0, 0, 0, 0.15),
+            0 20px 40px rgba(0, 0, 0, 0.08);
+    }
+    30% {
+        transform: translate(-50%, -50%) scale(0.25) rotateX(60deg) rotateY(60deg);
+        width: 60px;
+        height: 60px;
+        opacity: 0.35;
+        border-radius: 38%;
+        box-shadow: 
+            0 6px 12px rgba(0, 0, 0, 0.35),
+            0 12px 24px rgba(0, 0, 0, 0.18),
+            0 24px 48px rgba(0, 0, 0, 0.09);
+    }
+    35% {
+        transform: translate(-50%, -50%) scale(0.35) rotateX(55deg) rotateY(55deg);
+        width: 80px;
+        height: 80px;
+        opacity: 0.4;
+        border-radius: 36%;
+        box-shadow: 
+            0 7px 14px rgba(0, 0, 0, 0.4),
+            0 14px 28px rgba(0, 0, 0, 0.2),
+            0 28px 56px rgba(0, 0, 0, 0.1);
+    }
+    40% {
+        transform: translate(-50%, -50%) scale(0.45) rotateX(50deg) rotateY(50deg);
+        width: 100px;
+        height: 100px;
+        opacity: 0.45;
+        border-radius: 34%;
+        box-shadow: 
+            0 8px 16px rgba(0, 0, 0, 0.45),
+            0 16px 32px rgba(0, 0, 0, 0.22),
+            0 32px 64px rgba(0, 0, 0, 0.11);
+    }
+    45% {
+        transform: translate(-50%, -50%) scale(0.6) rotateX(45deg) rotateY(45deg);
+        width: 130px;
+        height: 130px;
+        opacity: 0.5;
+        border-radius: 32%;
+        box-shadow: 
+            0 10px 20px rgba(0, 0, 0, 0.5),
+            0 20px 40px rgba(0, 0, 0, 0.25),
+            0 40px 80px rgba(0, 0, 0, 0.12);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(0.75) rotateX(40deg) rotateY(40deg);
+        width: 160px;
+        height: 160px;
+        opacity: 0.55;
+        border-radius: 30%;
+        box-shadow: 
+            0 12px 24px rgba(0, 0, 0, 0.55),
+            0 24px 48px rgba(0, 0, 0, 0.28),
+            0 48px 96px rgba(0, 0, 0, 0.14);
+    }
+    55% {
+        transform: translate(-50%, -50%) scale(0.9) rotateX(35deg) rotateY(35deg);
+        width: 190px;
+        height: 190px;
+        opacity: 0.6;
+        border-radius: 28%;
+        box-shadow: 
+            0 14px 28px rgba(0, 0, 0, 0.6),
+            0 28px 56px rgba(0, 0, 0, 0.3),
+            0 56px 112px rgba(0, 0, 0, 0.15);
+    }
+    60% {
+        transform: translate(-50%, -50%) scale(1.05) rotateX(30deg) rotateY(30deg);
+        width: 220px;
+        height: 220px;
+        opacity: 0.65;
+        border-radius: 26%;
+        box-shadow: 
+            0 16px 32px rgba(0, 0, 0, 0.65),
+            0 32px 64px rgba(0, 0, 0, 0.32),
+            0 64px 128px rgba(0, 0, 0, 0.16);
+    }
+    65% {
+        transform: translate(-50%, -50%) scale(1.2) rotateX(25deg) rotateY(25deg);
+        width: 250px;
+        height: 250px;
+        opacity: 0.7;
+        border-radius: 24%;
+        box-shadow: 
+            0 18px 36px rgba(0, 0, 0, 0.7),
+            0 36px 72px rgba(0, 0, 0, 0.35),
+            0 72px 144px rgba(0, 0, 0, 0.18);
+    }
+    70% {
+        transform: translate(-50%, -50%) scale(1.35) rotateX(20deg) rotateY(20deg);
+        width: 280px;
+        height: 280px;
+        opacity: 0.75;
+        border-radius: 22%;
+        box-shadow: 
+            0 20px 40px rgba(0, 0, 0, 0.75),
+            0 40px 80px rgba(0, 0, 0, 0.38),
+            0 80px 160px rgba(0, 0, 0, 0.19);
+    }
+    75% {
+        transform: translate(-50%, -50%) scale(1.5) rotateX(15deg) rotateY(15deg);
+        width: 310px;
+        height: 310px;
+        opacity: 0.8;
+        border-radius: 20%;
+        box-shadow: 
+            0 22px 44px rgba(0, 0, 0, 0.8),
+            0 44px 88px rgba(0, 0, 0, 0.4),
+            0 88px 176px rgba(0, 0, 0, 0.2);
+    }
+    80% {
+        transform: translate(-50%, -50%) scale(1.65) rotateX(10deg) rotateY(10deg);
+        width: 340px;
+        height: 340px;
+        opacity: 0.85;
+        border-radius: 18%;
+        box-shadow: 
+            0 24px 48px rgba(0, 0, 0, 0.85),
+            0 48px 96px rgba(0, 0, 0, 0.42),
+            0 96px 192px rgba(0, 0, 0, 0.21);
+    }
+    85% {
+        transform: translate(-50%, -50%) scale(1.8) rotateX(5deg) rotateY(5deg);
+        width: 370px;
+        height: 370px;
+        opacity: 0.9;
+        border-radius: 16%;
+        box-shadow: 
+            0 26px 52px rgba(0, 0, 0, 0.9),
+            0 52px 104px rgba(0, 0, 0, 0.45),
+            0 104px 208px rgba(0, 0, 0, 0.22);
+    }
+    90% {
+        transform: translate(-50%, -50%) scale(1.95) rotateX(2deg) rotateY(2deg);
+        width: 400px;
+        height: 400px;
+        opacity: 0.95;
+        border-radius: 14%;
+        box-shadow: 
+            0 28px 56px rgba(0, 0, 0, 0.95),
+            0 56px 112px rgba(0, 0, 0, 0.48),
+            0 112px 224px rgba(0, 0, 0, 0.24);
+    }
+    95% {
+        transform: translate(-50%, -50%) scale(2.1) rotateX(1deg) rotateY(1deg);
+        width: 430px;
+        height: 430px;
+        opacity: 1;
+        border-radius: 12%;
+        box-shadow: 
+            0 30px 60px rgba(0, 0, 0, 1),
+            0 60px 120px rgba(0, 0, 0, 0.5),
+            0 120px 240px rgba(0, 0, 0, 0.25);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1) rotateX(0deg) rotateY(0deg);
+        width: 300px;
+        height: 200px;
+        opacity: 1;
+        border-radius: 20px;
+        box-shadow: 
+            0 50px 100px rgba(0, 0, 0, 0.5),
+            0 30px 60px rgba(0, 0, 0, 0.4),
+            0 20px 40px rgba(0, 0, 0, 0.3),
+            0 10px 20px rgba(0, 0, 0, 0.2),
+            inset 0 1px 2px rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Animation für das Schließen des Modals */
+@keyframes appleModalClose {
+    0% {
+        transform: translate(-50%, -50%) scale(1) rotateX(0deg) rotateY(0deg);
+        width: 300px;
+        height: 200px;
+        opacity: 1;
+        border-radius: 20px;
+        box-shadow: 
+            0 50px 100px rgba(0, 0, 0, 0.5),
+            0 30px 60px rgba(0, 0, 0, 0.4),
+            0 20px 40px rgba(0, 0, 0, 0.3),
+            0 10px 20px rgba(0, 0, 0, 0.2),
+            inset 0 1px 2px rgba(255, 255, 255, 0.1);
+    }
+    5% {
+        transform: translate(-50%, -50%) scale(0.98) rotateX(1deg) rotateY(1deg);
+        width: 290px;
+        height: 193px;
+        opacity: 0.95;
+        border-radius: 19px;
+        box-shadow: 
+            0 45px 90px rgba(0, 0, 0, 0.45),
+            0 27px 54px rgba(0, 0, 0, 0.36),
+            0 18px 36px rgba(0, 0, 0, 0.27),
+            0 9px 18px rgba(0, 0, 0, 0.18);
+    }
+    10% {
+        transform: translate(-50%, -50%) scale(0.96) rotateX(2deg) rotateY(2deg);
+        width: 280px;
+        height: 187px;
+        opacity: 0.9;
+        border-radius: 18px;
+        box-shadow: 
+            0 40px 80px rgba(0, 0, 0, 0.4),
+            0 24px 48px rgba(0, 0, 0, 0.32),
+            0 16px 32px rgba(0, 0, 0, 0.24),
+            0 8px 16px rgba(0, 0, 0, 0.16);
+    }
+    15% {
+        transform: translate(-50%, -50%) scale(0.94) rotateX(3deg) rotateY(3deg);
+        width: 270px;
+        height: 180px;
+        opacity: 0.85;
+        border-radius: 17px;
+        box-shadow: 
+            0 35px 70px rgba(0, 0, 0, 0.35),
+            0 21px 42px rgba(0, 0, 0, 0.28),
+            0 14px 28px rgba(0, 0, 0, 0.21),
+            0 7px 14px rgba(0, 0, 0, 0.14);
+    }
+    20% {
+        transform: translate(-50%, -50%) scale(0.92) rotateX(4deg) rotateY(4deg);
+        width: 260px;
+        height: 173px;
+        opacity: 0.8;
+        border-radius: 16px;
+        box-shadow: 
+            0 30px 60px rgba(0, 0, 0, 0.3),
+            0 18px 36px rgba(0, 0, 0, 0.24),
+            0 12px 24px rgba(0, 0, 0, 0.18),
+            0 6px 12px rgba(0, 0, 0, 0.12);
+    }
+    25% {
+        transform: translate(-50%, -50%) scale(0.9) rotateX(5deg) rotateY(5deg);
+        width: 250px;
+        height: 167px;
+        opacity: 0.75;
+        border-radius: 15px;
+        box-shadow: 
+            0 25px 50px rgba(0, 0, 0, 0.25),
+            0 15px 30px rgba(0, 0, 0, 0.2),
+            0 10px 20px rgba(0, 0, 0, 0.15),
+            0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+    30% {
+        transform: translate(-50%, -50%) scale(0.88) rotateX(6deg) rotateY(6deg);
+        width: 240px;
+        height: 160px;
+        opacity: 0.7;
+        border-radius: 14px;
+        box-shadow: 
+            0 20px 40px rgba(0, 0, 0, 0.2),
+            0 12px 24px rgba(0, 0, 0, 0.16),
+            0 8px 16px rgba(0, 0, 0, 0.12),
+            0 4px 8px rgba(0, 0, 0, 0.08);
+    }
+    35% {
+        transform: translate(-50%, -50%) scale(0.86) rotateX(7deg) rotateY(7deg);
+        width: 230px;
+        height: 153px;
+        opacity: 0.65;
+        border-radius: 13px;
+        box-shadow: 
+            0 15px 30px rgba(0, 0, 0, 0.15),
+            0 9px 18px rgba(0, 0, 0, 0.12),
+            0 6px 12px rgba(0, 0, 0, 0.09),
+            0 3px 6px rgba(0, 0, 0, 0.06);
+    }
+    40% {
+        transform: translate(-50%, -50%) scale(0.84) rotateX(8deg) rotateY(8deg);
+        width: 220px;
+        height: 147px;
+        opacity: 0.6;
+        border-radius: 12px;
+        box-shadow: 
+            0 10px 20px rgba(0, 0, 0, 0.1),
+            0 6px 12px rgba(0, 0, 0, 0.08),
+            0 4px 8px rgba(0, 0, 0, 0.06),
+            0 2px 4px rgba(0, 0, 0, 0.04);
+    }
+    45% {
+        transform: translate(-50%, -50%) scale(0.82) rotateX(9deg) rotateY(9deg);
+        width: 210px;
+        height: 140px;
+        opacity: 0.55;
+        border-radius: 11px;
+        box-shadow: 
+            0 5px 10px rgba(0, 0, 0, 0.05),
+            0 3px 6px rgba(0, 0, 0, 0.04),
+            0 2px 4px rgba(0, 0, 0, 0.03),
+            0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(0.8) rotateX(10deg) rotateY(10deg);
+        width: 200px;
+        height: 133px;
+        opacity: 0.5;
+        border-radius: 10px;
+        box-shadow: 
+            0 0 0 rgba(0, 0, 0, 0),
+            0 0 0 rgba(0, 0, 0, 0),
+            0 0 0 rgba(0, 0, 0, 0),
+            0 0 0 rgba(0, 0, 0, 0);
+    }
+    55% {
+        transform: translate(-50%, -50%) scale(0.75) rotateX(12deg) rotateY(12deg);
+        width: 180px;
+        height: 120px;
+        opacity: 0.45;
+        border-radius: 9px;
+    }
+    60% {
+        transform: translate(-50%, -50%) scale(0.7) rotateX(14deg) rotateY(14deg);
+        width: 160px;
+        height: 107px;
+        opacity: 0.4;
+        border-radius: 8px;
+    }
+    65% {
+        transform: translate(-50%, -50%) scale(0.65) rotateX(16deg) rotateY(16deg);
+        width: 140px;
+        height: 93px;
+        opacity: 0.35;
+        border-radius: 7px;
+    }
+    70% {
+        transform: translate(-50%, -50%) scale(0.6) rotateX(18deg) rotateY(18deg);
+        width: 120px;
+        height: 80px;
+        opacity: 0.3;
+        border-radius: 6px;
+    }
+    75% {
+        transform: translate(-50%, -50%) scale(0.5) rotateX(20deg) rotateY(20deg);
+        width: 100px;
+        height: 67px;
+        opacity: 0.25;
+        border-radius: 5px;
+    }
+    80% {
+        transform: translate(-50%, -50%) scale(0.4) rotateX(25deg) rotateY(25deg);
+        width: 80px;
+        height: 53px;
+        opacity: 0.2;
+        border-radius: 4px;
+    }
+    85% {
+        transform: translate(-50%, -50%) scale(0.3) rotateX(30deg) rotateY(30deg);
+        width: 60px;
+        height: 40px;
+        opacity: 0.15;
+        border-radius: 3px;
+    }
+    90% {
+        transform: translate(-50%, -50%) scale(0.2) rotateX(40deg) rotateY(40deg);
+        width: 40px;
+        height: 27px;
+        opacity: 0.1;
+        border-radius: 2px;
+    }
+    95% {
+        transform: translate(-50%, -50%) scale(0.1) rotateX(60deg) rotateY(60deg);
+        width: 20px;
+        height: 13px;
+        opacity: 0.05;
+        border-radius: 1px;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(0.01) rotateX(90deg) rotateY(90deg);
+        width: 0;
+        height: 0;
+        opacity: 0;
+        border-radius: 0;
+    }
+}
+
+/* Animation für das Öffnen anwenden */
+.modal.active {
+    display: block;
+    animation: appleModalOpen 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Animation für das Schließen anwenden */
+.modal.closing {
+    animation: appleModalClose 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Hintergrund-Overlay */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.active {
+    display: block;
+    opacity: 1;
+    animation: overlayFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes overlayFadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes overlayFadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+        
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            background-color: #303030;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Runder Button -->
+        <div class="round-button" id="modalButton"></div>
+        
+        <!-- Toggle Switch -->
+        <div class="toggle-container" id="toggle">
+            <div class="toggle-switch"></div>
+        </div>
+        
+        <!-- Slider -->
+        <div class="slider-container">
+            <input type="range" min="0" max="100" value="50" class="slider" id="slider">
+        </div>
+    </div>
+    
+    <!-- Modal Fenster -->
+    <div class="modal" id="modal">
+        <div class="close-button" id="closeButton"></div>
+        <div class="modal-content">example text</div>
+    </div>
+
+    <script>
+        // Modal Button Funktion
+        const modalButton = document.getElementById('modalButton');
+        const modal = document.getElementById('modal');
+        const closeButton = document.getElementById('closeButton');
+        
+        modalButton.addEventListener('click', function() {
+            modal.classList.add('active');
+        });
+        
+        closeButton.addEventListener('click', function() {
+            modal.classList.remove('active');
+        });
+        
+        // Schließe Modal, wenn außerhalb geklickt wird
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+        
+        // Toggle Switch Funktion
+        const toggle = document.getElementById('toggle');
+        
+        toggle.addEventListener('click', function() {
+            toggle.classList.toggle('active');
+        });
+        
+        // Slider Funktion
+        const slider = document.getElementById('slider');
+        
+        slider.addEventListener('input', function() {
+            // Der Slider hat keine spezielle Funktion außer seinen Wert zu ändern
+            console.log("Slider Wert:", slider.value);
+        });
+    </script>
+</body>
+</html>
