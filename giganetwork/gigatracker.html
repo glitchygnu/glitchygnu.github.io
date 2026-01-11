@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-scale=1.0">
+    <title>Sportscar Speed Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', 'Arial Black', sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            color: white;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        .dashboard-container {
+            flex: 1;
+            min-width: 500px;
+            position: relative;
+        }
+
+        .controls-container {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dashboard {
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 
+                0 0 60px rgba(0, 100, 255, 0.4),
+                inset 0 0 100px rgba(0, 0, 0, 0.8),
+                0 0 0 2px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                from 0deg,
+                transparent,
+                var(--accent-color, rgba(0, 150, 255, 0.1)),
+                var(--accent-color-light, rgba(0, 200, 255, 0.2)),
+                var(--accent-color, rgba(0, 150, 255, 0.1)),
+                transparent
+            );
+            animation: rotate 20s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, var(--accent-color, #00a8ff), #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(0, 168, 255, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .speedometer {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            margin: 0 auto 30px;
+            z-index: 2;
+        }
+
+        .outer-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                #00ff00 0% 20%,
+                #aaff00 20% 40%,
+                #ffff00 40% 60%,
+                #ffaa00 60% 80%,
+                #ff0000 80% 100%
+            );
+            padding: 15px;
+            box-shadow: 
+                inset 0 0 30px rgba(0, 0, 0, 0.8),
+                0 0 40px rgba(255, 255, 255, 0.1);
+            transition: all 0.5s ease;
+        }
+
+        .inner-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #111;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.9);
+        }
+
+        .speed-display {
+            font-size: 4.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .unit {
+            font-size: 1.5em;
+            color: #aaa;
+            letter-spacing: 1px;
+        }
+
+        .needle {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 6px;
+            height: 170px;
+            background: var(--needle-color, #ff3333);
+            transform-origin: bottom center;
+            border-radius: 4px 4px 0 0;
+            transform: translateX(-50%) rotate(0deg);
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 3;
+            box-shadow: 0 0 15px var(--needle-color, #ff3333);
+        }
+
+        .needle::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 25px;
+            height: 25px;
+            background: var(--needle-color, #ff3333);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--needle-color, #ff3333);
+        }
+
+        .scale {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+        }
+
+        .scale-mark {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 3px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.7);
+            transform-origin: bottom center;
+        }
+
+        .scale-number {
+            position: absolute;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            transform: translate(-50%, -50%);
+        }
+
+        .info-panel {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .info-box {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            min-width: 120px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .info-box:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: translateY(-5px);
+        }
+
+        .info-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--accent-color, #00a8ff);
+        }
+
+        .info-label {
+            font-size: 0.9em;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .status-indicator {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #ff4757;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-text {
+            font-size: 1.2em;
+        }
+
+        .controls-title {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            color: var(--accent-color, #00a8ff);
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .control-group:last-child {
+            border-bottom: none;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            color: #ddd;
+        }
+
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.selected {
+            border-color: white;
+            box-shadow: 0 0 10px white;
+        }
+
+        .color-option i {
+            color: white;
+            font-size: 1.2em;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .color-option.selected i {
+            opacity: 1;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slider-value {
+            min-width: 50px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--accent-color, #00a8ff);
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 8px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            background: var(--accent-color, #00a8ff);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            border-radius: 34px;
+            transition: .4s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .4s;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--accent-color, #00a8ff);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: var(--accent-color, #00a8ff);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background: var(--accent-color-light, #33bbff);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .presets {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .preset-btn {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .preset-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 1000px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .dashboard-container, .controls-container {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-container">
+            <div class="dashboard" id="dashboard">
+                <div class="header">
+                    <h1><i class="fas fa-tachometer-alt"></i> SPORTSCAR SPEED TRACKER</h1>
+                </div>
+                
+                <div class="speedometer">
+                    <div class="outer-circle" id="outerCircle">
+                        <div class="inner-circle">
+                            <div class="speed-display" id="speedDisplay">0</div>
+                            <div class="unit">KM/H</div>
+                        </div>
+                    </div>
+                    <div class="needle" id="needle"></div>
+                    <div class="scale" id="scale"></div>
+                </div>
+                
+                <div class="info-panel">
+                    <div class="info-box">
+                        <div class="info-value" id="maxSpeed">0</div>
+                        <div class="info-label">Max Speed</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-value" id="avgSpeed">0</div>
+                        <div class="info-label">Avg Speed</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-value" id="distance">0.0</div>
+                        <div class="info-label">Distance (km)</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="info-value" id="altitude">0</div>
+                        <div class="info-label">Altitude (m)</div>
+                    </div>
+                </div>
+                
+                <div class="status">
+                    <div class="status-indicator" id="statusIndicator"></div>
+                    <div class="status-text" id="statusText">Acquiring GPS Signal...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls-container">
+            <h2 class="controls-title"><i class="fas fa-sliders-h"></i> CUSTOMIZATION</h2>
+            
+            <div class="control-group">
+                <label class="control-label">Dashboard Theme</label>
+                <div class="presets">
+                    <button class="preset-btn" onclick="applyPreset('cyberpunk')">Cyberpunk</button>
+                    <button class="preset-btn" onclick="applyPreset('racing')">Racing</button>
+                    <button class="preset-btn" onclick="applyPreset('night')">Night Vision</button>
+                    <button class="preset-btn" onclick="applyPreset('classic')">Classic</button>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Accent Color</label>
+                <div class="color-picker">
+                    <div class="color-option selected" style="background: #00a8ff;" onclick="selectColor('#00a8ff')">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="color-option" style="background: #ff3838;" onclick="selectColor('#ff3838')"></div>
+                    <div class="color-option" style="background: #17c964;" onclick="selectColor('#17c964')"></div>
+                    <div class="color-option" style="background: #ff9f1c;" onclick="selectColor('#ff9f1c')"></div>
+                    <div class="color-option" style="background: #9b59b6;" onclick="selectColor('#9b59b6')"></div>
+                    <div class="color-option" style="background: #00cec9;" onclick="selectColor('#00cec9')"></div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Needle Color</label>
+                <div class="color-picker">
+                    <div class="color-option selected" style="background: #ff3333;" onclick="selectNeedleColor('#ff3333')">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="color-option" style="background: #00ff00;" onclick="selectNeedleColor('#00ff00')"></div>
+                    <div class="color-option" style="background: #ffff00;" onclick="selectNeedleColor('#ffff00')"></div>
+                    <div class="color-option" style="background: #ffffff;" onclick="selectNeedleColor('#ffffff')"></div>
+                    <div class="color-option" style="background: #ff00ff;" onclick="selectNeedleColor('#ff00ff')"></div>
+                    <div class="color-option" style="background: #00ffff;" onclick="selectNeedleColor('#00ffff')"></div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Speed Units</label>
+                <div class="toggle-container">
+                    <span>KM/H</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="unitToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span>MPH</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Speedometer Sensitivity</label>
+                <div class="slider-container">
+                    <span>Low</span>
+                    <input type="range" id="sensitivitySlider" min="1" max="10" value="5">
+                    <span>High</span>
+                    <div class="slider-value" id="sensitivityValue">5</div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Display Options</label>
+                <div class="toggle-container">
+                    <span>Show Altitude</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="altitudeToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-container">
+                    <span>Animate Needle</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="animationToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="resetData()">
+                <i class="fas fa-redo"></i> RESET TRIP DATA
+            </button>
+            
+            <button class="btn" onclick="simulateSpeed()" style="margin-top: 10px; background: #9b59b6;">
+                <i class="fas fa-gamepad"></i> SIMULATE SPEED (DEMO)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const speedDisplay = document.getElementById('speedDisplay');
+        const needle = document.getElementById('needle');
+        const outerCircle = document.getElementById('outerCircle');
+        const scale = document.getElementById('scale');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+        const maxSpeedElement = document.getElementById('maxSpeed');
+        const avgSpeedElement = document.getElementById('avgSpeed');
+        const distanceElement = document.getElementById('distance');
+        const altitudeElement = document.getElementById('altitude');
+        const dashboard = document.getElementById('dashboard');
+        
+        // Control Elements
+        const unitToggle = document.getElementById('unitToggle');
+        const sensitivitySlider = document.getElementById('sensitivitySlider');
+        const sensitivityValue = document.getElementById('sensitivityValue');
+        const altitudeToggle = document.getElementById('altitudeToggle');
+        const animationToggle = document.getElementById('animationToggle');
+        
+        // Speed tracking variables
+        let currentSpeed = 0;
+        let maxSpeed = 0;
+        let totalSpeed = 0;
+        let speedReadings = 0;
+        let distance = 0;
+        let lastPosition = null;
+        let useMph = false;
+        let isTracking = false;
+        let watchId = null;
+        
+        // Customization variables
+        let accentColor = '#00a8ff';
+        let accentColorLight = '#33bbff';
+        let needleColor = '#ff3333';
+        
+        // Create speed scale
+        function createScale() {
+            scale.innerHTML = '';
+            
+            for (let i = 0; i <= 240; i += 20) {
+                // Create scale marks
+                const mark = document.createElement('div');
+                mark.className = 'scale-mark';
+                const angle = (i / 240) * 270 - 135;
+                mark.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+                
+                // Create scale numbers
+                if (i % 40 === 0) {
+                    const number = document.createElement('div');
+                    number.className = 'scale-number';
+                    number.textContent = i;
+                    
+                    const rad = (angle * Math.PI) / 180;
+                    const x = 50 + 45 * Math.cos(rad);
+                    const y = 50 + 45 * Math.sin(rad);
+                    
+                    number.style.left = `${x}%`;
+                    number.style.top = `${y}%`;
+                    scale.appendChild(number);
+                }
+                
+                scale.appendChild(mark);
+            }
+        }
+        
+        // Update needle position based on speed
+        function updateNeedle(speed) {
+            // Limit speed to 240 for display purposes
+            const displaySpeed = Math.min(speed, 240);
+            
+            // Calculate needle angle (-135 to 135 degrees for 0-240 km/h)
+            const angle = (displaySpeed / 240) * 270 - 135;
+            
+            // Apply animation based on toggle
+            if (animationToggle.checked) {
+                needle.style.transition = 'transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            } else {
+                needle.style.transition = 'transform 0.1s linear';
+            }
+            
+            needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+            
+            // Update needle color based on speed
+            updateNeedleColor(speed);
+        }
+        
+        // Update needle color based on speed
+        function updateNeedleColor(speed) {
+            let color;
+            if (speed < 50) {
+                color = '#00ff00'; // Green
+            } else if (speed < 100) {
+                color = '#aaff00'; // Light green
+            } else if (speed < 150) {
+                color = '#ffff00'; // Yellow
+            } else if (speed < 200) {
+                color = '#ffaa00'; // Orange
+            } else {
+                color = '#ff0000'; // Red
+            }
+            
+            needle.style.background = color;
+            needle.style.boxShadow = `0 0 15px ${color}`;
+            needle.style.setProperty('--needle-color', color);
+            
+            // Update the needle circle color
+            needle.style.setProperty('--needle-color', color);
+        }
+        
+        // Update speed display with color effect
+        function updateSpeedDisplay(speed) {
+            speedDisplay.textContent = Math.round(speed);
+            
+            // Update color based on speed
+            let color;
+            if (speed < 50) {
+                color = '#00ff00';
+            } else if (speed < 100) {
+                color = '#aaff00';
+            } else if (speed < 150) {
+                color = '#ffff00';
+            } else if (speed < 200) {
+                color = '#ffaa00';
+            } else {
+                color = '#ff0000';
+            }
+            
+            speedDisplay.style.color = color;
+            speedDisplay.style.textShadow = `0 0 20px ${color}`;
+        }
+        
+        // Convert km/h to mph
+        function kmhToMph(kmh) {
+            return kmh * 0.621371;
+        }
+        
+        // Update all speed displays
+        function updateSpeed(speed) {
+            // Convert units if needed
+            const displaySpeed = useMph ? kmhToMph(speed) : speed;
+            
+            // Update current speed
+            currentSpeed = displaySpeed;
+            updateSpeedDisplay(displaySpeed);
+            updateNeedle(speed); // Needle always uses km/h scale
+            
+            // Update max speed
+            if (speed > maxSpeed) {
+                maxSpeed = speed;
+                maxSpeedElement.textContent = useMph ? Math.round(kmhToMph(maxSpeed)) : Math.round(maxSpeed);
+            }
+            
+            // Update average speed
+            totalSpeed += speed;
+            speedReadings++;
+            const avgSpeed = totalSpeed / speedReadings;
+            avgSpeedElement.textContent = useMph ? Math.round(kmhToMph(avgSpeed)) : Math.round(avgSpeed);
+        }
+        
+        // Calculate distance between two coordinates (in km)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+        
+        // Handle position updates from GPS
+        function handlePosition(position) {
+            if (!isTracking) {
+                isTracking = true;
+                statusIndicator.style.backgroundColor = '#2ed573';
+                statusText.textContent = 'Live Tracking Active';
+            }
+            
+            const speed = position.coords.speed;
+            const altitude = position.coords.altitude;
+            
+            // Update speed (convert from m/s to km/h)
+            if (speed !== null && speed >= 0) {
+                const speedKmh = speed * 3.6;
+                updateSpeed(speedKmh);
+            }
+            
+            // Update distance if we have a previous position
+            if (lastPosition && position.coords.accuracy < 50) {
+                const dist = calculateDistance(
+                    lastPosition.coords.latitude,
+                    lastPosition.coords.longitude,
+                    position.coords.latitude,
+                    position.coords.longitude
+                );
+                
+                if (dist < 0.1) { // Filter out noisy readings
+                    distance += dist;
+                    distanceElement.textContent = distance.toFixed(2);
+                }
+            }
+            
+            // Update altitude if available
+            if (altitude !== null && altitudeToggle.checked) {
+                altitudeElement.textContent = Math.round(altitude);
+            }
+            
+            lastPosition = position;
+        }
+        
+        // Handle GPS errors
+        function handleError(error) {
+            console.error('GPS Error:', error);
+            
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    statusText.textContent = 'Location access denied. Please enable GPS.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    statusText.textContent = 'Location information unavailable.';
+                    break;
+                case error.TIMEOUT:
+                    statusText.textContent = 'Location request timeout.';
+                    break;
+                default:
+                    statusText.textContent = 'Unknown error occurred.';
+                    break;
+            }
+            
+            statusIndicator.style.backgroundColor = '#ff4757';
+            statusIndicator.style.animation = 'none';
+        }
+        
+        // Start GPS tracking
+        function startTracking() {
+            if (!navigator.geolocation) {
+                statusText.textContent = 'Geolocation is not supported by your browser';
+                return;
+            }
+            
+            statusIndicator.style.backgroundColor = '#ffa502';
+            statusText.textContent = 'Requesting GPS access...';
+            
+            // Request high accuracy for better speed readings
+            const options = {
+                enableHighAccuracy: true,
+                maximumAge: 1000,
+                timeout: 5000
+            };
+            
+            watchId = navigator.geolocation.watchPosition(handlePosition, handleError, options);
+        }
+        
+        // Stop GPS tracking
+        function stopTracking() {
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+                isTracking = false;
+                statusIndicator.style.backgroundColor = '#ff4757';
+                statusText.textContent = 'Tracking Stopped';
+            }
+        }
+        
+        // Customization functions
+        function selectColor(color) {
+            accentColor = color;
+            
+            // Calculate lighter version for gradients
+            const r = parseInt(color.slice(1, 3), 16);
+            const g = parseInt(color.slice(3, 5), 16);
+            const b = parseInt(color.slice(5, 7), 16);
+            
+            accentColorLight = `rgb(${Math.min(r + 51, 255)}, ${Math.min(g + 51, 255)}, ${Math.min(b + 51, 255)})`;
+            
+            // Update CSS variables
+            document.documentElement.style.setProperty('--accent-color', accentColor + '80');
+            document.documentElement.style.setProperty('--accent-color-light', accentColorLight + '80');
+            
+            // Update UI elements
+            document.querySelectorAll('h1, .controls-title, .info-value, .slider-value').forEach(el => {
+                el.style.color = accentColor;
+            });
+            
+            document.querySelectorAll('.btn:not(:last-child)').forEach(btn => {
+                btn.style.background = accentColor;
+            });
+            
+            // Update selected color indicator
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.classList.remove('selected');
+                option.querySelector('i')?.style.opacity = '0';
+            });
+            
+            event.target.classList.add('selected');
+            event.target.querySelector('i').style.opacity = '1';
+        }
+        
+        function selectNeedleColor(color) {
+            needleColor = color;
+            updateNeedleColor(currentSpeed);
+            
+            // Update selected color indicator
+            const needleOptions = document.querySelectorAll('.control-group:nth-child(3) .color-option');
+            needleOptions.forEach(option => {
+                option.classList.remove('selected');
+                option.querySelector('i')?.style.opacity = '0';
+            });
+            
+            event.target.classList.add('selected');
+            if (event.target.querySelector('i')) {
+                event.target.querySelector('i').style.opacity = '1';
+            }
+        }
+        
+        function applyPreset(presetName) {
+            switch(presetName) {
+                case 'cyberpunk':
+                    selectColor('#9b59b6');
+                    selectNeedleColor('#00ffff');
+                    dashboard.style.boxShadow = '0 0 60px rgba(155, 89, 182, 0.6), inset 0 0 100px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.1)';
+                    break;
+                case 'racing':
+                    selectColor('#ff3838');
+                    selectNeedleColor('#ffffff');
+                    dashboard.style.boxShadow = '0 0 60px rgba(255, 56, 56, 0.6), inset 0 0 100px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.1)';
+                    break;
+                case 'night':
+                    selectColor('#00ff00');
+                    selectNeedleColor('#00ff00');
+                    dashboard.style.boxShadow = '0 0 60px rgba(0, 255, 0, 0.4), inset 0 0 100px rgba(0, 0, 0, 0.9), 0 0 0 2px rgba(0, 255, 0, 0.2)';
+                    break;
+                case 'classic':
+                    selectColor('#ff9f1c');
+                    selectNeedleColor('#ff3333');
+                    dashboard.style.boxShadow = '0 0 60px rgba(0, 100, 255, 0.4), inset 0 0 100px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.1)';
+                    break;
+            }
+        }
+        
+        function resetData() {
+            maxSpeed = 0;
+            totalSpeed = 0;
+            speedReadings = 0;
+            distance = 0;
+            lastPosition = null;
+            
+            maxSpeedElement.textContent = '0';
+            avgSpeedElement.textContent = '0';
+            distanceElement.textContent = '0.0';
+            altitudeElement.textContent = '0';
+            
+            updateSpeed(0);
+        }
+        
+        // Simulate speed for demo purposes
+        function simulateSpeed() {
+            if (watchId !== null) {
+                stopTracking();
+            }
+            
+            statusIndicator.style.backgroundColor = '#2ed573';
+            statusText.textContent = 'Simulation Mode Active';
+            
+            let simSpeed = 0;
+            let increasing = true;
+            
+            const simulationInterval = setInterval(() => {
+                if (increasing) {
+                    simSpeed += Math.random() * 5;
+                    if (simSpeed > 220) increasing = false;
+                } else {
+                    simSpeed -= Math.random() * 5;
+                    if (simSpeed < 10) increasing = true;
+                }
+                
+                // Add some randomness
+                simSpeed += (Math.random() - 0.5) * 10;
+                simSpeed = Math.max(0, simSpeed);
+                
+                updateSpeed(simSpeed);
+                
+                // Simulate distance
+                distance += simSpeed / 3600 * 0.1; // 0.1 hour interval
+                distanceElement.textContent = distance.toFixed(2);
+                
+                // Simulate altitude
+                if (altitudeToggle.checked) {
+                    altitudeElement.textContent = Math.floor(100 + Math.random() * 50 + Math.sin(Date.now() / 10000) * 20);
+                }
+            }, 500);
+            
+            // Stop simulation after 30 seconds or when real tracking starts
+            setTimeout(() => {
+                clearInterval(simulationInterval);
+                if (!isTracking) {
+                    statusText.textContent = 'Simulation Ended - Enable GPS for Real Tracking';
+                    statusIndicator.style.backgroundColor = '#ffa502';
+                }
+            }, 30000);
+        }
+        
+        // Initialize the application
+        function init() {
+            createScale();
+            selectColor('#00a8ff');
+            selectNeedleColor('#ff3333');
+            
+            // Set up event listeners for controls
+            unitToggle.addEventListener('change', function() {
+                useMph = this.checked;
+                document.querySelector('.unit').textContent = useMph ? 'MPH' : 'KM/H';
+                
+                // Convert current displayed values
+                const currentKmh = currentSpeed / (useMph ? 0.621371 : 1);
+                updateSpeed(currentKmh);
+                
+                maxSpeedElement.textContent = useMph ? Math.round(kmhToMph(maxSpeed)) : Math.round(maxSpeed);
+                
+                const avgKmh = (totalSpeed / speedReadings) || 0;
+                avgSpeedElement.textContent = useMph ? Math.round(kmhToMph(avgKmh)) : Math.round(avgKmh);
+            });
+            
+            sensitivitySlider.addEventListener('input', function() {
+                sensitivityValue.textContent = this.value;
+            });
+            
+            // Start tracking on page load
+            startTracking();
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'r' || e.key === 'R') {
+                    resetData();
+                } else if (e.key === 's' || e.key === 'S') {
+                    simulateSpeed();
+                } else if (e.key === 't' || e.key === 'T') {
+                    if (isTracking) {
+                        stopTracking();
+                    } else {
+                        startTracking();
+                    }
+                }
+            });
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
