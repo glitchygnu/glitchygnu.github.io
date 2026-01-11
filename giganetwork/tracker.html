@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Speed Tracker</title>
+    <script>
+        // Force HTTPS redirect for Safari compatibility
+        if (window.location.protocol !== 'https:' && !window.location.hostname.includes('localhost')) {
+            window.location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
+        }
+    </script>
+    <style>
+        body { font-family: monospace; margin: 20px; }
+        .speed { font-size: 72px; font-weight: bold; margin: 20px 0; }
+        .unit { font-size: 24px; }
+        button { padding: 15px; margin: 5px; font-size: 16px; }
+        .data { margin: 10px 0; }
+        .error { color: red; }
+        .warning { color: orange; }
+        .success { color: green; }
+        #status { padding: 10px; border: 1px solid #ccc; margin: 10px 0; }
+        #log { height: 150px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>SPEED TRACKER</h1>
+    
+    <div id="status" class="warning">Click START to begin tracking</div>
+    
+    <div class="speed">
+        <span id="speedValue">0</span><span class="unit" id="speedUnit"> km/h</span>
+    </div>
+    
+    <div>
+        <button id="startBtn">START GPS</button>
+        <button id="stopBtn" disabled>STOP</button>
+        <button id="resetBtn">RESET</button>
+        <button id="unitBtn">SWITCH TO MPH</button>
+    </div>
+    
+    <div id="data">
+        <div class="data">Accuracy: <span id="accuracy">-</span> m</div>
+        <div class="data">Max: <span id="maxSpeed">0</span> <span id="maxUnit">km/h</span></div>
+        <div class="data">Avg: <span id="avgSpeed">0</span> <span id="avgUnit">km/h</span></div>
+        <div class="data">Distance: <span id="distance">0</span> m</div>
+        <div class="data">Updates: <span id="updateCount">0</span></div>
+        <div class="data">Time: <span id="trackingTime">0</span> s</div>
+    </div>
+    
+    <div>GPS Log:</div>
+    <div id="log"></div>
+
+    <script>
+        // Core variables
+        let watchId = null;
+        let lastPos = null;
+        let lastTime = null;
+        let totalDist = 0;
+        let maxSpeed = 0;
+        let speedSum = 0;
+        let speedCount = 0;
+        let updateCount = 0;
+        let startTime = null;
+        let isTracking = false;
+        let isKmh = true;
+        
+        // DOM elements
+        const status = document.getElementById('status');
+        const speedValue = document.getElementById('speedValue');
+        const speedUnit = document.getElementById('speedUnit');
+        const accuracy = document.getElementById('accuracy');
+        const maxSpeedEl = document.getElementById('maxSpeed');
+        const avgSpeedEl = document.getElementById('avgSpeed');
+        const distance = document.getElementById('distance');
+        const updateCountEl = document.getElementById('updateCount');
+        const trackingTime = document.getElementById('trackingTime');
+        const log = document.getElementById('log');
+        const maxUnit = document.getElementById('maxUnit');
+        const avgUnit = document.getElementById('avgUnit');
+        
+        // Buttons
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const unitBtn = document.getElementById('unitBtn');
+        
+        // Add to log
+        function addLog(msg, isError = false) {
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.textContent = `${time}: ${msg}`;
+            entry.className = isError ? 'error' : '';
+            log.prepend(entry);
+            
+            // Keep last 20 entries
+            while (log.children.length > 20) {
+                log.removeChild(log.lastChild);
+            }
+        }
+        
+        // Calculate distance between two coordinates (meters)
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371000;
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+            
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            
+            return R * c;
+        }
+        
+        // Convert m/s to display unit
+        function convertSpeed(speedMs) {
+            return isKmh ? speedMs * 3.6 : speedMs * 2.23694;
+        }
+        
+        // Update display
+        function updateDisplay(speedMs, acc) {
+            const displaySpeed = convertSpeed(speedMs);
+            
+            // Update speed
+            speedValue.textContent = displaySpeed.toFixed(1);
+            speedUnit.textContent = isKmh ? ' km/h' : ' mph';
+            
+            // Update accuracy
+            accuracy.textContent = acc ? acc.toFixed(0) : '-';
+            
+            // Update tracking time
+            if (startTime) {
+                trackingTime.textContent = Math.floor((Date.now() - startTime) / 1000);
+            }
+        }
+        
+        // Try to get speed from position.coords.speed (if browser provides it)
+        function tryGetDirectSpeed(position) {
+            // Some browsers (Chrome Android) provide speed directly
+            if (position.coords.speed !== null && position.coords.speed >= 0) {
+                return position.coords.speed; // Already in m/s
+            }
+            return null;
+        }
+        
+        // Handle new position
+        function onPosition(position) {
+            const now = Date.now();
+            const acc = position.coords.accuracy;
+            
+            updateCount++;
+            updateCountEl.textContent = updateCount;
+            
+            // Try direct speed first (if browser provides it)
+            let speedMs = tryGetDirectSpeed(position);
+            let method = 'direct';
+            
+            // If no direct speed, calculate from position changes
+            if (speedMs === null && lastPos && lastTime) {
+                const timeDiff = (now - lastTime) / 1000;
+                
+                if (timeDiff > 0) {
+                    const dist = getDistance(
+                        lastPos.coords.latitude,
+                        lastPos.coords.longitude,
+                        position.coords.latitude,
+                        position.coords.longitude
+                    );
+                    
+                    // Only use if movement is significant compared to accuracy
+                    if (dist > acc / 2) {
+                        speedMs = dist / timeDiff;
+                        totalDist += dist;
+                        distance.textContent = Math.round(totalDist);
+                        method = 'calculated';
+                    } else {
+                        speedMs = 0;
+                        method = 'stationary';
+                    }
+                } else {
+                    speedMs = 0;
+                }
+            } else if (speedMs === null) {
+                speedMs = 0; // First position
+            }
+            
+            // Update stats
+            const displaySpeed = convertSpeed(speedMs);
+            
+            if (displaySpeed > maxSpeed) {
+                maxSpeed = displaySpeed;
+                maxSpeedEl.textContent = displaySpeed.toFixed(1);
+                maxUnit.textContent = isKmh ? 'km/h' : 'mph';
+            }
+            
+            speedSum += displaySpeed;
+            speedCount++;
+            avgSpeedEl.textContent = (speedSum / speedCount).toFixed(1);
+            avgUnit.textContent = isKmh ? 'km/h' : 'mph';
+            
+            // Update display
+            updateDisplay(speedMs, acc);
+            
+            // Log
+            addLog(`${method}: ${displaySpeed.toFixed(1)} ${isKmh ? 'km/h' : 'mph'} (acc: ${acc.toFixed(1)}m)`);
+            
+            // Store for next calculation
+            lastPos = position;
+            lastTime = now;
+        }
+        
+        // Handle errors
+        function onError(error) {
+            let msg = '';
+            switch(error.code) {
+                case 1: msg = 'Permission denied'; break;
+                case 2: msg = 'Position unavailable'; break;
+                case 3: msg = 'Timeout'; break;
+                default: msg = error.message;
+            }
+            
+            status.textContent = `ERROR: ${msg}`;
+            status.className = 'error';
+            addLog(`GPS Error: ${msg}`, true);
+            stopTracking();
+        }
+        
+        // Start tracking
+        function startTracking() {
+            if (!navigator.geolocation) {
+                status.textContent = 'ERROR: Geolocation not supported';
+                addLog('Geolocation API not available', true);
+                return;
+            }
+            
+            status.textContent = 'Requesting GPS permission...';
+            status.className = 'warning';
+            
+            // First check if we can get position (permission check)
+            navigator.geolocation.getCurrentPosition(
+                function(pos) {
+                    // Permission granted
+                    status.textContent = 'TRACKING: Move to see speed';
+                    status.className = 'success';
+                    
+                    // Initialize tracking
+                    lastPos = pos;
+                    lastTime = Date.now();
+                    startTime = Date.now();
+                    isTracking = true;
+                    
+                    // Start watching with optimal settings for each platform
+                    const options = {
+                        enableHighAccuracy: true,
+                        maximumAge: 0,
+                        timeout: 10000
+                    };
+                    
+                    watchId = navigator.geolocation.watchPosition(onPosition, onError, options);
+                    
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                    
+                    addLog('GPS tracking started');
+                    addLog(`Browser: ${navigator.userAgent.split(' ')[0]}`);
+                },
+                onError,
+                { timeout: 5000 }
+            );
+        }
+        
+        // Stop tracking
+        function stopTracking() {
+            if (watchId !== null) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+            
+            isTracking = false;
+            status.textContent = 'STOPPED';
+            status.className = '';
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            
+            addLog('GPS tracking stopped');
+        }
+        
+        // Reset data
+        function resetData() {
+            lastPos = null;
+            lastTime = null;
+            totalDist = 0;
+            maxSpeed = 0;
+            speedSum = 0;
+            speedCount = 0;
+            updateCount = 0;
+            startTime = null;
+            
+            speedValue.textContent = '0';
+            accuracy.textContent = '-';
+            maxSpeedEl.textContent = '0';
+            avgSpeedEl.textContent = '0';
+            distance.textContent = '0';
+            updateCountEl.textContent = '0';
+            trackingTime.textContent = '0';
+            
+            addLog('Data reset');
+        }
+        
+        // Toggle unit
+        function toggleUnit() {
+            isKmh = !isKmh;
+            unitBtn.textContent = isKmh ? 'SWITCH TO MPH' : 'SWITCH TO KM/H';
+            
+            // Convert displayed values
+            const currentSpeed = parseFloat(speedValue.textContent);
+            if (!isNaN(currentSpeed)) {
+                const speedMs = isKmh ? 
+                    (currentSpeed / 3.6) : // Was mph, convert to m/s
+                    (currentSpeed / 2.23694); // Was km/h, convert to m/s
+                updateDisplay(speedMs, parseFloat(accuracy.textContent));
+            }
+            
+            // Convert max speed
+            const currentMax = parseFloat(maxSpeedEl.textContent);
+            if (!isNaN(currentMax)) {
+                const maxMs = isKmh ? 
+                    (currentMax / 3.6) : 
+                    (currentMax / 2.23694);
+                maxSpeed = convertSpeed(maxMs);
+                maxSpeedEl.textContent = maxSpeed.toFixed(1);
+                maxUnit.textContent = isKmh ? 'km/h' : 'mph';
+            }
+            
+            // Convert avg speed
+            const currentAvg = parseFloat(avgSpeedEl.textContent);
+            if (!isNaN(currentAvg)) {
+                const avgMs = isKmh ? 
+                    (currentAvg / 3.6) : 
+                    (currentAvg / 2.23694);
+                const newAvg = convertSpeed(avgMs);
+                avgSpeedEl.textContent = newAvg.toFixed(1);
+                avgUnit.textContent = isKmh ? 'km/h' : 'mph';
+                speedSum = newAvg * speedCount;
+            }
+            
+            addLog(`Switched to ${isKmh ? 'km/h' : 'mph'}`);
+        }
+        
+        // Event listeners
+        startBtn.addEventListener('click', startTracking);
+        stopBtn.addEventListener('click', stopTracking);
+        resetBtn.addEventListener('click', resetData);
+        unitBtn.addEventListener('click', toggleUnit);
+        
+        // Initial log
+        addLog('Speed tracker loaded');
+        addLog(`User agent: ${navigator.userAgent}`);
+        
+        // Auto-detect platform and give specific instructions
+        const ua = navigator.userAgent.toLowerCase();
+        if (ua.includes('iphone') || ua.includes('ipad')) {
+            addLog('iOS detected: Make sure Location Services are enabled');
+            if (window.location.protocol !== 'https:') {
+                addLog('WARNING: Safari requires HTTPS for geolocation', true);
+            }
+        } else if (ua.includes('android')) {
+            addLog('Android detected: High accuracy GPS available');
+        } else if (ua.includes('chrome')) {
+            addLog('Chrome detected: Good GPS support');
+        }
+        
+        // Try to auto-start if we have HTTPS and seem to have permission
+        setTimeout(() => {
+            if (navigator.geolocation && window.location.protocol === 'https:') {
+                // Quick permission check
+                navigator.geolocation.getCurrentPosition(
+                    () => {
+                        addLog('GPS permission already granted - ready to go');
+                    },
+                    () => {
+                        // No permission yet
+                    },
+                    { timeout: 1000, maximumAge: 0 }
+                );
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
