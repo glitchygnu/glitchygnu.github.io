@@ -206,37 +206,494 @@
         }
         
         /* Slider */
-        .slider-container {
-            width: 200px;
-        }
-        
-        .slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 10px;
-            background-color: #505050;
-            border-radius: 5px;
-            border: 2px solid #303030;
-            outline: none;
-        }
-        
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background-color: #303030;
-            cursor: pointer;
-        }
-        
-        .slider::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background-color: #303030;
-            cursor: pointer;
-            border: none;
-        }
+        /* Slider Container Bubbly */
+.slider-container {
+    width: 300px;
+    height: 80px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Pill-shaped Track */
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 20px;
+    background: linear-gradient(90deg, #505050 0%, #606060 100%);
+    border-radius: 25px;
+    border: 3px solid #303030;
+    outline: none;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        inset 0 2px 10px rgba(0, 0, 0, 0.3),
+        inset 0 -2px 10px rgba(255, 255, 255, 0.1),
+        0 5px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+}
+
+/* Bubbly Fill Effect */
+.slider::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: var(--fill-width, 50%);
+    background: linear-gradient(90deg, #4a4a4a 0%, #5a5a5a 100%);
+    border-radius: 25px;
+    transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1;
+}
+
+/* Glossy Overlay */
+.slider::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+    border-radius: 25px 25px 0 0;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Bubbly Thumb */
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #6d6d6d, #525252);
+    border: 3px solid #303030;
+    cursor: pointer;
+    position: relative;
+    z-index: 3;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.4),
+        0 5px 15px rgba(0, 0, 0, 0.3),
+        inset 0 2px 5px rgba(255, 255, 255, 0.2),
+        inset 0 -2px 5px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: center;
+}
+
+/* Thumb Inner Circle */
+.slider::-webkit-slider-thumb::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    height: 70%;
+    background: linear-gradient(145deg, #5a5a5a, #474747);
+    border-radius: 50%;
+    box-shadow: 
+        inset 0 2px 8px rgba(255, 255, 255, 0.1),
+        inset 0 -2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Thumb Gloss */
+.slider::-webkit-slider-thumb::after {
+    content: '';
+    position: absolute;
+    top: 15%;
+    left: 15%;
+    width: 30%;
+    height: 30%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* Hover Effects */
+.slider:hover {
+    height: 22px;
+    box-shadow: 
+        inset 0 2px 12px rgba(0, 0, 0, 0.4),
+        inset 0 -2px 12px rgba(255, 255, 255, 0.15),
+        0 8px 25px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px);
+}
+
+.slider:hover::-webkit-slider-thumb {
+    transform: scale(1.15);
+    box-shadow: 
+        0 15px 40px rgba(0, 0, 0, 0.5),
+        0 8px 20px rgba(0, 0, 0, 0.4),
+        inset 0 2px 5px rgba(255, 255, 255, 0.25),
+        inset 0 -2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Active/Dragging Effects */
+.slider:active {
+    height: 18px;
+    transform: translateY(1px);
+}
+
+.slider:active::-webkit-slider-thumb {
+    transform: scale(0.9);
+    box-shadow: 
+        0 5px 15px rgba(0, 0, 0, 0.3),
+        0 3px 8px rgba(0, 0, 0, 0.2),
+        inset 0 2px 5px rgba(255, 255, 255, 0.15),
+        inset 0 -2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Bubbly Bounce Animation */
+@keyframes thumbBounce {
+    0%, 100% {
+        transform: scale(1);
+    }
+    25% {
+        transform: scale(1.2);
+    }
+    50% {
+        transform: scale(0.9);
+    }
+    75% {
+        transform: scale(1.1);
+    }
+}
+
+/* Bubble Pulse Animation */
+@keyframes bubblePulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 
+            0 10px 30px rgba(0, 0, 0, 0.4),
+            0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 
+            0 15px 40px rgba(0, 0, 0, 0.5),
+            0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 
+            0 10px 30px rgba(0, 0, 0, 0.4),
+            0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Firefox Styling */
+.slider::-moz-range-thumb {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #6d6d6d, #525252);
+    border: 3px solid #303030;
+    cursor: pointer;
+    position: relative;
+    z-index: 3;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.4),
+        0 5px 15px rgba(0, 0, 0, 0.3),
+        inset 0 2px 5px rgba(255, 255, 255, 0.2),
+        inset 0 -2px 5px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.slider::-moz-range-track {
+    width: 100%;
+    height: 20px;
+    background: linear-gradient(90deg, #505050 0%, #606060 100%);
+    border-radius: 25px;
+    border: 3px solid #303030;
+    box-shadow: 
+        inset 0 2px 10px rgba(0, 0, 0, 0.3),
+        inset 0 -2px 10px rgba(255, 255, 255, 0.1);
+}
+
+/* Bubbly Liquid Effect */
+.slider-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background: radial-gradient(ellipse at center, 
+        rgba(128, 128, 128, 0.3) 0%,
+        rgba(128, 128, 128, 0.1) 40%,
+        rgba(128, 128, 128, 0) 70%);
+    filter: blur(10px);
+    transform: translateY(-50%);
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.slider:hover ~ .slider-container::before,
+.slider:active ~ .slider-container::before {
+    opacity: 1;
+}
+
+/* Value Indicator Bubbles */
+.value-bubble {
+    position: absolute;
+    top: -40px;
+    left: var(--bubble-pos, 50%);
+    transform: translateX(-50%);
+    background: linear-gradient(145deg, #6d6d6d, #525252);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 
+        0 10px 25px rgba(0, 0, 0, 0.3),
+        inset 0 1px 3px rgba(255, 255, 255, 0.2);
+    z-index: 10;
+    min-width: 40px;
+    text-align: center;
+}
+
+.value-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #525252;
+}
+
+.slider:active ~ .value-bubble,
+.slider:hover ~ .value-bubble {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px);
+}
+
+/* Ripple Effect on Click */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+    pointer-events: none;
+    z-index: 4;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Slider Value Markers */
+.markers {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+    position: relative;
+}
+
+.marker {
+    width: 2px;
+    height: 10px;
+    background: #404040;
+    border-radius: 1px;
+    position: relative;
+}
+
+.marker::after {
+    content: attr(data-value);
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: #404040;
+    opacity: 0.7;
+}
+
+/* Elastic Stretch Effect */
+@keyframes elasticStretch {
+    0% {
+        transform: scaleX(1);
+    }
+    30% {
+        transform: scaleX(1.02);
+    }
+    60% {
+        transform: scaleX(0.98);
+    }
+    100% {
+        transform: scaleX(1);
+    }
+}
+
+.slider.elastic {
+    animation: elasticStretch 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Floating Particles */
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-30px) translateX(var(--tx, 0));
+        opacity: 0;
+    }
+}
+
+/* Ambient Glow */
+.slider-container::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    height: 60px;
+    background: radial-gradient(ellipse at center, 
+        rgba(96, 96, 96, 0.2) 0%,
+        rgba(96, 96, 96, 0.1) 40%,
+        rgba(96, 96, 96, 0) 70%);
+    filter: blur(15px);
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.slider:focus ~ .slider-container::after {
+    opacity: 1;
+}
+
+/* Progress Animation */
+@keyframes progressPulse {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.slider.animated::before {
+    background: linear-gradient(90deg, 
+        #4a4a4a 0%, 
+        #5a5a5a 25%, 
+        #4a4a4a 50%, 
+        #5a5a5a 75%, 
+        #4a4a4a 100%);
+    background-size: 200% 100%;
+    animation: progressPulse 2s ease-in-out infinite;
+}
+
+/* Micro-interaction vibrations */
+@keyframes microVibrate {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-1px); }
+    75% { transform: translateX(1px); }
+}
+
+.slider.vibrating {
+    animation: microVibrate 0.1s ease-in-out 3;
+}
+
+/* Depth layers for 3D effect */
+.slider-track-depth {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 24px;
+    background: #303030;
+    border-radius: 25px;
+    transform: translateY(-50%);
+    z-index: -2;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.slider-track-glow {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    background: linear-gradient(90deg, 
+        rgba(80, 80, 80, 0.3) 0%,
+        rgba(96, 96, 96, 0.4) 50%,
+        rgba(80, 80, 80, 0.3) 100%);
+    border-radius: 30px;
+    transform: translateY(-50%);
+    z-index: -3;
+    filter: blur(5px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.slider:hover ~ .slider-track-glow {
+    opacity: 0.7;
+}
+
+/* Bubbly Sound Wave Effect */
+.sound-wave {
+    position: absolute;
+    bottom: -30px;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 3px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.wave-bar {
+    width: 4px;
+    height: 5px;
+    background: linear-gradient(to top, #606060, #404040);
+    border-radius: 2px 2px 0 0;
+    animation: waveAnimation 1s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 0.1s);
+}
+
+@keyframes waveAnimation {
+    0%, 100% {
+        height: 5px;
+    }
+    50% {
+        height: 15px;
+    }
+}
+
+.slider:active ~ .sound-wave {
+    opacity: 0.5;
+}
         
         /* Modal Fenster */
         /* Modal Fenster mit erweiterter Apple-Animation */
@@ -862,40 +1319,304 @@
     </div>
 
     <script>
-        // Modal Button Funktion
-        const modalButton = document.getElementById('modalButton');
-        const modal = document.getElementById('modal');
-        const closeButton = document.getElementById('closeButton');
+    // Modal Button Funktion mit Druck-Sensitivität
+    const modalButton = document.getElementById('modalButton');
+    const modal = document.getElementById('modal');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const closeButton = document.getElementById('closeButton');
+    
+    // Druck-Sensitivität für den Button
+    let pressStartTime = 0;
+    let pressTimer = null;
+    
+    modalButton.addEventListener('mousedown', function(e) {
+        pressStartTime = Date.now();
+        modalButton.classList.add('depth-0');
         
-        modalButton.addEventListener('click', function() {
-            modal.classList.add('active');
-        });
-        
-        closeButton.addEventListener('click', function() {
-            modal.classList.remove('active');
-        });
-        
-        // Schließe Modal, wenn außerhalb geklickt wird
-        modal.addEventListener('click', function(event) {
-            if (event.target === modal) {
-                modal.classList.remove('active');
+        pressTimer = setInterval(() => {
+            const elapsed = Date.now() - pressStartTime;
+            
+            if (elapsed > 300) {
+                modalButton.classList.remove('depth-0');
+                modalButton.classList.add('depth-2');
+            } else if (elapsed > 150) {
+                modalButton.classList.remove('depth-0');
+                modalButton.classList.add('depth-1');
             }
-        });
+        }, 10);
+    });
+    
+    modalButton.addEventListener('mouseup', function(e) {
+        clearInterval(pressTimer);
         
-        // Toggle Switch Funktion
-        const toggle = document.getElementById('toggle');
+        // Entferne alle Druck-Klassen
+        modalButton.classList.remove('depth-0', 'depth-1', 'depth-2');
         
-        toggle.addEventListener('click', function() {
-            toggle.classList.toggle('active');
-        });
+        // Öffne das Modal
+        openModal();
+    });
+    
+    modalButton.addEventListener('mouseleave', function(e) {
+        clearInterval(pressTimer);
+        modalButton.classList.remove('depth-0', 'depth-1', 'depth-2');
+    });
+    
+    // Touch-Events für Mobile
+    modalButton.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        pressStartTime = Date.now();
+        modalButton.classList.add('depth-0');
         
-        // Slider Funktion
-        const slider = document.getElementById('slider');
+        pressTimer = setInterval(() => {
+            const elapsed = Date.now() - pressStartTime;
+            
+            if (elapsed > 300) {
+                modalButton.classList.remove('depth-0');
+                modalButton.classList.add('depth-2');
+            } else if (elapsed > 150) {
+                modalButton.classList.remove('depth-0');
+                modalButton.classList.add('depth-1');
+            }
+        }, 10);
+    });
+    
+    modalButton.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        clearInterval(pressTimer);
+        modalButton.classList.remove('depth-0', 'depth-1', 'depth-2');
+        openModal();
+    });
+    
+    function openModal() {
+        // Überprüfe, ob das Modal bereits aktiv ist
+        if (modal.classList.contains('active')) return;
         
-        slider.addEventListener('input', function() {
-            // Der Slider hat keine spezielle Funktion außer seinen Wert zu ändern
-            console.log("Slider Wert:", slider.value);
-        });
-    </script>
+        // Entferne closing Klasse falls vorhanden
+        modal.classList.remove('closing');
+        
+        // Aktiviere Overlay
+        modalOverlay.classList.add('active');
+        
+        // Aktiviere Modal mit Verzögerung für besseren visuellen Effekt
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 50);
+    }
+    
+    function closeModal() {
+        // Füge closing Klasse hinzu für Schließ-Animation
+        modal.classList.add('closing');
+        modal.classList.remove('active');
+        
+        // Deaktiviere Overlay mit Verzögerung
+        setTimeout(() => {
+            modalOverlay.classList.remove('active');
+            // Entferne closing Klasse nach der Animation
+            setTimeout(() => {
+                modal.classList.remove('closing');
+            }, 800);
+        }, 300);
+    }
+    
+    closeButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeModal();
+    });
+    
+    // Schließe Modal, wenn auf Overlay geklickt wird
+    modalOverlay.addEventListener('click', function() {
+        closeModal();
+    });
+    
+    // Schließe Modal mit Escape-Taste
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+    
+    // Toggle Switch Funktion
+    const toggle = document.getElementById('toggle');
+    
+    toggle.addEventListener('click', function() {
+        toggle.classList.toggle('active');
+    });
+    
+    // Slider Funktion
+    const slider = document.getElementById('slider');
+    
+    slider.addEventListener('input', function() {
+        // Der Slider hat keine spezielle Funktion außer seinen Wert zu ändern
+        console.log("Slider Wert:", slider.value);
+    });
+    // Bubbly Slider Funktion
+const slider = document.getElementById('slider');
+const sliderContainer = document.querySelector('.slider-container');
+
+// Erstelle Value Bubble
+const valueBubble = document.createElement('div');
+valueBubble.className = 'value-bubble';
+valueBubble.textContent = '50';
+sliderContainer.appendChild(valueBubble);
+
+// Erstelle Tiefeneffekt Layer
+const trackDepth = document.createElement('div');
+trackDepth.className = 'slider-track-depth';
+sliderContainer.insertBefore(trackDepth, slider);
+
+// Erstelle Glow Layer
+const trackGlow = document.createElement('div');
+trackGlow.className = 'slider-track-glow';
+sliderContainer.insertBefore(trackGlow, slider);
+
+// Erstelle Sound Wave
+const soundWave = document.createElement('div');
+soundWave.className = 'sound-wave';
+for (let i = 0; i < 15; i++) {
+    const waveBar = document.createElement('div');
+    waveBar.className = 'wave-bar';
+    waveBar.style.setProperty('--i', i);
+    soundWave.appendChild(waveBar);
+}
+sliderContainer.appendChild(soundWave);
+
+// Fill Width aktualisieren
+function updateFillWidth() {
+    const value = slider.value;
+    const min = slider.min || 0;
+    const max = slider.max || 100;
+    const percentage = ((value - min) / (max - min)) * 100;
+    
+    slider.style.setProperty('--fill-width', `${percentage}%`);
+    valueBubble.textContent = value;
+    valueBubble.style.setProperty('--bubble-pos', `${percentage}%`);
+    
+    // Aktiviere Animationen basierend auf Geschwindigkeit
+    const speed = Math.abs(value - slider.previousValue || 50);
+    if (speed > 5) {
+        slider.classList.add('elastic');
+        setTimeout(() => slider.classList.remove('elastic'), 800);
+    }
+    
+    slider.previousValue = value;
+}
+
+// Ripple Effect
+function createRipple(x, y) {
+    const ripple = document.createElement('div');
+    ripple.className = 'ripple';
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+    sliderContainer.appendChild(ripple);
+    
+    setTimeout(() => ripple.remove(), 600);
+}
+
+// Floating Particles
+function createParticles(x, y, count = 3) {
+    for (let i = 0; i < count; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        particle.style.setProperty('--tx', `${(Math.random() - 0.5) * 20}px`);
+        sliderContainer.appendChild(particle);
+        
+        particle.style.animation = `floatUp 0.6s ease-out forwards`;
+        setTimeout(() => particle.remove(), 600);
+    }
+}
+
+// Vibration Effect
+function addVibration() {
+    slider.classList.add('vibrating');
+    setTimeout(() => slider.classList.remove('vibrating'), 300);
+}
+
+// Event Listeners für Slider
+slider.addEventListener('input', function(e) {
+    updateFillWidth();
+    
+    // Ripple Effect
+    const rect = slider.getBoundingClientRect();
+    const percentage = (slider.value - slider.min) / (slider.max - slider.min);
+    const x = rect.left + (percentage * rect.width);
+    const y = rect.top + (rect.height / 2);
+    
+    createRipple(x, y);
+    
+    // Micro Vibration bei schneller Bewegung
+    if (Date.now() - (slider.lastMove || 0) < 50) {
+        addVibration();
+    }
+    slider.lastMove = Date.now();
+});
+
+slider.addEventListener('mousedown', function(e) {
+    // Particles auf Click
+    createParticles(e.clientX, e.clientY, 5);
+    
+    // Aktiviere Animation
+    slider.classList.add('animated');
+    
+    // Tiefen-Effekt
+    trackGlow.style.opacity = '0.7';
+});
+
+slider.addEventListener('mouseup', function(e) {
+    // Deaktiviere Animation
+    setTimeout(() => slider.classList.remove('animated'), 300);
+    
+    // Bounce Animation
+    slider.classList.add('elastic');
+    setTimeout(() => slider.classList.remove('elastic'), 800);
+    
+    // Reduziere Glow
+    trackGlow.style.opacity = '0.3';
+});
+
+slider.addEventListener('mouseenter', function() {
+    // Show value bubble
+    valueBubble.style.opacity = '1';
+    valueBubble.style.transform = `translateX(-50%) translateY(-5px)`;
+    
+    // Ambient glow
+    trackGlow.style.opacity = '0.5';
+});
+
+slider.addEventListener('mouseleave', function() {
+    // Hide value bubble wenn nicht aktiv
+    if (!slider.matches(':active')) {
+        valueBubble.style.opacity = '0';
+        valueBubble.style.transform = `translateX(-50%) translateY(0)`;
+    }
+    
+    // Reduziere Glow
+    trackGlow.style.opacity = '0';
+});
+
+slider.addEventListener('focus', function() {
+    slider.classList.add('elastic');
+    setTimeout(() => slider.classList.remove('elastic'), 800);
+});
+
+// Initialisierung
+updateFillWidth();
+
+// Touch Events für Mobile
+slider.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    slider.classList.add('animated');
+    trackGlow.style.opacity = '0.7';
+});
+
+slider.addEventListener('touchend', function(e) {
+    e.preventDefault();
+    setTimeout(() => slider.classList.remove('animated'), 300);
+    slider.classList.add('elastic');
+    setTimeout(() => slider.classList.remove('elastic'), 800);
+    trackGlow.style.opacity = '0.3';
+});
+</script>
 </body>
 </html>
