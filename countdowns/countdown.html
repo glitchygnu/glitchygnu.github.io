@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Countdown</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+        }
+        #countdown {
+            font-size: 50px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 id="title"></h1>
+    <div id="countdown"></div>
+</div>
+
+<script>
+// 🎯 Variablen
+const day = 16;
+const month = 3;
+const year = 2026;
+const hour = 8;
+const minute = 0;
+
+// Ziel-Datum
+const targetDate = new Date(year, month - 1, day, hour, minute, 0);
+
+// Titel mit Variablen zusammenfügen
+document.getElementById("title").textContent =
+    `Countdown bis ${day}.${month}.${year} um ${hour}:00 Uhr`;
+
+const countdownElement = document.getElementById("countdown");
+
+function pad(num) {
+    return num < 10 ? "0" + num : num;
+}
+
+function updateCountdown() {
+    const now = new Date();
+    const diff = targetDate - now;
+
+    if (diff <= 0) {
+        countdownElement.textContent = "Zeit erreicht!";
+        clearInterval(interval);
+        return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    // 👇 Hier werden Variablen direkt in den Text eingesetzt
+    countdownElement.textContent =
+        `${days} Tage, ${pad(hours)} Stunden, ${pad(minutes)} Minuten und ${pad(seconds)} Sekunden`;
+}
+
+const interval = setInterval(updateCountdown, 1000);
+updateCountdown();
+</script>
+
+</body>
+</html>
