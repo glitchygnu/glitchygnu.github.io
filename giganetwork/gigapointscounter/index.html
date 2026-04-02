@@ -2,509 +2,601 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Match Point · Digital Scoreboard (to 24)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Liquid Glass · Point Counter | to 24</title>
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
-            user-select: none; /* avoid accidental text selection on double-tap/clicks */
+            user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            margin: 0;
             min-height: 100vh;
-            background: linear-gradient(145deg, #1a2a3a 0%, #0e1a24 100%);
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: radial-gradient(circle at 10% 30%, #1b2b3e, #0a111a);
+            font-family: 'SF Pro Display', 'Inter', system-ui, -apple-system, 'BlinkMacSystemFont', 'Segoe UI', Roboto, Helvetica, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
 
-        /* main game arena: two large interactive plates */
-        .scoreboard {
-            max-width: 1300px;
+        /* main glass arena */
+        .scoreboard-container {
+            max-width: 1400px;
             width: 100%;
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: 4rem;
-            backdrop-filter: blur(2px);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.1);
-            padding: 1.5rem;
+            margin: 0 auto;
         }
 
-        .plates-container {
+        .plates-wrapper {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.8rem;
+            gap: 2rem;
             justify-content: center;
         }
 
-        /* each plate = huge clickable card */
-        .team-card {
+        /* ========= LIQUID GLASS CORE ========= */
+        .glass-plate {
             flex: 1;
-            min-width: 260px;
-            background: radial-gradient(ellipse at 30% 40%, #f8f9ff, #e9eef5);
-            border-radius: 3rem;
-            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.5), inset 0 1px 4px rgba(255, 255, 255, 0.8);
+            min-width: 280px;
+            backdrop-filter: blur(16px) saturate(180%);
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0.5px rgba(255, 255, 255, 0.6), inset 0 -1px 0px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             cursor: pointer;
-            transition: transform 0.1s ease, box-shadow 0.15s ease;
-            text-align: center;
-            padding: 2rem 1rem 2rem 1rem;
-            backdrop-filter: blur(2px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 2rem 1.5rem 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* active press feedback */
-        .team-card:active {
-            transform: scale(0.98);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-            transition: 0.02s;
+        /* extra liquid shine effect */
+        .glass-plate::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -60%;
+            width: 180%;
+            height: 100%;
+            background: linear-gradient(115deg, rgba(255,255,255,0) 10%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0) 90%);
+            transform: skewX(-20deg);
+            pointer-events: none;
+            transition: left 0.5s ease;
         }
 
-        /* left plate subtle tint */
-        .team-left {
-            background: radial-gradient(ellipse at 30% 40%, #fff5eb, #ffe0c4);
-            border-bottom: 6px solid #f97316;
+        .glass-plate:active::before {
+            left: 120%;
+            transition: left 0.6s ease;
         }
 
-        /* right plate subtle tint */
-        .team-right {
-            background: radial-gradient(ellipse at 70% 40%, #ebf5ff, #d4e4fc);
-            border-bottom: 6px solid #3b82f6;
+        /* LEFT PLATE — BLUE FROSTED GLASS */
+        .plate-left {
+            background: rgba(30, 100, 200, 0.28);
+            backdrop-filter: blur(16px) saturate(180%);
+            border-bottom: 4px solid rgba(80, 180, 255, 0.8);
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.7);
         }
 
+        /* RIGHT PLATE — GREEN GLASS (emerald vibe) */
+        .plate-right {
+            background: rgba(40, 180, 100, 0.28);
+            backdrop-filter: blur(16px) saturate(180%);
+            border-bottom: 4px solid rgba(80, 230, 130, 0.9);
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.7);
+        }
+
+        /* team name with glass typography */
         .team-name {
-            font-size: 2.6rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #1e293b, #2d3e5a);
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            background: linear-gradient(135deg, #ffffff, #eef4ff);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.05);
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .points {
-            font-size: 8rem;
-            font-weight: 900;
-            margin: 0.2rem 0;
-            line-height: 1;
-            font-family: 'Monaco', 'Fira Mono', monospace;
-            background: linear-gradient(to bottom, #0f172a, #2c3e50);
+            font-size: 7rem;
+            font-weight: 800;
+            font-family: 'SF Mono', 'Fira Mono', monospace;
+            background: linear-gradient(to bottom, #ffffff, #e0f0ff);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            text-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
-            letter-spacing: 4px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            line-height: 1;
+            margin: 0.2rem 0;
+            letter-spacing: 2px;
         }
 
-        .target-badge {
-            display: inline-block;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            padding: 0.4rem 1.2rem;
+        .target-chip {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
             border-radius: 60px;
+            padding: 0.35rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #ffecb3;
+            font-family: monospace;
+            letter-spacing: 0.8px;
+            margin-top: 0.5rem;
+            border: 0.5px solid rgba(255, 215, 0, 0.4);
+        }
+
+        /* action row: undo button + indicator */
+        .action-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
+            gap: 1rem;
+            width: 100%;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .undo-btn {
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 60px;
+            padding: 0.6rem 1.4rem;
             font-size: 1rem;
             font-weight: 600;
-            color: #facc15;
-            margin-top: 0.8rem;
-            font-family: monospace;
+            font-family: inherit;
+            color: #fffaec;
+            cursor: pointer;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .undo-btn:active {
+            transform: scale(0.94);
+            background: rgba(0, 0, 0, 0.75);
+        }
+
+        .game-point-badge {
+            font-size: 0.75rem;
+            background: rgba(255, 210, 90, 0.25);
+            backdrop-filter: blur(12px);
+            padding: 0.25rem 0.9rem;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #ffeaac;
             letter-spacing: 0.5px;
-            box-shadow: inset 0 0 2px gold, 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
-        .max-reached-message {
-            font-size: 0.9rem;
-            margin-top: 12px;
-            font-weight: 500;
-            background: rgba(0, 0, 0, 0.5);
-            display: inline-block;
-            padding: 0.3rem 1rem;
-            border-radius: 50px;
-            color: #ffdd88;
-        }
-
-        /* reset area */
-        .reset-area {
+        /* reset button — premium glass */
+        .reset-glass {
             display: flex;
             justify-content: center;
             margin-top: 2.5rem;
         }
 
         .reset-btn {
-            background: #1e293b;
-            border: none;
-            font-size: 1.6rem;
-            font-weight: 700;
-            padding: 1rem 2.4rem;
+            background: rgba(20, 30, 45, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2.6rem;
             border-radius: 80px;
-            color: #facc15;
-            font-family: inherit;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffeaac;
             cursor: pointer;
             transition: 0.2s;
-            box-shadow: 0 8px 0 #0f172a;
-            letter-spacing: 1px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            backdrop-filter: blur(8px);
-            background: #1e2a3a;
+            gap: 12px;
+            font-family: inherit;
         }
 
         .reset-btn:active {
             transform: translateY(3px);
-            box-shadow: 0 4px 0 #0f172a;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            background: rgba(20, 30, 45, 0.9);
         }
 
-        /* winner highlight effect */
+        /* winner glow — liquid gold aura */
         .winner-glow {
-            box-shadow: 0 0 0 4px #ffd966, 0 0 0 8px rgba(255, 215, 0, 0.4), 0 20px 35px -5px black;
-            transition: all 0.2s;
+            box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.7), 0 0 0 10px rgba(255, 200, 50, 0.3), 0 25px 45px -8px black;
+            transition: all 0.25s ease;
+            border: 1px solid rgba(255, 220, 100, 0.8);
         }
 
-        /* disabled click style (when game finished but we allow reset) */
-        .game-finished .team-card {
-            cursor: not-allowed;
+        /* game finished state — plates non-clickable but undo/reset works */
+        .game-finished .glass-plate {
+            cursor: default;
             opacity: 0.85;
-            filter: grayscale(0.1);
         }
 
-        .game-finished .team-card:active {
+        .game-finished .glass-plate:active {
             transform: scale(1);
-            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.5);
         }
 
-        /* footer tiny hint */
-        .info-note {
+        .game-finished .glass-plate:active::before {
+            left: -60%;
+        }
+
+        /* undo button always clickable */
+        .undo-btn {
+            pointer-events: auto;
+        }
+
+        .info-footer {
             text-align: center;
-            margin-top: 1.8rem;
+            margin-top: 2rem;
             font-size: 0.8rem;
-            color: #a0c4e2;
             font-weight: 500;
+            color: #bbd9ff;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
         }
 
-        @media (max-width: 720px) {
-            .plates-container {
-                gap: 1rem;
+        @media (max-width: 760px) {
+            .plates-wrapper {
+                gap: 1.2rem;
             }
             .team-name {
                 font-size: 1.8rem;
             }
             .points {
-                font-size: 5rem;
+                font-size: 4.5rem;
+            }
+            .undo-btn {
+                padding: 0.4rem 1rem;
+                font-size: 0.85rem;
             }
             .reset-btn {
-                font-size: 1.3rem;
-                padding: 0.8rem 1.8rem;
-            }
-            .target-badge {
-                font-size: 0.8rem;
+                font-size: 1.2rem;
+                padding: 0.7rem 1.8rem;
             }
         }
 
         @media (max-width: 550px) {
-            .team-card {
-                padding: 1rem 0.8rem;
+            .glass-plate {
+                padding: 1.2rem 1rem;
             }
             .points {
-                font-size: 4rem;
+                font-size: 3.8rem;
             }
+        }
+
+        /* disable text selection on undo clicks */
+        button {
+            user-select: none;
         }
     </style>
 </head>
 <body>
-<div class="scoreboard" id="scoreboardRoot">
-    <div class="plates-container">
-        <!-- LEFT TEAM PLATE (Team A) -->
-        <div class="team-card team-left" id="teamLeftPlate" role="button" aria-label="Add point to left team">
-            <div class="team-name">⚡ TEAM LEFT</div>
+<div class="scoreboard-container">
+    <div class="plates-wrapper">
+        <!-- LEFT PLATE : BLUE FROSTED GLASS -->
+        <div class="glass-plate plate-left" id="leftPlate">
+            <div class="team-name">
+                <span>🔷</span> TEAM BLUE
+            </div>
             <div class="points" id="leftPoints">0</div>
-            <div class="target-badge">🎯 target: 24 pts</div>
-            <div id="leftMessage" class="max-reached-message" style="visibility: hidden;">🏆 GAME POINT</div>
+            <div class="target-chip">🎯 target · 24 points</div>
+            <div class="action-row">
+                <button class="undo-btn" id="undoLeftBtn">↩️ Undo</button>
+                <div id="leftGamePointBadge" class="game-point-badge" style="visibility: hidden;">⚡ GAME POINT</div>
+            </div>
         </div>
 
-        <!-- RIGHT TEAM PLATE (Team B) -->
-        <div class="team-card team-right" id="teamRightPlate" role="button" aria-label="Add point to right team">
-            <div class="team-name">🌀 TEAM RIGHT</div>
+        <!-- RIGHT PLATE : GREEN GLASS -->
+        <div class="glass-plate plate-right" id="rightPlate">
+            <div class="team-name">
+                <span>🍃</span> TEAM GREEN
+            </div>
             <div class="points" id="rightPoints">0</div>
-            <div class="target-badge">🎯 target: 24 pts</div>
-            <div id="rightMessage" class="max-reached-message" style="visibility: hidden;">🏆 GAME POINT</div>
+            <div class="target-chip">🎯 target · 24 points</div>
+            <div class="action-row">
+                <button class="undo-btn" id="undoRightBtn">↩️ Undo</button>
+                <div id="rightGamePointBadge" class="game-point-badge" style="visibility: hidden;">⚡ GAME POINT</div>
+            </div>
         </div>
     </div>
 
-    <div class="reset-area">
-        <button class="reset-btn" id="resetBtn">⟳ RESET MATCH</button>
+    <div class="reset-glass">
+        <button class="reset-btn" id="resetBtn">⟳  RESET MATCH  ⟳</button>
     </div>
-    <div class="info-note">
-        ⚡ tap / click on any plate ➕ +1 point · first to 24 wins · reset for next set
+    <div class="info-footer">
+        💎 tap plate → +1 point | undo button → -1 point | first to 24 wins
     </div>
 </div>
 
 <script>
     (function() {
-        // --- GAME CONFIGURATION ---
-        const WINNING_SCORE = 24;      // set goes till 24
+        // ----- CONFIG -----
+        const WIN_SCORE = 24;
         let leftScore = 0;
         let rightScore = 0;
-        let gameActive = true;          // becomes false when a team reaches 24 (winner decided)
-        let winnerDeclared = false;     // extra flag for UI consistency
-        
+        let gameActive = true;    // becomes false when someone wins
+
         // DOM elements
-        const leftPlate = document.getElementById('teamLeftPlate');
-        const rightPlate = document.getElementById('teamRightPlate');
-        const leftPointsEl = document.getElementById('leftPoints');
-        const rightPointsEl = document.getElementById('rightPoints');
-        const leftMsgEl = document.getElementById('leftMessage');
-        const rightMsgEl = document.getElementById('rightMessage');
+        const leftPlateEl = document.getElementById('leftPlate');
+        const rightPlateEl = document.getElementById('rightPlate');
+        const leftPointsSpan = document.getElementById('leftPoints');
+        const rightPointsSpan = document.getElementById('rightPoints');
+        const undoLeftBtn = document.getElementById('undoLeftBtn');
+        const undoRightBtn = document.getElementById('undoRightBtn');
         const resetBtn = document.getElementById('resetBtn');
-        const rootBoard = document.getElementById('scoreboardRoot');
+        const leftBadge = document.getElementById('leftGamePointBadge');
+        const rightBadge = document.getElementById('rightGamePointBadge');
+        const container = document.querySelector('.scoreboard-container'); // for game-finished class
 
-        // Helper: update UI (scores, winner styling, messages, active state)
-        function updateUI() {
-            // update numeric scores
-            leftPointsEl.innerText = leftScore;
-            rightPointsEl.innerText = rightScore;
+        // helper: update UI (scores, badges, winner glows, gameActive state)
+        function refreshUI() {
+            // update displayed numbers
+            leftPointsSpan.innerText = leftScore;
+            rightPointsSpan.innerText = rightScore;
 
-            // handle win / game finished logic
-            const leftWins = (leftScore >= WINNING_SCORE);
-            const rightWins = (rightScore >= WINNING_SCORE);
-            
-            if ((leftWins || rightWins) && gameActive === true) {
-                // game just finished now (one team reached 24)
+            // check for win conditions
+            const leftWon = leftScore >= WIN_SCORE;
+            const rightWon = rightScore >= WIN_SCORE;
+
+            if ((leftWon || rightWon) && gameActive === true) {
+                // game just finished
                 gameActive = false;
-                winnerDeclared = true;
-                
-                // apply winner glow & disable clicks visually via class
-                rootBoard.classList.add('game-finished');
-                
-                if (leftWins) {
-                    leftPlate.classList.add('winner-glow');
-                    rightPlate.classList.remove('winner-glow');
-                    // show victory messages
-                    leftMsgEl.style.visibility = "visible";
-                    leftMsgEl.innerText = "🏆 VICTORY! SET WON 🏆";
-                    rightMsgEl.style.visibility = "visible";
-                    rightMsgEl.innerText = "❌ GAME OVER";
-                } 
-                else if (rightWins) {
-                    rightPlate.classList.add('winner-glow');
-                    leftPlate.classList.remove('winner-glow');
-                    rightMsgEl.style.visibility = "visible";
-                    rightMsgEl.innerText = "🏆 VICTORY! SET WON 🏆";
-                    leftMsgEl.style.visibility = "visible";
-                    leftMsgEl.innerText = "❌ GAME OVER";
+                // apply winner highlight & disable main plate clicks (class on parent wrapper)
+                container.classList.add('game-finished');
+                if (leftWon) {
+                    leftPlateEl.classList.add('winner-glow');
+                    rightPlateEl.classList.remove('winner-glow');
+                    // show victory text on badges (temporary)
+                    leftBadge.style.visibility = "visible";
+                    leftBadge.innerText = "🏆 VICTORY! 🏆";
+                    rightBadge.style.visibility = "visible";
+                    rightBadge.innerText = "❌ GAME OVER";
+                } else if (rightWon) {
+                    rightPlateEl.classList.add('winner-glow');
+                    leftPlateEl.classList.remove('winner-glow');
+                    rightBadge.style.visibility = "visible";
+                    rightBadge.innerText = "🏆 VICTORY! 🏆";
+                    leftBadge.style.visibility = "visible";
+                    leftBadge.innerText = "❌ GAME OVER";
                 }
-            }
-            else if (!gameActive && !(leftScore >= WINNING_SCORE || rightScore >= WINNING_SCORE)) {
-                // edge case: after reset, scores are below 24, gameActive should be true but we ensure sync
-                if (gameActive === false && leftScore < WINNING_SCORE && rightScore < WINNING_SCORE) {
-                    gameActive = true;
-                    winnerDeclared = false;
-                    rootBoard.classList.remove('game-finished');
-                    leftPlate.classList.remove('winner-glow');
-                    rightPlate.classList.remove('winner-glow');
-                    // reset message visibility and texts
-                    leftMsgEl.style.visibility = "hidden";
-                    rightMsgEl.style.visibility = "hidden";
-                    leftMsgEl.innerText = "🏆 GAME POINT";
-                    rightMsgEl.innerText = "🏆 GAME POINT";
-                }
-            }
-            
-            // if game is still active (no winner yet), manage "game point" messages and remove winner glow if any
-            if (gameActive === true) {
-                // remove winner glows just in case
-                leftPlate.classList.remove('winner-glow');
-                rightPlate.classList.remove('winner-glow');
-                rootBoard.classList.remove('game-finished');
-                
-                // show game point warnings when a team is at 23 (one point away from 24)
-                if (leftScore === WINNING_SCORE - 1) {
-                    leftMsgEl.style.visibility = "visible";
-                    leftMsgEl.innerText = "⚡ GAME POINT ⚡";
-                } else {
-                    leftMsgEl.style.visibility = "hidden";
-                }
-                
-                if (rightScore === WINNING_SCORE - 1) {
-                    rightMsgEl.style.visibility = "visible";
-                    rightMsgEl.innerText = "⚡ GAME POINT ⚡";
-                } else {
-                    rightMsgEl.style.visibility = "hidden";
-                }
-                
-                // also if both not at 23 but maybe some leftover 'victory' hidden? double clean
-                if (leftScore !== WINNING_SCORE - 1 && leftScore < WINNING_SCORE) {
-                    leftMsgEl.style.visibility = "hidden";
-                }
-                if (rightScore !== WINNING_SCORE - 1 && rightScore < WINNING_SCORE) {
-                    rightMsgEl.style.visibility = "hidden";
-                }
-            } else {
-                // game finished: messages already set, but ensure we don't override victory text on reset later
-                // winner glows and messages are static from above block. But in case reset triggers update before reinit,
-                // we maintain correct flag: reset function will fully override anyway.
-            }
-        }
-        
-        // core function: add point to a team (left = true, right = false)
-        function addPointToTeam(isLeftTeam) {
-            // if game is not active (already finished) → no further point increments
-            if (!gameActive) {
-                // optional subtle vibration-like feedback? not needed, just ignore click
                 return;
             }
-            
-            let newScore;
-            if (isLeftTeam) {
-                // prevent overflow beyond 24 but also gameActive ensures max 24
-                if (leftScore >= WINNING_SCORE) return;
-                leftScore = leftScore + 1;
-                newScore = leftScore;
-                // after increment, check win condition
-                if (leftScore >= WINNING_SCORE) {
-                    // set score exactly WINNING_SCORE if somehow >, but we cap
-                    if (leftScore > WINNING_SCORE) leftScore = WINNING_SCORE;
-                    // gameActive will be set false in updateUI
-                    updateUI();
-                    return;
+
+            // if game is active (no winner yet)
+            if (gameActive === true) {
+                // remove any leftover winner glow & game-finished class
+                container.classList.remove('game-finished');
+                leftPlateEl.classList.remove('winner-glow');
+                rightPlateEl.classList.remove('winner-glow');
+
+                // --- game point logic (one point away from 24) ---
+                if (leftScore === WIN_SCORE - 1 && leftScore < WIN_SCORE) {
+                    leftBadge.style.visibility = "visible";
+                    leftBadge.innerText = "⚡ GAME POINT ⚡";
+                } else {
+                    leftBadge.style.visibility = "hidden";
                 }
-            } else {
-                if (rightScore >= WINNING_SCORE) return;
-                rightScore = rightScore + 1;
-                newScore = rightScore;
-                if (rightScore >= WINNING_SCORE) {
-                    if (rightScore > WINNING_SCORE) rightScore = WINNING_SCORE;
-                    updateUI();
-                    return;
+
+                if (rightScore === WIN_SCORE - 1 && rightScore < WIN_SCORE) {
+                    rightBadge.style.visibility = "visible";
+                    rightBadge.innerText = "⚡ GAME POINT ⚡";
+                } else {
+                    rightBadge.style.visibility = "hidden";
                 }
-            }
-            // normal update after increment
-            updateUI();
-            
-            // extra safety: after increment if both scores somehow beyond limit? not possible because we check.
-            // double check gameActive consistency
-            if (leftScore >= WINNING_SCORE || rightScore >= WINNING_SCORE) {
-                // but we already early return, but just in case
-                if (!gameActive) return;
-                gameActive = false;
-                updateUI(); // re-trigger with winner declaration
+
+                // also ensure if any victory leftover text is removed
+                if (leftBadge.innerText.includes("VICTORY")) leftBadge.innerText = "⚡ GAME POINT ⚡";
+                if (rightBadge.innerText.includes("VICTORY")) rightBadge.innerText = "⚡ GAME POINT ⚡";
+            } 
+            else {
+                // gameActive false but scores under 24? (e.g after reset we call refresh, will flip later)
+                if (leftScore < WIN_SCORE && rightScore < WIN_SCORE && gameActive === false) {
+                    // we will reactivate game in reset, but just in case handle by reset trigger
+                }
             }
         }
-        
-        // Reset everything: zero scores, reactivate game, remove glows, clear messages
-        function resetGame() {
+
+        // main point addition (with win lock)
+        function addPoint(teamIsLeft) {
+            if (!gameActive) return;   // match finished, no more points
+
+            if (teamIsLeft) {
+                if (leftScore >= WIN_SCORE) return;
+                leftScore = Math.min(leftScore + 1, WIN_SCORE);
+            } else {
+                if (rightScore >= WIN_SCORE) return;
+                rightScore = Math.min(rightScore + 1, WIN_SCORE);
+            }
+
+            refreshUI();
+
+            // after increment, check if win condition triggered in refreshUI, but we may need extra sync
+            if (leftScore >= WIN_SCORE || rightScore >= WIN_SCORE) {
+                if (gameActive === true) {
+                    gameActive = false;
+                    container.classList.add('game-finished');
+                    refreshUI(); // second pass to ensure victory badges
+                }
+            }
+        }
+
+        // UNDO functionality: remove one point from a team, but never negative, and never undo if game finished? 
+        // We allow undo even after game finished? UX friendly: yes, you can undo but careful: if game finished, reset is better.
+        // But spec: undo to fix accidental clicks — should work before game ends, but after win it's also nice to adjust before reset? 
+        // Let's allow undo only if gameActive is true OR if game is finished but the score is still above? but if game finished, 
+        // we can still undo to bring back under 24? That would remove winner state. Better to allow undo always (except when score zero) 
+        // and re-activate game if both scores below winning threshold. This feels natural: "oops, I clicked too much, undo fixes and game continues"
+        function undoPoint(teamIsLeft) {
+            if (teamIsLeft) {
+                if (leftScore <= 0) return;
+                leftScore--;
+            } else {
+                if (rightScore <= 0) return;
+                rightScore--;
+            }
+
+            // after undoing, check if both scores below WIN_SCORE => game becomes active again, remove winner glows
+            const wasFinished = !gameActive;
+            if (leftScore < WIN_SCORE && rightScore < WIN_SCORE) {
+                gameActive = true;
+                container.classList.remove('game-finished');
+                leftPlateEl.classList.remove('winner-glow');
+                rightPlateEl.classList.remove('winner-glow');
+                // reset badges to default hidden or game point style
+                if (leftBadge.innerText.includes("VICTORY") || leftBadge.innerText.includes("GAME OVER")) {
+                    leftBadge.style.visibility = "hidden";
+                }
+                if (rightBadge.innerText.includes("VICTORY") || rightBadge.innerText.includes("GAME OVER")) {
+                    rightBadge.style.visibility = "hidden";
+                }
+            } else {
+                // if one team still >= WIN_SCORE, game stays finished, but we refresh UI to keep winner state
+                if (leftScore >= WIN_SCORE || rightScore >= WIN_SCORE) {
+                    gameActive = false;
+                    container.classList.add('game-finished');
+                    if (leftScore >= WIN_SCORE) {
+                        leftPlateEl.classList.add('winner-glow');
+                        rightPlateEl.classList.remove('winner-glow');
+                        leftBadge.style.visibility = "visible";
+                        leftBadge.innerText = "🏆 VICTORY! 🏆";
+                        rightBadge.style.visibility = "visible";
+                        rightBadge.innerText = "❌ GAME OVER";
+                    } else if (rightScore >= WIN_SCORE) {
+                        rightPlateEl.classList.add('winner-glow');
+                        leftPlateEl.classList.remove('winner-glow');
+                        rightBadge.style.visibility = "visible";
+                        rightBadge.innerText = "🏆 VICTORY! 🏆";
+                        leftBadge.style.visibility = "visible";
+                        leftBadge.innerText = "❌ GAME OVER";
+                    }
+                } else {
+                    // extra sync
+                    if (leftScore < WIN_SCORE && rightScore < WIN_SCORE) gameActive = true;
+                }
+            }
+            refreshUI(); // final UI sync
+        }
+
+        // FULL RESET: zero scores, active game, clear any winner highlights and badges
+        function resetMatch() {
             leftScore = 0;
             rightScore = 0;
             gameActive = true;
-            winnerDeclared = false;
+            container.classList.remove('game-finished');
+            leftPlateEl.classList.remove('winner-glow');
+            rightPlateEl.classList.remove('winner-glow');
             
-            // reset UI classes & messages
-            rootBoard.classList.remove('game-finished');
-            leftPlate.classList.remove('winner-glow');
-            rightPlate.classList.remove('winner-glow');
+            // reset badges visibility & text
+            leftBadge.style.visibility = "hidden";
+            rightBadge.style.visibility = "hidden";
+            leftBadge.innerText = "⚡ GAME POINT ⚡";
+            rightBadge.innerText = "⚡ GAME POINT ⚡";
             
-            // reset message visibility and content
-            leftMsgEl.style.visibility = "hidden";
-            rightMsgEl.style.visibility = "hidden";
-            leftMsgEl.innerText = "🏆 GAME POINT";
-            rightMsgEl.innerText = "🏆 GAME POINT";
+            refreshUI();  // updates numbers and removes any leftover game point badges
             
-            // update numeric displays
-            leftPointsEl.innerText = "0";
-            rightPointsEl.innerText = "0";
-            
-            // re-run full UI sync (scores are zero)
-            updateUI();
-            
-            // small edge: updateUI will hide game point messages and remove winner state, but also ensure no leftover 'victory'
-            // additional forced removal
-            if (leftMsgEl.innerText.includes("VICTORY")) leftMsgEl.innerText = "🏆 GAME POINT";
-            if (rightMsgEl.innerText.includes("VICTORY")) rightMsgEl.innerText = "🏆 GAME POINT";
-            leftMsgEl.style.visibility = "hidden";
-            rightMsgEl.style.visibility = "hidden";
-            // ensure no winner glow leftover
-            leftPlate.classList.remove('winner-glow');
-            rightPlate.classList.remove('winner-glow');
-            rootBoard.classList.remove('game-finished');
+            // after refresh, ensure both badges are hidden because scores are 0
+            leftBadge.style.visibility = "hidden";
+            rightBadge.style.visibility = "hidden";
         }
-        
-        // ---- Event Listeners for plates (mouse + touch) ----
-        // both desktop click and touchstart for mobile (fast response)
-        function attachPlateEvents() {
-            // LEFT PLATE click/tap handler
-            const leftHandler = (e) => {
-                e.preventDefault();  // prevents any double-fire weirdness on some mobile browsers
-                addPointToTeam(true);
-            };
-            // RIGHT PLATE handler
-            const rightHandler = (e) => {
-                e.preventDefault();
-                addPointToTeam(false);
-            };
-            
-            // For better mobile support, we use both 'click' and 'touchstart'
-            // but to avoid duplicate increments, we use a simple flag technique? Actually touchstart + click might fire twice on some devices.
-            // Better: use only 'click' works fine on modern mobile, but if we want instant feedback 'touchstart' is good.
-            // However double-firing: if we add both, the event might trigger twice. So we use just 'click' because it's unified
-            // and mobile browsers trigger click after tap (300ms delay negligible for score counter). 
-            // For better instant response and prevent double counts, we'll use 'pointerdown'? but click is safe.
-            // To support fast tapping perfectly without double increment, we'll use 'click' only.
-            // But requirement says mouse or finger -> click works for both. Perfect.
-            leftPlate.removeEventListener('click', leftHandler);
-            rightPlate.removeEventListener('click', rightHandler);
-            leftPlate.addEventListener('click', leftHandler);
-            rightPlate.addEventListener('click', rightHandler);
-            
-            // Additionally prevent context menu on long press for cleaner UX
-            leftPlate.addEventListener('contextmenu', (e) => e.preventDefault());
-            rightPlate.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        // ----- EVENT HANDLERS (with click & touch support)-----
+        // plates: add point
+        function onLeftPlateClick(e) {
+            // ignore if click originated from undo button (bubbling)
+            if (e.target === undoLeftBtn || undoLeftBtn.contains(e.target)) return;
+            e.preventDefault();
+            addPoint(true);
         }
+
+        function onRightPlateClick(e) {
+            if (e.target === undoRightBtn || undoRightBtn.contains(e.target)) return;
+            e.preventDefault();
+            addPoint(false);
+        }
+
+        // undo buttons specific
+        function onUndoLeft(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            undoPoint(true);
+        }
+
+        function onUndoRight(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            undoPoint(false);
+        }
+
+        // attach event listeners (modern)
+        leftPlateEl.addEventListener('click', onLeftPlateClick);
+        rightPlateEl.addEventListener('click', onRightPlateClick);
+        undoLeftBtn.addEventListener('click', onUndoLeft);
+        undoRightBtn.addEventListener('click', onUndoRight);
         
-        // reset button event
+        // mobile touch support: ensure no ghost delay / context menu issues
+        leftPlateEl.addEventListener('touchstart', (e) => {
+            // if undo button is the target, let it handle separately, but we avoid double fire
+            if (e.target === undoLeftBtn || undoLeftBtn.contains(e.target)) return;
+            e.preventDefault();
+            addPoint(true);
+        }, { passive: false });
+        
+        rightPlateEl.addEventListener('touchstart', (e) => {
+            if (e.target === undoRightBtn || undoRightBtn.contains(e.target)) return;
+            e.preventDefault();
+            addPoint(false);
+        }, { passive: false });
+        
+        // prevent context menu on plates
+        leftPlateEl.addEventListener('contextmenu', (e) => e.preventDefault());
+        rightPlateEl.addEventListener('contextmenu', (e) => e.preventDefault());
+        
+        // undo touch support
+        undoLeftBtn.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            undoPoint(true);
+        }, { passive: false });
+        
+        undoRightBtn.addEventListener('touchstart', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            undoPoint(false);
+        }, { passive: false });
+        
+        // reset button events
         resetBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            resetGame();
+            resetMatch();
         });
-        
-        // also allow reset on touch without zoom side effect
         resetBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            resetGame();
-        });
+            resetMatch();
+        }, { passive: false });
         
-        // attach plate click events
-        attachPlateEvents();
+        // initial refresh
+        refreshUI();
         
-        // initial UI rendering
-        updateUI();
-        
-        // small extra: handle dynamic if someone double clicks quickly but gameActive prevents overshooting.
-        // also because we cap at 24 and gameActive false after win, no extra points.
-        // Ensure that when game finishes, any attempt to add point via left/right is ignored due to gameActive check.
-        // Also added additional check inside addPointToTeam for score limits.
-        
-        // bonus: if user resets while game finished, we reinit correctly
-        // everything works.
-        
-        // ensure that after reset no stale "game-finished" class remains
-        window.resetGame = resetGame; // not needed but for console debug
-        
-        // Provide a nice optional haptic / vfb? not needed, just functional.
-        // Also adjust for physical buttons: everything is touch friendly.
-        // The plates are large and style indicates press effect.
-        // Add final sync for zero state.
-        
-        // For accessibility, we set ARIA live region optional
-        const leftScoreRegion = document.createElement('div');
-        leftScoreRegion.setAttribute('aria-live', 'polite');
-        const rightScoreRegion = document.createElement('div');
-        rightScoreRegion.setAttribute('aria-live', 'polite');
-        // Not needed but fine.
-        
-        console.log("Scoreboard ready | set to 24 points | tap plates to add");
+        // Additional polish: when game is finished, the main plates ignore clicks (due to gameActive flag)
+        // Undo remains functional even after match point (undo can reduce score and revive match if both <24)
+        console.log("✨ Liquid Glass Scoreboard Ready — Blue | Green — Undo each side ✨");
     })();
 </script>
 </body>
