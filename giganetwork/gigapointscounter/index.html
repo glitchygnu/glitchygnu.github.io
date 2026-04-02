@@ -588,6 +588,91 @@
                 });
             } catch(e) {}
         }
+        
+        // ========== FANCY WIN CONFETTI - copy this entire block ==========
+function launchFancyConfetti() {
+    // Massive confetti explosion
+    canvasConfetti({
+        particleCount: 300,
+        spread: 120,
+        origin: { y: 0.6 },
+        startVelocity: 25,
+        colors: ['#ff0000', '#ff8800', '#ffff00', '#00ff00', '#0088ff', '#8800ff', '#ff00ff'],
+        decay: 0.9,
+        ticks: 300
+    });
+    
+    // Side bursts (left and right)
+    setTimeout(() => {
+        canvasConfetti({
+            particleCount: 150,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0, y: 0.5 },
+            startVelocity: 30,
+            colors: ['#ffaa00', '#ffdd44', '#ff6600']
+        });
+        canvasConfetti({
+            particleCount: 150,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1, y: 0.5 },
+            startVelocity: 30,
+            colors: ['#ffaa00', '#ffdd44', '#ff6600']
+        });
+    }, 100);
+    
+    // Falling stars effect
+    setTimeout(() => {
+        canvasConfetti({
+            particleCount: 80,
+            spread: 360,
+            origin: { y: 0.1 },
+            startVelocity: 15,
+            colors: ['#ffffff', '#ffffaa', '#ffdd88'],
+            shapes: ['star']
+        });
+    }, 200);
+    
+    // Second big wave
+    setTimeout(() => {
+        canvasConfetti({
+            particleCount: 400,
+            spread: 100,
+            origin: { y: 0.7 },
+            startVelocity: 20,
+            colors: ['#ff3366', '#ff6633', '#ffcc33', '#33ff66', '#33ccff']
+        });
+    }, 400);
+    
+    // Long streamers (rectangle shapes)
+    setTimeout(() => {
+        canvasConfetti({
+            particleCount: 60,
+            spread: 45,
+            origin: { y: 0.5 },
+            startVelocity: 12,
+            colors: ['#ff6699', '#ffcc00', '#66ff99', '#ff6666'],
+            shapes: ['rect']
+        });
+    }, 600);
+    
+    // Final grand finale
+    setTimeout(() => {
+        for(let i = 0; i < 3; i++) {
+            setTimeout(() => {
+                canvasConfetti({
+                    particleCount: 200,
+                    spread: 140,
+                    origin: { y: 0.5 + Math.random() * 0.3 },
+                    startVelocity: 28,
+                    colors: ['#ff4444', '#ffaa44', '#ffff44', '#44ff44', '#44aaff', '#ff44ff']
+                });
+            }, i * 200);
+        }
+    }, 800);
+}
+// ========== END OF CONFETTI CODE ==========
 
         function enableAudioOnInteraction() {
             if (soundInitialized) return;
@@ -720,6 +805,7 @@
                     leftBadge.innerText = "🏆✨ VICTORY! ✨🏆";
                     rightBadge.style.visibility = "visible";
                     rightBadge.innerText = "😢 GAME OVER";
+                    launchFancyConfetti();   // <-- ADD THIS LINE
                     celebrateWin(true);
                 } else if (rightWon) {
                     rightPlate.classList.add('winner-glow');
@@ -728,6 +814,7 @@
                     rightBadge.innerText = "🏆✨ VICTORY! ✨🏆";
                     leftBadge.style.visibility = "visible";
                     leftBadge.innerText = "😢 GAME OVER";
+                    launchFancyConfetti();   // <-- ADD THIS LINE
                     celebrateWin(false);
                 }
                 updateServeDisplayText();
@@ -900,7 +987,7 @@
         undoLeft.addEventListener('click', onUndoLeftHandler);
         undoRight.addEventListener('click', onUndoRightHandler);
         resetBtn.addEventListener('click', (e) => { e.preventDefault(); resetMatch(); });
-        
+    
         // touch events
         leftPlate.addEventListener('touchstart', (e) => { if(e.target === undoLeft || undoLeft.contains(e.target)) return; e.preventDefault(); addPoint(true, { target: leftPlate }); }, { passive: false });
         rightPlate.addEventListener('touchstart', (e) => { if(e.target === undoRight || undoRight.contains(e.target)) return; e.preventDefault(); addPoint(false, { target: rightPlate }); }, { passive: false });
