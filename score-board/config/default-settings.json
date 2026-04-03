@@ -1,1 +1,22 @@
-
+{
+  "defaultColors": {
+    "left": "#ff6b6b",
+    "right": "#4ecdc4"
+  },
+  "defaultMode": "normal",
+  "defaultStartingServe": "left",
+  "maxScore": 24,
+  "serveChangeInterval": 2,
+  "availableColors": [
+    "#ff6b6b",
+    "#4ecdc4",
+    "#45b7d1",
+    "#96ceb4",
+    "#ffeaa7",
+    "#dfe6e9",
+    "#ff9999",
+    "#99ff99",
+    "#9999ff",
+    "#ffcc99"
+  ]
+}
