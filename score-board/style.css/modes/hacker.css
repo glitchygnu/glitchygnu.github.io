@@ -1,47 +1,128 @@
-/* Hacker cool Mode - Matrix Style */
+/* Hacker Mode - Matrix Style */
 body.hacker-mode {
+    transition: all 0.3s ease;
+}
+
+body.hacker-mode .animated-bg {
     background: #000000;
 }
 
-.hacker-mode .score-field {
+body.hacker-mode .score-field {
     background: #0a0a0a;
     border: 2px solid #00ff00;
-    box-shadow: 0 0 20px rgba(0,255,0,0.3);
+    box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+    position: relative;
+    overflow: hidden;
 }
 
-.hacker-mode .score-number {
+body.hacker-mode .score-field::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
+    animation: hackerScan 3s linear infinite;
+}
+
+@keyframes hackerScan {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+body.hacker-mode .score-number {
     text-shadow: 0 0 10px #00ff00;
     color: #00ff00;
-    font-family: 'Courier New', monospace;
+    font-family: 'Courier New', 'Monaco', monospace;
+    animation: hackerGlow 1s ease-in-out infinite alternate;
 }
 
-.hacker-mode .field-label {
+@keyframes hackerGlow {
+    from { text-shadow: 0 0 5px #00ff00; }
+    to { text-shadow: 0 0 20px #00ff00; }
+}
+
+body.hacker-mode .player-name {
     text-shadow: 0 0 5px #00ff00;
     color: #00ff00;
     font-family: 'Courier New', monospace;
+    letter-spacing: 4px;
 }
 
-.hacker-mode .undo-btn {
+body.hacker-mode .score-label {
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+}
+
+body.hacker-mode .undo-btn {
     background: #0a0a0a;
     color: #00ff00;
     border: 1px solid #00ff00;
     font-family: 'Courier New', monospace;
 }
 
-.hacker-mode .top-bar {
+body.hacker-mode .undo-btn:hover {
+    background: #00ff00;
+    color: #000;
+}
+
+body.hacker-mode .top-bar {
     background: #0a0a0a;
     border-bottom: 1px solid #00ff00;
 }
 
-.hacker-mode .reset-btn, 
-.hacker-mode .settings-btn {
+body.hacker-mode .action-btn {
     background: #0a0a0a;
     color: #00ff00;
     border: 1px solid #00ff00;
+    font-family: 'Courier New', monospace;
 }
 
-.hacker-mode .serve-indicator {
+body.hacker-mode .action-btn:hover {
+    background: #00ff00;
+    color: #000;
+}
+
+body.hacker-mode .serve-indicator {
     background: #0a0a0a;
     border: 1px solid #00ff00;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+body.hacker-mode .serve-badge,
+body.hacker-mode .serve-player {
     color: #00ff00;
+    font-family: 'Courier New', monospace;
+}
+
+body.hacker-mode .vs-circle {
+    background: #0a0a0a;
+    border: 2px solid #00ff00;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+}
+
+body.hacker-mode .game-status {
+    background: #0a0a0a;
+    border-top: 1px solid #00ff00;
+}
+
+body.hacker-mode .status-label,
+body.hacker-mode .status-value {
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+}
+
+/* Matrix rain effect canvas */
+#matrixCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.15;
+    pointer-events: none;
 }
