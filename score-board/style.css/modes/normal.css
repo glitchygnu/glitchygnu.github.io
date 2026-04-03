@@ -1,1 +1,17 @@
+/* Normal Mode - Clean and Professional */
+body.normal-mode {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
 
+.normal-mode .score-field {
+    background: #f0f0f0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.normal-mode .score-number {
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+}
+
+.normal-mode .undo-btn {
+    background: rgba(255, 255, 255, 0.9);
+}
