@@ -1,1 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Score Board - Volleyball Score Keeper</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/settings.css">
+    <!-- Mode CSS will be loaded dynamically -->
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <button id="resetBtn" class="reset-btn">🔄 Reset Set</button>
+            <div class="serve-indicator">
+                <span class="serve-label">SERVE</span>
+                <span id="servePlayer" class="serve-player">Left</span>
+            </div>
+            <button id="settingsBtn" class="settings-btn">⚙️</button>
+        </div>
 
+        <!-- Main Scoreboard -->
+        <div class="scoreboard">
+            <div id="leftField" class="score-field left-field">
+                <div class="score-number" id="leftScore">0</div>
+                <div class="field-label">LEFT PLAYER</div>
+                <button class="undo-btn left-undo" data-side="left">↩️ Undo</button>
+            </div>
+            <div id="rightField" class="score-field right-field">
+                <div class="score-number" id="rightScore">0</div>
+                <div class="field-label">RIGHT PLAYER</div>
+                <button class="undo-btn right-undo" data-side="right">↩️ Undo</button>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="settings-modal">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <h2>Settings</h2>
+                    <button class="close-settings">&times;</button>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>🎨 Color Themes</h3>
+                    <div class="color-options">
+                        <div class="color-picker-item">
+                            <label>Left Field Color:</label>
+                            <select id="leftColorSelect" class="color-select">
+                                <option value="#ff6b6b">Red</option>
+                                <option value="#4ecdc4">Teal</option>
+                                <option value="#45b7d1">Blue</option>
+                                <option value="#96ceb4">Green</option>
+                                <option value="#ffeaa7">Yellow</option>
+                                <option value="#dfe6e9">Gray</option>
+                            </select>
+                        </div>
+                        <div class="color-picker-item">
+                            <label>Right Field Color:</label>
+                            <select id="rightColorSelect" class="color-select">
+                                <option value="#ff6b6b">Red</option>
+                                <option value="#4ecdc4">Teal</option>
+                                <option value="#45b7d1">Blue</option>
+                                <option value="#96ceb4">Green</option>
+                                <option value="#ffeaa7">Yellow</option>
+                                <option value="#dfe6e9">Gray</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>🎭 Visual Modes</h3>
+                    <div class="mode-buttons">
+                        <button data-mode="normal" class="mode-btn active">Normal</button>
+                        <button data-mode="vibrant" class="mode-btn">Vibrant</button>
+                        <button data-mode="hacker" class="mode-btn">Hacker</button>
+                        <button data-mode="liquid-glass" class="mode-btn">Liquid Glass</button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>🏐 Starting Serve</h3>
+                    <div class="serve-selector">
+                        <button id="startServeLeft" class="serve-start-btn">Left Serves First</button>
+                        <button id="startServeRight" class="serve-start-btn">Right Serves First</button>
+                    </div>
+                    <div class="current-start-serve">
+                        Current: <span id="currentStartServe">Left</span>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>ℹ️ Info</h3>
+                    <p>Tap left/right field to add point<br>Max score: 24 points per player<br>Serve changes every 2 total points</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/scoreboard.js"></script>
+    <script src="js/serve.js"></script>
+    <script src="js/undo.js"></script>
+    <script src="js/modes.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
