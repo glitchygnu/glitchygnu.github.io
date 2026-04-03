@@ -1,22 +1,68 @@
 {
-  "defaultColors": {
-    "left": "#ff6b6b",
-    "right": "#4ecdc4"
+  "version": "1.0.0",
+  "defaultSettings": {
+    "maxScore": 24,
+    "serveChangeInterval": 2,
+    "defaultMode": "normal",
+    "defaultStartingServe": "left",
+    "defaultColors": {
+      "left": "#ff4757",
+      "right": "#1e90ff"
+    },
+    "animationsEnabled": true,
+    "soundEnabled": false,
+    "hapticFeedback": true
   },
-  "defaultMode": "normal",
-  "defaultStartingServe": "left",
-  "maxScore": 24,
-  "serveChangeInterval": 2,
-  "availableColors": [
-    "#ff6b6b",
-    "#4ecdc4",
-    "#45b7d1",
-    "#96ceb4",
-    "#ffeaa7",
-    "#dfe6e9",
-    "#ff9999",
-    "#99ff99",
-    "#9999ff",
-    "#ffcc99"
-  ]
+  "colorOptions": {
+    "left": [
+      "#ff4757",
+      "#ff6b81",
+      "#ff7f50",
+      "#ff6348",
+      "#ff4757",
+      "#ff6b6b"
+    ],
+    "right": [
+      "#1e90ff",
+      "#00cec9",
+      "#0984e3",
+      "#74b9ff",
+      "#4ecdc4",
+      "#45b7d1"
+    ]
+  },
+  "modeSettings": {
+    "normal": {
+      "background": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      "fontFamily": "Segoe UI, Roboto, sans-serif"
+    },
+    "vibrant": {
+      "background": "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+      "fontFamily": "Poppins, Segoe UI, sans-serif"
+    },
+    "hacker": {
+      "background": "#000000",
+      "fontFamily": "Courier New, Monaco, monospace"
+    },
+    "liquid-glass": {
+      "background": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      "fontFamily": "Segoe UI, Roboto, sans-serif"
+    }
+  },
+  "gameRules": {
+    "winCondition": "First to 24 points wins",
+    "serveRotation": "Changes every 2 total points",
+    "undoLimit": 30,
+    "maxHistoryItems": 30
+  },
+  "localStorageKeys": {
+    "gameState": "gameState",
+    "fieldColors": "fieldColors",
+    "visualMode": "visualMode",
+    "startingServe": "startingServe",
+    "serveHistory": "serveHistory",
+    "undoStack": "undoStack",
+    "animationSettings": "animationSettings",
+    "scoreboardSettings": "scoreboardSettings"
+  }
 }
