@@ -1,4 +1,6 @@
-// Settings management
+// ============================================
+// SETTINGS MANAGEMENT
+// ============================================
 
 class SettingsManager {
     constructor() {
@@ -7,66 +9,126 @@ class SettingsManager {
         this.closeBtn = document.querySelector('.close-settings');
         this.leftColorSelect = document.getElementById('leftColorSelect');
         this.rightColorSelect = document.getElementById('rightColorSelect');
+        this.leftColorPreview = document.getElementById('leftColorPreview');
+        this.rightColorPreview = document.getElementById('rightColorPreview');
         this.startServeLeftBtn = document.getElementById('startServeLeft');
         this.startServeRightBtn = document.getElementById('startServeRight');
         this.currentStartServeSpan = document.getElementById('currentStartServe');
+        this.modeCards = document.querySelectorAll('.mode-card');
+        
+        this.colorMap = {
+            '#ff4757': 'Crimson Red',
+            '#ff6b81': 'Soft Red',
+            '#ff7f50': 'Coral',
+            '#ff6348': 'Tomato',
+            '#1e90ff': 'Dodger Blue',
+            '#00cec9': 'Teal',
+            '#0984e3': 'Bright Blue',
+            '#74b9ff': 'Light Blue'
+        };
     }
     
     init() {
         this.attachEventListeners();
         this.loadColorsFromLocalStorage();
         this.updateStartServeDisplay();
+        this.setupKeyboardShortcuts();
+        this.loadModeFromManager();
     }
     
     attachEventListeners() {
         // Open settings
-        this.settingsBtn.addEventListener('click', () => this.openSettings());
+        if (this.settingsBtn) {
+            this.settingsBtn.addEventListener('click', () => this.openSettings());
+        }
         
         // Close settings
-        this.closeBtn.addEventListener('click', () => this.closeSettings());
+        if (this.closeBtn) {
+            this.closeBtn.addEventListener('click', () => this.closeSettings());
+        }
         
-        // Close on background click
-        this.modal.addEventListener('click', (e) => {
-            if (e.target === this.modal) {
+        // Close on overlay click
+        const overlay = document.querySelector('.settings-overlay');
+        if (overlay) {
+            overlay.addEventListener('click', () => this.closeSettings());
+        }
+        
+        // Escape key to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.modal && this.modal.classList.contains('show')) {
                 this.closeSettings();
             }
         });
         
         // Color change handlers
-        this.leftColorSelect.addEventListener('change', (e) => {
-            this.changeFieldColor('left', e.target.value);
-        });
-        
-        this.rightColorSelect.addEventListener('change', (e) => {
-            this.changeFieldColor('right', e.target.value);
-        });
-        
-        // Starting serve handlers
-        this.startServeLeftBtn.addEventListener('click', () => {
-            this.setStartingServe('left');
-        });
-        
-        this.startServeRightBtn.addEventListener('click', () => {
-            this.setStartingServe('right');
-        });
-        
-        // Mode buttons
-        document.querySelectorAll('.mode-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const mode = btn.dataset.mode;
-                if (window.modeManager) {
-                    window.modeManager.applyMode(mode);
+        if (this.leftColorSelect) {
+            this.leftColorSelect.addEventListener('change', (e) => {
+                this.changeFieldColor('left', e.target.value);
+                if (this.leftColorPreview) {
+                    this.leftColorPreview.style.backgroundColor = e.target.value;
                 }
             });
-        });
+        }
+        
+        if (this.rightColorSelect) {
+            this.rightColorSelect.addEventListener('change', (e) => {
+                this.changeFieldColor('right', e.target.value);
+                if (this.rightColorPreview) {
+                    this.rightColorPreview.style.backgroundColor = e.target.value;
+                }
+            });
+        }
+        
+        // Serve start handlers
+        if (this.startServeLeftBtn) {
+            this.startServeLeftBtn.addEventListener('click', () => {
+                this.setStartingServe('left');
+            });
+        }
+        
+        if (this.startServeRightBtn) {
+            this.startServeRightBtn.addEventListener('click', () => {
+                this.setStartingServe('right');
+            });
+        }
+        
+        // Mode selection
+        if (this.modeCards) {
+            this.modeCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const mode = card.dataset.mode;
+                    if (mode && window.modeManager) {
+                        window.modeManager.applyMode(mode);
+                        this.closeSettings();
+                    }
+                });
+            });
+        }
     }
     
     openSettings() {
-        this.modal.classList.add('show');
+        if (this.modal) {
+            this.modal.classList.add('show');
+            this.updateColorPreviews();
+            this.updateModeSelection();
+            
+            // Add animation to settings button
+            if (this.settingsBtn) {
+                const icon = this.settingsBtn.querySelector('.btn-icon');
+                if (icon) {
+                    icon.classList.add('spin');
+                    setTimeout(() => {
+                        icon.classList.remove('spin');
+                    }, 500);
+                }
+            }
+        }
     }
     
     closeSettings() {
-        this.modal.classList.remove('show');
+        if (this.modal) {
+            this.modal.classList.remove('show');
+        }
     }
     
     changeFieldColor(side, color) {
@@ -74,6 +136,12 @@ class SettingsManager {
         if (field) {
             field.style.backgroundColor = color;
             this.saveColorToLocalStorage(side, color);
+            
+            // Add transition effect
+            field.style.transition = 'background-color 0.3s ease';
+            setTimeout(() => {
+                field.style.transition = '';
+            }, 300);
         }
     }
     
@@ -86,21 +154,39 @@ class SettingsManager {
     loadColorsFromLocalStorage() {
         const colors = Utils.loadFromLocalStorage('fieldColors', {});
         
-        if (colors.left) {
-            document.getElementById('leftField').style.backgroundColor = colors.left;
-            this.leftColorSelect.value = colors.left;
-        } else {
-            // Default colors
-            document.getElementById('leftField').style.backgroundColor = '#ff6b6b';
-            this.leftColorSelect.value = '#ff6b6b';
+        // Set left field color
+        const leftColor = colors.left || '#ff4757';
+        const leftField = document.getElementById('leftField');
+        if (leftField) {
+            leftField.style.backgroundColor = leftColor;
+        }
+        if (this.leftColorSelect) {
+            this.leftColorSelect.value = leftColor;
+        }
+        if (this.leftColorPreview) {
+            this.leftColorPreview.style.backgroundColor = leftColor;
         }
         
-        if (colors.right) {
-            document.getElementById('rightField').style.backgroundColor = colors.right;
-            this.rightColorSelect.value = colors.right;
-        } else {
-            document.getElementById('rightField').style.backgroundColor = '#4ecdc4';
-            this.rightColorSelect.value = '#4ecdc4';
+        // Set right field color
+        const rightColor = colors.right || '#1e90ff';
+        const rightField = document.getElementById('rightField');
+        if (rightField) {
+            rightField.style.backgroundColor = rightColor;
+        }
+        if (this.rightColorSelect) {
+            this.rightColorSelect.value = rightColor;
+        }
+        if (this.rightColorPreview) {
+            this.rightColorPreview.style.backgroundColor = rightColor;
+        }
+    }
+    
+    updateColorPreviews() {
+        if (this.leftColorPreview && this.leftColorSelect) {
+            this.leftColorPreview.style.backgroundColor = this.leftColorSelect.value;
+        }
+        if (this.rightColorPreview && this.rightColorSelect) {
+            this.rightColorPreview.style.backgroundColor = this.rightColorSelect.value;
         }
     }
     
@@ -108,19 +194,68 @@ class SettingsManager {
         if (window.serveManager) {
             window.serveManager.setStartingServe(side);
             this.updateStartServeDisplay();
+            
             // Reset the game to apply new serve order
             if (window.scoreBoard) {
                 window.scoreBoard.reset();
             }
+            
+            Utils.showToast(`${side === 'left' ? 'Left' : 'Right'} will now serve first!`, 2000);
             this.closeSettings();
         }
     }
     
     updateStartServeDisplay() {
         if (window.serveManager && this.currentStartServeSpan) {
-            const startingServe = window.serveManager.startingServe;
+            const startingServe = window.serveManager.getStartingServe();
             this.currentStartServeSpan.textContent = startingServe === 'left' ? 'Left' : 'Right';
+            this.currentStartServeSpan.style.color = startingServe === 'left' ? '#ff4757' : '#1e90ff';
         }
+    }
+    
+    updateModeSelection() {
+        if (!window.modeManager || !this.modeCards) return;
+        
+        const currentMode = window.modeManager.getCurrentMode();
+        this.modeCards.forEach(card => {
+            if (card.dataset.mode === currentMode) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        });
+    }
+    
+    loadModeFromManager() {
+        if (window.modeManager) {
+            this.updateModeSelection();
+        }
+    }
+    
+    setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            // Ctrl + S to open settings
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                this.openSettings();
+            }
+        });
+    }
+    
+    resetToDefaults() {
+        // Reset colors
+        this.changeFieldColor('left', '#ff4757');
+        this.changeFieldColor('right', '#1e90ff');
+        
+        // Reset mode
+        if (window.modeManager) {
+            window.modeManager.applyMode('normal');
+        }
+        
+        // Reset serve
+        this.setStartingServe('left');
+        
+        Utils.showToast('Settings reset to defaults!', 2000);
     }
 }
 
