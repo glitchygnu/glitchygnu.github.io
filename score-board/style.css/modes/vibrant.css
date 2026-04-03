@@ -1,1 +1,28 @@
+/* Vibrant Mode - Bright and Energetic */
+body.vibrant-mode {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
 
+.vibrant-mode .score-field {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+.vibrant-mode .score-number {
+    text-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+    color: #ff6b6b;
+}
+
+.vibrant-mode .field-label {
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+}
+
+.vibrant-mode .undo-btn {
+    background: #ff6b6b;
+    color: white;
+    box-shadow: 0 5px 15px rgba(255,107,107,0.3);
+}
+
+.vibrant-mode .top-bar {
+    background: rgba(0, 0, 0, 0.5);
+}
