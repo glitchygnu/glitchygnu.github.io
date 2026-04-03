@@ -3,25 +3,610 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Ultimate Score Board - Volleyball Score Keeper</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/settings.css">
-    <link rel="stylesheet" href="css/animations.css">
+    <style>
+        /* ============================================
+           GLOBAL STYLES & RESET
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Poppins', 'Roboto', sans-serif;
+            overflow: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            transition: all 0.5s ease;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .app-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================
+           TOP BAR STYLES
+           ============================================ */
+        .top-bar {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 100;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-icon {
+            font-size: 18px;
+        }
+
+        /* Serve Indicator */
+        .serve-indicator-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .serve-indicator {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 25px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .serve-badge {
+            font-weight: 700;
+            color: #333;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .serve-player-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .serve-player {
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .serve-arrow {
+            font-size: 20px;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(5px); }
+        }
+
+        /* ============================================
+           SCOREBOARD STYLES
+           ============================================ */
+        .scoreboard {
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            padding: 30px;
+            position: relative;
+        }
+
+        .score-field {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .score-field:active {
+            transform: scale(0.98);
+        }
+
+        .left-field {
+            background: #ff4757;
+        }
+
+        .right-field {
+            background: #1e90ff;
+        }
+
+        .field-content {
+            text-align: center;
+            z-index: 2;
+        }
+
+        .player-name {
+            font-size: 2vw;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .score-number {
+            font-size: 18vw;
+            font-weight: 800;
+            color: white;
+            text-shadow: 4px 4px 20px rgba(0,0,0,0.3);
+            line-height: 1;
+            margin: 20px 0;
+            transition: all 0.1s ease;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+        }
+
+        .score-label {
+            font-size: 1.2vw;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* VS Divider */
+        .vs-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .vs-circle {
+            width: 70px;
+            height: 70px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Undo Buttons */
+        .undo-btn {
+            position: absolute;
+            bottom: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .undo-btn:active {
+            transform: scale(0.95);
+        }
+
+        .left-undo {
+            right: 30px;
+        }
+
+        .right-undo {
+            left: 30px;
+        }
+
+        .undo-icon {
+            font-size: 18px;
+        }
+
+        .undo-text {
+            font-size: 14px;
+        }
+
+        /* ============================================
+           GAME STATUS BAR
+           ============================================ */
+        .game-status {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            padding: 12px 25px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+        }
+
+        /* ============================================
+           SETTINGS MODAL
+           ============================================ */
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            justify-content: flex-end;
+            align-items: flex-start;
+        }
+
+        .settings-modal.show {
+            display: flex;
+        }
+
+        .settings-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+        }
+
+        .settings-content {
+            position: relative;
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            height: 100%;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.3);
+            animation: slideInRight 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .settings-header h2 {
+            margin: 0;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-settings {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-settings:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .settings-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+
+        .settings-section {
+            padding: 15px 25px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .settings-section h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Color Options */
+        .color-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .color-picker-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .color-picker-item label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .color-select {
+            padding: 8px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            background: white;
+        }
+
+        .color-preview {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+
+        /* Mode Grid */
+        .mode-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .mode-card {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .mode-card.active {
+            border-color: #667eea;
+            background: #667eea15;
+        }
+
+        .mode-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .mode-name {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .mode-desc {
+            font-size: 11px;
+            color: #888;
+        }
+
+        /* Serve Selector */
+        .serve-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .serve-start-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .serve-start-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .current-start-serve {
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .info-value {
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        /* Rules List */
+        .rules-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .rule-item {
+            padding: 6px 0;
+            font-size: 13px;
+            color: #555;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Animations */
+        @keyframes scorePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .score-pop {
+            animation: scorePop 0.2s ease-out;
+        }
+
+        @keyframes fieldFlash {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(1.15); }
+            100% { filter: brightness(1); }
+        }
+
+        .field-flash {
+            animation: fieldFlash 0.15s ease-out;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .top-bar { padding: 10px 15px; }
+            .action-btn { padding: 8px 15px; font-size: 14px; }
+            .btn-text { display: none; }
+            .action-btn { padding: 10px; }
+            .serve-indicator { padding: 5px 15px; }
+            .serve-player { font-size: 18px; }
+            .scoreboard { padding: 15px; gap: 10px; }
+            .player-name { font-size: 4vw; margin-bottom: 10px; }
+            .score-number { font-size: 25vw; margin: 10px 0; }
+            .score-label { font-size: 3vw; }
+            .vs-circle { width: 50px; height: 50px; font-size: 18px; }
+            .undo-btn { bottom: 20px; padding: 8px 16px; }
+            .undo-text { display: none; }
+            .left-undo { right: 15px; }
+            .right-undo { left: 15px; }
+        }
+
+        @media (max-width: 480px) {
+            .serve-arrow { display: none; }
+            .vs-circle { width: 40px; height: 40px; font-size: 14px; }
+        }
+    </style>
 </head>
 <body>
-    <!-- Main Application Container -->
     <div class="app-container">
-        <!-- Animated Background -->
         <div class="animated-bg"></div>
         
-        <!-- Top Navigation Bar -->
+        <!-- Top Bar -->
         <div class="top-bar">
             <div class="top-bar-left">
                 <button id="resetBtn" class="action-btn reset-btn">
                     <span class="btn-icon">🔄</span>
-                    <span class="btn-text">Reset Set</span>
+                    <span class="btn-text">Reset</span>
                 </button>
             </div>
             
@@ -30,7 +615,7 @@
                     <div class="serve-badge">SERVE</div>
                     <div class="serve-player-wrapper">
                         <span id="servePlayer" class="serve-player">LEFT</span>
-                        <div class="serve-arrow">🏐</div>
+                        <span class="serve-arrow">🏐</span>
                     </div>
                 </div>
             </div>
@@ -43,11 +628,9 @@
             </div>
         </div>
 
-        <!-- Main Scoreboard Area -->
+        <!-- Main Scoreboard -->
         <div class="scoreboard">
-            <!-- Left Player Field -->
             <div id="leftField" class="score-field left-field">
-                <div class="field-glow"></div>
                 <div class="field-content">
                     <div class="player-name">PLAYER 1</div>
                     <div class="score-number" id="leftScore">0</div>
@@ -57,17 +640,13 @@
                     <span class="undo-icon">↩️</span>
                     <span class="undo-text">Undo</span>
                 </button>
-                <div class="field-decoration"></div>
             </div>
             
-            <!-- VS Divider -->
             <div class="vs-divider">
                 <div class="vs-circle">VS</div>
             </div>
             
-            <!-- Right Player Field -->
             <div id="rightField" class="score-field right-field">
-                <div class="field-glow"></div>
                 <div class="field-content">
                     <div class="player-name">PLAYER 2</div>
                     <div class="score-number" id="rightScore">0</div>
@@ -77,11 +656,10 @@
                     <span class="undo-icon">↩️</span>
                     <span class="undo-text">Undo</span>
                 </button>
-                <div class="field-decoration"></div>
             </div>
         </div>
 
-        <!-- Game Status Bar -->
+        <!-- Game Status -->
         <div class="game-status">
             <div class="status-item">
                 <span class="status-label">Total Points</span>
@@ -92,7 +670,7 @@
                 <span id="nextServe" class="status-value">-</span>
             </div>
             <div class="status-item">
-                <span class="status-label">Game Status</span>
+                <span class="status-label">Status</span>
                 <span id="gameStatus" class="status-value">Active</span>
             </div>
         </div>
@@ -102,132 +680,710 @@
             <div class="settings-overlay"></div>
             <div class="settings-content">
                 <div class="settings-header">
-                    <h2>
-                        <span class="header-icon">⚙️</span>
-                        Settings & Customization
-                    </h2>
+                    <h2><span>⚙️</span> Settings</h2>
                     <button class="close-settings">&times;</button>
                 </div>
-                
                 <div class="settings-body">
-                    <!-- Color Themes Section -->
                     <div class="settings-section">
-                        <h3>
-                            <span class="section-icon">🎨</span>
-                            Field Colors
-                        </h3>
+                        <h3><span>🎨</span> Field Colors</h3>
                         <div class="color-options">
                             <div class="color-picker-item">
-                                <label>Left Field Color:</label>
-                                <div class="color-select-wrapper">
+                                <label>Left Field:</label>
+                                <div style="display: flex; gap: 10px; align-items: center;">
                                     <select id="leftColorSelect" class="color-select">
-                                        <option value="#ff4757">Crimson Red</option>
+                                        <option value="#ff4757">Red</option>
                                         <option value="#ff6b81">Soft Red</option>
                                         <option value="#ff7f50">Coral</option>
-                                        <option value="#ff6348">Tomato</option>
+                                        <option value="#2ed573">Green</option>
+                                        <option value="#ffa502">Orange</option>
                                     </select>
-                                    <div class="color-preview" id="leftColorPreview" style="background-color: #ff4757"></div>
+                                    <div id="leftColorPreview" class="color-preview" style="background:#ff4757"></div>
                                 </div>
                             </div>
                             <div class="color-picker-item">
-                                <label>Right Field Color:</label>
-                                <div class="color-select-wrapper">
+                                <label>Right Field:</label>
+                                <div style="display: flex; gap: 10px; align-items: center;">
                                     <select id="rightColorSelect" class="color-select">
-                                        <option value="#1e90ff">Dodger Blue</option>
+                                        <option value="#1e90ff">Blue</option>
                                         <option value="#00cec9">Teal</option>
-                                        <option value="#0984e3">Bright Blue</option>
-                                        <option value="#74b9ff">Light Blue</option>
+                                        <option value="#0984e3">Dark Blue</option>
+                                        <option value="#a29bfe">Purple</option>
+                                        <option value="#6c5ce7">Violet</option>
                                     </select>
-                                    <div class="color-preview" id="rightColorPreview" style="background-color: #1e90ff"></div>
+                                    <div id="rightColorPreview" class="color-preview" style="background:#1e90ff"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Visual Modes Section -->
                     <div class="settings-section">
-                        <h3>
-                            <span class="section-icon">🎭</span>
-                            Visual Modes
-                        </h3>
+                        <h3><span>🎭</span> Visual Modes</h3>
                         <div class="mode-grid">
                             <button data-mode="normal" class="mode-card active">
                                 <div class="mode-icon">✨</div>
                                 <div class="mode-name">Normal</div>
-                                <div class="mode-desc">Clean & Professional</div>
+                                <div class="mode-desc">Clean</div>
                             </button>
                             <button data-mode="vibrant" class="mode-card">
                                 <div class="mode-icon">🌈</div>
                                 <div class="mode-name">Vibrant</div>
-                                <div class="mode-desc">Bright & Energetic</div>
+                                <div class="mode-desc">Bright</div>
                             </button>
                             <button data-mode="hacker" class="mode-card">
                                 <div class="mode-icon">💻</div>
                                 <div class="mode-name">Hacker</div>
-                                <div class="mode-desc">Matrix Style</div>
+                                <div class="mode-desc">Matrix</div>
                             </button>
                             <button data-mode="liquid-glass" class="mode-card">
                                 <div class="mode-icon">💎</div>
                                 <div class="mode-name">Liquid Glass</div>
-                                <div class="mode-desc">Frosted Effect</div>
+                                <div class="mode-desc">Frosted</div>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Serve Settings Section -->
                     <div class="settings-section">
-                        <h3>
-                            <span class="section-icon">🏐</span>
-                            Serve Configuration
-                        </h3>
-                        <div class="serve-config">
-                            <div class="serve-selector">
-                                <button id="startServeLeft" class="serve-start-btn">
-                                    <span class="serve-icon">⬅️</span>
-                                    Left Serves First
-                                </button>
-                                <button id="startServeRight" class="serve-start-btn">
-                                    <span class="serve-icon">➡️</span>
-                                    Right Serves First
-                                </button>
-                            </div>
-                            <div class="current-start-serve">
-                                <span class="info-label">Current starter:</span>
-                                <span id="currentStartServe" class="info-value">Left</span>
-                            </div>
+                        <h3><span>🏐</span> Serve Configuration</h3>
+                        <div class="serve-selector">
+                            <button id="startServeLeft" class="serve-start-btn">⬅️ Left First</button>
+                            <button id="startServeRight" class="serve-start-btn">Right First ➡️</button>
+                        </div>
+                        <div class="current-start-serve">
+                            Starter: <span id="currentStartServe" class="info-value">Left</span>
                         </div>
                     </div>
 
-                    <!-- Game Rules Section -->
                     <div class="settings-section">
-                        <h3>
-                            <span class="section-icon">📋</span>
-                            Game Rules
-                        </h3>
+                        <h3><span>📋</span> Rules</h3>
                         <div class="rules-list">
-                            <div class="rule-item">🎯 Max score: 24 points per player</div>
+                            <div class="rule-item">🏆 First to 24 points wins</div>
                             <div class="rule-item">🔄 Serve changes every 2 total points</div>
-                            <div class="rule-item">👆 Tap any field to add point</div>
-                            <div class="rule-item">↩️ Use Undo to fix mistakes</div>
-                            <div class="rule-item">🏆 First to 24 wins the set</div>
+                            <div class="rule-item">👆 Tap field to add point</div>
+                            <div class="rule-item">↩️ Undo to fix mistakes</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Toast Notification -->
         <div id="toast" class="toast"></div>
     </div>
 
-    <!-- JavaScript Files -->
-    <script src="js/utils.js"></script>
-    <script src="js/scoreboard.js"></script>
-    <script src="js/serve.js"></script>
-    <script src="js/undo.js"></script>
-    <script src="js/modes.js"></script>
-    <script src="js/settings.js"></script>
-    <script src="js/animations.js"></script>
-    <script src="js/main.js"></script>
+    <script>
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
+        const Utils = {
+            saveToLocalStorage(key, value) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch(e) { return false; }
+            },
+            loadFromLocalStorage(key, defaultValue = null) {
+                try {
+                    const saved = localStorage.getItem(key);
+                    return saved ? JSON.parse(saved) : defaultValue;
+                } catch(e) { return defaultValue; }
+            },
+            showToast(message, duration = 2000) {
+                const toast = document.getElementById('toast');
+                if (!toast) return;
+                toast.textContent = message;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), duration);
+            },
+            vibrate(duration = 30) {
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate(duration);
+                }
+            },
+            getTotalPoints(left, right) { return left + right; },
+            isGameFinished(left, right, max = 24) { return left === max || right === max; }
+        };
+
+        // ============================================
+        // SCOREBOARD MANAGEMENT
+        // ============================================
+        class ScoreBoard {
+            constructor() {
+                this.leftScore = 0;
+                this.rightScore = 0;
+                this.maxScore = 24;
+                this.leftElement = document.getElementById('leftScore');
+                this.rightElement = document.getElementById('rightScore');
+                this.leftField = document.getElementById('leftField');
+                this.rightField = document.getElementById('rightField');
+                this.totalPointsElement = document.getElementById('totalPoints');
+                this.gameStatusElement = document.getElementById('gameStatus');
+                this.history = [];
+                this.isGameActive = true;
+            }
+            
+            init() {
+                this.updateDisplay();
+                this.attachEventListeners();
+                this.updateGameStatus();
+            }
+            
+            attachEventListeners() {
+                this.leftField.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('undo-btn')) return;
+                    if (!this.isGameActive) {
+                        Utils.showToast('Game finished! Press Reset.', 1500);
+                        return;
+                    }
+                    this.incrementScore('left');
+                });
+                
+                this.rightField.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('undo-btn')) return;
+                    if (!this.isGameActive) {
+                        Utils.showToast('Game finished! Press Reset.', 1500);
+                        return;
+                    }
+                    this.incrementScore('right');
+                });
+            }
+            
+            incrementScore(side) {
+                if (!this.isGameActive) return;
+                
+                this.saveToHistory();
+                
+                if (side === 'left' && this.leftScore < this.maxScore) {
+                    this.leftScore++;
+                    this.animateScore('left');
+                } else if (side === 'right' && this.rightScore < this.maxScore) {
+                    this.rightScore++;
+                    this.animateScore('right');
+                } else {
+                    Utils.showToast(`Max score is ${this.maxScore}!`, 1000);
+                    return;
+                }
+                
+                this.updateDisplay();
+                Utils.vibrate(30);
+                
+                if (window.serveManager) {
+                    window.serveManager.updateServe(this.leftScore, this.rightScore);
+                }
+                
+                this.updateTotalPoints();
+                this.checkWinner();
+            }
+            
+            animateScore(side) {
+                const scoreElement = side === 'left' ? this.leftElement : this.rightElement;
+                const field = side === 'left' ? this.leftField : this.rightField;
+                scoreElement.classList.add('score-pop');
+                field.classList.add('field-flash');
+                setTimeout(() => {
+                    scoreElement.classList.remove('score-pop');
+                    field.classList.remove('field-flash');
+                }, 200);
+            }
+            
+            updateDisplay() {
+                this.leftElement.textContent = this.leftScore;
+                this.rightElement.textContent = this.rightScore;
+            }
+            
+            saveToHistory() {
+                this.history.push({ left: this.leftScore, right: this.rightScore });
+                if (this.history.length > 30) this.history.shift();
+            }
+            
+            undo() {
+                if (this.history.length === 0) {
+                    Utils.showToast('Nothing to undo!', 1000);
+                    return false;
+                }
+                const prev = this.history.pop();
+                this.leftScore = prev.left;
+                this.rightScore = prev.right;
+                this.updateDisplay();
+                this.updateTotalPoints();
+                if (!this.isGameActive) {
+                    this.isGameActive = true;
+                    this.updateGameStatus();
+                }
+                Utils.showToast('Point undone!', 1000);
+                return true;
+            }
+            
+            updateTotalPoints() {
+                if (this.totalPointsElement) {
+                    this.totalPointsElement.textContent = this.leftScore + this.rightScore;
+                }
+            }
+            
+            updateGameStatus() {
+                if (this.gameStatusElement) {
+                    if (!this.isGameActive) {
+                        const winner = this.leftScore === this.maxScore ? 'LEFT' : 'RIGHT';
+                        this.gameStatusElement.textContent = `${winner} WON!`;
+                        this.gameStatusElement.style.color = '#ffd700';
+                    } else {
+                        this.gameStatusElement.textContent = 'Active';
+                        this.gameStatusElement.style.color = '#4ecdc4';
+                    }
+                }
+            }
+            
+            checkWinner() {
+                if (this.leftScore === this.maxScore) {
+                    this.isGameActive = false;
+                    this.updateGameStatus();
+                    Utils.showToast('🏆 LEFT PLAYER WINS! 🏆', 3000);
+                    Utils.vibrate(200);
+                } else if (this.rightScore === this.maxScore) {
+                    this.isGameActive = false;
+                    this.updateGameStatus();
+                    Utils.showToast('🏆 RIGHT PLAYER WINS! 🏆', 3000);
+                    Utils.vibrate(200);
+                }
+            }
+            
+            reset() {
+                this.leftScore = 0;
+                this.rightScore = 0;
+                this.history = [];
+                this.isGameActive = true;
+                this.updateDisplay();
+                this.updateTotalPoints();
+                this.updateGameStatus();
+                if (window.serveManager) {
+                    window.serveManager.resetServe();
+                }
+                Utils.showToast('Game reset!', 1000);
+            }
+            
+            getScores() { return { left: this.leftScore, right: this.rightScore }; }
+        }
+
+        // ============================================
+        // SERVE MANAGEMENT
+        // ============================================
+        class ServeManager {
+            constructor() {
+                this.startingServe = 'left';
+                this.currentServe = 'left';
+                this.serveElement = document.getElementById('servePlayer');
+                this.nextServeElement = document.getElementById('nextServe');
+            }
+            
+            init() {
+                this.loadFromLocalStorage();
+                this.updateDisplay();
+            }
+            
+            setStartingServe(side) {
+                this.startingServe = side;
+                this.currentServe = side;
+                this.updateDisplay();
+                this.saveToLocalStorage();
+                Utils.showToast(`${side === 'left' ? 'Left' : 'Right'} serves first!`, 1500);
+            }
+            
+            updateServe(leftScore, rightScore) {
+                const totalPoints = leftScore + rightScore;
+                const serveCycles = Math.floor(totalPoints / 2);
+                
+                let newServe;
+                if (serveCycles % 2 === 0) {
+                    newServe = this.startingServe;
+                } else {
+                    newServe = this.startingServe === 'left' ? 'right' : 'left';
+                }
+                
+                const changed = (newServe !== this.currentServe);
+                this.currentServe = newServe;
+                this.updateDisplay();
+                
+                if (changed && totalPoints > 0) {
+                    Utils.showToast(`Serve to ${this.currentServe === 'left' ? 'LEFT' : 'RIGHT'}!`, 1000);
+                }
+            }
+            
+            updateDisplay() {
+                if (this.serveElement) {
+                    this.serveElement.textContent = this.currentServe === 'left' ? 'LEFT' : 'RIGHT';
+                    this.serveElement.style.color = this.currentServe === 'left' ? '#ff4757' : '#1e90ff';
+                }
+                if (this.nextServeElement) {
+                    const total = window.scoreBoard ? window.scoreBoard.leftScore + window.scoreBoard.rightScore : 0;
+                    const nextCycle = Math.floor((total + 2) / 2);
+                    let nextServe;
+                    if (nextCycle % 2 === 0) {
+                        nextServe = this.startingServe;
+                    } else {
+                        nextServe = this.startingServe === 'left' ? 'right' : 'left';
+                    }
+                    this.nextServeElement.textContent = nextServe === 'left' ? 'LEFT' : 'RIGHT';
+                    this.nextServeElement.style.color = nextServe === 'left' ? '#ff4757' : '#1e90ff';
+                }
+            }
+            
+            resetServe() {
+                this.currentServe = this.startingServe;
+                this.updateDisplay();
+            }
+            
+            getCurrentServe() { return this.currentServe; }
+            getStartingServe() { return this.startingServe; }
+            
+            saveToLocalStorage() {
+                Utils.saveToLocalStorage('startingServe', this.startingServe);
+            }
+            
+            loadFromLocalStorage() {
+                const saved = Utils.loadFromLocalStorage('startingServe');
+                if (saved === 'left' || saved === 'right') {
+                    this.startingServe = saved;
+                    this.currentServe = saved;
+                }
+            }
+        }
+
+        // ============================================
+        // UNDO MANAGEMENT
+        // ============================================
+        class UndoManager {
+            constructor() {
+                this.undoLeft = document.querySelector('.left-undo');
+                this.undoRight = document.querySelector('.right-undo');
+            }
+            
+            init() {
+                this.attachEvents();
+            }
+            
+            attachEvents() {
+                if (this.undoLeft) {
+                    this.undoLeft.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (window.scoreBoard) {
+                            window.scoreBoard.undo();
+                            if (window.serveManager && window.scoreBoard) {
+                                const scores = window.scoreBoard.getScores();
+                                window.serveManager.updateServe(scores.left, scores.right);
+                            }
+                        }
+                    });
+                }
+                if (this.undoRight) {
+                    this.undoRight.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (window.scoreBoard) {
+                            window.scoreBoard.undo();
+                            if (window.serveManager && window.scoreBoard) {
+                                const scores = window.scoreBoard.getScores();
+                                window.serveManager.updateServe(scores.left, scores.right);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        // ============================================
+        // MODE MANAGEMENT
+        // ============================================
+        class ModeManager {
+            constructor() {
+                this.currentMode = 'normal';
+            }
+            
+            init() {
+                this.loadFromLocalStorage();
+                this.applyMode(this.currentMode);
+            }
+            
+            applyMode(mode) {
+                const body = document.body;
+                const bg = document.querySelector('.animated-bg');
+                
+                // Remove all mode classes
+                body.classList.remove('normal-mode', 'vibrant-mode', 'hacker-mode', 'liquid-glass-mode');
+                
+                // Apply new mode class
+                body.classList.add(`${mode}-mode`);
+                
+                // Apply mode-specific styles
+                switch(mode) {
+                    case 'normal':
+                        bg.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                        break;
+                    case 'vibrant':
+                        bg.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+                        break;
+                    case 'hacker':
+                        bg.style.background = '#000000';
+                        break;
+                    case 'liquid-glass':
+                        bg.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                        break;
+                }
+                
+                this.currentMode = mode;
+                this.saveToLocalStorage();
+                this.updateActiveButton(mode);
+                Utils.showToast(`${mode} mode activated!`, 1000);
+            }
+            
+            updateActiveButton(mode) {
+                document.querySelectorAll('.mode-card').forEach(btn => {
+                    if (btn.dataset.mode === mode) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+            
+            saveToLocalStorage() {
+                Utils.saveToLocalStorage('visualMode', this.currentMode);
+            }
+            
+            loadFromLocalStorage() {
+                const saved = Utils.loadFromLocalStorage('visualMode');
+                if (saved) this.currentMode = saved;
+            }
+            
+            getCurrentMode() { return this.currentMode; }
+        }
+
+        // ============================================
+        // SETTINGS MANAGEMENT
+        // ============================================
+        class SettingsManager {
+            constructor() {
+                this.modal = document.getElementById('settingsModal');
+                this.settingsBtn = document.getElementById('settingsBtn');
+                this.closeBtn = document.querySelector('.close-settings');
+                this.overlay = document.querySelector('.settings-overlay');
+                this.leftColorSelect = document.getElementById('leftColorSelect');
+                this.rightColorSelect = document.getElementById('rightColorSelect');
+                this.leftPreview = document.getElementById('leftColorPreview');
+                this.rightPreview = document.getElementById('rightColorPreview');
+                this.startLeft = document.getElementById('startServeLeft');
+                this.startRight = document.getElementById('startServeRight');
+                this.currentStartSpan = document.getElementById('currentStartServe');
+            }
+            
+            init() {
+                this.attachEvents();
+                this.loadColors();
+                this.updateStartDisplay();
+                this.loadModeSelection();
+            }
+            
+            attachEvents() {
+                this.settingsBtn.addEventListener('click', () => this.open());
+                this.closeBtn.addEventListener('click', () => this.close());
+                this.overlay.addEventListener('click', () => this.close());
+                
+                this.leftColorSelect.addEventListener('change', (e) => {
+                    this.changeColor('left', e.target.value);
+                });
+                this.rightColorSelect.addEventListener('change', (e) => {
+                    this.changeColor('right', e.target.value);
+                });
+                
+                this.startLeft.addEventListener('click', () => {
+                    if (window.serveManager) {
+                        window.serveManager.setStartingServe('left');
+                        if (window.scoreBoard) window.scoreBoard.reset();
+                        this.updateStartDisplay();
+                        this.close();
+                    }
+                });
+                this.startRight.addEventListener('click', () => {
+                    if (window.serveManager) {
+                        window.serveManager.setStartingServe('right');
+                        if (window.scoreBoard) window.scoreBoard.reset();
+                        this.updateStartDisplay();
+                        this.close();
+                    }
+                });
+                
+                document.querySelectorAll('.mode-card').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        if (window.modeManager) {
+                            window.modeManager.applyMode(btn.dataset.mode);
+                            this.close();
+                        }
+                    });
+                });
+            }
+            
+            open() { this.modal.classList.add('show'); }
+            close() { this.modal.classList.remove('show'); }
+            
+            changeColor(side, color) {
+                const field = document.getElementById(`${side}Field`);
+                if (field) field.style.backgroundColor = color;
+                const colors = Utils.loadFromLocalStorage('fieldColors', {});
+                colors[side] = color;
+                Utils.saveToLocalStorage('fieldColors', colors);
+            }
+            
+            loadColors() {
+                const colors = Utils.loadFromLocalStorage('fieldColors', {});
+                if (colors.left) {
+                    document.getElementById('leftField').style.backgroundColor = colors.left;
+                    this.leftColorSelect.value = colors.left;
+                    this.leftPreview.style.backgroundColor = colors.left;
+                }
+                if (colors.right) {
+                    document.getElementById('rightField').style.backgroundColor = colors.right;
+                    this.rightColorSelect.value = colors.right;
+                    this.rightPreview.style.backgroundColor = colors.right;
+                }
+            }
+            
+            updateStartDisplay() {
+                if (window.serveManager && this.currentStartSpan) {
+                    const starter = window.serveManager.getStartingServe();
+                    this.currentStartSpan.textContent = starter === 'left' ? 'Left' : 'Right';
+                }
+            }
+            
+            loadModeSelection() {
+                if (window.modeManager) {
+                    const current = window.modeManager.getCurrentMode();
+                    document.querySelectorAll('.mode-card').forEach(btn => {
+                        if (btn.dataset.mode === current) {
+                            btn.classList.add('active');
+                        }
+                    });
+                }
+            }
+        }
+
+        // ============================================
+        // ADDITIONAL MODE CSS (injected dynamically)
+        // ============================================
+        const modeStyles = document.createElement('style');
+        modeStyles.textContent = `
+            /* Vibrant Mode */
+            body.vibrant-mode .score-field {
+                border: 2px solid rgba(255,255,255,0.5);
+            }
+            body.vibrant-mode .score-number {
+                text-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+            }
+            body.vibrant-mode .undo-btn {
+                background: #ff6b6b;
+                color: white;
+            }
+            
+            /* Hacker Mode */
+            body.hacker-mode .score-field {
+                border: 2px solid #00ff00;
+                box-shadow: 0 0 20px rgba(0,255,0,0.3);
+                background: #0a0a0a;
+            }
+            body.hacker-mode .score-number,
+            body.hacker-mode .player-name,
+            body.hacker-mode .score-label {
+                color: #00ff00;
+                text-shadow: 0 0 10px #00ff00;
+                font-family: 'Courier New', monospace;
+            }
+            body.hacker-mode .undo-btn {
+                background: #0a0a0a;
+                color: #00ff00;
+                border: 1px solid #00ff00;
+            }
+            body.hacker-mode .top-bar,
+            body.hacker-mode .game-status {
+                background: #0a0a0a;
+                border-color: #00ff00;
+            }
+            body.hacker-mode .serve-indicator {
+                background: #0a0a0a;
+                border: 1px solid #00ff00;
+            }
+            body.hacker-mode .serve-badge,
+            body.hacker-mode .serve-player {
+                color: #00ff00;
+            }
+            body.hacker-mode .vs-circle {
+                background: #0a0a0a;
+                border: 2px solid #00ff00;
+                color: #00ff00;
+            }
+            body.hacker-mode .action-btn {
+                background: #0a0a0a;
+                color: #00ff00;
+                border: 1px solid #00ff00;
+            }
+            
+            /* Liquid Glass Mode */
+            body.liquid-glass-mode .score-field {
+                background: rgba(255,255,255,0.15);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255,255,255,0.3);
+            }
+            body.liquid-glass-mode .score-number {
+                background: linear-gradient(135deg, #fff, rgba(255,255,255,0.8));
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+            body.liquid-glass-mode .undo-btn {
+                background: rgba(255,255,255,0.25);
+                backdrop-filter: blur(10px);
+                color: white;
+            }
+            body.liquid-glass-mode .top-bar,
+            body.liquid-glass-mode .game-status {
+                background: rgba(255,255,255,0.2);
+                backdrop-filter: blur(20px);
+            }
+            body.liquid-glass-mode .serve-indicator {
+                background: rgba(255,255,255,0.25);
+                backdrop-filter: blur(10px);
+            }
+            body.liquid-glass-mode .vs-circle {
+                background: rgba(255,255,255,0.25);
+                backdrop-filter: blur(10px);
+            }
+            body.liquid-glass-mode .action-btn {
+                background: rgba(255,255,255,0.25);
+                backdrop-filter: blur(10px);
+                color: white;
+            }
+        `;
+        document.head.appendChild(modeStyles);
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            window.scoreBoard = new ScoreBoard();
+            window.serveManager = new ServeManager();
+            window.undoManager = new UndoManager();
+            window.modeManager = new ModeManager();
+            window.settingsManager = new SettingsManager();
+            
+            window.scoreBoard.init();
+            window.serveManager.init();
+            window.undoManager.init();
+            window.modeManager.init();
+            window.settingsManager.init();
+            
+            // Reset button handler
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                if (confirm('Reset the set? All points will be lost.')) {
+                    window.scoreBoard.reset();
+                }
+            });
+            
+            Utils.showToast('Tap fields to score! First to 24 wins!', 2500);
+        });
+    </script>
 </body>
 </html>
