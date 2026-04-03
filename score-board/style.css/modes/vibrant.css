@@ -1,28 +1,71 @@
-//* Vibrant Mode - Bright and Energetic */
+/* Vibrant Mode - Bright & Energetic */
 body.vibrant-mode {
+    transition: all 0.3s ease;
+}
+
+body.vibrant-mode .animated-bg {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    animation: vibrantBgShift 5s ease-in-out infinite;
 }
 
-.vibrant-mode .score-field {
+@keyframes vibrantBgShift {
+    0%, 100% { filter: hue-rotate(0deg); }
+    50% { filter: hue-rotate(10deg); }
+}
+
+body.vibrant-mode .score-field {
     background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.5);
 }
 
-.vibrant-mode .score-number {
-    text-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+body.vibrant-mode .score-number {
+    text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
     color: #ff6b6b;
+    animation: vibrantText 2s ease-in-out infinite;
 }
 
-.vibrant-mode .field-label {
-    text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+@keyframes vibrantText {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
 }
 
-.vibrant-mode .undo-btn {
+body.vibrant-mode .player-name {
+    color: #ff6b6b;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+    font-weight: 800;
+}
+
+body.vibrant-mode .undo-btn {
     background: #ff6b6b;
     color: white;
-    box-shadow: 0 5px 15px rgba(255,107,107,0.3);
+    border: none;
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
 }
 
-.vibrant-mode .top-bar {
-    background: rgba(0, 0, 0, 0.5);
+body.vibrant-mode .serve-indicator {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    color: white;
+    box-shadow: 0 5px 20px rgba(240, 147, 251, 0.4);
+}
+
+body.vibrant-mode .serve-badge,
+body.vibrant-mode .serve-player {
+    color: white;
+}
+
+body.vibrant-mode .action-btn {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    color: white;
+    border: none;
+}
+
+body.vibrant-mode .vs-circle {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    color: white;
+    border: none;
+}
+
+body.vibrant-mode .game-status {
+    background: rgba(0, 0, 0, 0.3);
 }
