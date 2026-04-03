@@ -1,37 +1,140 @@
-/* Liquid cool Glass Mode - Frosted Glass Effect */
+/* Liquid Glass Mode - Frosted Glass Effect */
 body.liquid-glass-mode {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transition: all 0.3s ease;
 }
 
-.liquid-glass-mode .score-field {
-    background: rgba(255, 255, 255, 0.2);
+body.liquid-glass-mode .animated-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    animation: liquidBgShift 8s ease-in-out infinite;
+}
+
+@keyframes liquidBgShift {
+    0%, 100% { 
+        background-position: 0% 50%;
+        filter: blur(0px);
+    }
+    50% { 
+        background-position: 100% 50%;
+        filter: blur(2px);
+    }
+}
+
+body.liquid-glass-mode .score-field {
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-.liquid-glass-mode .score-number {
-    text-shadow: 0 0 20px rgba(255,255,255,0.5);
+body.liquid-glass-mode .score-field::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+    animation: liquidShine 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes liquidShine {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(50%, 50%) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+body.liquid-glass-mode .score-number {
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
     color: white;
+    background: linear-gradient(135deg, #fff, rgba(255,255,255,0.8));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
 }
 
-.liquid-glass-mode .field-label {
-    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+body.liquid-glass-mode .player-name {
+    color: white;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    letter-spacing: 2px;
 }
 
-.liquid-glass-mode .undo-btn {
-    background: rgba(255, 255, 255, 0.3);
+body.liquid-glass-mode .score-label {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+body.liquid-glass-mode .undo-btn {
+    background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(10px);
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
-.liquid-glass-mode .top-bar {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(20px);
+body.liquid-glass-mode .undo-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
 }
 
-.liquid-glass-mode .serve-indicator {
-    background: rgba(255, 255, 255, 0.3);
+body.liquid-glass-mode .top-bar {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+body.liquid-glass-mode .action-btn {
+    background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(10px);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+body.liquid-glass-mode .action-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+body.liquid-glass-mode .serve-indicator {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+body.liquid-glass-mode .serve-badge,
+body.liquid-glass-mode .serve-player {
+    color: white;
+}
+
+body.liquid-glass-mode .vs-circle {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+}
+
+body.liquid-glass-mode .game-status {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+body.liquid-glass-mode .status-label,
+body.liquid-glass-mode .status-value {
+    color: white;
+}
+
+/* Liquid glass hover effect */
+body.liquid-glass-mode .score-field:hover {
+    transform: scale(1.02);
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
