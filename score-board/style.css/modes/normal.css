@@ -1,17 +1,49 @@
-/* Normal Mode - very Clean and Professional */
+/* Normal Mode - Clean & Professional */
 body.normal-mode {
+    transition: all 0.3s ease;
+}
+
+body.normal-mode .animated-bg {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.normal-mode .score-field {
-    background: #f0f0f0;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+body.normal-mode .score-field {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
-.normal-mode .score-number {
-    text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+body.normal-mode .score-number {
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
 }
 
-.normal-mode .undo-btn {
-    background: rgba(255, 255, 255, 0.9);
+body.normal-mode .player-name {
+    color: #333;
+    text-shadow: none;
+}
+
+body.normal-mode .undo-btn {
+    background: white;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+body.normal-mode .serve-indicator {
+    background: white;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+body.normal-mode .action-btn {
+    background: white;
+    color: #333;
+}
+
+body.normal-mode .vs-circle {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
 }
