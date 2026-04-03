@@ -3,108 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Score Board - Volleyball Score Keeper</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Ultimate Score Board - Volleyball Score Keeper</title>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/settings.css">
-    <!-- Mode CSS will be loaded dynamically -->
+    <link rel="stylesheet" href="css/animations.css">
 </head>
 <body>
+    <!-- Main Application Container -->
     <div class="app-container">
-        <!-- Top Bar -->
+        <!-- Animated Background -->
+        <div class="animated-bg"></div>
+        
+        <!-- Top Navigation Bar -->
         <div class="top-bar">
-            <button id="resetBtn" class="reset-btn">🔄 Reset Set</button>
-            <div class="serve-indicator">
-                <span class="serve-label">SERVE</span>
-                <span id="servePlayer" class="serve-player">Left</span>
+            <div class="top-bar-left">
+                <button id="resetBtn" class="action-btn reset-btn">
+                    <span class="btn-icon">🔄</span>
+                    <span class="btn-text">Reset Set</span>
+                </button>
             </div>
-            <button id="settingsBtn" class="settings-btn">⚙️</button>
+            
+            <div class="serve-indicator-container">
+                <div class="serve-indicator">
+                    <div class="serve-badge">SERVE</div>
+                    <div class="serve-player-wrapper">
+                        <span id="servePlayer" class="serve-player">LEFT</span>
+                        <div class="serve-arrow">🏐</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="top-bar-right">
+                <button id="settingsBtn" class="action-btn settings-btn">
+                    <span class="btn-icon">⚙️</span>
+                    <span class="btn-text">Settings</span>
+                </button>
+            </div>
         </div>
 
-        <!-- Main Scoreboard -->
+        <!-- Main Scoreboard Area -->
         <div class="scoreboard">
+            <!-- Left Player Field -->
             <div id="leftField" class="score-field left-field">
-                <div class="score-number" id="leftScore">0</div>
-                <div class="field-label">LEFT PLAYER</div>
-                <button class="undo-btn left-undo" data-side="left">↩️ Undo</button>
+                <div class="field-glow"></div>
+                <div class="field-content">
+                    <div class="player-name">PLAYER 1</div>
+                    <div class="score-number" id="leftScore">0</div>
+                    <div class="score-label">POINTS</div>
+                </div>
+                <button class="undo-btn left-undo" data-side="left">
+                    <span class="undo-icon">↩️</span>
+                    <span class="undo-text">Undo</span>
+                </button>
+                <div class="field-decoration"></div>
             </div>
+            
+            <!-- VS Divider -->
+            <div class="vs-divider">
+                <div class="vs-circle">VS</div>
+            </div>
+            
+            <!-- Right Player Field -->
             <div id="rightField" class="score-field right-field">
-                <div class="score-number" id="rightScore">0</div>
-                <div class="field-label">RIGHT PLAYER</div>
-                <button class="undo-btn right-undo" data-side="right">↩️ Undo</button>
+                <div class="field-glow"></div>
+                <div class="field-content">
+                    <div class="player-name">PLAYER 2</div>
+                    <div class="score-number" id="rightScore">0</div>
+                    <div class="score-label">POINTS</div>
+                </div>
+                <button class="undo-btn right-undo" data-side="right">
+                    <span class="undo-icon">↩️</span>
+                    <span class="undo-text">Undo</span>
+                </button>
+                <div class="field-decoration"></div>
+            </div>
+        </div>
+
+        <!-- Game Status Bar -->
+        <div class="game-status">
+            <div class="status-item">
+                <span class="status-label">Total Points</span>
+                <span id="totalPoints" class="status-value">0</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Next Serve</span>
+                <span id="nextServe" class="status-value">-</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Game Status</span>
+                <span id="gameStatus" class="status-value">Active</span>
             </div>
         </div>
 
         <!-- Settings Modal -->
         <div id="settingsModal" class="settings-modal">
+            <div class="settings-overlay"></div>
             <div class="settings-content">
                 <div class="settings-header">
-                    <h2>Settings</h2>
+                    <h2>
+                        <span class="header-icon">⚙️</span>
+                        Settings & Customization
+                    </h2>
                     <button class="close-settings">&times;</button>
                 </div>
                 
-                <div class="settings-section">
-                    <h3>🎨 Color Themes</h3>
-                    <div class="color-options">
-                        <div class="color-picker-item">
-                            <label>Left Field Color:</label>
-                            <select id="leftColorSelect" class="color-select">
-                                <option value="#ff6b6b">Red</option>
-                                <option value="#4ecdc4">Teal</option>
-                                <option value="#45b7d1">Blue</option>
-                                <option value="#96ceb4">Green</option>
-                                <option value="#ffeaa7">Yellow</option>
-                                <option value="#dfe6e9">Gray</option>
-                            </select>
+                <div class="settings-body">
+                    <!-- Color Themes Section -->
+                    <div class="settings-section">
+                        <h3>
+                            <span class="section-icon">🎨</span>
+                            Field Colors
+                        </h3>
+                        <div class="color-options">
+                            <div class="color-picker-item">
+                                <label>Left Field Color:</label>
+                                <div class="color-select-wrapper">
+                                    <select id="leftColorSelect" class="color-select">
+                                        <option value="#ff4757">Crimson Red</option>
+                                        <option value="#ff6b81">Soft Red</option>
+                                        <option value="#ff7f50">Coral</option>
+                                        <option value="#ff6348">Tomato</option>
+                                    </select>
+                                    <div class="color-preview" id="leftColorPreview" style="background-color: #ff4757"></div>
+                                </div>
+                            </div>
+                            <div class="color-picker-item">
+                                <label>Right Field Color:</label>
+                                <div class="color-select-wrapper">
+                                    <select id="rightColorSelect" class="color-select">
+                                        <option value="#1e90ff">Dodger Blue</option>
+                                        <option value="#00cec9">Teal</option>
+                                        <option value="#0984e3">Bright Blue</option>
+                                        <option value="#74b9ff">Light Blue</option>
+                                    </select>
+                                    <div class="color-preview" id="rightColorPreview" style="background-color: #1e90ff"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="color-picker-item">
-                            <label>Right Field Color:</label>
-                            <select id="rightColorSelect" class="color-select">
-                                <option value="#ff6b6b">Red</option>
-                                <option value="#4ecdc4">Teal</option>
-                                <option value="#45b7d1">Blue</option>
-                                <option value="#96ceb4">Green</option>
-                                <option value="#ffeaa7">Yellow</option>
-                                <option value="#dfe6e9">Gray</option>
-                            </select>
+                    </div>
+
+                    <!-- Visual Modes Section -->
+                    <div class="settings-section">
+                        <h3>
+                            <span class="section-icon">🎭</span>
+                            Visual Modes
+                        </h3>
+                        <div class="mode-grid">
+                            <button data-mode="normal" class="mode-card active">
+                                <div class="mode-icon">✨</div>
+                                <div class="mode-name">Normal</div>
+                                <div class="mode-desc">Clean & Professional</div>
+                            </button>
+                            <button data-mode="vibrant" class="mode-card">
+                                <div class="mode-icon">🌈</div>
+                                <div class="mode-name">Vibrant</div>
+                                <div class="mode-desc">Bright & Energetic</div>
+                            </button>
+                            <button data-mode="hacker" class="mode-card">
+                                <div class="mode-icon">💻</div>
+                                <div class="mode-name">Hacker</div>
+                                <div class="mode-desc">Matrix Style</div>
+                            </button>
+                            <button data-mode="liquid-glass" class="mode-card">
+                                <div class="mode-icon">💎</div>
+                                <div class="mode-name">Liquid Glass</div>
+                                <div class="mode-desc">Frosted Effect</div>
+                            </button>
                         </div>
                     </div>
-                </div>
 
-                <div class="settings-section">
-                    <h3>🎭 Visual Modes</h3>
-                    <div class="mode-buttons">
-                        <button data-mode="normal" class="mode-btn active">Normal</button>
-                        <button data-mode="vibrant" class="mode-btn">Vibrant</button>
-                        <button data-mode="hacker" class="mode-btn">Hacker</button>
-                        <button data-mode="liquid-glass" class="mode-btn">Liquid Glass</button>
+                    <!-- Serve Settings Section -->
+                    <div class="settings-section">
+                        <h3>
+                            <span class="section-icon">🏐</span>
+                            Serve Configuration
+                        </h3>
+                        <div class="serve-config">
+                            <div class="serve-selector">
+                                <button id="startServeLeft" class="serve-start-btn">
+                                    <span class="serve-icon">⬅️</span>
+                                    Left Serves First
+                                </button>
+                                <button id="startServeRight" class="serve-start-btn">
+                                    <span class="serve-icon">➡️</span>
+                                    Right Serves First
+                                </button>
+                            </div>
+                            <div class="current-start-serve">
+                                <span class="info-label">Current starter:</span>
+                                <span id="currentStartServe" class="info-value">Left</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="settings-section">
-                    <h3>🏐 Starting Serve</h3>
-                    <div class="serve-selector">
-                        <button id="startServeLeft" class="serve-start-btn">Left Serves First</button>
-                        <button id="startServeRight" class="serve-start-btn">Right Serves First</button>
+                    <!-- Game Rules Section -->
+                    <div class="settings-section">
+                        <h3>
+                            <span class="section-icon">📋</span>
+                            Game Rules
+                        </h3>
+                        <div class="rules-list">
+                            <div class="rule-item">🎯 Max score: 24 points per player</div>
+                            <div class="rule-item">🔄 Serve changes every 2 total points</div>
+                            <div class="rule-item">👆 Tap any field to add point</div>
+                            <div class="rule-item">↩️ Use Undo to fix mistakes</div>
+                            <div class="rule-item">🏆 First to 24 wins the set</div>
+                        </div>
                     </div>
-                    <div class="current-start-serve">
-                        Current: <span id="currentStartServe">Left</span>
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <h3>ℹ️ Info</h3>
-                    <p>Tap left/right field to add point<br>Max score: 24 points per player<br>Serve changes every 2 total points</p>
                 </div>
             </div>
         </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
     </div>
 
+    <!-- JavaScript Files -->
     <script src="js/utils.js"></script>
     <script src="js/scoreboard.js"></script>
     <script src="js/serve.js"></script>
     <script src="js/undo.js"></script>
     <script src="js/modes.js"></script>
     <script src="js/settings.js"></script>
+    <script src="js/animations.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
