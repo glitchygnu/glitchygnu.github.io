@@ -22,7 +22,7 @@ body {
     overflow: hidden;
 }
 
-/* Top Bar */
+/* Top bar */
 .top-bar {
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
