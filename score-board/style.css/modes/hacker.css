@@ -1,1 +1,47 @@
+/* Hacker Mode - Matrix Style */
+body.hacker-mode {
+    background: #000000;
+}
 
+.hacker-mode .score-field {
+    background: #0a0a0a;
+    border: 2px solid #00ff00;
+    box-shadow: 0 0 20px rgba(0,255,0,0.3);
+}
+
+.hacker-mode .score-number {
+    text-shadow: 0 0 10px #00ff00;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+}
+
+.hacker-mode .field-label {
+    text-shadow: 0 0 5px #00ff00;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+}
+
+.hacker-mode .undo-btn {
+    background: #0a0a0a;
+    color: #00ff00;
+    border: 1px solid #00ff00;
+    font-family: 'Courier New', monospace;
+}
+
+.hacker-mode .top-bar {
+    background: #0a0a0a;
+    border-bottom: 1px solid #00ff00;
+}
+
+.hacker-mode .reset-btn, 
+.hacker-mode .settings-btn {
+    background: #0a0a0a;
+    color: #00ff00;
+    border: 1px solid #00ff00;
+}
+
+.hacker-mode .serve-indicator {
+    background: #0a0a0a;
+    border: 1px solid #00ff00;
+    color: #00ff00;
+}
