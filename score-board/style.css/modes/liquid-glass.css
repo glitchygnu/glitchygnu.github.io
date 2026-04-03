@@ -1,1 +1,37 @@
+/* Liquid Glass Mode - Frosted Glass Effect */
+body.liquid-glass-mode {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
 
+.liquid-glass-mode .score-field {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.liquid-glass-mode .score-number {
+    text-shadow: 0 0 20px rgba(255,255,255,0.5);
+    color: white;
+}
+
+.liquid-glass-mode .field-label {
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+.liquid-glass-mode .undo-btn {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.liquid-glass-mode .top-bar {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+}
+
+.liquid-glass-mode .serve-indicator {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
