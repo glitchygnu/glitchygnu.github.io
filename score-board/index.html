@@ -330,7 +330,7 @@
             position: relative;
             background: white;
             width: 100%;
-            max-width: 500px;
+            max-width: 550px;
             height: 100%;
             box-shadow: -5px 0 30px rgba(0, 0, 0, 0.3);
             animation: slideInRight 0.3s ease;
@@ -401,40 +401,78 @@
             gap: 10px;
         }
 
-        /* Color Options */
+        /* Color Options - Enhanced */
         .color-options {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
 
         .color-picker-item {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
+            flex-direction: column;
             gap: 10px;
         }
 
         .color-picker-item label {
-            font-weight: 600;
-            color: #555;
+            font-weight: 700;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .color-select-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
         .color-select {
-            padding: 8px 15px;
+            flex: 1;
+            padding: 10px 12px;
             border: 2px solid #ddd;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             background: white;
+            font-weight: 500;
         }
 
         .color-preview {
-            width: 36px;
-            height: 36px;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Color Grid for Quick Selection */
+        .color-grid {
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+            gap: 8px;
+        }
+
+        .color-swatch {
+            width: 100%;
+            aspect-ratio: 1;
             border-radius: 10px;
-            border: 2px solid #ddd;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.05);
+            border-color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .color-swatch.selected {
+            border-color: white;
+            box-shadow: 0 0 0 2px #333;
         }
 
         /* Mode Grid */
@@ -589,6 +627,10 @@
             .undo-text { display: none; }
             .left-undo { right: 15px; }
             .right-undo { left: 15px; }
+            .color-grid {
+                grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+                gap: 6px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -684,64 +726,159 @@
                     <button class="close-settings">&times;</button>
                 </div>
                 <div class="settings-body">
+                    <!-- Color Themes Section - ENHANCED WITH 40+ COLORS -->
                     <div class="settings-section">
                         <h3><span>🎨</span> Field Colors</h3>
                         <div class="color-options">
+                            <!-- Left Field Color Picker -->
                             <div class="color-picker-item">
-                                <label>Left Field:</label>
-                                <div style="display: flex; gap: 10px; align-items: center;">
+                                <label>🎯 LEFT FIELD COLOR</label>
+                                <div class="color-select-wrapper">
                                     <select id="leftColorSelect" class="color-select">
-                                        <option value="#ff4757">Red</option>
-                                        <option value="#ff6b81">Soft Red</option>
-                                        <option value="#ff7f50">Coral</option>
-                                        <option value="#2ed573">Green</option>
-                                        <option value="#ffa502">Orange</option>
+                                        <optgroup label="🔴 Reds & Pinks">
+                                            <option value="#ff4757">Crimson Red</option>
+                                            <option value="#ff6b81">Soft Red</option>
+                                            <option value="#ff7f50">Coral</option>
+                                            <option value="#ff6348">Tomato</option>
+                                            <option value="#ff6b6b">Light Red</option>
+                                            <option value="#ee5a24">Pumpkin</option>
+                                            <option value="#eb4d4b">Deep Red</option>
+                                            <option value="#ff3838">Bright Red</option>
+                                            <option value="#ff9ff3">Soft Pink</option>
+                                            <option value="#ffcccc">Light Pink</option>
+                                        </optgroup>
+                                        <optgroup label="🟠 Oranges & Yellows">
+                                            <option value="#ffa502">Orange</option>
+                                            <option value="#eccc68">Golden Yellow</option>
+                                            <option value="#ffdd59">Banana Yellow</option>
+                                            <option value="#ff7f50">Dark Orange</option>
+                                            <option value="#f39c12">Tangerine</option>
+                                            <option value="#f1c40f">Sunflower</option>
+                                            <option value="#ffeaa7">Light Yellow</option>
+                                        </optgroup>
+                                        <optgroup label="🟢 Greens">
+                                            <option value="#2ed573">Mint Green</option>
+                                            <option value="#7bed9f">Light Green</option>
+                                            <option value="#27ae60">Emerald</option>
+                                            <option value="#2ecc71">Green</option>
+                                            <option value="#00d2d3">Teal Green</option>
+                                            <option value="#badc58">Lime</option>
+                                            <option value="#6ab04c">Apple Green</option>
+                                        </optgroup>
+                                        <optgroup label="🔵 Blues & Purples">
+                                            <option value="#1e90ff">Dodger Blue</option>
+                                            <option value="#00cec9">Teal</option>
+                                            <option value="#0984e3">Bright Blue</option>
+                                            <option value="#74b9ff">Light Blue</option>
+                                            <option value="#a29bfe">Soft Purple</option>
+                                            <option value="#6c5ce7">Violet</option>
+                                            <option value="#5f27cd">Deep Purple</option>
+                                            <option value="#341f97">Dark Indigo</option>
+                                            <option value="#54a0ff">Sky Blue</option>
+                                            <option value="#48dbfb">Cyan</option>
+                                        </optgroup>
+                                        <optgroup label="⚫ Neutrals">
+                                            <option value="#dfe6e9">Light Gray</option>
+                                            <option value="#b2bec3">Gray</option>
+                                            <option value="#636e72">Dark Gray</option>
+                                            <option value="#2d3436">Charcoal</option>
+                                            <option value="#f5f6fa">White</option>
+                                            <option value="#d63031">Warm Brown</option>
+                                        </optgroup>
                                     </select>
                                     <div id="leftColorPreview" class="color-preview" style="background:#ff4757"></div>
                                 </div>
+                                <!-- Quick color grid for left field -->
+                                <div class="color-grid" id="leftColorGrid"></div>
                             </div>
+
+                            <!-- Right Field Color Picker -->
                             <div class="color-picker-item">
-                                <label>Right Field:</label>
-                                <div style="display: flex; gap: 10px; align-items: center;">
+                                <label>🎯 RIGHT FIELD COLOR</label>
+                                <div class="color-select-wrapper">
                                     <select id="rightColorSelect" class="color-select">
-                                        <option value="#1e90ff">Blue</option>
-                                        <option value="#00cec9">Teal</option>
-                                        <option value="#0984e3">Dark Blue</option>
-                                        <option value="#a29bfe">Purple</option>
-                                        <option value="#6c5ce7">Violet</option>
+                                        <optgroup label="🔵 Blues & Purples">
+                                            <option value="#1e90ff" selected>Dodger Blue</option>
+                                            <option value="#00cec9">Teal</option>
+                                            <option value="#0984e3">Bright Blue</option>
+                                            <option value="#74b9ff">Light Blue</option>
+                                            <option value="#a29bfe">Soft Purple</option>
+                                            <option value="#6c5ce7">Violet</option>
+                                            <option value="#5f27cd">Deep Purple</option>
+                                            <option value="#341f97">Dark Indigo</option>
+                                            <option value="#54a0ff">Sky Blue</option>
+                                            <option value="#48dbfb">Cyan</option>
+                                            <option value="#0abde3">Electric Blue</option>
+                                        </optgroup>
+                                        <optgroup label="🟢 Greens">
+                                            <option value="#2ed573">Mint Green</option>
+                                            <option value="#7bed9f">Light Green</option>
+                                            <option value="#27ae60">Emerald</option>
+                                            <option value="#2ecc71">Green</option>
+                                            <option value="#00d2d3">Teal Green</option>
+                                            <option value="#badc58">Lime</option>
+                                            <option value="#6ab04c">Apple Green</option>
+                                        </optgroup>
+                                        <optgroup label="🔴 Reds & Pinks">
+                                            <option value="#ff4757">Crimson Red</option>
+                                            <option value="#ff6b81">Soft Red</option>
+                                            <option value="#ff7f50">Coral</option>
+                                            <option value="#ff6348">Tomato</option>
+                                            <option value="#ff6b6b">Light Red</option>
+                                            <option value="#ee5a24">Pumpkin</option>
+                                            <option value="#eb4d4b">Deep Red</option>
+                                        </optgroup>
+                                        <optgroup label="🟠 Oranges & Yellows">
+                                            <option value="#ffa502">Orange</option>
+                                            <option value="#eccc68">Golden Yellow</option>
+                                            <option value="#ffdd59">Banana Yellow</option>
+                                            <option value="#f39c12">Tangerine</option>
+                                            <option value="#f1c40f">Sunflower</option>
+                                        </optgroup>
+                                        <optgroup label="⚫ Neutrals">
+                                            <option value="#dfe6e9">Light Gray</option>
+                                            <option value="#b2bec3">Gray</option>
+                                            <option value="#636e72">Dark Gray</option>
+                                            <option value="#2d3436">Charcoal</option>
+                                            <option value="#f5f6fa">White</option>
+                                        </optgroup>
                                     </select>
                                     <div id="rightColorPreview" class="color-preview" style="background:#1e90ff"></div>
                                 </div>
+                                <!-- Quick color grid for right field -->
+                                <div class="color-grid" id="rightColorGrid"></div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Visual Modes Section -->
                     <div class="settings-section">
                         <h3><span>🎭</span> Visual Modes</h3>
                         <div class="mode-grid">
                             <button data-mode="normal" class="mode-card active">
                                 <div class="mode-icon">✨</div>
                                 <div class="mode-name">Normal</div>
-                                <div class="mode-desc">Clean</div>
+                                <div class="mode-desc">Clean & Professional</div>
                             </button>
                             <button data-mode="vibrant" class="mode-card">
                                 <div class="mode-icon">🌈</div>
                                 <div class="mode-name">Vibrant</div>
-                                <div class="mode-desc">Bright</div>
+                                <div class="mode-desc">Bright & Energetic</div>
                             </button>
                             <button data-mode="hacker" class="mode-card">
                                 <div class="mode-icon">💻</div>
                                 <div class="mode-name">Hacker</div>
-                                <div class="mode-desc">Matrix</div>
+                                <div class="mode-desc">Matrix Style</div>
                             </button>
                             <button data-mode="liquid-glass" class="mode-card">
                                 <div class="mode-icon">💎</div>
                                 <div class="mode-name">Liquid Glass</div>
-                                <div class="mode-desc">Frosted</div>
+                                <div class="mode-desc">Frosted Effect</div>
                             </button>
                         </div>
                     </div>
 
+                    <!-- Serve Configuration Section -->
                     <div class="settings-section">
                         <h3><span>🏐</span> Serve Configuration</h3>
                         <div class="serve-selector">
@@ -753,13 +890,15 @@
                         </div>
                     </div>
 
+                    <!-- Rules Section -->
                     <div class="settings-section">
-                        <h3><span>📋</span> Rules</h3>
+                        <h3><span>📋</span> Game Rules</h3>
                         <div class="rules-list">
                             <div class="rule-item">🏆 First to 24 points wins</div>
                             <div class="rule-item">🔄 Serve changes every 2 total points</div>
                             <div class="rule-item">👆 Tap field to add point</div>
                             <div class="rule-item">↩️ Undo to fix mistakes</div>
+                            <div class="rule-item">🎨 40+ colors available</div>
                         </div>
                     </div>
                 </div>
@@ -770,6 +909,19 @@
     </div>
 
     <script>
+        // ============================================
+        // COMPLETE COLOR LIST - 40+ COLORS
+        // ============================================
+        const COLOR_PALETTE = {
+            reds: ['#ff4757', '#ff6b81', '#ff7f50', '#ff6348', '#ff6b6b', '#ee5a24', '#eb4d4b', '#ff3838', '#ff9ff3', '#ffcccc'],
+            oranges: ['#ffa502', '#eccc68', '#ffdd59', '#f39c12', '#f1c40f', '#ffeaa7'],
+            greens: ['#2ed573', '#7bed9f', '#27ae60', '#2ecc71', '#00d2d3', '#badc58', '#6ab04c', '#55efc4'],
+            blues: ['#1e90ff', '#00cec9', '#0984e3', '#74b9ff', '#a29bfe', '#6c5ce7', '#5f27cd', '#341f97', '#54a0ff', '#48dbfb', '#0abde3', '#81ecec'],
+            neutrals: ['#dfe6e9', '#b2bec3', '#636e72', '#2d3436', '#f5f6fa', '#d63031']
+        };
+        
+        const ALL_COLORS = [...COLOR_PALETTE.reds, ...COLOR_PALETTE.oranges, ...COLOR_PALETTE.greens, ...COLOR_PALETTE.blues, ...COLOR_PALETTE.neutrals];
+
         // ============================================
         // UTILITY FUNCTIONS
         // ============================================
@@ -1104,13 +1256,9 @@
                 const body = document.body;
                 const bg = document.querySelector('.animated-bg');
                 
-                // Remove all mode classes
                 body.classList.remove('normal-mode', 'vibrant-mode', 'hacker-mode', 'liquid-glass-mode');
-                
-                // Apply new mode class
                 body.classList.add(`${mode}-mode`);
                 
-                // Apply mode-specific styles
                 switch(mode) {
                     case 'normal':
                         bg.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
@@ -1155,7 +1303,7 @@
         }
 
         // ============================================
-        // SETTINGS MANAGEMENT
+        // SETTINGS MANAGEMENT WITH ENHANCED COLORS
         // ============================================
         class SettingsManager {
             constructor() {
@@ -1170,6 +1318,8 @@
                 this.startLeft = document.getElementById('startServeLeft');
                 this.startRight = document.getElementById('startServeRight');
                 this.currentStartSpan = document.getElementById('currentStartServe');
+                this.leftColorGrid = document.getElementById('leftColorGrid');
+                this.rightColorGrid = document.getElementById('rightColorGrid');
             }
             
             init() {
@@ -1177,6 +1327,43 @@
                 this.loadColors();
                 this.updateStartDisplay();
                 this.loadModeSelection();
+                this.buildColorGrids();
+            }
+            
+            buildColorGrids() {
+                // Build left color grid
+                if (this.leftColorGrid) {
+                    this.leftColorGrid.innerHTML = '';
+                    ALL_COLORS.forEach(color => {
+                        const swatch = document.createElement('div');
+                        swatch.className = 'color-swatch';
+                        swatch.style.backgroundColor = color;
+                        swatch.title = color;
+                        swatch.addEventListener('click', () => {
+                            this.changeColor('left', color);
+                            this.leftColorSelect.value = color;
+                            this.leftPreview.style.backgroundColor = color;
+                        });
+                        this.leftColorGrid.appendChild(swatch);
+                    });
+                }
+                
+                // Build right color grid
+                if (this.rightColorGrid) {
+                    this.rightColorGrid.innerHTML = '';
+                    ALL_COLORS.forEach(color => {
+                        const swatch = document.createElement('div');
+                        swatch.className = 'color-swatch';
+                        swatch.style.backgroundColor = color;
+                        swatch.title = color;
+                        swatch.addEventListener('click', () => {
+                            this.changeColor('right', color);
+                            this.rightColorSelect.value = color;
+                            this.rightPreview.style.backgroundColor = color;
+                        });
+                        this.rightColorGrid.appendChild(swatch);
+                    });
+                }
             }
             
             attachEvents() {
@@ -1223,10 +1410,13 @@
             
             changeColor(side, color) {
                 const field = document.getElementById(`${side}Field`);
-                if (field) field.style.backgroundColor = color;
-                const colors = Utils.loadFromLocalStorage('fieldColors', {});
-                colors[side] = color;
-                Utils.saveToLocalStorage('fieldColors', colors);
+                if (field) {
+                    field.style.backgroundColor = color;
+                    const colors = Utils.loadFromLocalStorage('fieldColors', {});
+                    colors[side] = color;
+                    Utils.saveToLocalStorage('fieldColors', colors);
+                    Utils.showToast(`${side === 'left' ? 'Left' : 'Right'} field color changed!`, 1000);
+                }
             }
             
             loadColors() {
@@ -1263,99 +1453,30 @@
         }
 
         // ============================================
-        // ADDITIONAL MODE CSS (injected dynamically)
+        // ADDITIONAL MODE CSS
         // ============================================
         const modeStyles = document.createElement('style');
         modeStyles.textContent = `
-            /* Vibrant Mode */
-            body.vibrant-mode .score-field {
-                border: 2px solid rgba(255,255,255,0.5);
-            }
-            body.vibrant-mode .score-number {
-                text-shadow: 3px 3px 0px rgba(0,0,0,0.2);
-            }
-            body.vibrant-mode .undo-btn {
-                background: #ff6b6b;
-                color: white;
-            }
+            body.vibrant-mode .score-field { border: 2px solid rgba(255,255,255,0.5); }
+            body.vibrant-mode .score-number { text-shadow: 3px 3px 0px rgba(0,0,0,0.2); }
+            body.vibrant-mode .undo-btn { background: #ff6b6b; color: white; }
             
-            /* Hacker Mode */
-            body.hacker-mode .score-field {
-                border: 2px solid #00ff00;
-                box-shadow: 0 0 20px rgba(0,255,0,0.3);
-                background: #0a0a0a;
-            }
-            body.hacker-mode .score-number,
-            body.hacker-mode .player-name,
-            body.hacker-mode .score-label {
-                color: #00ff00;
-                text-shadow: 0 0 10px #00ff00;
-                font-family: 'Courier New', monospace;
-            }
-            body.hacker-mode .undo-btn {
-                background: #0a0a0a;
-                color: #00ff00;
-                border: 1px solid #00ff00;
-            }
-            body.hacker-mode .top-bar,
-            body.hacker-mode .game-status {
-                background: #0a0a0a;
-                border-color: #00ff00;
-            }
-            body.hacker-mode .serve-indicator {
-                background: #0a0a0a;
-                border: 1px solid #00ff00;
-            }
-            body.hacker-mode .serve-badge,
-            body.hacker-mode .serve-player {
-                color: #00ff00;
-            }
-            body.hacker-mode .vs-circle {
-                background: #0a0a0a;
-                border: 2px solid #00ff00;
-                color: #00ff00;
-            }
-            body.hacker-mode .action-btn {
-                background: #0a0a0a;
-                color: #00ff00;
-                border: 1px solid #00ff00;
-            }
+            body.hacker-mode .score-field { border: 2px solid #00ff00; box-shadow: 0 0 20px rgba(0,255,0,0.3); background: #0a0a0a; }
+            body.hacker-mode .score-number, body.hacker-mode .player-name, body.hacker-mode .score-label { color: #00ff00; text-shadow: 0 0 10px #00ff00; font-family: 'Courier New', monospace; }
+            body.hacker-mode .undo-btn { background: #0a0a0a; color: #00ff00; border: 1px solid #00ff00; }
+            body.hacker-mode .top-bar, body.hacker-mode .game-status { background: #0a0a0a; border-color: #00ff00; }
+            body.hacker-mode .serve-indicator { background: #0a0a0a; border: 1px solid #00ff00; }
+            body.hacker-mode .serve-badge, body.hacker-mode .serve-player { color: #00ff00; }
+            body.hacker-mode .vs-circle { background: #0a0a0a; border: 2px solid #00ff00; color: #00ff00; }
+            body.hacker-mode .action-btn { background: #0a0a0a; color: #00ff00; border: 1px solid #00ff00; }
             
-            /* Liquid Glass Mode */
-            body.liquid-glass-mode .score-field {
-                background: rgba(255,255,255,0.15);
-                backdrop-filter: blur(20px);
-                border: 1px solid rgba(255,255,255,0.3);
-            }
-            body.liquid-glass-mode .score-number {
-                background: linear-gradient(135deg, #fff, rgba(255,255,255,0.8));
-                -webkit-background-clip: text;
-                background-clip: text;
-                color: transparent;
-            }
-            body.liquid-glass-mode .undo-btn {
-                background: rgba(255,255,255,0.25);
-                backdrop-filter: blur(10px);
-                color: white;
-            }
-            body.liquid-glass-mode .top-bar,
-            body.liquid-glass-mode .game-status {
-                background: rgba(255,255,255,0.2);
-                backdrop-filter: blur(20px);
-            }
-            body.liquid-glass-mode .serve-indicator {
-                background: rgba(255,255,255,0.25);
-                backdrop-filter: blur(10px);
-            }
-            body.liquid-glass-mode .vs-circle {
-                background: rgba(255,255,255,0.25);
-                backdrop-filter: blur(10px);
-            }
-            body.liquid-glass-mode .action-btn {
-                background: rgba(255,255,255,0.25);
-                backdrop-filter: blur(10px);
-                color: white;
-            }
+            body.liquid-glass-mode .score-field { background: rgba(255,255,255,0.15); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.3); }
+            body.liquid-glass-mode .score-number { background: linear-gradient(135deg, #fff, rgba(255,255,255,0.8)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+            body.liquid-glass-mode .undo-btn { background: rgba(255,255,255,0.25); backdrop-filter: blur(10px); color: white; }
+            body.liquid-glass-mode .top-bar, body.liquid-glass-mode .game-status { background: rgba(255,255,255,0.2); backdrop-filter: blur(20px); }
+            body.liquid-glass-mode .serve-indicator { background: rgba(255,255,255,0.25); backdrop-filter: blur(10px); }
+            body.liquid-glass-mode .vs-circle { background: rgba(255,255,255,0.25); backdrop-filter: blur(10px); }
+            body.liquid-glass-mode .action-btn { background: rgba(255,255,255,0.25); backdrop-filter: blur(10px); color: white; }
         `;
         document.head.appendChild(modeStyles);
 
@@ -1375,14 +1496,13 @@
             window.modeManager.init();
             window.settingsManager.init();
             
-            // Reset button handler
             document.getElementById('resetBtn').addEventListener('click', () => {
                 if (confirm('Reset the set? All points will be lost.')) {
                     window.scoreBoard.reset();
                 }
             });
             
-            Utils.showToast('Tap fields to score! First to 24 wins!', 2500);
+            Utils.showToast('🎨 40+ colors available! Tap fields to score!', 3000);
         });
     </script>
 </body>
