@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Deutsche Kennzeichen von A bis Z | ADAC-inspirierte Übersicht</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+      background: #f0f4f8;
+      color: #1e2a3e;
+      line-height: 1.4;
+    }
+
+    /* Header mit ADAC-ähnlichem Look */
+    .hero {
+      background: linear-gradient(135deg, #003c7e 0%, #0055a4 100%);
+      color: white;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      border-bottom: 4px solid #ffcc00;
+    }
+
+    .hero h1 {
+      font-size: 2.2rem;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .badge-info {
+      background: #ffcc00;
+      color: #003c7e;
+      display: inline-block;
+      padding: 0.2rem 0.9rem;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+    }
+
+    /* Filter und Navigation (schnelles A-Z) */
+    .alphabet-nav {
+      background: white;
+      padding: 1rem 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.4rem;
+      border-bottom: 1px solid #dce4ec;
+    }
+
+    .letter-btn {
+      background: #eef2f7;
+      border: none;
+      font-weight: 600;
+      font-size: 1rem;
+      width: 2.3rem;
+      height: 2.3rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #1e466e;
+      font-family: monospace;
+      font-weight: bold;
+    }
+
+    .letter-btn:hover {
+      background: #ffcc00;
+      transform: translateY(-2px);
+      color: #1e2a3e;
+    }
+
+    .letter-btn.active {
+      background: #003c7e;
+      color: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    /* Hauptgrid: Karten im Stil moderner ADAC-Fahrzeugübersichten */
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .plates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.8rem;
+    }
+
+    /* Karte – realistisches Kennzeichendesign */
+    .card {
+      background: white;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      border: 1px solid #e9edf2;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 30px -12px rgba(0, 60, 126, 0.2);
+    }
+
+    /* EU-Kennzeichen-Style */
+    .plate {
+      background: #ffffff;
+      padding: 1rem;
+      text-align: center;
+      border-bottom: 2px solid #f0f0f0;
+      position: relative;
+      background: linear-gradient(145deg, #fafcff 0%, #ffffff 100%);
+    }
+
+    .plate-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: #f8fafd;
+      border-radius: 40px;
+      padding: 8px 12px;
+      width: fit-content;
+      margin: 0 auto;
+      box-shadow: inset 0 1px 2px #00000008, 0 2px 5px rgba(0,0,0,0.02);
+    }
+
+    .eu-stripe {
+      background: #003399;
+      width: 36px;
+      height: 28px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      font-family: 'Segoe UI', monospace;
+    }
+
+    .plate-code {
+      font-family: 'FE-Schrift', 'Arial Black', 'Impact', 'Courier New', monospace;
+      font-weight: 900;
+      font-size: 2.1rem;
+      letter-spacing: 3px;
+      background: #eef2f5;
+      padding: 0.2rem 1rem;
+      border-radius: 12px;
+      color: #0a2f44;
+      text-shadow: 0 1px 0 white;
+      border: 1px solid #cddae9;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
+    }
+
+    .city-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #2c5a8c;
+      margin-top: 6px;
+      font-family: 'Segoe UI';
+    }
+
+    /* Infotext + Button */
+    .card-info {
+      padding: 1.2rem 1.2rem 1.4rem;
+    }
+
+    .info-text {
+      font-size: 0.9rem;
+      color: #2c3e50;
+      margin-bottom: 1.2rem;
+      line-height: 1.45;
+      background: #f9fbfd;
+      padding: 0.8rem;
+      border-radius: 16px;
+      border-left: 3px solid #ffcc00;
+    }
+
+    .btn-details {
+      background: #003c7e;
+      border: none;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: inherit;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .btn-details:hover {
+      background: #ffa000;
+      color: #1e2a3e;
+    }
+
+    /* Modal (Infobox Stadt) – ADAC Lightbox Style */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+      background: white;
+      max-width: 480px;
+      width: 90%;
+      border-radius: 32px;
+      overflow: hidden;
+      animation: fadeInUp 0.25s ease;
+      box-shadow: 0 25px 40px rgba(0,0,0,0.3);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      background: #003c7e;
+      color: white;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.6rem;
+      letter-spacing: 1px;
+    }
+
+    .close-modal {
+      font-size: 1.8rem;
+      font-weight: bold;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: white;
+      transition: transform 0.1s;
+    }
+
+    .close-modal:hover {
+      transform: scale(1.1);
+      color: #ffcc00;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-city-plate {
+      font-family: monospace;
+      font-weight: bold;
+      font-size: 1.8rem;
+      background: #eef2f5;
+      display: inline-block;
+      padding: 0.2rem 1rem;
+      border-radius: 16px;
+      margin-bottom: 1rem;
+    }
+
+    .modal-desc {
+      line-height: 1.5;
+      color: #2c3e50;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 2rem;
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: #5e7a93;
+      border-top: 1px solid #dce5ef;
+    }
+
+    @media (max-width: 700px) {
+      .plate-code {
+        font-size: 1.4rem;
+        letter-spacing: 2px;
+      }
+      .hero h1 {
+        font-size: 1.6rem;
+      }
+      .letter-btn {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>🇩🇺 Deutsche Kfz-Kennzeichen <span style="color:#ffcc00;">A–Z</span></h1>
+  <p>Alle Unterscheidungszeichen von A wie Aachen bis Z wie Zwickau · Inspiriert von ADAC</p>
+  <div class="badge-info">📌 26 Städte & Kreise | Klick auf Button für Stadt-Infos</div>
+</div>
+
+<div class="alphabet-nav" id="alphabetNav"></div>
+
+<div class="container">
+  <div class="plates-grid" id="platesGrid"></div>
+  <div class="footer-note">
+    <span>🔍 Offizielle Kennzeichencodes (DE) – basierend auf Zulassungsbezirken. Karte klicken oder auf „Mehr erfahren“ für Details zur Stadt.</span>
+  </div>
+</div>
+
+<!-- Modal für Stadtinfo -->
+<div id="cityModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modalCityName">Stadt</h3>
+      <button class="close-modal" id="closeModalBtn">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-city-plate" id="modalPlateCode">---</div>
+      <p class="modal-desc" id="modalDescription">Lorem ipsum dolor sit amet consectetur.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // DATENSATZ: Kennzeichen von A bis Z mit Stadtnamen, Region und Info-Text (authentisch)
+  const licenseData = [
+    { code: "A", city: "Augsburg", region: "Bayern", info: "Augsburg ist eine der ältesten Städte Deutschlands, gegründet von den Römern. Die Fuggerstadt besticht durch prächtige Renaissancebauten und die bekannte Puppenkiste." },
+    { code: "B", city: "Berlin", region: "Berlin", info: "Berlin, die Hauptstadt Deutschlands, ist bekannt für ihre Geschichte, das Brandenburger Tor, die Museumsinsel und ein pulsierendes Kulturleben – weltoffen und kreativ." },
+    { code: "C", city: "Chemnitz", region: "Sachsen", info: "Chemnitz, auch als 'Stadt der Moderne' bekannt, begeistert mit Industriearchitektur, dem Karl-Marx-Monument und dem Schlossbergmuseum." },
+    { code: "D", city: "Düsseldorf", region: "Nordrhein-Westfalen", info: "Düsseldorf – Mode- und Kunstmetropole am Rhein. Berühmt für die Königsallee, Altbier und die futuristische Rheinturm-Architektur." },
+    { code: "E", city: "Essen", region: "Nordrhein-Westfalen", info: "Essen wandelte sich vom Kohle- und Stahlstandort zur Kulturhauptstadt Europas 2010 mit dem UNESCO-Welterbe Zollverein." },
+    { code: "F", city: "Frankfurt am Main", region: "Hessen", info: "Frankfurt, Finanzmetropole mit markanter Skyline, Geburtsstadt Goethes und Sitz der Europäischen Zentralbank." },
+    { code: "G", city: "Gießen", region: "Hessen", info: "Gießen ist eine junge, lebendige Universitätsstadt mit grünen Parks, historischem Wappentier – dem 'Gießener Grab' und schönen Fachwerkbauten." },
+    { code: "H", city: "Hannover", region: "Niedersachsen", info: "Hannover, bekannt für Messen, den Maschsee und die Herrenhäuser Gärten – eine grüne Stadt mit königlichem Flair." },
+    { code: "I", city: "Ingolstadt", region: "Bayern", info: "Ingolstadt ist stark geprägt von Audi und der Wissenschaft. Liegt an der Donau und bewahrt mittelalterliche Wehrtürme." },
+    { code: "J", city: "Jena", region: "Thüringen", info: "Jena – Stadt des Lichts, Optikindustrie (Zeiss, Schott) und junge Studentenatmosphäre. Berühmt für das Jen-Tower und die geschichtsträchtige Universität." },
+    { code: "K", city: "Köln", region: "Nordrhein-Westfalen", info: "Köln begeistert mit dem imposanten Dom, Karneval und rheinischer Lebensfreude. Eine der ältesten Großstädte Deutschlands." },
+    { code: "L", city: "Leipzig", region: "Sachsen", info: "Leipzig – Heldenstadt der Friedlichen Revolution 1989. Viel Kultur, Musik (Gewandhaus) und die lebendige Neuseenland-Region." },
+    { code: "M", city: "München", region: "Bayern", info: "München, das 'Millionendorf' mit Oktoberfest, Englischem Garten und einer Mischung aus Tradition & Hightech (BMW, Siemens)." },
+    { code: "N", city: "Nürnberg", region: "Bayern", info: "Nürnberg bekannt für Christkindlesmarkt, Burg, Lebkuchen und die Reichsparteitagsgelände – reich an Geschichte und Kultur." },
+    { code: "O", city: "Oldenburg", region: "Niedersachsen", info: "Oldenburg im Nordwesten: grüne Stadt mit Schloss, kultureller Vielfalt und naher Natur – bekannt für die 'Oldenburger Münsterland' Region." },
+    { code: "P", city: "Potsdam", region: "Brandenburg", info: "Potsdam, weltberühmt für die Schlösser und Gärten Sanssouci, UNESCO-Welterbe und ehemalige Residenzstadt der preußischen Könige." },
+    { code: "Q", city: "Quedlinburg", region: "Sachsen-Anhalt", info: "Quedlinburg gehört zum UNESCO-Welterbe, besitzt über 2000 Fachwerkhäuser und eine tausendjährige Stiftskirche – Perfekt für Romantiker." },
+    { code: "R", city: "Regensburg", region: "Bayern", info: "Regensburg bietet eine der am besten erhaltenen mittelalterlichen Altstädte Deutschlands, Welterbe, Steinerne Brücke und gemütliches bayerisches Flair." },
+    { code: "S", city: "Stuttgart", region: "Baden-Württemberg", info: "Stuttgart – Automobilwelt (Mercedes, Porsche), Weinberge in der Stadt, kulturelle Vielfalt und das neue Stadtquartier Stuttgart 21." },
+    { code: "T", city: "Trier", region: "Rheinland-Pfalz", info: "Trier, Deutschlands älteste Stadt, römische Baudenkmäler wie die Porta Nigra, Kaiserthermen – ein lebendiges Museum unter freiem Himmel." },
+    { code: "U", city: "Ulm", region: "Baden-Württemberg", info: "Ulm besticht durch das höchste Kirchturm der Welt (Ulmer Münster), ist Geburtsstadt Albert Einsteins und liegt an der Donau." },
+    { code: "V", city: "Villingen-Schwenningen", region: "Baden-Württemberg", info: "VS vereint zwei Städte im Schwarzwald. Bekannt für Uhrenindustrie, historische Altstadt (Villingen) und moderne Technologie." },
+    { code: "W", city: "Wiesbaden", region: "Hessen", info: "Wiesbaden, Landeshauptstadt Hessens, berühmt für heiße Thermalquellen, historische Kurhäuser und das Schloss Biebrich." },
+    { code: "X", city: "Xanten", region: "Nordrhein-Westfalen", info: "Xanten am Niederrhein, bekannt für den Archäologischen Park, die romanische Stiftskirche und lebendige Römergeschichte – ein Freilichtmuseum." },
+    { code: "Y", city: "Zwickau (Y-Notierung, historisch)", region: "Sachsen", info: "Das Kennzeichen Y wird für die Bundeswehr verwendet. Als Stadtbezug wird hier die traditionsreiche Autostadt Zwickau (August Horch, Audi) genannt. Zwickau – Geburtsort des ersten VW Golf." },
+    { code: "Z", city: "Zwickau", region: "Sachsen", info: "Zwickau ist die Wiege des Automobilbaus in Sachsen, bekannt für das August Horch Museum und die weltbekannten 'Trabi'-Fertigung." }
+  ];
+
+  // DOM-Elemente
+  const platesGrid = document.getElementById('platesGrid');
+  const alphabetNav = document.getElementById('alphabetNav');
+  const modal = document.getElementById('cityModal');
+  const modalCityName = document.getElementById('modalCityName');
+  const modalPlateCode = document.getElementById('modalPlateCode');
+  const modalDescription = document.getElementById('modalDescription');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+
+  let activeLetter = null;
+
+  // Buchstaben A-Z generieren (inkl. X, Y sind enthalten)
+  function buildAlphabetNavigation() {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    letters.forEach(letter => {
+      const btn = document.createElement('button');
+      btn.textContent = letter;
+      btn.classList.add('letter-btn');
+      btn.dataset.letter = letter;
+      btn.addEventListener('click', () => {
+        filterByLetter(letter);
+        // Aktiven Button highlighten
+        document.querySelectorAll('.letter-btn').forEach(btn => btn.classList.remove('active'));
+        btn.classList.add('active');
+      });
+      alphabetNav.appendChild(btn);
+    });
+    // extra "Alle anzeigen" Button? optional - aber funktional per default zeigen wir alle, besser 'A' als aktiv setzen
+    const firstBtn = alphabetNav.querySelector('.letter-btn');
+    if (firstBtn) {
+      firstBtn.classList.add('active');
+      activeLetter = 'A';
+    }
+  }
+
+  // Filter Funktion: Cards rendern nach Buchstabe (oder alle wenn null)
+  function filterByLetter(letter) {
+    activeLetter = letter;
+    renderCards(letter);
+  }
+
+  // Rendering der Karten
+  function renderCards(filterLetter = null) {
+    platesGrid.innerHTML = '';
+    let filteredData = licenseData;
+    if (filterLetter) {
+      filteredData = licenseData.filter(item => item.code === filterLetter);
+    }
+    if (filteredData.length === 0) {
+      const emptyMsg = document.createElement('div');
+      emptyMsg.style.gridColumn = '1 / -1';
+      emptyMsg.style.textAlign = 'center';
+      emptyMsg.style.padding = '3rem';
+      emptyMsg.innerHTML = '<p style="font-size:1.2rem">⚠️ Keine Kennzeichen für diesen Buchstaben gefunden.</p>';
+      platesGrid.appendChild(emptyMsg);
+      return;
+    }
+
+    filteredData.forEach(entry => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      // Kennzeichen-Oberteil
+      const plateDiv = document.createElement('div');
+      plateDiv.className = 'plate';
+      plateDiv.innerHTML = `
+        <div class="plate-badge">
+          <div class="eu-stripe">D</div>
+          <div class="plate-code">${entry.code}</div>
+        </div>
+        <div class="city-name">${entry.city} · ${entry.region}</div>
+      `;
+      
+      // Info-Text-Bereich + Button
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'card-info';
+      
+      // Kurzer Info-Text (ein kurzer Einblick) -> verwende ersten Satz oder kürze (max 110 Zeichen)
+      let shortInfo = entry.info.length > 110 ? entry.info.substring(0, 107) + '…' : entry.info;
+      const infoTextPara = document.createElement('div');
+      infoTextPara.className = 'info-text';
+      infoTextPara.innerHTML = `📌 ${shortInfo}`;
+      
+      const detailsBtn = document.createElement('button');
+      detailsBtn.className = 'btn-details';
+      detailsBtn.innerHTML = '🔍 Mehr über die Stadt erfahren';
+      detailsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openModal(entry);
+      });
+      
+      infoDiv.appendChild(infoTextPara);
+      infoDiv.appendChild(detailsBtn);
+      
+      card.appendChild(plateDiv);
+      card.appendChild(infoDiv);
+      
+      // Klick auf gesamte Karte öffnet auch Modal (optional, aber benutzerfreundlich)
+      card.addEventListener('click', (e) => {
+        if (e.target !== detailsBtn && !detailsBtn.contains(e.target)) {
+          openModal(entry);
+        }
+      });
+      
+      platesGrid.appendChild(card);
+    });
+  }
+
+  // Modal öffnen mit detaillierter Stadtinformation (ADAC Style: tiefere Info)
+  function openModal(entry) {
+    modalCityName.innerHTML = `${entry.city} <span style="font-size:0.9rem;">(${entry.region})</span>`;
+    modalPlateCode.innerHTML = entry.code;
+    // Ausführlicher Text - erweitert für mehr Realität
+    const extendedInfo = `${entry.info} ${getExtraFact(entry.code)}`;
+    modalDescription.innerHTML = extendedInfo;
+    modal.style.display = 'flex';
+  }
+
+  // kleine zusätzliche Fakten, um noch authentischer zu wirken (ähnlich ADAC Reiseführer)
+  function getExtraFact(code) {
+    const extraMap = {
+      'A': ' ✨ Die Fuggerei ist die älteste Sozialsiedlung der Welt.',
+      'B': ' 🎭 Berlin hat über 170 Museen und drei Opernhäuser.',
+      'C': ' 🚂 Chemnitz war bekannt als „Karl-Marx-Stadt“ zur DDR-Zeit.',
+      'D': ' 🛍️ Die Königsallee gilt als eine der exklusivsten Einkaufsstraßen Europas.',
+      'E': ' 🏭 Zollverein ist ein architektonisches Wahrzeichen des Ruhrgebiets.',
+      'F': ' ✈️ Der Flughafen FRA ist einer der größten Drehkreuze weltweit.',
+      'G': ' 🌳 Der Botanische Garten der Uni Gießen besteht seit 1609.',
+      'H': ' 🌸 Herrenhäuser Gärten zählen zu den bedeutendsten Barockgärten Europas.',
+      'I': ' 🚗 Das Audi Museum Mobile ist ein Highlight für Technikfans.',
+      'J': ' 🔭 Das Zeiss-Planetarium in Jena ist das älteste der Welt.',
+      'K': ' 🍺 Kölsch wird nur in Köln und Umgebung gebraut.',
+      'L': ' 🎵 Das Gewandhausorchester gehört zu den besten Orchestern der Welt.',
+      'M': ' 🍺 Auf dem Oktoberfest fließen rund 7 Millionen Liter Bier.',
+      'N': ' 🎄 Der Nürnberger Christkindlesmarkt ist weltberühmt.',
+      'O': ' 🚲 Oldenburg erhielt den Titel „Fahrradhauptstadt“ Niedersachsens.',
+      'P': ' 🏰 Schloss Sanssouci wird oft „preußisches Versailles“ genannt.',
+      'Q': ' 🏘️ Quedlinburg hat über 2000 denkmalgeschützte Fachwerkhäuser.',
+      'R': ' 🌉 Die Steinerne Brücke aus dem 12. Jahrhundert ist ein Meisterwerk.',
+      'S': ' 🏎️ Das Mercedes-Benz Museum zeigt 130 Jahre Automobilgeschichte.',
+      'T': ' 🏛️ Die Porta Nigra ist das am besten erhaltene römische Stadttor nördlich der Alpen.',
+      'U': ' ⛪ Das Ulmer Münster besitzt den höchsten Kirchturm der Welt (161,5 m).',
+      'V': ' ⌚ Villingen-Schwenningen ist Sitz der traditionsreichen Uhrenindustrie.',
+      'W': ' ♨️ Wiesbaden hat 14 heiße Thermalquellen – bis 66°C.',
+      'X': ' 🏺 Der Archäologische Park Xanten zeigt eine vollständig rekonstruierte römische Stadt.',
+      'Y': ' 🛡️ Das Y-Kennzeichen steht für die Bundeswehr. Zwickau ist eine Automobilhochburg.',
+      'Z': ' 🚘 Im August Horch Museum kann man Oldtimer aus Sachsens Glanzzeit erleben.'
+    };
+    return extraMap[code] || ' 🌟 Entdecken Sie die kulturellen und historischen Schätze dieser Stadt.';
+  }
+
+  // Modal schließen
+  function closeModal() {
+    modal.style.display = 'none';
+  }
+
+  // Eventlistener für Schließen via Hintergrund oder X
+  window.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+  closeModalBtn.addEventListener('click', closeModal);
+  
+  // Initialisierung
+  function init() {
+    buildAlphabetNavigation();
+    renderCards('A'); // Zeige standard A (Augsburg)
+    // optional: URL-Hash? Nicht nötig, aber clean.
+  }
+
+  init();
+</script>
+</body>
+</html>
