@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video → MP3 · GitHub Pages Converter</title>
+<style>
+  :root {
+    --bg: #0a0d14;
+    --bg2: #0f1320;
+    --card: #131826;
+    --card2: #1a2033;
+    --border: #232b40;
+    --border2: #2e3852;
+    --text: #e6ecf5;
+    --text2: #9aa8c0;
+    --text3: #64708a;
+    --accent: #4f7bff;
+    --accent2: #6f92ff;
+    --accent-hover: #6488ff;
+    --danger: #ff5c7c;
+    --ok: #4ade80;
+    --warn: #fbbf24;
+    --shadow: 0 20px 60px -20px rgba(0,0,0,.8);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 "Helvetica Neue", Arial, sans-serif;
+    background:
+      radial-gradient(1200px 600px at 20% -10%, rgba(79,123,255,.10), transparent 60%),
+      radial-gradient(1000px 500px at 90% 110%, rgba(111,146,255,.08), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3rem 1.25rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { width: 100%; max-width: 720px; }
+
+  header { margin-bottom: 2rem; text-align: center; }
+  header .logo {
+    display: inline-flex; align-items: center; gap: .65rem;
+    font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em;
+  }
+  header .logo svg { width: 34px; height: 34px; }
+  header .logo .grad {
+    background: linear-gradient(135deg, #9bbaff, #4f7bff 60%, #6f92ff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  header p {
+    color: var(--text2); font-size: .95rem; margin-top: .6rem;
+    max-width: 480px; margin-left: auto; margin-right: auto;
+  }
+
+  .card {
+    background: linear-gradient(180deg, var(--card), var(--bg2));
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 1.75rem;
+    box-shadow: var(--shadow);
+  }
+
+  /* ---------- drop zone ---------- */
+  .drop {
+    position: relative;
+    border: 2px dashed var(--border2);
+    border-radius: 18px;
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .18s, background .18s, transform .18s;
+    background: rgba(15, 19, 32, .6);
+    overflow: hidden;
+  }
+  .drop:hover, .drop.hover {
+    border-color: var(--accent);
+    background: rgba(79,123,255,.06);
+  }
+  .drop.hover { transform: scale(1.005); }
+  .drop.drag { border-color: var(--accent2); background: rgba(111,146,255,.10); }
+  .drop input[type=file] { display: none; }
+  .drop .icon {
+    width: 56px; height: 56px; margin: 0 auto .9rem;
+    color: var(--accent2); opacity: .9;
+  }
+  .drop .title {
+    font-size: 1.02rem; font-weight: 600; color: var(--text);
+    margin-bottom: .35rem;
+  }
+  .drop .sub { font-size: .85rem; color: var(--text3); }
+  .drop .browse {
+    display: inline-block; margin-top: .9rem;
+    background: var(--card2); border: 1px solid var(--border2);
+    color: var(--text); font-size: .85rem; font-weight: 500;
+    padding: .5rem 1.15rem; border-radius: 999px;
+  }
+
+  /* ---------- file chip ---------- */
+  .filechip {
+    display: none; align-items: center; gap: .85rem;
+    margin-top: 1rem; padding: .85rem 1rem;
+    background: var(--card2); border: 1px solid var(--border2);
+    border-radius: 14px; font-size: .88rem;
+  }
+  .filechip.show { display: flex; }
+  .filechip .fico {
+    flex: 0 0 auto; width: 36px; height: 36px; border-radius: 9px;
+    background: linear-gradient(135deg, #2a3a66, #1f2947);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent2);
+  }
+  .filechip .fmeta { min-width: 0; flex: 1; }
+  .filechip .fname {
+    font-weight: 600; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .filechip .fsize { color: var(--text3); font-size: .8rem; margin-top: .1rem; }
+  .filechip .fclear {
+    flex: 0 0 auto; width: 28px; height: 28px; border-radius: 8px;
+    background: transparent; border: 1px solid transparent; color: var(--text3);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: .15s;
+  }
+  .filechip .fclear:hover { color: var(--danger); border-color: var(--border2); }
+
+  /* ---------- progress ---------- */
+  .progress {
+    margin-top: 1.25rem; display: none;
+  }
+  .progress.show { display: block; }
+  .progress .top {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: .82rem; color: var(--text2); margin-bottom: .45rem;
+  }
+  .progress .pct { font-variant-numeric: tabular-nums; color: var(--text); font-weight: 600; }
+  .progress .bar {
+    height: 8px; background: #0a0e18; border-radius: 999px; overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .progress .bar > i {
+    display: block; height: 100%; width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 999px; transition: width .18s ease;
+  }
+
+  /* ---------- buttons ---------- */
+  .actions { display: flex; gap: .75rem; margin-top: 1.4rem; flex-wrap: wrap; }
+  button {
+    font-family: inherit; font-size: .92rem; font-weight: 600;
+    padding: .85rem 1.4rem; border-radius: 12px; cursor: pointer;
+    border: 1px solid var(--border2); background: var(--card2);
+    color: var(--text); display: inline-flex; align-items: center;
+    justify-content: center; gap: .55rem; flex: 1 1 auto;
+    transition: transform .12s, background .15s, border-color .15s, opacity .15s;
+    user-select: none;
+  }
+  button:hover:not(:disabled) { background: #232c44; border-color: #3a4666; }
+  button:active:not(:disabled) { transform: translateY(1px); }
+  button:disabled { opacity: .38; cursor: not-allowed; }
+  button.primary {
+    background: linear-gradient(135deg, var(--accent), #3d5ee0);
+    border-color: #5b81ff; color: #fff;
+    box-shadow: 0 10px 24px -10px rgba(79,123,255,.7);
+  }
+  button.primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--accent-hover), #4a68ff);
+  }
+  button.success {
+    background: linear-gradient(135deg, #2fa45a, #1f8b47);
+    border-color: #4ade80; color: #fff;
+    box-shadow: 0 10px 24px -10px rgba(74,222,128,.5);
+  }
+  button.success:hover:not(:disabled) { background: linear-gradient(135deg, #35b866, #22964e); }
+  button svg { width: 17px; height: 17px; flex: 0 0 auto; }
+
+  /* ---------- log ---------- */
+  .log {
+    margin-top: 1.4rem; background: #070a12; border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden;
+  }
+  .log header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .6rem .9rem; background: #0a0e18; border-bottom: 1px solid var(--border);
+    font-size: .78rem; color: var(--text3); text-transform: uppercase;
+    letter-spacing: .08em; margin: 0; text-align: left;
+  }
+  .log header .dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--text3); margin-right: .5rem; vertical-align: middle;
+  }
+  .log header .dot.ok { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+  .log header .dot.busy { background: var(--warn); box-shadow: 0 0 8px var(--warn); animation: pulse 1.2s infinite; }
+  .log header .dot.err { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  .log pre {
+    margin: 0; padding: .8rem .95rem; font-family: ui-monospace, SFMono-Regular,
+      Menlo, Consolas, monospace; font-size: .76rem; line-height: 1.55;
+    color: #b7c4dc; max-height: 180px; overflow-y: auto; white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .log pre::-webkit-scrollbar { width: 8px; }
+  .log pre::-webkit-scrollbar-thumb { background: #232b40; border-radius: 4px; }
+
+  footer {
+    margin-top: 1.6rem; text-align: center; font-size: .78rem; color: var(--text3);
+  }
+  footer a { color: var(--text2); text-decoration: none; border-bottom: 1px dotted var(--border2); }
+  footer a:hover { color: var(--accent2); }
+
+  /* ---------- github pages note ---------- */
+  .notice {
+    display: flex; gap: .7rem; align-items: flex-start;
+    background: rgba(79,123,255,.07); border: 1px solid rgba(79,123,255,.25);
+    border-radius: 14px; padding: .85rem 1rem; margin-bottom: 1.4rem;
+    font-size: .84rem; color: #b8c8e8;
+  }
+  .notice svg { flex: 0 0 auto; width: 18px; height: 18px; color: var(--accent2); margin-top: 2px; }
+  .notice strong { color: #dbe4f5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#4f7bff" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+        <polyline points="7 9 12 4 17 9"/>
+        <line x1="12" y1="4" x2="12" y2="16"/>
+      </svg>
+      <span>Video <span class="grad">→</span> MP3</span>
+    </div>
+    <p>Convert any browser-decodable video to MP3 — entirely in your browser.
+       No upload, no server, no tracking.</p>
+  </header>
+
+  <div class="notice">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/>
+      <line x1="12" y1="8" x2="12.01" y2="8"/>
+    </svg>
+    <div>
+      <strong>Runs on GitHub Pages.</strong> This build uses the single-threaded
+      FFmpeg core, so it needs no <code>SharedArrayBuffer</code> and no
+      COOP/COEP headers. It works from any static host, including
+      <code>*.github.io</code>. First conversion downloads ~30&nbsp;MB of
+      wasm (browser-cached afterwards).
+    </div>
+  </div>
+
+  <div class="card">
+
+    <div class="drop" id="drop">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+      <div class="title">Drop a video here</div>
+      <div class="sub">MP4, MOV, AVI, MKV, WebM, M4V, MPEG, 3GP, FLV</div>
+      <div class="browse">Browse files</div>
+      <input type="file" id="fileInput"
+             accept="video/*,audio/*,.mp4,.mov,.avi,.mkv,.webm,.m4v,.mpg,.mpeg,.3gp,.flv,.ogv,.ts">
+    </div>
+
+    <div class="filechip" id="fileChip">
+      <div class="fico">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+          <polygon points="23 7 16 12 23 17 23 7"/>
+          <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+        </svg>
+      </div>
+      <div class="fmeta">
+        <div class="fname" id="fName">—</div>
+        <div class="fsize" id="fSize">—</div>
+      </div>
+      <button class="fclear" id="fClear" title="Remove file">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="progress" id="progress">
+      <div class="top">
+        <span id="stage">Preparing…</span>
+        <span class="pct" id="pct">0%</span>
+      </div>
+      <div class="bar"><i id="barFill"></i></div>
+    </div>
+
+    <div class="actions">
+      <button class="primary" id="convertBtn" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        Convert to MP3
+      </button>
+      <button class="success" id="downloadBtn" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download MP3
+      </button>
+    </div>
+
+    <div class="log">
+      <header>
+        <span><span class="dot" id="statusDot"></span><span id="statusText">Idle</span></span>
+        <span id="statusMeta"></span>
+      </header>
+      <pre id="log">Waiting for a file…</pre>
+    </div>
+
+  </div>
+
+  <footer>
+    Built with <a href="https://ffmpegwasm.netlify.app/" target="_blank" rel="noopener">FFmpeg.wasm</a>
+    · single-threaded core · works on GitHub Pages
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================================
+ *  Video → MP3 converter
+ *  ----------------------------------------------------------------------------
+ *  Uses FFmpeg.wasm single-threaded core (@ffmpeg/core-st) so that it works
+ *  without SharedArrayBuffer and therefore without COOP/COEP headers.
+ *  This is what makes it compatible with GitHub Pages.
+ *
+ *  Flow:
+ *    1. User picks a file.
+ *    2. On first convert, we lazy-load ffmpeg.js + the single-threaded core
+ *       from jsDelivr. Browser caches it, so subsequent loads are instant.
+ *    3. We write the input file into FFmpeg's in-memory FS.
+ *    4. Run:  ffmpeg -i input.ext -vn -ac 2 -ar 44100 -b:a 192k output.mp3
+ *    5. Read output.mp3 back, wrap in a Blob, offer a download link.
+ *    6. Clean up the FS.
+ *
+ *  Why single-threaded:
+ *    @ffmpeg/core (threaded) requires SharedArrayBuffer, which requires the
+ *    page to be cross-origin isolated via COOP/COEP headers. GitHub Pages
+ *    cannot set response headers, so the threaded core fails there.
+ *    @ffmpeg/core-st runs on the main thread and needs neither.
+ * ========================================================================== */
+(function () {
+  "use strict";
+
+  /* ------------------------------------------------------------------ *
+   *  Configuration
+   * ------------------------------------------------------------------ */
+  const CONFIG = {
+    // FFmpeg.wasm loader (UMD build, exposes window.FFmpegWASM).
+    // Pin a version so behavior is stable.
+    FFMPEG_JS:  "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js",
+    // Single-threaded core: no SharedArrayBuffer, no COOP/COEP headers.
+    CORE_JS:    "https://cdn.jsdelivr.net/npm/@ffmpeg/core-st@0.11.1/dist/ffmpeg-core.js",
+    CORE_WASM:  "https://cdn.jsdelivr.net/npm/@ffmpeg/core-st@0.11.1/dist/ffmpeg-core.wasm",
+    CORE_WORKER: null, // not used in single-threaded build
+
+    // Encoder settings.
+    OUTPUT_BITRATE: "192k",   // MP3 bitrate
+    OUTPUT_CHANNELS: 2,       // stereo
+    OUTPUT_SAMPLE_RATE: 44100,
+
+    // Guardrails.
+    MAX_FILE_BYTES: 2 * 1024 * 1024 * 1024, // 2 GB sanity cap
+
+    // Extensions we accept. (Browser + FFmpeg may still reject some codecs.)
+    ACCEPTED_EXT: [
+      "mp4","m4v","mov","avi","mkv","webm","ogv","ogg",
+      "mpg","mpeg","mpe","mpv","3gp","3g2","flv","f4v",
+      "ts","m2ts","mts","wmv","asf","vob","rm","rmvb",
+      "m2v","mxf","dv","y4m"
+    ],
+  };
+
+  /* ------------------------------------------------------------------ *
+   *  DOM
+   * ------------------------------------------------------------------ */
+  const $ = (id) => document.getElementById(id);
+
+  const el = {
+    drop:       $("drop"),
+    input:      $("fileInput"),
+    chip:       $("fileChip"),
+    fName:      $("fName"),
+    fSize:      $("fSize"),
+    fClear:     $("fClear"),
+    progress:   $("progress"),
+    stage:      $("stage"),
+    pct:        $("pct"),
+    barFill:    $("barFill"),
+    convertBtn: $("convertBtn"),
+    downloadBtn:$("downloadBtn"),
+    log:        $("log"),
+    dot:        $("statusDot"),
+    statusText: $("statusText"),
+    statusMeta: $("statusMeta"),
+  };
+
+  /* ------------------------------------------------------------------ *
+   *  State
+   * ------------------------------------------------------------------ */
+  const state = {
+    file:        null,     // current File
+    ffmpeg:      null,     // FFmpeg instance
+    ffmpegReady: false,    // core loaded?
+    loadingFF:   null,     // in-flight load promise
+    busy:        false,    // conversion running?
+    output:      null,     // { blob, name, url }
+    logLines:    [],
+  };
+
+  /* ------------------------------------------------------------------ *
+   *  Utilities
+   * ------------------------------------------------------------------ */
+  function log(msg) {
+    const stamp = new Date().toISOString().slice(11, 19);
+    state.logLines.push(`[${stamp}] ${msg}`);
+    if (state.logLines.length > 400) state.logLines.shift();
+    el.log.textContent = state.logLines.join("\n");
+    el.log.scrollTop = el.log.scrollHeight;
+  }
+
+  function setStatus(kind, text, meta) {
+    el.dot.className = "dot" + (kind ? " " + kind : "");
+    el.statusText.textContent = text;
+    el.statusMeta.textContent = meta || "";
+  }
+
+  function humanBytes(n) {
+    if (!Number.isFinite(n) || n <= 0) return "0 B";
+    const u = ["B","KB","MB","GB","TB"];
+    let i = 0;
+    while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
+    return n.toFixed(n < 10 && i > 0 ? 2 : 0) + " " + u[i];
+  }
+
+  function extOf(name) {
+    const m = /\.([a-z0-9]+)$/i.exec(name || "");
+    return m ? m[1].toLowerCase() : "";
+  }
+
+  function baseOf(name) {
+    return (name || "audio").replace(/\.[^./\\]+$/, "") || "audio";
+  }
+
+  function setProgress(fraction, stageText) {
+    const clamped = Math.max(0, Math.min(1, fraction || 0));
+    el.barFill.style.width = (clamped * 100).toFixed(1) + "%";
+    el.pct.textContent = Math.round(clamped * 100) + "%";
+    if (stageText) el.stage.textContent = stageText;
+  }
+
+  function showProgress(show) {
+    el.progress.classList.toggle("show", !!show);
+  }
+
+  function resetOutput() {
+    if (state.output && state.output.url) {
+      try { URL.revokeObjectURL(state.output.url); } catch (_) {}
+    }
+    state.output = null;
+    el.downloadBtn.disabled = true;
+  }
+
+  function setConvertEnabled(enabled) {
+    el.convertBtn.disabled = !enabled || state.busy;
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  FFmpeg loading
+   *
+   *  We lazy-load the UMD ffmpeg.js script on first use. The script is
+   *  cached by the browser, so subsequent loads are synchronous-ish.
+   *  Then we create an FFmpeg instance and call load() with the
+   *  single-threaded core URLs.
+   * ------------------------------------------------------------------ */
+  function loadScriptOnce(src) {
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector(`script[data-src="${src}"]`);
+      if (existing) {
+        if (existing.dataset.loaded === "1") return resolve();
+        existing.addEventListener("load", () => resolve());
+        existing.addEventListener("error", () => reject(new Error("Failed to load " + src)));
+        return;
+      }
+      const s = document.createElement("script");
+      s.src = src;
+      s.async = true;
+      s.crossOrigin = "anonymous";
+      s.dataset.src = src;
+      s.addEventListener("load", () => { s.dataset.loaded = "1"; resolve(); });
+      s.addEventListener("error", () => reject(new Error("Failed to load " + src)));
+      document.head.appendChild(s);
+    });
+  }
+
+  async function ensureFFmpeg() {
+    if (state.ffmpegReady) return state.ffmpeg;
+    if (state.loadingFF) return state.loadingFF;
+
+    state.loadingFF = (async () => {
+      setStatus("busy", "Loading FFmpeg", "single-threaded core");
+      log("Loading FFmpeg.wasm loader…");
+      showProgress(true);
+      setProgress(0, "Loading FFmpeg loader…");
+
+      await loadScriptOnce(CONFIG.FFMPEG_JS);
+
+      const FFmpegNS = window.FFmpegWASM;
+      if (!FFmpegNS || !FFmpegNS.FFmpeg) {
+        throw new Error(
+          "FFmpeg.wasm loader did not attach window.FFmpegWASM. " +
+          "Check your network / ad-blocker / CSP."
+        );
+      }
+
+      const ff = new FFmpegNS.FFmpeg();
+
+      // Wire up logging + progress from the worker/thread.
+      ff.on("log", ({ message }) => {
+        if (!message) return;
+        log("[ffmpeg] " + message);
+      });
+      ff.on("progress", ({ progress, time }) => {
+        // `progress` is a 0..1 fraction when the core reports it.
+        if (typeof progress === "number" && isFinite(progress) && progress >= 0) {
+          // Reserve the last 5% for reading the output file back.
+          const p = Math.min(0.95, progress * 0.95);
+          setProgress(p, "Encoding MP3…");
+        }
+        if (typeof time === "number" && time > 0) {
+          el.statusMeta.textContent = (time / 1e6).toFixed(1) + "s";
+        }
+      });
+
+      setProgress(0.05, "Downloading core (~30 MB)…");
+      log("Loading single-threaded core from jsDelivr…");
+      log("  core.js:   " + CONFIG.CORE_JS);
+      log("  core.wasm: " + CONFIG.CORE_WASM);
+
+      await ff.load({
+        coreURL: CONFIG.CORE_JS,
+        wasmURL: CONFIG.CORE_WASM,
+      });
+
+      state.ffmpeg = ff;
+      state.ffmpegReady = true;
+      setProgress(1, "FFmpeg ready");
+      setStatus("ok", "FFmpeg ready", "single-threaded");
+      log("FFmpeg core loaded.");
+      return ff;
+    })();
+
+    try {
+      return await state.loadingFF;
+    } finally {
+      state.loadingFF = null;
+    }
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  File selection
+   * ------------------------------------------------------------------ */
+  function acceptFile(file) {
+    if (!file) return;
+
+    if (file.size > CONFIG.MAX_FILE_BYTES) {
+      setStatus("err", "File too large",
+        "max " + humanBytes(CONFIG.MAX_FILE_BYTES));
+      log("Rejected: file exceeds size cap (" + humanBytes(file.size) + ").");
+      return;
+    }
+
+    const ext = extOf(file.name);
+    const looksLikeVideo =
+      (file.type && file.type.startsWith("video/")) ||
+      (file.type && file.type.startsWith("audio/")) ||
+      CONFIG.ACCEPTED_EXT.includes(ext);
+
+    if (!looksLikeVideo) {
+      setStatus("err", "Unsupported file", ext ? "." + ext : "unknown");
+      log("Rejected: extension '." + ext + "' is not in the accepted list.");
+      return;
+    }
+
+    state.file = file;
+    resetOutput();
+
+    el.fName.textContent = file.name;
+    el.fSize.textContent = humanBytes(file.size) + (ext ? " · ." + ext : "");
+    el.chip.classList.add("show");
+
+    setConvertEnabled(true);
+    setStatus("", "File loaded", humanBytes(file.size));
+    log("Selected: " + file.name + " (" + humanBytes(file.size) + ")");
+
+    showProgress(false);
+    setProgress(0, "Ready");
+  }
+
+  function clearFile() {
+    if (state.busy) return;
+    state.file = null;
+    el.input.value = "";
+    el.chip.classList.remove("show");
+    setConvertEnabled(false);
+    resetOutput();
+    showProgress(false);
+    setStatus("", "Idle", "");
+    log("File cleared.");
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  Conversion
+   * ------------------------------------------------------------------ */
+  async function convert() {
+    if (!state.file || state.busy) return;
+
+    state.busy = true;
+    resetOutput();
+    setConvertEnabled(false);
+    el.downloadBtn.disabled = true;
+    showProgress(true);
+    setProgress(0, "Starting…");
+
+    const inputExt = extOf(state.file.name) || "mp4";
+    const inputName = "input." + inputExt;   // name inside FFmpeg FS
+    const outputName = "output.mp3";
+
+    const startedAt = performance.now();
+    let ff = null;
+
+    try {
+      ff = await ensureFFmpeg();
+
+      // --- write input into the virtual FS -----------------------------
+      setProgress(0.03, "Reading file…");
+      setStatus("busy", "Reading file", humanBytes(state.file.size));
+      log("Reading " + humanBytes(state.file.size) + " into memory…");
+      const buffer = await state.file.arrayBuffer();
+      const bytes = new Uint8Array(buffer);
+      log("Writing " + inputName + " to FFmpeg FS…");
+      await ff.writeFile(inputName, bytes);
+
+      // --- run ffmpeg --------------------------------------------------
+      setProgress(0.05, "Encoding MP3…");
+      setStatus("busy", "Encoding MP3", "0%");
+      log("Running ffmpeg -i " + inputName +
+          " -vn -ac " + CONFIG.OUTPUT_CHANNELS +
+          " -ar " + CONFIG.OUTPUT_SAMPLE_RATE +
+          " -b:a " + CONFIG.OUTPUT_BITRATE + " " + outputName);
+
+      const args = [
+        "-i", inputName,
+        "-vn",                                   // drop video
+        "-ac", String(CONFIG.OUTPUT_CHANNELS),   // stereo
+        "-ar", String(CONFIG.OUTPUT_SAMPLE_RATE),// 44.1 kHz
+        "-b:a", CONFIG.OUTPUT_BITRATE,           // 192 kbps
+        "-f", "mp3",
+        outputName,
+      ];
+
+      await ff.exec(args);
+
+      // --- read output -------------------------------------------------
+      setProgress(0.96, "Packaging MP3…");
+      setStatus("busy", "Packaging MP3", "");
+      log("Reading " + outputName + " back from FFmpeg FS…");
+      const data = await ff.readFile(outputName);
+      const mp3Bytes = data instanceof Uint8Array ? data : new Uint8Array(data);
+
+      if (!mp3Bytes || mp3Bytes.length === 0) {
+        throw new Error("FFmpeg produced an empty output file. " +
+                        "The source may have no audio track, or the codec is unsupported.");
+      }
+
+      const blob = new Blob([mp3Bytes], { type: "audio/mpeg" });
+      const outName = baseOf(state.file.name) + ".mp3";
+      const url = URL.createObjectURL(blob);
+
+      state.output = { blob, name: outName, url };
+
+      el.downloadBtn.disabled = false;
+      setProgress(1, "Done");
+      const secs = ((performance.now() - startedAt) / 1000).toFixed(1);
+      setStatus("ok", "Conversion complete", secs + "s · " + humanBytes(blob.size));
+      log("Done in " + secs + "s → " + outName + " (" + humanBytes(blob.size) + ")");
+
+      // Auto-trigger the download so the UX matches user expectation.
+      triggerDownload();
+
+    } catch (err) {
+      console.error(err);
+      const msg = (err && err.message) ? err.message : String(err);
+      setStatus("err", "Conversion failed", "");
+      setProgress(0, "Failed");
+      log("ERROR: " + msg);
+      // Common failure hint
+      if (/sharedarraybuffer|coop|coep|cross-origin/i.test(msg)) {
+        log("Hint: this build uses the single-threaded core and should not " +
+            "need COOP/COEP. If you're seeing this, the CDN may be serving " +
+            "a threaded core — check the CORE_JS / CORE_WASM URLs.");
+      }
+      if (/memory|out of|abort/i.test(msg)) {
+        log("Hint: the file may be too large for browser memory. " +
+            "Try a shorter clip or a smaller file.");
+      }
+    } finally {
+      // --- cleanup FFmpeg FS (best effort) -----------------------------
+      if (ff) {
+        try { await ff.deleteFile(inputName); } catch (_) {}
+        try { await ff.deleteFile(outputName); } catch (_) {}
+      }
+      state.busy = false;
+      setConvertEnabled(!!state.file);
+    }
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  Download
+   * ------------------------------------------------------------------ */
+  function triggerDownload() {
+    if (!state.output) return;
+    const a = document.createElement("a");
+    a.href = state.output.url;
+    a.download = state.output.name;
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    log("Download triggered: " + state.output.name);
+  }
+
+  /* ------------------------------------------------------------------ *
+   *  Wire up events
+   * ------------------------------------------------------------------ */
+
+  // Click anywhere on the drop zone → open file picker.
+  el.drop.addEventListener("click", (e) => {
+    // Don't re-trigger if the user clicked the (hidden) input itself.
+    if (e.target === el.input) return;
+    el.input.click();
+  });
+
+  el.input.addEventListener("change", (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (f) acceptFile(f);
+  });
+
+  // Drag & drop.
+  ["dragenter","dragover"].forEach((ev) =>
+    el.drop.addEventListener(ev, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      el.drop.classList.add("hover","drag");
+    })
+  );
+  ["dragleave","dragend"].forEach((ev) =>
+    el.drop.addEventListener(ev, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (ev === "dragleave" && el.drop.contains(e.relatedTarget)) return;
+      el.drop.classList.remove("hover","drag");
+    })
+  );
+  el.drop.addEventListener("drop", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    el.drop.classList.remove("hover","drag");
+    const dt = e.dataTransfer;
+    if (dt && dt.files && dt.files.length) {
+      acceptFile(dt.files[0]);
+    }
+  });
+
+  // Prevent the whole page from navigating when a file is dropped outside.
+  ["dragover","drop"].forEach((ev) =>
+    window.addEventListener(ev, (e) => {
+      if (e.target === el.drop || el.drop.contains(e.target)) return;
+      e.preventDefault();
+    })
+  );
+
+  el.fClear.addEventListener("click", (e) => {
+    e.stopPropagation();
+    clearFile();
+  });
+
+  el.convertBtn.addEventListener("click", convert);
+  el.downloadBtn.addEventListener("click", triggerDownload);
+
+  // Keyboard: Enter on the drop zone opens the picker.
+  el.drop.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      el.input.click();
+    }
+  });
+  el.drop.setAttribute("tabindex", "0");
+  el.drop.setAttribute("role", "button");
+  el.drop.setAttribute("aria-label", "Choose a video file");
+
+  // Beforeunload warning if conversion in progress.
+  window.addEventListener("beforeunload", (e) => {
+    if (state.busy) {
+      e.preventDefault();
+      e.returnValue = "";
+      return "";
+    }
+  });
+
+  /* ------------------------------------------------------------------ *
+   *  Init
+   * ------------------------------------------------------------------ */
+  setConvertEnabled(false);
+  setStatus("", "Idle", "");
+  log("Ready. Select a video file to begin.");
+  log("Note: the first conversion downloads the FFmpeg core (~30 MB) " +
+      "from jsDelivr. It is cached by the browser afterwards.");
+
+})();
+</script>
+</body>
+</html>
