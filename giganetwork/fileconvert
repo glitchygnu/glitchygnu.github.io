@@ -2,846 +2,401 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video → MP3 · GitHub Pages Converter</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>H4CK3R_N3TW0RK // ROOT_ACCESS</title>
 <style>
-  :root {
-    --bg: #0a0d14;
-    --bg2: #0f1320;
-    --card: #131826;
-    --card2: #1a2033;
-    --border: #232b40;
-    --border2: #2e3852;
-    --text: #e6ecf5;
-    --text2: #9aa8c0;
-    --text3: #64708a;
-    --accent: #4f7bff;
-    --accent2: #6f92ff;
-    --accent-hover: #6488ff;
-    --danger: #ff5c7c;
-    --ok: #4ade80;
-    --warn: #fbbf24;
-    --shadow: 0 20px 60px -20px rgba(0,0,0,.8);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-                 "Helvetica Neue", Arial, sans-serif;
-    background:
-      radial-gradient(1200px 600px at 20% -10%, rgba(79,123,255,.10), transparent 60%),
-      radial-gradient(1000px 500px at 90% 110%, rgba(111,146,255,.08), transparent 60%),
-      var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 3rem 1.25rem;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .wrap { width: 100%; max-width: 720px; }
-
-  header { margin-bottom: 2rem; text-align: center; }
-  header .logo {
-    display: inline-flex; align-items: center; gap: .65rem;
-    font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em;
-  }
-  header .logo svg { width: 34px; height: 34px; }
-  header .logo .grad {
-    background: linear-gradient(135deg, #9bbaff, #4f7bff 60%, #6f92ff);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  header p {
-    color: var(--text2); font-size: .95rem; margin-top: .6rem;
-    max-width: 480px; margin-left: auto; margin-right: auto;
-  }
-
-  .card {
-    background: linear-gradient(180deg, var(--card), var(--bg2));
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 1.75rem;
-    box-shadow: var(--shadow);
-  }
-
-  /* ---------- drop zone ---------- */
-  .drop {
-    position: relative;
-    border: 2px dashed var(--border2);
-    border-radius: 18px;
-    padding: 2.5rem 1.5rem;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color .18s, background .18s, transform .18s;
-    background: rgba(15, 19, 32, .6);
-    overflow: hidden;
-  }
-  .drop:hover, .drop.hover {
-    border-color: var(--accent);
-    background: rgba(79,123,255,.06);
-  }
-  .drop.hover { transform: scale(1.005); }
-  .drop.drag { border-color: var(--accent2); background: rgba(111,146,255,.10); }
-  .drop input[type=file] { display: none; }
-  .drop .icon {
-    width: 56px; height: 56px; margin: 0 auto .9rem;
-    color: var(--accent2); opacity: .9;
-  }
-  .drop .title {
-    font-size: 1.02rem; font-weight: 600; color: var(--text);
-    margin-bottom: .35rem;
-  }
-  .drop .sub { font-size: .85rem; color: var(--text3); }
-  .drop .browse {
-    display: inline-block; margin-top: .9rem;
-    background: var(--card2); border: 1px solid var(--border2);
-    color: var(--text); font-size: .85rem; font-weight: 500;
-    padding: .5rem 1.15rem; border-radius: 999px;
-  }
-
-  /* ---------- file chip ---------- */
-  .filechip {
-    display: none; align-items: center; gap: .85rem;
-    margin-top: 1rem; padding: .85rem 1rem;
-    background: var(--card2); border: 1px solid var(--border2);
-    border-radius: 14px; font-size: .88rem;
-  }
-  .filechip.show { display: flex; }
-  .filechip .fico {
-    flex: 0 0 auto; width: 36px; height: 36px; border-radius: 9px;
-    background: linear-gradient(135deg, #2a3a66, #1f2947);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--accent2);
-  }
-  .filechip .fmeta { min-width: 0; flex: 1; }
-  .filechip .fname {
-    font-weight: 600; color: var(--text);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .filechip .fsize { color: var(--text3); font-size: .8rem; margin-top: .1rem; }
-  .filechip .fclear {
-    flex: 0 0 auto; width: 28px; height: 28px; border-radius: 8px;
-    background: transparent; border: 1px solid transparent; color: var(--text3);
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: .15s;
-  }
-  .filechip .fclear:hover { color: var(--danger); border-color: var(--border2); }
-
-  /* ---------- progress ---------- */
-  .progress {
-    margin-top: 1.25rem; display: none;
-  }
-  .progress.show { display: block; }
-  .progress .top {
-    display: flex; justify-content: space-between; align-items: baseline;
-    font-size: .82rem; color: var(--text2); margin-bottom: .45rem;
-  }
-  .progress .pct { font-variant-numeric: tabular-nums; color: var(--text); font-weight: 600; }
-  .progress .bar {
-    height: 8px; background: #0a0e18; border-radius: 999px; overflow: hidden;
-    border: 1px solid var(--border);
-  }
-  .progress .bar > i {
-    display: block; height: 100%; width: 0%;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    border-radius: 999px; transition: width .18s ease;
-  }
-
-  /* ---------- buttons ---------- */
-  .actions { display: flex; gap: .75rem; margin-top: 1.4rem; flex-wrap: wrap; }
-  button {
-    font-family: inherit; font-size: .92rem; font-weight: 600;
-    padding: .85rem 1.4rem; border-radius: 12px; cursor: pointer;
-    border: 1px solid var(--border2); background: var(--card2);
-    color: var(--text); display: inline-flex; align-items: center;
-    justify-content: center; gap: .55rem; flex: 1 1 auto;
-    transition: transform .12s, background .15s, border-color .15s, opacity .15s;
-    user-select: none;
-  }
-  button:hover:not(:disabled) { background: #232c44; border-color: #3a4666; }
-  button:active:not(:disabled) { transform: translateY(1px); }
-  button:disabled { opacity: .38; cursor: not-allowed; }
-  button.primary {
-    background: linear-gradient(135deg, var(--accent), #3d5ee0);
-    border-color: #5b81ff; color: #fff;
-    box-shadow: 0 10px 24px -10px rgba(79,123,255,.7);
-  }
-  button.primary:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--accent-hover), #4a68ff);
-  }
-  button.success {
-    background: linear-gradient(135deg, #2fa45a, #1f8b47);
-    border-color: #4ade80; color: #fff;
-    box-shadow: 0 10px 24px -10px rgba(74,222,128,.5);
-  }
-  button.success:hover:not(:disabled) { background: linear-gradient(135deg, #35b866, #22964e); }
-  button svg { width: 17px; height: 17px; flex: 0 0 auto; }
-
-  /* ---------- log ---------- */
-  .log {
-    margin-top: 1.4rem; background: #070a12; border: 1px solid var(--border);
-    border-radius: 14px; overflow: hidden;
-  }
-  .log header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: .6rem .9rem; background: #0a0e18; border-bottom: 1px solid var(--border);
-    font-size: .78rem; color: var(--text3); text-transform: uppercase;
-    letter-spacing: .08em; margin: 0; text-align: left;
-  }
-  .log header .dot {
-    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
-    background: var(--text3); margin-right: .5rem; vertical-align: middle;
-  }
-  .log header .dot.ok { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
-  .log header .dot.busy { background: var(--warn); box-shadow: 0 0 8px var(--warn); animation: pulse 1.2s infinite; }
-  .log header .dot.err { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
-  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
-  .log pre {
-    margin: 0; padding: .8rem .95rem; font-family: ui-monospace, SFMono-Regular,
-      Menlo, Consolas, monospace; font-size: .76rem; line-height: 1.55;
-    color: #b7c4dc; max-height: 180px; overflow-y: auto; white-space: pre-wrap;
-    word-break: break-word;
-  }
-  .log pre::-webkit-scrollbar { width: 8px; }
-  .log pre::-webkit-scrollbar-thumb { background: #232b40; border-radius: 4px; }
-
-  footer {
-    margin-top: 1.6rem; text-align: center; font-size: .78rem; color: var(--text3);
-  }
-  footer a { color: var(--text2); text-decoration: none; border-bottom: 1px dotted var(--border2); }
-  footer a:hover { color: var(--accent2); }
-
-  /* ---------- github pages note ---------- */
-  .notice {
-    display: flex; gap: .7rem; align-items: flex-start;
-    background: rgba(79,123,255,.07); border: 1px solid rgba(79,123,255,.25);
-    border-radius: 14px; padding: .85rem 1rem; margin-bottom: 1.4rem;
-    font-size: .84rem; color: #b8c8e8;
-  }
-  .notice svg { flex: 0 0 auto; width: 18px; height: 18px; color: var(--accent2); margin-top: 2px; }
-  .notice strong { color: #dbe4f5; }
+*{margin:0;padding:0;box-sizing:border-box}
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+body{background:#0a0e0a;color:#00ff41;font-family:'Share Tech Mono','Courier New',monospace;overflow:hidden;height:100vh;width:100vw;text-shadow:0 0 5px rgba(0,255,65,.5);background-image:linear-gradient(rgba(0,255,65,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,65,.03) 1px,transparent 1px);background-size:30px 30px}
+body::before{content:"";position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,rgba(0,0,0,.15) 0px,rgba(0,255,65,.03) 2px,transparent 3px,transparent 5px);pointer-events:none;z-index:1000;animation:scanline 10s linear infinite}
+@keyframes scanline{0%{transform:translateY(0)}100%{transform:translateY(10px)}}
+@keyframes flicker{0%{opacity:.97}5%{opacity:.92}10%{opacity:.98}15%{opacity:.94}20%{opacity:1}50%{opacity:.96}80%{opacity:.98}100%{opacity:.97}}
+.crt{animation:flicker .15s infinite}
+.hacker-container{display:grid;grid-template-columns:280px 1fr 340px;grid-template-rows:60px 1fr 40px;height:100vh;width:100vw;gap:2px;padding:2px;background:#0a0e0a;position:relative;z-index:10}
+.panel{background:rgba(10,20,10,.85);border:1px solid #00ff41;box-shadow:0 0 15px rgba(0,255,65,.3),inset 0 0 15px rgba(0,255,65,.1);backdrop-filter:blur(3px);padding:12px;position:relative;overflow:hidden}
+.panel::after{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:#00ff41;box-shadow:0 0 10px #00ff41}
+.header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 25px;border-bottom:1px solid #00ff41;background:rgba(0,20,0,.9);position:relative;z-index:20}
+.header h1{font-size:1.5rem;letter-spacing:5px;color:#00ff41;text-transform:uppercase;animation:glitch 3s infinite}
+@keyframes glitch{0%,100%{text-shadow:2px 0 #ff00ff,-2px 0 #00ffff}25%{text-shadow:-2px 0 #ff00ff,2px 0 #00ffff}50%{text-shadow:2px 2px #ff00ff,-2px -2px #00ffff}75%{text-shadow:-1px 1px #ff00ff,1px -1px #00ffff}}
+.header-stats{display:flex;gap:25px;font-size:.8rem}
+.stat-item{color:#00ff41;opacity:.8}
+.stat-value{color:#ffaa00;font-weight:bold}
+.sidebar-left{grid-row:2/3;display:flex;flex-direction:column;gap:2px}
+.sidebar-panel{flex:1;display:flex;flex-direction:column;gap:8px}
+.panel-title{font-size:.9rem;color:#00ff41;border-bottom:1px dashed #00ff41;padding-bottom:5px;margin-bottom:8px;text-transform:uppercase;letter-spacing:2px;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:"▣";font-size:1rem}
+.sys-info{font-size:.75rem;line-height:1.6;color:#00cc33}
+.sys-info .label{color:#008800}
+.sys-info .value{color:#00ff41}
+.progress-bar{width:100%;height:8px;background:#001100;border:1px solid #00ff41;margin:4px 0;position:relative;overflow:hidden}
+.progress-fill{height:100%;background:#00ff41;box-shadow:0 0 10px #00ff41;animation:pulse 2s infinite;transition:width .5s}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.main-content{grid-row:2/3;display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.terminal{flex:3;display:flex;flex-direction:column;background:#0a0e0a;border:1px solid #00ff41;box-shadow:inset 0 0 20px rgba(0,255,65,.1);overflow:hidden;position:relative}
+.terminal-header{background:#001a00;padding:8px 12px;border-bottom:1px solid #00ff41;display:flex;justify-content:space-between;font-size:.8rem;color:#00ff41}
+.terminal-body{flex:1;padding:12px;overflow-y:auto;font-size:.85rem;line-height:1.5;color:#00ff41;scrollbar-width:thin;scrollbar-color:#00ff41 #001100}
+.terminal-body::-webkit-scrollbar{width:6px}
+.terminal-body::-webkit-scrollbar-track{background:#001100}
+.terminal-body::-webkit-scrollbar-thumb{background:#00ff41;border-radius:3px}
+.terminal-line{margin-bottom:2px;word-break:break-all}
+.prompt{color:#00ff41}
+.prompt::before{content:"root@h4ck3r:~# ";color:#00aa00}
+.output{color:#00cc33}
+.error{color:#ff3333}
+.success{color:#00ff41}
+.warning{color:#ffaa00}
+.cursor{display:inline-block;width:10px;height:18px;background:#00ff41;animation:blink 1s step-end infinite;vertical-align:middle}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.input-line{display:flex;align-items:center;margin-top:5px}
+.input-line input{background:transparent;border:none;color:#00ff41;font-family:'Share Tech Mono',monospace;font-size:.85rem;outline:none;flex:1;caret-color:#00ff41}
+.network-map{flex:2;border:1px solid #00ff41;position:relative;overflow:hidden;background:#001100}
+.network-map canvas{display:block;width:100%;height:100%;opacity:.8}
+.map-overlay{position:absolute;top:10px;left:10px;font-size:.7rem;color:#00ff41;background:rgba(0,20,0,.8);padding:5px 10px;border:1px solid #00ff41;pointer-events:none}
+.sidebar-right{grid-row:2/3;display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.sidebar-panel-right{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.log-container{flex:1;overflow-y:auto;font-size:.7rem;line-height:1.4;color:#00cc33;scrollbar-width:thin;scrollbar-color:#00ff41 #001100}
+.log-container::-webkit-scrollbar{width:4px}
+.log-container::-webkit-scrollbar-thumb{background:#00ff41}
+.log-entry{padding:2px 0;border-bottom:1px solid rgba(0,255,65,.1)}
+.log-time{color:#008800}
+.log-type{color:#ffaa00}
+.log-msg{color:#00ff41}
+.process-list{font-size:.7rem;display:flex;flex-direction:column;gap:4px}
+.process-item{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dotted rgba(0,255,65,.2)}
+.process-name{color:#00ff41}
+.process-cpu{color:#ffaa00}
+.process-mem{color:#00cc33}
+.footer{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 25px;border-top:1px solid #00ff41;background:rgba(0,20,0,.9);font-size:.75rem;color:#00ff41}
+.footer-left{display:flex;gap:20px}
+.footer-right{display:flex;gap:20px}
+.blink{animation:blink 1s step-end infinite}
+#matrixCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:.15}
+.shortcut{position:fixed;bottom:50px;right:20px;font-size:.7rem;color:#00ff41;background:rgba(0,20,0,.9);padding:8px 12px;border:1px solid #00ff41;z-index:100;opacity:.6;transition:opacity .3s}
+.shortcut:hover{opacity:1}
+.shortcut kbd{background:#001100;border:1px solid #00ff41;padding:2px 5px;border-radius:3px;color:#00ff41}
+.glitch-text{position:relative}
+.glitch-text::before,.glitch-text::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%}
+.glitch-text::before{animation:glitch-1 2s infinite linear alternate-reverse;color:#ff00ff;z-index:-1}
+.glitch-text::after{animation:glitch-2 3s infinite linear alternate-reverse;color:#00ffff;z-index:-2}
+@keyframes glitch-1{0%{clip-path:inset(20% 0 30% 0);transform:translate(-2px,-1px)}20%{clip-path:inset(10% 0 60% 0);transform:translate(2px,1px)}40%{clip-path:inset(40% 0 20% 0);transform:translate(-1px,2px)}60%{clip-path:inset(70% 0 5% 0);transform:translate(1px,-2px)}80%{clip-path:inset(5% 0 80% 0);transform:translate(-2px,1px)}100%{clip-path:inset(30% 0 40% 0);transform:translate(2px,-1px)}}
+@keyframes glitch-2{0%{clip-path:inset(60% 0 10% 0);transform:translate(2px,1px)}20%{clip-path:inset(30% 0 50% 0);transform:translate(-2px,-1px)}40%{clip-path:inset(10% 0 70% 0);transform:translate(1px,-2px)}60%{clip-path:inset(80% 0 5% 0);transform:translate(-1px,2px)}80%{clip-path:inset(40% 0 30% 0);transform:translate(2px,-1px)}100%{clip-path:inset(20% 0 60% 0);transform:translate(-2px,1px)}}
+@media(max-width:1200px){.hacker-container{grid-template-columns:220px 1fr 260px}}
+@media(max-width:900px){.hacker-container{grid-template-columns:1fr;grid-template-rows:60px 1fr 1fr 1fr 40px}.sidebar-left,.main-content,.sidebar-right{grid-column:1/-1}}
+.glow{animation:glow 2s ease-in-out infinite alternate}
+@keyframes glow{from{box-shadow:0 0 5px #00ff41,0 0 10px #00ff41}to{box-shadow:0 0 15px #00ff41,0 0 25px #00ff41}}
+.typewriter{overflow:hidden;white-space:nowrap;border-right:2px solid #00ff41;animation:typing 3.5s steps(40,end),blink-caret .75s step-end infinite}
+@keyframes typing{from{width:0}to{width:100%}}
+@keyframes blink-caret{from,to{border-color:transparent}50%{border-color:#00ff41}}
+.hex-dump{font-size:.65rem;color:#008800;line-height:1.3;opacity:.5;pointer-events:none}
+.animated-border{position:relative;overflow:hidden}
+.animated-border::before{content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,255,65,.2),transparent);animation:borderScan 3s infinite}
+@keyframes borderScan{0%{left:-100%}100%{left:100%}}
+.hud-corner{position:absolute;width:20px;height:20px;border:2px solid #00ff41;pointer-events:none}
+.hud-corner.tl{top:4px;left:4px;border-right:none;border-bottom:none}
+.hud-corner.tr{top:4px;right:4px;border-left:none;border-bottom:none}
+.hud-corner.bl{bottom:4px;left:4px;border-right:none;border-top:none}
+.hud-corner.br{bottom:4px;right:4px;border-left:none;border-top:none}
+.ticker{position:absolute;bottom:0;left:0;width:100%;background:rgba(0,20,0,.9);border-top:1px solid #00ff41;font-size:.65rem;color:#00ff41;padding:3px 0;overflow:hidden;white-space:nowrap}
+.ticker-content{display:inline-block;padding-left:100%;animation:ticker 30s linear infinite}
+@keyframes ticker{0%{transform:translate(0,0)}100%{transform:translate(-100%,0)}}
+.radar{width:100%;height:120px;background:radial-gradient(circle,rgba(0,255,65,.1) 0%,transparent 70%);position:relative;overflow:hidden;border:1px solid rgba(0,255,65,.3)}
+.radar::before{content:"";position:absolute;top:50%;left:50%;width:2px;height:50%;background:linear-gradient(to top,#00ff41,transparent);transform-origin:bottom center;animation:radarSweep 3s linear infinite}
+@keyframes radarSweep{0%{transform:translate(-50%,-100%) rotate(0deg)}100%{transform:translate(-50%,-100%) rotate(360deg)}}
+.radar-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border:1px solid rgba(0,255,65,.3);border-radius:50%}
+.radar-ring:nth-child(1){width:30px;height:30px}
+.radar-ring:nth-child(2){width:60px;height:60px}
+.radar-ring:nth-child(3){width:90px;height:90px}
+.radar-dot{position:absolute;width:4px;height:4px;background:#ffaa00;border-radius:50%;box-shadow:0 0 8px #ffaa00;animation:radarBlip 2s infinite}
+@keyframes radarBlip{0%,100%{opacity:1}50%{opacity:.2}}
+.waveform{display:flex;align-items:center;gap:2px;height:40px;padding:5px 0}
+.wave-bar{flex:1;background:#00ff41;animation:wave 1s ease-in-out infinite}
+@keyframes wave{0%,100%{height:20%}50%{height:100%}}
+.matrix-grid{display:grid;grid-template-columns:repeat(16,1fr);gap:1px;font-size:.55rem;color:#008800;line-height:1}
+.matrix-cell{text-align:center}
+.code-stream{font-size:.6rem;color:#00aa00;line-height:1.3;height:80px;overflow:hidden;position:relative}
+.code-stream-inner{animation:codeScroll 8s linear infinite}
+@keyframes codeScroll{0%{transform:translateY(0)}100%{transform:translateY(-50%)}}
+.graph-bar{display:flex;align-items:flex-end;gap:2px;height:50px;padding:5px 0}
+.graph-bar-item{flex:1;background:linear-gradient(to top,#00ff41,#00aa00);min-height:4px;animation:graphPulse 1.5s ease-in-out infinite}
+@keyframes graphPulse{0%,100%{opacity:.7}50%{opacity:1}}
 </style>
 </head>
 <body>
-<div class="wrap">
-
-  <header>
-    <div class="logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#4f7bff" stroke-width="2"
-           stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
-        <polyline points="7 9 12 4 17 9"/>
-        <line x1="12" y1="4" x2="12" y2="16"/>
-      </svg>
-      <span>Video <span class="grad">→</span> MP3</span>
-    </div>
-    <p>Convert any browser-decodable video to MP3 — entirely in your browser.
-       No upload, no server, no tracking.</p>
-  </header>
-
-  <div class="notice">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-         stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/>
-      <line x1="12" y1="8" x2="12.01" y2="8"/>
-    </svg>
-    <div>
-      <strong>Runs on GitHub Pages.</strong> This build uses the single-threaded
-      FFmpeg core, so it needs no <code>SharedArrayBuffer</code> and no
-      COOP/COEP headers. It works from any static host, including
-      <code>*.github.io</code>. First conversion downloads ~30&nbsp;MB of
-      wasm (browser-cached afterwards).
-    </div>
-  </div>
-
-  <div class="card">
-
-    <div class="drop" id="drop">
-      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-        <polyline points="17 8 12 3 7 8"/>
-        <line x1="12" y1="3" x2="12" y2="15"/>
-      </svg>
-      <div class="title">Drop a video here</div>
-      <div class="sub">MP4, MOV, AVI, MKV, WebM, M4V, MPEG, 3GP, FLV</div>
-      <div class="browse">Browse files</div>
-      <input type="file" id="fileInput"
-             accept="video/*,audio/*,.mp4,.mov,.avi,.mkv,.webm,.m4v,.mpg,.mpeg,.3gp,.flv,.ogv,.ts">
-    </div>
-
-    <div class="filechip" id="fileChip">
-      <div class="fico">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
-             stroke="currentColor" stroke-width="2" stroke-linecap="round"
-             stroke-linejoin="round">
-          <polygon points="23 7 16 12 23 17 23 7"/>
-          <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-        </svg>
-      </div>
-      <div class="fmeta">
-        <div class="fname" id="fName">—</div>
-        <div class="fsize" id="fSize">—</div>
-      </div>
-      <button class="fclear" id="fClear" title="Remove file">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none"
-             stroke="currentColor" stroke-width="2" stroke-linecap="round"
-             stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
-    </div>
-
-    <div class="progress" id="progress">
-      <div class="top">
-        <span id="stage">Preparing…</span>
-        <span class="pct" id="pct">0%</span>
-      </div>
-      <div class="bar"><i id="barFill"></i></div>
-    </div>
-
-    <div class="actions">
-      <button class="primary" id="convertBtn" disabled>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="5 3 19 12 5 21 5 3"/>
-        </svg>
-        Convert to MP3
-      </button>
-      <button class="success" id="downloadBtn" disabled>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/>
-          <line x1="12" y1="15" x2="12" y2="3"/>
-        </svg>
-        Download MP3
-      </button>
-    </div>
-
-    <div class="log">
-      <header>
-        <span><span class="dot" id="statusDot"></span><span id="statusText">Idle</span></span>
-        <span id="statusMeta"></span>
-      </header>
-      <pre id="log">Waiting for a file…</pre>
-    </div>
-
-  </div>
-
-  <footer>
-    Built with <a href="https://ffmpegwasm.netlify.app/" target="_blank" rel="noopener">FFmpeg.wasm</a>
-    · single-threaded core · works on GitHub Pages
-  </footer>
-
+<canvas id="matrixCanvas"></canvas>
+<div class="hacker-container crt">
+<header class="header">
+<h1 class="glitch-text" data-text="H4CK3R_N3TW0RK">H4CK3R_N3TW0RK</h1>
+<div class="header-stats">
+<span class="stat-item">IP: <span class="stat-value" id="headerIP">192.168.1.1</span></span>
+<span class="stat-item">UPTIME: <span class="stat-value" id="headerUptime">00:00:00</span></span>
+<span class="stat-item">LOAD: <span class="stat-value" id="headerLoad">0.00</span></span>
+<span class="stat-item">THREAT: <span class="stat-value" id="headerThreat" style="color:#ff3333">HIGH</span></span>
 </div>
-
+</header>
+<aside class="sidebar-left">
+<div class="panel sidebar-panel">
+<div class="panel-title">SYSTEM_INFO</div>
+<div class="sys-info">
+<div><span class="label">HOSTNAME:</span> <span class="value">kali-h4ck3r</span></div>
+<div><span class="label">KERNEL:</span> <span class="value">6.6.1-hack</span></div>
+<div><span class="label">ARCH:</span> <span class="value">x86_64</span></div>
+<div><span class="label">SHELL:</span> <span class="value">/bin/zsh</span></div>
+<div><span class="label">TERMINAL:</span> <span class="value">/dev/pts/0</span></div>
+<div><span class="label">USER:</span> <span class="value">root</span></div>
+<div><span class="label">GROUPS:</span> <span class="value">wheel,sudo,netadmin</span></div>
+<div><span class="label">SELINUX:</span> <span class="value" style="color:#ff3333">DISABLED</span></div>
+</div>
+</div>
+<div class="panel sidebar-panel">
+<div class="panel-title">RESOURCES</div>
+<div class="sys-info">
+<div><span class="label">CPU:</span> <span class="value" id="cpuValue">0%</span></div>
+<div class="progress-bar"><div class="progress-fill" id="cpuBar" style="width:0%"></div></div>
+<div><span class="label">MEM:</span> <span class="value" id="memValue">0%</span></div>
+<div class="progress-bar"><div class="progress-fill" id="memBar" style="width:0%"></div></div>
+<div><span class="label">DISK:</span> <span class="value" id="diskValue">0%</span></div>
+<div class="progress-bar"><div class="progress-fill" id="diskBar" style="width:0%"></div></div>
+<div><span class="label">NET:</span> <span class="value" id="netValue">0 KB/s</span></div>
+<div class="progress-bar"><div class="progress-fill" id="netBar" style="width:0%"></div></div>
+<div><span class="label">TEMP:</span> <span class="value" id="tempValue">0°C</span></div>
+<div class="progress-bar"><div class="progress-fill" id="tempBar" style="width:0%"></div></div>
+</div>
+</div>
+<div class="panel sidebar-panel">
+<div class="panel-title">RADAR</div>
+<div class="radar">
+<div class="radar-ring"></div>
+<div class="radar-ring"></div>
+<div class="radar-ring"></div>
+<div class="radar-dot" style="top:30%;left:40%"></div>
+<div class="radar-dot" style="top:60%;left:70%;animation-delay:.5s"></div>
+<div class="radar-dot" style="top:45%;left:20%;animation-delay:1s"></div>
+<div class="radar-dot" style="top:70%;left:55%;animation-delay:1.5s"></div>
+</div>
+<div style="font-size:.65rem;color:#00cc33;margin-top:6px;display:flex;justify-content:space-between">
+<span>SCAN: <span style="color:#00ff41">ACTIVE</span></span>
+<span>HOSTS: <span style="color:#00ff41">47</span></span>
+</div>
+</div>
+<div class="panel sidebar-panel">
+<div class="panel-title">PROCESSES</div>
+<div class="process-list" id="processList"></div>
+</div>
+</aside>
+<main class="main-content">
+<div class="terminal">
+<div class="terminal-header">
+<span>┌─[ TERMINAL ]───────────────────────────────┐</span>
+<span>root@kali-h4ck3r: ~</span>
+</div>
+<div class="terminal-body" id="terminalBody">
+<div class="terminal-line output">Initializing H4CK3R_N3TW0RK terminal v3.7.1...</div>
+<div class="terminal-line output">Loading kernel modules... <span class="success">[OK]</span></div>
+<div class="terminal-line output">Starting network services... <span class="success">[OK]</span></div>
+<div class="terminal-line output">Mounting virtual filesystems... <span class="success">[OK]</span></div>
+<div class="terminal-line output">Establishing encrypted tunnel to 10.0.0.1... <span class="success">[OK]</span></div>
+<div class="terminal-line output">Bypassing firewall... <span class="warning">[WARN]</span></div>
+<div class="terminal-line output">Spoofing MAC address... <span class="success">[OK]</span></div>
+<div class="terminal-line output">Injecting payload... <span class="success">[OK]</span></div>
+<div class="terminal-line output">Access granted. Welcome, root.</div>
+<div class="terminal-line" style="margin-top:8px">&nbsp;</div>
+<div class="terminal-line prompt">nmap -sS -A -T4 192.168.1.0/24</div>
+<div class="terminal-line output">Starting Nmap 7.94 ( https://nmap.org )</div>
+<div class="terminal-line output">Nmap scan report for 192.168.1.1</div>
+<div class="terminal-line output">Host is up (0.0023s latency).</div>
+<div class="terminal-line output">Not shown: 995 closed tcp ports (reset)</div>
+<div class="terminal-line output">PORT     STATE SERVICE     VERSION</div>
+<div class="terminal-line output">22/tcp   open  ssh         OpenSSH 9.2p1</div>
+<div class="terminal-line output">80/tcp   open  http        nginx 1.24.0</div>
+<div class="terminal-line output">443/tcp  open  ssl/https   nginx 1.24.0</div>
+<div class="terminal-line output">3306/tcp open  mysql       MySQL 8.0.36</div>
+<div class="terminal-line output">8080/tcp open  http-proxy  Squid 5.7</div>
+<div class="terminal-line output">Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</div>
+<div class="terminal-line output">Nmap done: 256 IP addresses (1 host up) scanned in 12.34 seconds</div>
+<div class="terminal-line" style="margin-top:8px">&nbsp;</div>
+<div class="terminal-line prompt">ssh root@192.168.1.1 -p 22</div>
+<div class="terminal-line output">root@192.168.1.1's password: <span class="success">********</span></div>
+<div class="terminal-line output">Welcome to Ubuntu 22.04.3 LTS (GNU/Linux 6.6.1-hack x86_64)</div>
+<div class="terminal-line output">Last login: Thu Jan 15 03:14:15 2026 from 10.0.0.42</div>
+<div class="terminal-line" style="margin-top:8px">&nbsp;</div>
+<div class="input-line">
+<span class="prompt"></span>
+<input type="text" id="terminalInput" autofocus placeholder="type 'help' for commands...">
+</div>
+</div>
+</div>
+<div class="network-map">
+<canvas id="networkCanvas"></canvas>
+<div class="map-overlay">NETWORK_MAP // LIVE_SCAN // 256 HOSTS</div>
+<div class="hud-corner tl"></div>
+<div class="hud-corner tr"></div>
+<div class="hud-corner bl"></div>
+<div class="hud-corner br"></div>
+</div>
+</main>
+<aside class="sidebar-right">
+<div class="panel sidebar-panel-right">
+<div class="panel-title">SYSTEM_LOGS</div>
+<div class="log-container" id="logContainer"></div>
+</div>
+<div class="panel sidebar-panel-right">
+<div class="panel-title">PAYLOAD_BUILDER</div>
+<div class="sys-info" style="font-size:.7rem">
+<div><span class="label">TARGET:</span> <span class="value">192.168.1.1</span></div>
+<div><span class="label">PAYLOAD:</span> <span class="value">reverse_tcp</span></div>
+<div><span class="label">LHOST:</span> <span class="value">10.0.0.42</span></div>
+<div><span class="label">LPORT:</span> <span class="value">4444</span></div>
+<div><span class="label">ENCODER:</span> <span class="value">x86/shikata_ga_nai</span></div>
+<div><span class="label">ITERATIONS:</span> <span class="value">5</span></div>
+<div style="margin-top:8px">
+<div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div>
+<div style="text-align:right;font-size:.6rem;color:#00cc33">Encoding... 78%</div>
+</div>
+</div>
+</div>
+<div class="panel sidebar-panel-right">
+<div class="panel-title">WAVEFORM</div>
+<div class="waveform" id="waveform"></div>
+<div style="font-size:.6rem;color:#00cc33;text-align:center">SIGNAL: <span style="color:#00ff41">ENCRYPTED</span></div>
+</div>
+<div class="panel sidebar-panel-right">
+<div class="panel-title">CRYPTO_KEYS</div>
+<div class="hex-dump" id="hexDump"></div>
+</div>
+<div class="panel sidebar-panel-right">
+<div class="panel-title">CODE_STREAM</div>
+<div class="code-stream">
+<div class="code-stream-inner" id="codeStream"></div>
+</div>
+</div>
+</aside>
+<footer class="footer">
+<div class="footer-left">
+<span>CONNECTION: <span style="color:#00ff41">ENCRYPTED</span></span>
+<span>PING: <span style="color:#00ff41" id="footerPing">12ms</span></span>
+<span>PACKETS: <span style="color:#00ff41" id="footerPackets">0</span></span>
+<span>THROUGHPUT: <span style="color:#00ff41" id="footerThroughput">0 Mbps</span></span>
+</div>
+<div class="footer-right">
+<span>H4CK3R_N3TW0RK v3.7.1</span>
+<span class="blink">█</span>
+<span>ROOT_ACCESS</span>
+</div>
+</footer>
+<div class="ticker">
+<div class="ticker-content">[ALERT] Intrusion attempt blocked from 203.0.113.42 &nbsp;&nbsp; [INFO] SSH connection established from 10.0.0.42 &nbsp;&nbsp; [WARN] High CPU usage detected: 94% &nbsp;&nbsp; [INFO] Firewall rule updated: ALLOW 192.168.1.0/24 &nbsp;&nbsp; [ERROR] MySQL connection refused &nbsp;&nbsp; [INFO] VPN tunnel established to 10.0.0.1 &nbsp;&nbsp; [WARN] SSL certificate expires in 7 days &nbsp;&nbsp; [INFO] User root logged in from 192.168.1.42 &nbsp;&nbsp; [ERROR] Intrusion attempt blocked: CVE-2026-1337 &nbsp;&nbsp; [INFO] DNS query: google.com -> 142.250.185.46 &nbsp;&nbsp; [WARN] Unusual outbound traffic on port 4444 &nbsp;&nbsp; [INFO] System scan completed: no threats found</div>
+</div>
+</div>
+<div class="shortcut">
+<kbd>Ctrl</kbd>+<kbd>L</kbd> Clear | <kbd>Ctrl</kbd>+<kbd>H</kbd> Help | <kbd>Ctrl</kbd>+<kbd>M</kbd> Matrix | <kbd>Ctrl</kbd>+<kbd>R</kbd> Reboot
+</div>
 <script>
-/* ============================================================================
- *  Video → MP3 converter
- *  ----------------------------------------------------------------------------
- *  Uses FFmpeg.wasm single-threaded core (@ffmpeg/core-st) so that it works
- *  without SharedArrayBuffer and therefore without COOP/COEP headers.
- *  This is what makes it compatible with GitHub Pages.
- *
- *  Flow:
- *    1. User picks a file.
- *    2. On first convert, we lazy-load ffmpeg.js + the single-threaded core
- *       from jsDelivr. Browser caches it, so subsequent loads are instant.
- *    3. We write the input file into FFmpeg's in-memory FS.
- *    4. Run:  ffmpeg -i input.ext -vn -ac 2 -ar 44100 -b:a 192k output.mp3
- *    5. Read output.mp3 back, wrap in a Blob, offer a download link.
- *    6. Clean up the FS.
- *
- *  Why single-threaded:
- *    @ffmpeg/core (threaded) requires SharedArrayBuffer, which requires the
- *    page to be cross-origin isolated via COOP/COEP headers. GitHub Pages
- *    cannot set response headers, so the threaded core fails there.
- *    @ffmpeg/core-st runs on the main thread and needs neither.
- * ========================================================================== */
-(function () {
-  "use strict";
-
-  /* ------------------------------------------------------------------ *
-   *  Configuration
-   * ------------------------------------------------------------------ */
-  const CONFIG = {
-    // FFmpeg.wasm loader (UMD build, exposes window.FFmpegWASM).
-    // Pin a version so behavior is stable.
-    FFMPEG_JS:  "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js",
-    // Single-threaded core: no SharedArrayBuffer, no COOP/COEP headers.
-    CORE_JS:    "https://cdn.jsdelivr.net/npm/@ffmpeg/core-st@0.11.1/dist/ffmpeg-core.js",
-    CORE_WASM:  "https://cdn.jsdelivr.net/npm/@ffmpeg/core-st@0.11.1/dist/ffmpeg-core.wasm",
-    CORE_WORKER: null, // not used in single-threaded build
-
-    // Encoder settings.
-    OUTPUT_BITRATE: "192k",   // MP3 bitrate
-    OUTPUT_CHANNELS: 2,       // stereo
-    OUTPUT_SAMPLE_RATE: 44100,
-
-    // Guardrails.
-    MAX_FILE_BYTES: 2 * 1024 * 1024 * 1024, // 2 GB sanity cap
-
-    // Extensions we accept. (Browser + FFmpeg may still reject some codecs.)
-    ACCEPTED_EXT: [
-      "mp4","m4v","mov","avi","mkv","webm","ogv","ogg",
-      "mpg","mpeg","mpe","mpv","3gp","3g2","flv","f4v",
-      "ts","m2ts","mts","wmv","asf","vob","rm","rmvb",
-      "m2v","mxf","dv","y4m"
-    ],
-  };
-
-  /* ------------------------------------------------------------------ *
-   *  DOM
-   * ------------------------------------------------------------------ */
-  const $ = (id) => document.getElementById(id);
-
-  const el = {
-    drop:       $("drop"),
-    input:      $("fileInput"),
-    chip:       $("fileChip"),
-    fName:      $("fName"),
-    fSize:      $("fSize"),
-    fClear:     $("fClear"),
-    progress:   $("progress"),
-    stage:      $("stage"),
-    pct:        $("pct"),
-    barFill:    $("barFill"),
-    convertBtn: $("convertBtn"),
-    downloadBtn:$("downloadBtn"),
-    log:        $("log"),
-    dot:        $("statusDot"),
-    statusText: $("statusText"),
-    statusMeta: $("statusMeta"),
-  };
-
-  /* ------------------------------------------------------------------ *
-   *  State
-   * ------------------------------------------------------------------ */
-  const state = {
-    file:        null,     // current File
-    ffmpeg:      null,     // FFmpeg instance
-    ffmpegReady: false,    // core loaded?
-    loadingFF:   null,     // in-flight load promise
-    busy:        false,    // conversion running?
-    output:      null,     // { blob, name, url }
-    logLines:    [],
-  };
-
-  /* ------------------------------------------------------------------ *
-   *  Utilities
-   * ------------------------------------------------------------------ */
-  function log(msg) {
-    const stamp = new Date().toISOString().slice(11, 19);
-    state.logLines.push(`[${stamp}] ${msg}`);
-    if (state.logLines.length > 400) state.logLines.shift();
-    el.log.textContent = state.logLines.join("\n");
-    el.log.scrollTop = el.log.scrollHeight;
-  }
-
-  function setStatus(kind, text, meta) {
-    el.dot.className = "dot" + (kind ? " " + kind : "");
-    el.statusText.textContent = text;
-    el.statusMeta.textContent = meta || "";
-  }
-
-  function humanBytes(n) {
-    if (!Number.isFinite(n) || n <= 0) return "0 B";
-    const u = ["B","KB","MB","GB","TB"];
-    let i = 0;
-    while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; }
-    return n.toFixed(n < 10 && i > 0 ? 2 : 0) + " " + u[i];
-  }
-
-  function extOf(name) {
-    const m = /\.([a-z0-9]+)$/i.exec(name || "");
-    return m ? m[1].toLowerCase() : "";
-  }
-
-  function baseOf(name) {
-    return (name || "audio").replace(/\.[^./\\]+$/, "") || "audio";
-  }
-
-  function setProgress(fraction, stageText) {
-    const clamped = Math.max(0, Math.min(1, fraction || 0));
-    el.barFill.style.width = (clamped * 100).toFixed(1) + "%";
-    el.pct.textContent = Math.round(clamped * 100) + "%";
-    if (stageText) el.stage.textContent = stageText;
-  }
-
-  function showProgress(show) {
-    el.progress.classList.toggle("show", !!show);
-  }
-
-  function resetOutput() {
-    if (state.output && state.output.url) {
-      try { URL.revokeObjectURL(state.output.url); } catch (_) {}
-    }
-    state.output = null;
-    el.downloadBtn.disabled = true;
-  }
-
-  function setConvertEnabled(enabled) {
-    el.convertBtn.disabled = !enabled || state.busy;
-  }
-
-  /* ------------------------------------------------------------------ *
-   *  FFmpeg loading
-   *
-   *  We lazy-load the UMD ffmpeg.js script on first use. The script is
-   *  cached by the browser, so subsequent loads are synchronous-ish.
-   *  Then we create an FFmpeg instance and call load() with the
-   *  single-threaded core URLs.
-   * ------------------------------------------------------------------ */
-  function loadScriptOnce(src) {
-    return new Promise((resolve, reject) => {
-      const existing = document.querySelector(`script[data-src="${src}"]`);
-      if (existing) {
-        if (existing.dataset.loaded === "1") return resolve();
-        existing.addEventListener("load", () => resolve());
-        existing.addEventListener("error", () => reject(new Error("Failed to load " + src)));
-        return;
-      }
-      const s = document.createElement("script");
-      s.src = src;
-      s.async = true;
-      s.crossOrigin = "anonymous";
-      s.dataset.src = src;
-      s.addEventListener("load", () => { s.dataset.loaded = "1"; resolve(); });
-      s.addEventListener("error", () => reject(new Error("Failed to load " + src)));
-      document.head.appendChild(s);
-    });
-  }
-
-  async function ensureFFmpeg() {
-    if (state.ffmpegReady) return state.ffmpeg;
-    if (state.loadingFF) return state.loadingFF;
-
-    state.loadingFF = (async () => {
-      setStatus("busy", "Loading FFmpeg", "single-threaded core");
-      log("Loading FFmpeg.wasm loader…");
-      showProgress(true);
-      setProgress(0, "Loading FFmpeg loader…");
-
-      await loadScriptOnce(CONFIG.FFMPEG_JS);
-
-      const FFmpegNS = window.FFmpegWASM;
-      if (!FFmpegNS || !FFmpegNS.FFmpeg) {
-        throw new Error(
-          "FFmpeg.wasm loader did not attach window.FFmpegWASM. " +
-          "Check your network / ad-blocker / CSP."
-        );
-      }
-
-      const ff = new FFmpegNS.FFmpeg();
-
-      // Wire up logging + progress from the worker/thread.
-      ff.on("log", ({ message }) => {
-        if (!message) return;
-        log("[ffmpeg] " + message);
-      });
-      ff.on("progress", ({ progress, time }) => {
-        // `progress` is a 0..1 fraction when the core reports it.
-        if (typeof progress === "number" && isFinite(progress) && progress >= 0) {
-          // Reserve the last 5% for reading the output file back.
-          const p = Math.min(0.95, progress * 0.95);
-          setProgress(p, "Encoding MP3…");
-        }
-        if (typeof time === "number" && time > 0) {
-          el.statusMeta.textContent = (time / 1e6).toFixed(1) + "s";
-        }
-      });
-
-      setProgress(0.05, "Downloading core (~30 MB)…");
-      log("Loading single-threaded core from jsDelivr…");
-      log("  core.js:   " + CONFIG.CORE_JS);
-      log("  core.wasm: " + CONFIG.CORE_WASM);
-
-      await ff.load({
-        coreURL: CONFIG.CORE_JS,
-        wasmURL: CONFIG.CORE_WASM,
-      });
-
-      state.ffmpeg = ff;
-      state.ffmpegReady = true;
-      setProgress(1, "FFmpeg ready");
-      setStatus("ok", "FFmpeg ready", "single-threaded");
-      log("FFmpeg core loaded.");
-      return ff;
-    })();
-
-    try {
-      return await state.loadingFF;
-    } finally {
-      state.loadingFF = null;
-    }
-  }
-
-  /* ------------------------------------------------------------------ *
-   *  File selection
-   * ------------------------------------------------------------------ */
-  function acceptFile(file) {
-    if (!file) return;
-
-    if (file.size > CONFIG.MAX_FILE_BYTES) {
-      setStatus("err", "File too large",
-        "max " + humanBytes(CONFIG.MAX_FILE_BYTES));
-      log("Rejected: file exceeds size cap (" + humanBytes(file.size) + ").");
-      return;
-    }
-
-    const ext = extOf(file.name);
-    const looksLikeVideo =
-      (file.type && file.type.startsWith("video/")) ||
-      (file.type && file.type.startsWith("audio/")) ||
-      CONFIG.ACCEPTED_EXT.includes(ext);
-
-    if (!looksLikeVideo) {
-      setStatus("err", "Unsupported file", ext ? "." + ext : "unknown");
-      log("Rejected: extension '." + ext + "' is not in the accepted list.");
-      return;
-    }
-
-    state.file = file;
-    resetOutput();
-
-    el.fName.textContent = file.name;
-    el.fSize.textContent = humanBytes(file.size) + (ext ? " · ." + ext : "");
-    el.chip.classList.add("show");
-
-    setConvertEnabled(true);
-    setStatus("", "File loaded", humanBytes(file.size));
-    log("Selected: " + file.name + " (" + humanBytes(file.size) + ")");
-
-    showProgress(false);
-    setProgress(0, "Ready");
-  }
-
-  function clearFile() {
-    if (state.busy) return;
-    state.file = null;
-    el.input.value = "";
-    el.chip.classList.remove("show");
-    setConvertEnabled(false);
-    resetOutput();
-    showProgress(false);
-    setStatus("", "Idle", "");
-    log("File cleared.");
-  }
-
-  /* ------------------------------------------------------------------ *
-   *  Conversion
-   * ------------------------------------------------------------------ */
-  async function convert() {
-    if (!state.file || state.busy) return;
-
-    state.busy = true;
-    resetOutput();
-    setConvertEnabled(false);
-    el.downloadBtn.disabled = true;
-    showProgress(true);
-    setProgress(0, "Starting…");
-
-    const inputExt = extOf(state.file.name) || "mp4";
-    const inputName = "input." + inputExt;   // name inside FFmpeg FS
-    const outputName = "output.mp3";
-
-    const startedAt = performance.now();
-    let ff = null;
-
-    try {
-      ff = await ensureFFmpeg();
-
-      // --- write input into the virtual FS -----------------------------
-      setProgress(0.03, "Reading file…");
-      setStatus("busy", "Reading file", humanBytes(state.file.size));
-      log("Reading " + humanBytes(state.file.size) + " into memory…");
-      const buffer = await state.file.arrayBuffer();
-      const bytes = new Uint8Array(buffer);
-      log("Writing " + inputName + " to FFmpeg FS…");
-      await ff.writeFile(inputName, bytes);
-
-      // --- run ffmpeg --------------------------------------------------
-      setProgress(0.05, "Encoding MP3…");
-      setStatus("busy", "Encoding MP3", "0%");
-      log("Running ffmpeg -i " + inputName +
-          " -vn -ac " + CONFIG.OUTPUT_CHANNELS +
-          " -ar " + CONFIG.OUTPUT_SAMPLE_RATE +
-          " -b:a " + CONFIG.OUTPUT_BITRATE + " " + outputName);
-
-      const args = [
-        "-i", inputName,
-        "-vn",                                   // drop video
-        "-ac", String(CONFIG.OUTPUT_CHANNELS),   // stereo
-        "-ar", String(CONFIG.OUTPUT_SAMPLE_RATE),// 44.1 kHz
-        "-b:a", CONFIG.OUTPUT_BITRATE,           // 192 kbps
-        "-f", "mp3",
-        outputName,
-      ];
-
-      await ff.exec(args);
-
-      // --- read output -------------------------------------------------
-      setProgress(0.96, "Packaging MP3…");
-      setStatus("busy", "Packaging MP3", "");
-      log("Reading " + outputName + " back from FFmpeg FS…");
-      const data = await ff.readFile(outputName);
-      const mp3Bytes = data instanceof Uint8Array ? data : new Uint8Array(data);
-
-      if (!mp3Bytes || mp3Bytes.length === 0) {
-        throw new Error("FFmpeg produced an empty output file. " +
-                        "The source may have no audio track, or the codec is unsupported.");
-      }
-
-      const blob = new Blob([mp3Bytes], { type: "audio/mpeg" });
-      const outName = baseOf(state.file.name) + ".mp3";
-      const url = URL.createObjectURL(blob);
-
-      state.output = { blob, name: outName, url };
-
-      el.downloadBtn.disabled = false;
-      setProgress(1, "Done");
-      const secs = ((performance.now() - startedAt) / 1000).toFixed(1);
-      setStatus("ok", "Conversion complete", secs + "s · " + humanBytes(blob.size));
-      log("Done in " + secs + "s → " + outName + " (" + humanBytes(blob.size) + ")");
-
-      // Auto-trigger the download so the UX matches user expectation.
-      triggerDownload();
-
-    } catch (err) {
-      console.error(err);
-      const msg = (err && err.message) ? err.message : String(err);
-      setStatus("err", "Conversion failed", "");
-      setProgress(0, "Failed");
-      log("ERROR: " + msg);
-      // Common failure hint
-      if (/sharedarraybuffer|coop|coep|cross-origin/i.test(msg)) {
-        log("Hint: this build uses the single-threaded core and should not " +
-            "need COOP/COEP. If you're seeing this, the CDN may be serving " +
-            "a threaded core — check the CORE_JS / CORE_WASM URLs.");
-      }
-      if (/memory|out of|abort/i.test(msg)) {
-        log("Hint: the file may be too large for browser memory. " +
-            "Try a shorter clip or a smaller file.");
-      }
-    } finally {
-      // --- cleanup FFmpeg FS (best effort) -----------------------------
-      if (ff) {
-        try { await ff.deleteFile(inputName); } catch (_) {}
-        try { await ff.deleteFile(outputName); } catch (_) {}
-      }
-      state.busy = false;
-      setConvertEnabled(!!state.file);
-    }
-  }
-
-  /* ------------------------------------------------------------------ *
-   *  Download
-   * ------------------------------------------------------------------ */
-  function triggerDownload() {
-    if (!state.output) return;
-    const a = document.createElement("a");
-    a.href = state.output.url;
-    a.download = state.output.name;
-    a.rel = "noopener";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    log("Download triggered: " + state.output.name);
-  }
-
-  /* ------------------------------------------------------------------ *
-   *  Wire up events
-   * ------------------------------------------------------------------ */
-
-  // Click anywhere on the drop zone → open file picker.
-  el.drop.addEventListener("click", (e) => {
-    // Don't re-trigger if the user clicked the (hidden) input itself.
-    if (e.target === el.input) return;
-    el.input.click();
-  });
-
-  el.input.addEventListener("change", (e) => {
-    const f = e.target.files && e.target.files[0];
-    if (f) acceptFile(f);
-  });
-
-  // Drag & drop.
-  ["dragenter","dragover"].forEach((ev) =>
-    el.drop.addEventListener(ev, (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      el.drop.classList.add("hover","drag");
-    })
-  );
-  ["dragleave","dragend"].forEach((ev) =>
-    el.drop.addEventListener(ev, (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (ev === "dragleave" && el.drop.contains(e.relatedTarget)) return;
-      el.drop.classList.remove("hover","drag");
-    })
-  );
-  el.drop.addEventListener("drop", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    el.drop.classList.remove("hover","drag");
-    const dt = e.dataTransfer;
-    if (dt && dt.files && dt.files.length) {
-      acceptFile(dt.files[0]);
-    }
-  });
-
-  // Prevent the whole page from navigating when a file is dropped outside.
-  ["dragover","drop"].forEach((ev) =>
-    window.addEventListener(ev, (e) => {
-      if (e.target === el.drop || el.drop.contains(e.target)) return;
-      e.preventDefault();
-    })
-  );
-
-  el.fClear.addEventListener("click", (e) => {
-    e.stopPropagation();
-    clearFile();
-  });
-
-  el.convertBtn.addEventListener("click", convert);
-  el.downloadBtn.addEventListener("click", triggerDownload);
-
-  // Keyboard: Enter on the drop zone opens the picker.
-  el.drop.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      el.input.click();
-    }
-  });
-  el.drop.setAttribute("tabindex", "0");
-  el.drop.setAttribute("role", "button");
-  el.drop.setAttribute("aria-label", "Choose a video file");
-
-  // Beforeunload warning if conversion in progress.
-  window.addEventListener("beforeunload", (e) => {
-    if (state.busy) {
-      e.preventDefault();
-      e.returnValue = "";
-      return "";
-    }
-  });
-
-  /* ------------------------------------------------------------------ *
-   *  Init
-   * ------------------------------------------------------------------ */
-  setConvertEnabled(false);
-  setStatus("", "Idle", "");
-  log("Ready. Select a video file to begin.");
-  log("Note: the first conversion downloads the FFmpeg core (~30 MB) " +
-      "from jsDelivr. It is cached by the browser afterwards.");
-
+(function(){
+const canvas=document.getElementById('matrixCanvas');
+const ctx=canvas.getContext('2d');
+let width,height,columns,drops=[];
+const fontSize=14;
+const chars='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF<>{}[]|/\\';
+function resize(){width=canvas.width=window.innerWidth;height=canvas.height=window.innerHeight;columns=Math.floor(width/fontSize);drops=new Array(columns).fill(1)}
+window.addEventListener('resize',resize);resize();
+function draw(){ctx.fillStyle='rgba(0,10,0,0.05)';ctx.fillRect(0,0,width,height);ctx.fillStyle='#00ff41';ctx.font=fontSize+'px monospace';for(let i=0;i<drops.length;i++){const char=chars[Math.floor(Math.random()*chars.length)];ctx.fillText(char,i*fontSize,drops[i]*fontSize);if(drops[i]*fontSize>height&&Math.random()>0.975){drops[i]=0}drops[i]++}}
+setInterval(draw,50);
 })();
+(function(){
+const canvas=document.getElementById('networkCanvas');
+const ctx=canvas.getContext('2d');
+let width,height;
+const nodes=[];
+const edges=[];
+const numNodes=40;
+function resize(){const rect=canvas.parentElement.getBoundingClientRect();width=canvas.width=rect.width;height=canvas.height=rect.height}
+window.addEventListener('resize',resize);
+for(let i=0;i<numNodes;i++){nodes.push({x:Math.random()*width,y:Math.random()*height,vx:(Math.random()-0.5)*0.5,vy:(Math.random()-0.5)*0.5,radius:Math.random()*3+2,pulse:Math.random()*Math.PI*2,data:Math.random()*100})}
+for(let i=0;i<numNodes;i++){for(let j=i+1;j<numNodes;j++){if(Math.random()>0.9){edges.push({from:i,to:j,strength:Math.random()})}}}
+function draw(){ctx.clearRect(0,0,width,height);nodes.forEach(node=>{node.x+=node.vx;node.y+=node.vy;node.pulse+=0.05;node.data=(node.data+Math.random()*2)%100;if(node.x<0||node.x>width)node.vx*=-1;if(node.y<0||node.y>height)node.vy*=-1});
+edges.forEach(edge=>{const from=nodes[edge.from];const to=nodes[edge.to];const dist=Math.hypot(to.x-from.x,to.y-from.y);if(dist<250){ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.lineTo(to.x,to.y);ctx.strokeStyle=`rgba(0,255,65,${0.3-dist/800})`;ctx.lineWidth=0.5;ctx.stroke();
+if(Math.random()>0.98){const t=Math.random();const px=from.x+(to.x-from.x)*t;const py=from.y+(to.y-from.y)*t;ctx.beginPath();ctx.arc(px,py,2,0,Math.PI*2);ctx.fillStyle='#ffaa00';ctx.fill();}}});
+nodes.forEach(node=>{const pulseSize=node.radius+Math.sin(node.pulse)*1.5;ctx.beginPath();ctx.arc(node.x,node.y,pulseSize,0,Math.PI*2);ctx.fillStyle=node.data>80?'#ff3333':'#00ff41';ctx.shadowColor=node.data>80?'#ff3333':'#00ff41';ctx.shadowBlur=12;ctx.fill();ctx.shadowBlur=0;
+ctx.beginPath();ctx.arc(node.x,node.y,pulseSize+4,0,Math.PI*2);ctx.strokeStyle=`rgba(0,255,65,${0.2+Math.sin(node.pulse)*0.1})`;ctx.lineWidth=0.5;ctx.stroke();});
+requestAnimationFrame(draw)}
+resize();draw();
+})();
+const terminalBody=document.getElementById('terminalBody');
+const terminalInput=document.getElementById('terminalInput');
+const logContainer=document.getElementById('logContainer');
+const commands={
+help:()=>['Available commands:','  help          - Show this help message','  clear         - Clear terminal','  nmap          - Network scan','  ssh           - Connect to remote host','  ifconfig      - Show network interfaces','  netstat       - Show network statistics','  ps            - Show running processes','  whoami        - Show current user','  date          - Show current date/time','  hack          - Initiate hack sequence','  matrix        - Toggle matrix effect','  reboot        - Reboot system','  crawl         - Web crawl target','  exploit       - Run exploit','  payload       - Generate payload','  sniff         - Packet sniffer','  crack         - Password cracker','  decrypt       - Decrypt file','  keylog        - Start keylogger','  persist       - Install persistence','  backdoor      - Open backdoor','  reverse       - Reverse shell','  bind          - Bind shell','  scan          - Quick port scan','  geoip         - Geolocate IP','  dns           - DNS lookup','  whois         - WHOIS lookup','  traceroute    - Trace route','  ping          - Ping host','  arp           - ARP table','  route         - Routing table','  iptables      - Firewall rules','  cron          - Cron jobs','  history       - Command history','  exit          - Close session'],
+clear:()=>{terminalBody.innerHTML='';return[]},
+nmap:()=>['Starting Nmap 7.94 ( https://nmap.org )','Nmap scan report for 192.168.1.1','Host is up (0.0023s latency).','Not shown: 995 closed tcp ports (reset)','PORT     STATE SERVICE     VERSION','22/tcp   open  ssh         OpenSSH 9.2p1','80/tcp   open  http        nginx 1.24.0','443/tcp  open  ssl/https   nginx 1.24.0','3306/tcp open  mysql       MySQL 8.0.36','8080/tcp open  http-proxy  Squid 5.7','Nmap done: 256 IP addresses (1 host up) scanned in 12.34 seconds'],
+ssh:()=>['Connecting to 192.168.1.1...','SSH-2.0-OpenSSH_9.2p1','Entering interactive session...','Last login: Thu Jan 15 03:14:15 2026 from 10.0.0.42','Welcome to Ubuntu 22.04.3 LTS (GNU/Linux 6.6.1-hack x86_64)'],
+ifconfig:()=>['eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500','        inet 192.168.1.42  netmask 255.255.255.0  broadcast 192.168.1.255','        ether 00:0c:29:3a:4b:5c  txqueuelen 1000  (Ethernet)','        RX packets 14253  bytes 12847291 (12.2 MiB)','        TX packets 9872  bytes 8421392 (8.0 MiB)','lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536','        inet 127.0.0.1  netmask 255.0.0.0','        loop  txqueuelen 1000  (Local Loopback)'],
+netstat:()=>['Active Internet connections (only servers)','Proto Recv-Q Send-Q Local Address           Foreign Address         State','tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN','tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN','tcp        0      0 0.0.0.0:443             0.0.0.0:*               LISTEN','tcp        0      0 127.0.0.1:3306          0.0.0.0:*               LISTEN','tcp        0      0 0.0.0.0:8080            0.0.0.0:*               LISTEN','udp        0      0 0.0.0.0:53              0.0.0.0:*'],
+ps:()=>['  PID TTY          TIME CMD','    1 ?        00:00:02 systemd','  423 ?        00:00:01 sshd','  512 ?        00:00:00 nginx','  678 ?        00:00:03 mysql','  891 ?        00:00:00 squid',' 1024 pts/0    00:00:00 zsh',' 1337 pts/0    00:00:00 nmap',' 2048 pts/0    00:00:00 htop'],
+whoami:()=>'root',
+date:()=>new Date().toString(),
+hack:()=>['Initializing hack sequence...','Scanning target ports...','Exploiting vulnerability CVE-2026-1337...','Injecting payload...','Bypassing authentication...','Escalating privileges...','Access granted. Welcome to the mainframe.'],
+matrix:()=>{const canvas=document.getElementById('matrixCanvas');canvas.style.opacity=canvas.style.opacity==='0.15'?'0.3':'0.15';return['Matrix effect toggled.']},
+reboot:()=>{setTimeout(()=>location.reload(),1500);return['Rebooting system...','System will restart in 1.5 seconds.']},
+crawl:()=>['Crawling http://192.168.1.1...','Found 47 links','Found 12 forms','Found 3 file uploads','Crawl complete.'],
+exploit:()=>['Loading exploit module...','Target: 192.168.1.1','Exploit: CVE-2026-1337','Sending payload...','Shell obtained!','uid=0(root) gid=0(root) groups=0(root)'],
+payload:()=>['Generating payload...','msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=10.0.0.42 LPORT=4444 -f elf -o shell.elf','Payload size: 207 bytes','Encoding with x86/shikata_ga_nai...','Payload saved to shell.elf'],
+sniff:()=>['Starting packet capture on eth0...','Capturing 1000 packets...','HTTP GET /admin HTTP/1.1','POST /login username=admin&password=admin123','Cookie: session=abc123def456','Capture complete.'],
+crack:()=>['Loading wordlist...','rockyou.txt loaded (14,344,391 words)','Cracking hashes...','Hash: 5f4dcc3b5aa765d61d8327deb882cf99','Password: password','Cracked in 2.3 seconds'],
+decrypt:()=>['Loading encrypted file...','File: secret.enc','Algorithm: AES-256-CBC','Key derived from password','Decrypting...','File decrypted: secret.txt'],
+keylog:()=>['Starting keylogger...','Hooking keyboard driver...','Logging to /var/log/.keylog','Keystrokes captured: 14253','Keylogger active.'],
+persist:()=>['Installing persistence...','Adding to crontab: @reboot /tmp/.backdoor','Adding to systemd: /etc/systemd/system/backdoor.service','Adding to .bashrc: /tmp/.backdoor &','Persistence installed.'],
+backdoor:()=>['Opening backdoor on port 31337...','Listening for connections...','Backdoor active.'],
+reverse:()=>['Starting reverse shell...','Connecting to 10.0.0.42:4444...','Connection established.','Shell active.'],
+bind:()=>['Starting bind shell on port 4444...','Listening...','Connection from 10.0.0.42:52341','Shell active.'],
+scan:()=>['Scanning 192.168.1.0/24...','Hosts up: 47','Open ports: 22,80,443,3306,8080','Scan complete.'],
+geoip:()=>['Looking up 8.8.8.8...','Country: United States','City: Mountain View','ISP: Google LLC','Lat/Lon: 37.4056,-122.0775'],
+dns:()=>['Querying google.com...','A record: 142.250.185.46','AAAA record: 2607:f8b0:4004:800::200e','MX record: smtp.google.com','DNS lookup complete.'],
+whois:()=>['Querying whois.verisign-grs.com...','Domain: google.com','Registrar: MarkMonitor Inc.','Created: 1997-09-15','Expires: 2028-09-14'],
+traceroute:()=>['Tracing route to 8.8.8.8...','1  192.168.1.1  0.5ms','2  10.0.0.1  1.2ms','3  72.14.204.1  5.3ms','4  8.8.8.8  12.1ms','Trace complete.'],
+ping:()=>['PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.','64 bytes from 8.8.8.8: icmp_seq=1 ttl=117 time=12.1 ms','64 bytes from 8.8.8.8: icmp_seq=2 ttl=117 time=11.8 ms','64 bytes from 8.8.8.8: icmp_seq=3 ttl=117 time=12.3 ms','--- 8.8.8.8 ping statistics ---','3 packets transmitted, 3 received, 0% packet loss'],
+arp:()=>['Address                  HWtype  HWaddress           Flags Mask            Iface','192.168.1.1              ether   00:1a:2b:3c:4d:5e   C                     eth0','192.168.1.42             ether   00:0c:29:3a:4b:5c   C                     eth0','192.168.1.100            ether   aa:bb:cc:dd:ee:ff   C                     eth0'],
+route:()=>['Kernel IP routing table','Destination     Gateway         Genmask         Flags Metric Ref    Use Iface','0.0.0.0         192.168.1.1     0.0.0.0         UG    100    0        0 eth0','192.168.1.0     0.0.0.0         255.255.255.0   U     100    0        0 eth0'],
+iptables:()=>['Chain INPUT (policy DROP)','target     prot opt source               destination','ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED','ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:22','ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:80','ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:443','DROP       all  --  0.0.0.0/0            0.0.0.0/0'],
+cron:()=>['SHELL=/bin/sh','PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin','@reboot root /tmp/.backdoor','*/5 * * * * root /usr/bin/backup.sh','0 3 * * * root /usr/bin/update.sh'],
+history:()=>['  1  nmap -sS -A -T4 192.168.1.0/24','  2  ssh root@192.168.1.1 -p 22','  3  ifconfig','  4  netstat -tulpn','  5  ps aux','  6  whoami','  7  hack','  8  crawl http://192.168.1.1','  9  exploit CVE-2026-1337',' 10  payload'],
+exit:()=>['Closing terminal session...','Connection closed by remote host.']
+};
+function addTerminalLine(text,className='output'){const line=document.createElement('div');line.className='terminal-line '+className;line.innerHTML=text;terminalBody.appendChild(line);terminalBody.scrollTop=terminalBody.scrollHeight}
+function addLogEntry(type,msg){const now=new Date();const timeStr=now.toTimeString().split(' ')[0];const entry=document.createElement('div');entry.className='log-entry';entry.innerHTML=`<span class="log-time">[${timeStr}]</span> <span class="log-type">[${type}]</span> <span class="log-msg">${msg}</span>`;logContainer.appendChild(entry);logContainer.scrollTop=logContainer.scrollHeight;while(logContainer.children.length>60){logContainer.removeChild(logContainer.firstChild)}}
+terminalInput.addEventListener('keydown',(e)=>{if(e.key==='Enter'){const input=terminalInput.value.trim();if(input==='')return;const cmdLine=document.createElement('div');cmdLine.className='terminal-line prompt';cmdLine.textContent=input;terminalBody.appendChild(cmdLine);const cmd=input.split(' ')[0].toLowerCase();const handler=commands[cmd];if(handler){const result=handler();if(Array.isArray(result)){result.forEach(line=>addTerminalLine(line))}else if(result){addTerminalLine(result)}addLogEntry('CMD',`Executed: ${input}`)}else{addTerminalLine(`Command not found: ${cmd}. Type 'help' for available commands.`,'error');addLogEntry('ERR',`Unknown command: ${input}`)}addTerminalLine('&nbsp;');terminalInput.value=''}});
+terminalBody.addEventListener('click',()=>terminalInput.focus());
+document.addEventListener('keydown',(e)=>{if(e.ctrlKey&&e.key==='l'){e.preventDefault();terminalBody.innerHTML='';addLogEntry('SYS','Terminal cleared')}if(e.ctrlKey&&e.key==='h'){e.preventDefault();commands.help().forEach(line=>addTerminalLine(line));addLogEntry('SYS','Help displayed')}if(e.ctrlKey&&e.key==='m'){e.preventDefault();const canvas=document.getElementById('matrixCanvas');canvas.style.opacity=canvas.style.opacity==='0.15'?'0.3':'0.15';addLogEntry('SYS','Matrix effect toggled')}if(e.ctrlKey&&e.key==='r'){e.preventDefault();addLogEntry('SYS','Rebooting system...');setTimeout(()=>location.reload(),1500)}});
+function randomIP(){return`${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`}
+let uptimeSeconds=0;
+setInterval(()=>{uptimeSeconds++;const hours=String(Math.floor(uptimeSeconds/3600)).padStart(2,'0');const minutes=String(Math.floor((uptimeSeconds%3600)/60)).padStart(2,'0');const seconds=String(uptimeSeconds%60).padStart(2,'0');document.getElementById('headerUptime').textContent=`${hours}:${minutes}:${seconds}`;const load=(Math.random()*3).toFixed(2);document.getElementById('headerLoad').textContent=load;if(Math.random()>0.7){document.getElementById('headerIP').textContent=randomIP()}},1000);
+setInterval(()=>{const cpu=Math.floor(Math.random()*60)+20;const mem=Math.floor(Math.random()*40)+40;const disk=Math.floor(Math.random()*30)+30;const net=Math.floor(Math.random()*80)+10;const temp=Math.floor(Math.random()*40)+40;document.getElementById('cpuValue').textContent=cpu+'%';document.getElementById('cpuBar').style.width=cpu+'%';document.getElementById('memValue').textContent=mem+'%';document.getElementById('memBar').style.width=mem+'%';document.getElementById('diskValue').textContent=disk+'%';document.getElementById('diskBar').style.width=disk+'%';document.getElementById('netValue').textContent=net+' KB/s';document.getElementById('netBar').style.width=net+'%';document.getElementById('tempValue').textContent=temp+'°C';document.getElementById('tempBar').style.width=temp+'%'},2000);
+const processes=['systemd','sshd','nginx','mysql','squid','zsh','nmap','htop','python3','node','docker','redis','postgres','apache2','php-fpm','fail2ban','ufw','cron','rsyslog','snort','suricata','metasploit','burpsuite','wireshark','tcpdump','john','hashcat','hydra','sqlmap','nikto'];
+setInterval(()=>{const processList=document.getElementById('processList');processList.innerHTML='';const shuffled=processes.sort(()=>Math.random()-0.5).slice(0,7);shuffled.forEach(name=>{const cpu=(Math.random()*15).toFixed(1);const mem=(Math.random()*10).toFixed(1);const item=document.createElement('div');item.className='process-item';item.innerHTML=`<span class="process-name">${name}</span><span class="process-cpu">${cpu}%</span><span class="process-mem">${mem}%</span>`;processList.appendChild(item)})},3000);
+const logMessages=[['INFO','SSH connection established from 10.0.0.42'],['WARN','Failed login attempt from 203.0.113.42'],['INFO','Firewall rule updated: ALLOW 192.168.1.0/24'],['ERROR','Port scan detected from 198.51.100.7'],['INFO','Backup completed successfully'],['WARN','High memory usage detected: 87%'],['INFO','Package update available: openssl 3.0.12'],['ERROR','MySQL connection refused'],['INFO','VPN tunnel established to 10.0.0.1'],['WARN','SSL certificate expires in 7 days'],['INFO','User root logged in from 192.168.1.42'],['ERROR','Intrusion attempt blocked: CVE-2026-1337'],['INFO','DNS query: google.com -> 142.250.185.46'],['WARN','Unusual outbound traffic on port 4444'],['INFO','System scan completed: no threats found'],['ERROR','Failed to mount /dev/sdb1'],['INFO','Cron job executed: /etc/cron.daily/backup'],['WARN','CPU temperature: 78°C'],['INFO','New device connected: 00:1a:2b:3c:4d:5e'],['ERROR','Connection timeout to 8.8.8.8'],['INFO','Payload delivered to 192.168.1.1'],['WARN','Suspicious process detected: /tmp/.backdoor'],['ERROR','Authentication failure for user admin'],['INFO','Log rotation completed'],['WARN','Disk usage above 80%'],['INFO','Kernel module loaded: rootkit.ko'],['ERROR','Failed to establish reverse shell'],['INFO','Persistence installed: /etc/systemd/system/backdoor.service'],['WARN','Anomaly detected in network traffic'],['INFO','Decryption key recovered']];
+setInterval(()=>{const msg=logMessages[Math.floor(Math.random()*logMessages.length)];addLogEntry(msg[0],msg[1])},3500);
+let packetCount=0;
+setInterval(()=>{packetCount+=Math.floor(Math.random()*100)+10;document.getElementById('footerPackets').textContent=packetCount.toLocaleString();document.getElementById('footerPing').textContent=Math.floor(Math.random()*50)+5+'ms';document.getElementById('footerThroughput').textContent=(Math.random()*100).toFixed(1)+' Mbps'},1500);
+setInterval(()=>{const title=document.querySelector('.header h1');const originalText='H4CK3R_N3TW0RK';let glitched='';for(let i=0;i<originalText.length;i++){if(Math.random()>0.9){glitched+=String.fromCharCode(33+Math.floor(Math.random()*94))}else{glitched+=originalText[i]}}title.textContent=glitched;setTimeout(()=>{title.textContent=originalText},100)},3000);
+setInterval(()=>{const hexDump=document.getElementById('hexDump');if(hexDump){let newHex='';for(let i=0;i<6;i++){for(let j=0;j<16;j++){newHex+=(Math.floor(Math.random()*256).toString(16).padStart(2,'0'))+' '}newHex+='<br>'}hexDump.innerHTML=newHex}},2000);
+setInterval(()=>{const threat=document.getElementById('headerThreat');const levels=['LOW','MEDIUM','HIGH','CRITICAL'];const colors=['#00ff41','#ffaa00','#ff6600','#ff3333'];const idx=Math.floor(Math.random()*levels.length);threat.textContent=levels[idx];threat.style.color=colors[idx]},5000);
+(function(){const waveform=document.getElementById('waveform');for(let i=0;i<40;i++){const bar=document.createElement('div');bar.className='wave-bar';bar.style.animationDelay=(i*0.05)+'s';bar.style.animationDuration=(0.5+Math.random()*0.5)+'s';waveform.appendChild(bar)}})();
+(function(){const codeStream=document.getElementById('codeStream');const codes=['0x4a3b2c1d','0x5e6f7a8b','0x9c0d1e2f','0x3a4b5c6d','0x7e8f9a0b','0x1c2d3e4f','0x5a6b7c8d','0x9e0f1a2b','0x3c4d5e6f','0x7a8b9c0d','0x1e2f3a4b','0x5c6d7e8f','0x9a0b1c2d','0x3e4f5a6b','0x7c8d9e0f','0x1a2b3c4d'];let content='';for(let i=0;i<100;i++){content+=codes[Math.floor(Math.random()*codes.length)]+'  ';if(i%4===3)content+='<br>'}codeStream.innerHTML=content})();
+setInterval(()=>{const codeStream=document.getElementById('codeStream');const codes=['0x4a3b2c1d','0x5e6f7a8b','0x9c0d1e2f','0x3a4b5c6d','0x7e8f9a0b','0x1c2d3e4f','0x5a6b7c8d','0x9e0f1a2b','0x3c4d5e6f','0x7a8b9c0d','0x1e2f3a4b','0x5c6d7e8f','0x9a0b1c2d','0x3e4f5a6b','0x7c8d9e0f','0x1a2b3c4d'];let content='';for(let i=0;i<100;i++){content+=codes[Math.floor(Math.random()*codes.length)]+'  ';if(i%4===3)content+='<br>'}codeStream.innerHTML=content},5000);
+addLogEntry('SYS','System initialized');
+addLogEntry('SYS','Network interface eth0 up');
+addLogEntry('SYS','Firewall rules loaded');
+addLogEntry('INFO','SSH server started on port 22');
+addLogEntry('WARN','Default credentials detected');
+addLogEntry('INFO','Terminal session started');
+addLogEntry('INFO','Kernel module rootkit.ko loaded');
+addLogEntry('WARN','Anomaly detected in network traffic');
+addLogEntry('INFO','Persistence installed');
+addLogEntry('ERROR','Failed to establish reverse shell');
+terminalBody.scrollTop=terminalBody.scrollHeight;
+setTimeout(()=>terminalInput.focus(),100);
+console.log('%cH4CK3R_N3TW0RK v3.7.1','color:#00ff41;font-size:20px;font-weight:bold');
+console.log('%cAccess granted. Welcome, root.','color:#00ff41;font-size:14px');
+console.log('%cType "help" for available commands.','color:#00aa00;font-size:12px');
 </script>
 </body>
 </html>
