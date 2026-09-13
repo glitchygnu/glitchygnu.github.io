@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>H4CK3R_N3TW0RK // ROOT_ACCESS</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+body{background:#0a0e0a;color:#00ff41;font-family:'Share Tech Mono','Courier New',monospace;overflow:hidden;height:100vh;width:100vw;text-shadow:0 0 5px rgba(0,255,65,.5);background-image:linear-gradient(rgba(0,255,65,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,65,.03) 1px,transparent 1px);background-size:30px 30px}
+body::before{content:"";position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,rgba(0,0,0,.15) 0px,rgba(0,255,65,.03) 2px,transparent 3px,transparent 5px);pointer-events:none;z-index:1000;animation:scanline 10s linear infinite}
+@keyframes scanline{0%{transform:translateY(0)}100%{transform:translateY(10px)}}
+@keyframes flicker{0%{opacity:.97}5%{opacity:.92}10%{opacity:.98}15%{opacity:.94}20%{opacity:1}50%{opacity:.96}80%{opacity:.98}100%{opacity:.97}}
+.crt{animation:flicker .15s infinite}
+.hacker-container{display:grid;grid-template-columns:280px 1fr 340px;grid-template-rows:60px 1fr 40px;height:100vh;width:100vw;gap:2px;padding:2px;background:#0a0e0a;position:relative;z-index:10}
+.panel{background:rgba(10,20,10,.85);border:1px solid #00ff41;box-shadow:0 0 15px rgba(0,255,65,.3),inset 0 0 15px rgba(0,255,65,.1);backdrop-filter:blur(3px);padding:12px;position:relative;overflow:hidden}
+.panel::after{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:#00ff41;box-shadow:0 0 10px #00ff41}
+.header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 25px;border-bottom:1px solid #00ff41;background:rgba(0,20,0,.9);position:relative;z-index:20}
+.header h1{font-size:1.5rem;letter-spacing:5px;color:#00ff41;text-transform:uppercase;animation:glitch 3s infinite}
+@keyframes glitch{0%,100%{text-shadow:2px 0 #ff00ff,-2px 0 #00ffff}25%{text-shadow:-2px 0 #ff00ff,2px 0 #00ffff}50%{text-shadow:2px 2px #ff00ff,-2px -2px #00ffff}75%{text-shadow:-1px 1px #ff00ff,1px -1px #00ffff}}
+.header-stats{display:flex;gap:25px;font-size:.8rem}
+.stat-item{color:#00ff41;opacity:.8}
+.stat-value{color:#ffaa00;font-weight:bold}
+.sidebar-left{grid-row:2/3;display:flex;flex-direction:column;gap:2px}
+.sidebar-panel{flex:1;display:flex;flex-direction:column;gap:8px}
+.panel-title{font-size:.9rem;color:#00ff41;border-bottom:1px dashed #00ff41;padding-bottom:5px;margin-bottom:8px;text-transform:uppercase;letter-spacing:2px;display:flex;align-items:center;gap:8px}
+.panel-title::before{content:"▣";font-size:1rem}
+.sys-info{font-size:.75rem;line-height:1.6;color:#00cc33}
+.sys-info .label{color:#008800}
+.sys-info .value{color:#00ff41}
+.progress-bar{width:100%;height:8px;background:#001100;border:1px solid #00ff41;margin:4px 0;position:relative;overflow:hidden}
+.progress-fill{height:100%;background:#00ff41;box-shadow:0 0 10px #00ff41;animation:pulse 2s infinite;transition:width .5s}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.main-content{grid-row:2/3;display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.terminal{flex:3;display:flex;flex-direction:column;background:#0a0e0a;border:1px solid #00ff41;box-shadow:inset 0 0 20px rgba(0,255,65,.1);overflow:hidden;position:relative}
+.terminal-header{background:#001a00;padding:8px 12px;border-bottom:1px solid #00ff41;display:flex;justify-content:space-between;font-size:.8rem;color:#00ff41}
+.terminal-body{flex:1;padding:12px;overflow-y:auto;font-size:.85rem;line-height:1.5;color:#00ff41;scrollbar-width:thin;scrollbar-color:#00ff41 #001100}
+.terminal-body::-webkit-scrollbar{width:6px}
+.terminal-body::-webkit-scrollbar-track{background:#001100}
+.terminal-body::-webkit-scrollbar-thumb{background:#00ff41;border-radius:3px}
+.terminal-line{margin-bottom:2px;word-break:break-all}
+.prompt{color:#00ff41}
+.prompt::before{content:"root@h4ck3r:~# ";color:#00aa00}
+.output{color:#00cc33}
+.error{color:#ff3333}
+.success{color:#00ff41}
+.warning{color:#ffaa00}
+.cursor{display:inline-block;width:10px;height:18px;background:#00ff41;animation:blink 1s step-end infinite;vertical-align:middle}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.input-line{display:flex;align-items:center;margin-top:5px}
+.input-line input{background:transparent;border:none;color:#00ff41;font-family:'Share Tech Mono',monospace;font-size:.85rem;outline:none;flex:1;caret-color:#00ff41}
+.network-map{flex:2;border:1px solid #00ff41;position:relative;overflow:hidden;background:#001100}
+.network-map canvas{display:block;width:100%;height:100%;opacity:.8}
+.map-overlay{position:absolute;top:10px;left:10px;font-size:.7rem;color:#00ff41;background:rgba(0,20,0,.8);padding:5px 10px;border:1px solid #00ff41;pointer-events:none}
+.sidebar-right{grid-row:2/3;display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.sidebar-panel-right{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.log-container{flex:1;overflow-y:auto;font-size:.7rem;line-height:1.4;color:#00cc33;scrollbar-width:thin;scrollbar-color:#00ff41 #001100}
+.log-container::-webkit-scrollbar{width:4px}
+.log-container::-webkit-scrollbar-thumb{background:#00ff41}
+.log-entry{padding:2px 0;border-bottom:1px solid rgba(0,255,65,.1)}
+.log-time{color:#008800}
+.log-type{color:#ffaa00}
+.log-msg{color:#00ff41}
+.process-list{font-size:.7rem;display:flex;flex-direction:column;gap:4px}
+.process-item{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px dotted rgba(0,255,65,.2)}
+.process-name{color:#00ff41}
+.process-cpu{color:#ffaa00}
+.process-mem{color:#00cc33}
+.footer{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 25px;border-top:1px solid #00ff41;background:rgba(0,20,0,.9);font-size:.75rem;color:#00ff41}
+.footer-left{display:flex;gap:20px}
+.footer-right{display:flex;gap:20px}
+.blink{animation:blink 1s step-end infinite}
+#matrixCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:.15}
+.shortcut{position:fixed;bottom:50px;right:20px;font-size:.7rem;color:#00ff41;background:rgba(0,20,0,.9);padding:8px 12px;border:1px solid #00ff41;z-index:100;opacity:.6;transition:opacity .3s}
+.shortcut:hover{opacity:1}
+.shortcut kbd{background:#001100;border:1px solid #00ff41;padding:2px 5px;border-radius:3px;color:#00ff41}
+.glitch-text{position:relative}
+.glitch-text::before,.glitch-text::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%}
+.glitch-text::before{animation:glitch-1 2s infinite linear alternate-reverse;color:#ff00ff;z-index:-1}
+.glitch-text::after{animation:glitch-2 3s infinite linear alternate-reverse;color:#00ffff;z-index:-2}
+@keyframes glitch-1{0%{clip-path:inset(20% 0 30% 0);transform:translate(-2px,-1px)}20%{clip-path:inset(10% 0 60% 0);transform:translate(2px,1px)}40%{clip-path:inset(40% 0 20% 0);transform:translate(-1px,2px)}60%{clip-path:inset(70% 0 5% 0);transform:translate(1px,-2px)}80%{clip-path:inset(5% 0 80% 0);transform:translate(-2px,1px)}100%{clip-path:inset(30% 0 40% 0);transform:translate(2px,-1px)}}
+@keyframes glitch-2{0%{clip-path:inset(60% 0 10% 0);transform:translate(2px,1px)}20%{clip-path:inset(30% 0 50% 0);transform:translate(-2px,-1px)}40%{clip-path:inset(10% 0 70% 0);transform:translate(1px,-2px)}60%{clip-path:inset(80% 0 5% 0);transform:translate(-1px,2px)}80%{clip-path:inset(40% 0 30% 0);transform:translate(2px,-1px)}100%{clip-path:inset(20% 0 60% 0);transform:translate(-2px,1px)}}
+@media(max-width:1200px){.hacker-container{grid-template-columns:220px 1fr 260px}}
+@media(max-width:900px){.hacker-container{grid-template-columns:1fr;grid-template-rows:60px 1fr 1fr 1fr 40px}.sidebar-left,.main-content,.sidebar-right{grid-column:1/-1}}
+.glow{animation:glow 2s ease-in-out infinite alternate}
+@keyframes glow{from{box-shadow:0 0 5px #00ff41,0 0 10px #00ff41}to{box-shadow:0 0 15px #00ff41,0 0 25px #00ff41}}
+.typewriter{overflow:hidden;white-space:nowrap;border-right:2px solid #00ff41;animation:typing 3.5s steps(40,end),blink-caret .75s step-end infinite}
+@keyframes typing{from{width:0}to{width:100%}}
+@keyframes blink-caret{from,to{border-color:transparent}50%{border-color:#00ff41}}
+.hex-dump{font-size:.65rem;color:#008800;line-height:1.3;opacity:.5;pointer-events:none}
+.animated-border{position:relative;overflow:hidden}
+.animated-border::before{content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,255,65,.2),transparent);animation:borderScan 3s infinite}
+@keyframes borderScan{0%{left:-100%}100%{left:100%}}
+.hud-corner{position:absolute;width:20px;height:20px;border:2px solid #00ff41;pointer-events:none}
+.hud-corner.tl{top:4px;left:4px;border-right:none;border-bottom:none}
+.hud-corner.tr{top:4px;right:4px;border-left:none;border-bottom:none}
+.hud-corner.bl{bottom:4px;left:4px;border-right:none;border-top:none}
+.hud-corner.br{bottom:4px;right:4px;border-left:none;border-top:none}
+.ticker{position:absolute;bottom:0;left:0;width:100%;background:rgba(0,20,0,.9);border-top:1px solid #00ff41;font-size:.65rem;color:#00ff41;padding:3px 0;overflow:hidden;white-space:nowrap}
+.ticker-content{display:inline-block;padding-left:100%;animation:ticker 30s linear infinite}
+@keyframes ticker{0%{transform:translate(0,0)}100%{transform:translate(-100%,0)}}
+.radar{width:100%;height:120px;background:radial-gradient(circle,rgba(0,255,65,.1) 0%,transparent 70%);position:relative;overflow:hidden;border:1px solid rgba(0,255,65,.3)}
+.radar::before{content:"";position:absolute;top:50%;left:50%;width:2px;height:50%;background:linear-gradient(to top,#00ff41,transparent);transform-origin:bottom center;animation:radarSweep 3s linear infinite}
+@keyframes radarSweep{0%{transform:translate(-50%,-100%) rotate(0deg)}100%{transform:translate(-50%,-100%) rotate(360deg)}}
+.radar-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border:1px solid rgba(0,255,65,.3);border-radius:50%}
+.radar-ring:nth-child(1){width:30px;height:30px}
+.radar-ring:nth-child(2){width:60px;height:60px}
+.radar-ring:nth-child(3){width:90px;height:90px}
+.radar-dot{position:absolute;width:4px;height:4px;background:#ffaa00;border-radius:50%;box-shadow:0 0 8px #ffaa00;animation:radarBlip 2s infinite}
+@keyframes radarBlip{0%,100%{opacity:1}50%{opacity:.2}}
+.waveform{display:flex;align-items:center;gap:2px;height:40px;padding:5px 0}
+.wave-bar{flex:1;background:#00ff41;animation:wave 1s ease-in-out infinite}
+@keyframes wave{0%,100%{height:20%}50%{height:100%}}
+.matrix-grid{display:grid;grid-template-columns:repeat(16,1fr);gap:1px;font-size:.55rem;color:#008800;line-height:1}
+.matrix-cell{text-align:center}
+.code-stream{font-size:.6rem;color:#00aa00;line-height:1.3;height:80px;overflow:hidden;position:relative}
+.code-stream-inner{animation:codeScroll 8s linear infinite}
+@keyframes codeScroll{0%{transform:translateY(0)}100%{transform:translateY(-50%)}}
+.graph-bar{display:flex;align-items:flex-end;gap:2px;height:50px;padding:5px 0}
+.graph-bar-item{flex:1;background:linear-gradient(to top,#00ff41,#00aa00);min-height:4px;animation:graphPulse 1.5s ease-in-out infinite}
+@keyframes graphPulse{0%,100%{opacity:.7}50%{opacity:1}}
+</style>
+</head>
+<body>
+<canvas id="matrixCanvas"></canvas>
+<div class="hacker-container crt">
+<header class="header">
+<h1 class="glitch-text" data-text="H4CK3R_N3TW0RK">H4CK3R_N3TW0RK</h1>
+<div class="header-stats">
+<span class="stat-item">IP: <span class="stat-value" id="headerIP">192.168.1.1</span></span>
+<span class="stat-item">UPTIME: <span class="stat-value" id="headerUptime">00:00:00</span></span>
+<span class="stat-item">LOAD: <span class="stat-value" id="headerLoad">0.00</span></span>
+<span class="stat-item">THREAT: <span class="stat-value" id="headerThreat" style="color:#ff3333">HIGH</span></span>
+</div>
+</header>
+<aside class="sidebar-left">
+<div class="panel sidebar-panel">
+<div class="panel-title">SYSTEM_INFO</div>
+<div class="sys-info">
+<div><span class="label">HOSTNAME:</span> <span class="value">kali-h4ck3r</span></div>
+<div><span class="label">KERNEL:</span> <span class="value">6.6.1-hack</span></div>
+<div><span class="label">ARCH:</span> <span class="value">x86_64</span></div>
+<div><span class="label">SHELL:</span> <span class="value">/bin/zsh</span></div>
+<div><span class="label">TERMINAL:</span> <span class="value">/dev/pts/0</span></div>
+<div><span class="label">USER:</span> <span class="value">root</span></div>
+<div><span class="label">GROUPS:</span> <span class="value">wheel,sudo,netadmin</span></div>
+<div><span class="label">SELINUX:</span> <span class="value" style="color:#ff3333">DISABLED</span></div>
+</div>
+</div>
+<div class="panel sidebar-panel">
+<div class="panel-title">RESOURCES</div>
+<div class="sys-info">
+<div><span class="label">CPU:</span> <span class="value" id="cpuValue">0%</span></div>
+<div class="progress-bar"><div class="progress-fill" id="cpuBar" style="width:0%"></div></div>
+<div><span class="label">MEM:</span> <span class="value" id="memValue">0%</span></div>
+<div class="progress-bar"><div class="progress-fill" id="memBar" style="width:0%"></div></div>
+<div><span class="label">DISK:</span> <span class="value" id="diskValue">0%</span></div>
+<div class="progress-bar"><div class="progress-fill" id="diskBar" style="width:0%"></div></div>
+<div><span class="label">NET:</span> <span class="value" id="netValue">0 KB/s</span></div>
+<div class="progress-bar"><div class="progress-fill" id="netBar" style="width:0%"></div></div>
+<div><span class="label">TEMP:</span> <span class="value" id="tempValue">0°C</span></div>
+<div class="progress-bar"><div class="progress-fill" id="tempBar" style="width:0%"></div></div>
+</div>
+</div>
+<div class="panel sidebar-panel">
+<div class="panel-title">RADAR</div>
+<div class="radar">
+<div class="radar-ring"></div>
+<div class="radar-ring"></div>
+<div class="radar-ring"></div>
+<div class="radar-dot" style="top:30%;left:40%"></div>
+<div class="radar-dot" style="top:60%;left:70%;animation-delay:.5s"></div>
+<div class="radar-dot" style="top:45%;left:20%;animation-delay:1s"></div>
+<div class="radar-dot" style="top:70%;left:55%;animation-delay:1.5s"></div>
+</div>
+<div style="font-size:.65rem;color:#00cc33;margin-top:6px;display:flex;justify-content:space-between">
+<span>SCAN: <span style="color:#00ff41">ACTIVE</span></span>
+<span>HOSTS: <span style="color:#00ff41">47</span></span>
+</div>
+</div>
+<div class="panel sidebar-panel">
+<div class="panel-title">PROCESSES</div>
+<div class="process-list" id="processList"></div>
+</div>
+</aside>
+<main class="main-content">
+<div class="terminal">
+<div class="terminal-header">
+<span>┌─[ TERMINAL ]───────────────────────────────┐</span>
+<span>root@kali-h4ck3r: ~</span>
+</div>
+<div class="terminal-body" id="terminalBody">
+<div class="terminal-line output">Initializing H4CK3R_N3TW0RK terminal v3.7.1...</div>
+<div class="terminal-line output">Loading kernel modules... <span class="success">[OK]</span></div>
+<div class="terminal-line output">Starting network services... <span class="success">[OK]</span></div>
+<div class="terminal-line output">Mounting virtual filesystems... <span class="success">[OK]</span></div>
+<div class="terminal-line output">Establishing encrypted tunnel to 10.0.0.1... <span class="success">[OK]</span></div>
+<div class="terminal-line output">Bypassing firewall... <span class="warning">[WARN]</span></div>
+<div class="terminal-line output">Spoofing MAC address... <span class="success">[OK]</span></div>
+<div class="terminal-line output">Injecting payload... <span class="success">[OK]</span></div>
+<div class="terminal-line output">Access granted. Welcome, root.</div>
+<div class="terminal-line" style="margin-top:8px">&nbsp;</div>
+<div class="terminal-line prompt">nmap -sS -A -T4 192.168.1.0/24</div>
+<div class="terminal-line output">Starting Nmap 7.94 ( https://nmap.org )</div>
+<div class="terminal-line output">Nmap scan report for 192.168.1.1</div>
+<div class="terminal-line output">Host is up (0.0023s latency).</div>
+<div class="terminal-line output">Not shown: 995 closed tcp ports (reset)</div>
+<div class="terminal-line output">PORT     STATE SERVICE     VERSION</div>
+<div class="terminal-line output">22/tcp   open  ssh         OpenSSH 9.2p1</div>
+<div class="terminal-line output">80/tcp   open  http        nginx 1.24.0</div>
+<div class="terminal-line output">443/tcp  open  ssl/https   nginx 1.24.0</div>
+<div class="terminal-line output">3306/tcp open  mysql       MySQL 8.0.36</div>
+<div class="terminal-line output">8080/tcp open  http-proxy  Squid 5.7</div>
+<div class="terminal-line output">Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .</div>
+<div class="terminal-line output">Nmap done: 256 IP addresses (1 host up) scanned in 12.34 seconds</div>
+<div class="terminal-line" style="margin-top:8px">&nbsp;</div>
+<div class="terminal-line prompt">ssh root@192.168.1.1 -p 22</div>
+<div class="terminal-line output">root@192.168.1.1's password: <span class="success">********</span></div>
+<div class="terminal-line output">Welcome to Ubuntu 22.04.3 LTS (GNU/Linux 6.6.1-hack x86_64)</div>
+<div class="terminal-line output">Last login: Thu Jan 15 03:14:15 2026 from 10.0.0.42</div>
+<div class="terminal-line" style="margin-top:8px">&nbsp;</div>
+<div class="input-line">
+<span class="prompt"></span>
+<input type="text" id="terminalInput" autofocus placeholder="type 'help' for commands...">
+</div>
+</div>
+</div>
+<div class="network-map">
+<canvas id="networkCanvas"></canvas>
+<div class="map-overlay">NETWORK_MAP // LIVE_SCAN // 256 HOSTS</div>
+<div class="hud-corner tl"></div>
+<div class="hud-corner tr"></div>
+<div class="hud-corner bl"></div>
+<div class="hud-corner br"></div>
+</div>
+</main>
+<aside class="sidebar-right">
+<div class="panel sidebar-panel-right">
+<div class="panel-title">SYSTEM_LOGS</div>
+<div class="log-container" id="logContainer"></div>
+</div>
+<div class="panel sidebar-panel-right">
+<div class="panel-title">PAYLOAD_BUILDER</div>
+<div class="sys-info" style="font-size:.7rem">
+<div><span class="label">TARGET:</span> <span class="value">192.168.1.1</span></div>
+<div><span class="label">PAYLOAD:</span> <span class="value">reverse_tcp</span></div>
+<div><span class="label">LHOST:</span> <span class="value">10.0.0.42</span></div>
+<div><span class="label">LPORT:</span> <span class="value">4444</span></div>
+<div><span class="label">ENCODER:</span> <span class="value">x86/shikata_ga_nai</span></div>
+<div><span class="label">ITERATIONS:</span> <span class="value">5</span></div>
+<div style="margin-top:8px">
+<div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div>
+<div style="text-align:right;font-size:.6rem;color:#00cc33">Encoding... 78%</div>
+</div>
+</div>
+</div>
+<div class="panel sidebar-panel-right">
+<div class="panel-title">WAVEFORM</div>
+<div class="waveform" id="waveform"></div>
+<div style="font-size:.6rem;color:#00cc33;text-align:center">SIGNAL: <span style="color:#00ff41">ENCRYPTED</span></div>
+</div>
+<div class="panel sidebar-panel-right">
+<div class="panel-title">CRYPTO_KEYS</div>
+<div class="hex-dump" id="hexDump"></div>
+</div>
+<div class="panel sidebar-panel-right">
+<div class="panel-title">CODE_STREAM</div>
+<div class="code-stream">
+<div class="code-stream-inner" id="codeStream"></div>
+</div>
+</div>
+</aside>
+<footer class="footer">
+<div class="footer-left">
+<span>CONNECTION: <span style="color:#00ff41">ENCRYPTED</span></span>
+<span>PING: <span style="color:#00ff41" id="footerPing">12ms</span></span>
+<span>PACKETS: <span style="color:#00ff41" id="footerPackets">0</span></span>
+<span>THROUGHPUT: <span style="color:#00ff41" id="footerThroughput">0 Mbps</span></span>
+</div>
+<div class="footer-right">
+<span>H4CK3R_N3TW0RK v3.7.1</span>
+<span class="blink">█</span>
+<span>ROOT_ACCESS</span>
+</div>
+</footer>
+<div class="ticker">
+<div class="ticker-content">[ALERT] Intrusion attempt blocked from 203.0.113.42 &nbsp;&nbsp; [INFO] SSH connection established from 10.0.0.42 &nbsp;&nbsp; [WARN] High CPU usage detected: 94% &nbsp;&nbsp; [INFO] Firewall rule updated: ALLOW 192.168.1.0/24 &nbsp;&nbsp; [ERROR] MySQL connection refused &nbsp;&nbsp; [INFO] VPN tunnel established to 10.0.0.1 &nbsp;&nbsp; [WARN] SSL certificate expires in 7 days &nbsp;&nbsp; [INFO] User root logged in from 192.168.1.42 &nbsp;&nbsp; [ERROR] Intrusion attempt blocked: CVE-2026-1337 &nbsp;&nbsp; [INFO] DNS query: google.com -> 142.250.185.46 &nbsp;&nbsp; [WARN] Unusual outbound traffic on port 4444 &nbsp;&nbsp; [INFO] System scan completed: no threats found</div>
+</div>
+</div>
+<div class="shortcut">
+<kbd>Ctrl</kbd>+<kbd>L</kbd> Clear | <kbd>Ctrl</kbd>+<kbd>H</kbd> Help | <kbd>Ctrl</kbd>+<kbd>M</kbd> Matrix | <kbd>Ctrl</kbd>+<kbd>R</kbd> Reboot
+</div>
+<script>
+(function(){
+const canvas=document.getElementById('matrixCanvas');
+const ctx=canvas.getContext('2d');
+let width,height,columns,drops=[];
+const fontSize=14;
+const chars='アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF<>{}[]|/\\';
+function resize(){width=canvas.width=window.innerWidth;height=canvas.height=window.innerHeight;columns=Math.floor(width/fontSize);drops=new Array(columns).fill(1)}
+window.addEventListener('resize',resize);resize();
+function draw(){ctx.fillStyle='rgba(0,10,0,0.05)';ctx.fillRect(0,0,width,height);ctx.fillStyle='#00ff41';ctx.font=fontSize+'px monospace';for(let i=0;i<drops.length;i++){const char=chars[Math.floor(Math.random()*chars.length)];ctx.fillText(char,i*fontSize,drops[i]*fontSize);if(drops[i]*fontSize>height&&Math.random()>0.975){drops[i]=0}drops[i]++}}
+setInterval(draw,50);
+})();
+(function(){
+const canvas=document.getElementById('networkCanvas');
+const ctx=canvas.getContext('2d');
+let width,height;
+const nodes=[];
+const edges=[];
+const numNodes=40;
+function resize(){const rect=canvas.parentElement.getBoundingClientRect();width=canvas.width=rect.width;height=canvas.height=rect.height}
+window.addEventListener('resize',resize);
+for(let i=0;i<numNodes;i++){nodes.push({x:Math.random()*width,y:Math.random()*height,vx:(Math.random()-0.5)*0.5,vy:(Math.random()-0.5)*0.5,radius:Math.random()*3+2,pulse:Math.random()*Math.PI*2,data:Math.random()*100})}
+for(let i=0;i<numNodes;i++){for(let j=i+1;j<numNodes;j++){if(Math.random()>0.9){edges.push({from:i,to:j,strength:Math.random()})}}}
+function draw(){ctx.clearRect(0,0,width,height);nodes.forEach(node=>{node.x+=node.vx;node.y+=node.vy;node.pulse+=0.05;node.data=(node.data+Math.random()*2)%100;if(node.x<0||node.x>width)node.vx*=-1;if(node.y<0||node.y>height)node.vy*=-1});
+edges.forEach(edge=>{const from=nodes[edge.from];const to=nodes[edge.to];const dist=Math.hypot(to.x-from.x,to.y-from.y);if(dist<250){ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.lineTo(to.x,to.y);ctx.strokeStyle=`rgba(0,255,65,${0.3-dist/800})`;ctx.lineWidth=0.5;ctx.stroke();
+if(Math.random()>0.98){const t=Math.random();const px=from.x+(to.x-from.x)*t;const py=from.y+(to.y-from.y)*t;ctx.beginPath();ctx.arc(px,py,2,0,Math.PI*2);ctx.fillStyle='#ffaa00';ctx.fill();}}});
+nodes.forEach(node=>{const pulseSize=node.radius+Math.sin(node.pulse)*1.5;ctx.beginPath();ctx.arc(node.x,node.y,pulseSize,0,Math.PI*2);ctx.fillStyle=node.data>80?'#ff3333':'#00ff41';ctx.shadowColor=node.data>80?'#ff3333':'#00ff41';ctx.shadowBlur=12;ctx.fill();ctx.shadowBlur=0;
+ctx.beginPath();ctx.arc(node.x,node.y,pulseSize+4,0,Math.PI*2);ctx.strokeStyle=`rgba(0,255,65,${0.2+Math.sin(node.pulse)*0.1})`;ctx.lineWidth=0.5;ctx.stroke();});
+requestAnimationFrame(draw)}
+resize();draw();
+})();
+const terminalBody=document.getElementById('terminalBody');
+const terminalInput=document.getElementById('terminalInput');
+const logContainer=document.getElementById('logContainer');
+const commands={
+help:()=>['Available commands:','  help          - Show this help message','  clear         - Clear terminal','  nmap          - Network scan','  ssh           - Connect to remote host','  ifconfig      - Show network interfaces','  netstat       - Show network statistics','  ps            - Show running processes','  whoami        - Show current user','  date          - Show current date/time','  hack          - Initiate hack sequence','  matrix        - Toggle matrix effect','  reboot        - Reboot system','  crawl         - Web crawl target','  exploit       - Run exploit','  payload       - Generate payload','  sniff         - Packet sniffer','  crack         - Password cracker','  decrypt       - Decrypt file','  keylog        - Start keylogger','  persist       - Install persistence','  backdoor      - Open backdoor','  reverse       - Reverse shell','  bind          - Bind shell','  scan          - Quick port scan','  geoip         - Geolocate IP','  dns           - DNS lookup','  whois         - WHOIS lookup','  traceroute    - Trace route','  ping          - Ping host','  arp           - ARP table','  route         - Routing table','  iptables      - Firewall rules','  cron          - Cron jobs','  history       - Command history','  exit          - Close session'],
+clear:()=>{terminalBody.innerHTML='';return[]},
+nmap:()=>['Starting Nmap 7.94 ( https://nmap.org )','Nmap scan report for 192.168.1.1','Host is up (0.0023s latency).','Not shown: 995 closed tcp ports (reset)','PORT     STATE SERVICE     VERSION','22/tcp   open  ssh         OpenSSH 9.2p1','80/tcp   open  http        nginx 1.24.0','443/tcp  open  ssl/https   nginx 1.24.0','3306/tcp open  mysql       MySQL 8.0.36','8080/tcp open  http-proxy  Squid 5.7','Nmap done: 256 IP addresses (1 host up) scanned in 12.34 seconds'],
+ssh:()=>['Connecting to 192.168.1.1...','SSH-2.0-OpenSSH_9.2p1','Entering interactive session...','Last login: Thu Jan 15 03:14:15 2026 from 10.0.0.42','Welcome to Ubuntu 22.04.3 LTS (GNU/Linux 6.6.1-hack x86_64)'],
+ifconfig:()=>['eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500','        inet 192.168.1.42  netmask 255.255.255.0  broadcast 192.168.1.255','        ether 00:0c:29:3a:4b:5c  txqueuelen 1000  (Ethernet)','        RX packets 14253  bytes 12847291 (12.2 MiB)','        TX packets 9872  bytes 8421392 (8.0 MiB)','lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536','        inet 127.0.0.1  netmask 255.0.0.0','        loop  txqueuelen 1000  (Local Loopback)'],
+netstat:()=>['Active Internet connections (only servers)','Proto Recv-Q Send-Q Local Address           Foreign Address         State','tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN','tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN','tcp        0      0 0.0.0.0:443             0.0.0.0:*               LISTEN','tcp        0      0 127.0.0.1:3306          0.0.0.0:*               LISTEN','tcp        0      0 0.0.0.0:8080            0.0.0.0:*               LISTEN','udp        0      0 0.0.0.0:53              0.0.0.0:*'],
+ps:()=>['  PID TTY          TIME CMD','    1 ?        00:00:02 systemd','  423 ?        00:00:01 sshd','  512 ?        00:00:00 nginx','  678 ?        00:00:03 mysql','  891 ?        00:00:00 squid',' 1024 pts/0    00:00:00 zsh',' 1337 pts/0    00:00:00 nmap',' 2048 pts/0    00:00:00 htop'],
+whoami:()=>'root',
+date:()=>new Date().toString(),
+hack:()=>['Initializing hack sequence...','Scanning target ports...','Exploiting vulnerability CVE-2026-1337...','Injecting payload...','Bypassing authentication...','Escalating privileges...','Access granted. Welcome to the mainframe.'],
+matrix:()=>{const canvas=document.getElementById('matrixCanvas');canvas.style.opacity=canvas.style.opacity==='0.15'?'0.3':'0.15';return['Matrix effect toggled.']},
+reboot:()=>{setTimeout(()=>location.reload(),1500);return['Rebooting system...','System will restart in 1.5 seconds.']},
+crawl:()=>['Crawling http://192.168.1.1...','Found 47 links','Found 12 forms','Found 3 file uploads','Crawl complete.'],
+exploit:()=>['Loading exploit module...','Target: 192.168.1.1','Exploit: CVE-2026-1337','Sending payload...','Shell obtained!','uid=0(root) gid=0(root) groups=0(root)'],
+payload:()=>['Generating payload...','msfvenom -p linux/x64/meterpreter/reverse_tcp LHOST=10.0.0.42 LPORT=4444 -f elf -o shell.elf','Payload size: 207 bytes','Encoding with x86/shikata_ga_nai...','Payload saved to shell.elf'],
+sniff:()=>['Starting packet capture on eth0...','Capturing 1000 packets...','HTTP GET /admin HTTP/1.1','POST /login username=admin&password=admin123','Cookie: session=abc123def456','Capture complete.'],
+crack:()=>['Loading wordlist...','rockyou.txt loaded (14,344,391 words)','Cracking hashes...','Hash: 5f4dcc3b5aa765d61d8327deb882cf99','Password: password','Cracked in 2.3 seconds'],
+decrypt:()=>['Loading encrypted file...','File: secret.enc','Algorithm: AES-256-CBC','Key derived from password','Decrypting...','File decrypted: secret.txt'],
+keylog:()=>['Starting keylogger...','Hooking keyboard driver...','Logging to /var/log/.keylog','Keystrokes captured: 14253','Keylogger active.'],
+persist:()=>['Installing persistence...','Adding to crontab: @reboot /tmp/.backdoor','Adding to systemd: /etc/systemd/system/backdoor.service','Adding to .bashrc: /tmp/.backdoor &','Persistence installed.'],
+backdoor:()=>['Opening backdoor on port 31337...','Listening for connections...','Backdoor active.'],
+reverse:()=>['Starting reverse shell...','Connecting to 10.0.0.42:4444...','Connection established.','Shell active.'],
+bind:()=>['Starting bind shell on port 4444...','Listening...','Connection from 10.0.0.42:52341','Shell active.'],
+scan:()=>['Scanning 192.168.1.0/24...','Hosts up: 47','Open ports: 22,80,443,3306,8080','Scan complete.'],
+geoip:()=>['Looking up 8.8.8.8...','Country: United States','City: Mountain View','ISP: Google LLC','Lat/Lon: 37.4056,-122.0775'],
+dns:()=>['Querying google.com...','A record: 142.250.185.46','AAAA record: 2607:f8b0:4004:800::200e','MX record: smtp.google.com','DNS lookup complete.'],
+whois:()=>['Querying whois.verisign-grs.com...','Domain: google.com','Registrar: MarkMonitor Inc.','Created: 1997-09-15','Expires: 2028-09-14'],
+traceroute:()=>['Tracing route to 8.8.8.8...','1  192.168.1.1  0.5ms','2  10.0.0.1  1.2ms','3  72.14.204.1  5.3ms','4  8.8.8.8  12.1ms','Trace complete.'],
+ping:()=>['PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.','64 bytes from 8.8.8.8: icmp_seq=1 ttl=117 time=12.1 ms','64 bytes from 8.8.8.8: icmp_seq=2 ttl=117 time=11.8 ms','64 bytes from 8.8.8.8: icmp_seq=3 ttl=117 time=12.3 ms','--- 8.8.8.8 ping statistics ---','3 packets transmitted, 3 received, 0% packet loss'],
+arp:()=>['Address                  HWtype  HWaddress           Flags Mask            Iface','192.168.1.1              ether   00:1a:2b:3c:4d:5e   C                     eth0','192.168.1.42             ether   00:0c:29:3a:4b:5c   C                     eth0','192.168.1.100            ether   aa:bb:cc:dd:ee:ff   C                     eth0'],
+route:()=>['Kernel IP routing table','Destination     Gateway         Genmask         Flags Metric Ref    Use Iface','0.0.0.0         192.168.1.1     0.0.0.0         UG    100    0        0 eth0','192.168.1.0     0.0.0.0         255.255.255.0   U     100    0        0 eth0'],
+iptables:()=>['Chain INPUT (policy DROP)','target     prot opt source               destination','ACCEPT     all  --  0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED','ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:22','ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:80','ACCEPT     tcp  --  0.0.0.0/0            0.0.0.0/0            tcp dpt:443','DROP       all  --  0.0.0.0/0            0.0.0.0/0'],
+cron:()=>['SHELL=/bin/sh','PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin','@reboot root /tmp/.backdoor','*/5 * * * * root /usr/bin/backup.sh','0 3 * * * root /usr/bin/update.sh'],
+history:()=>['  1  nmap -sS -A -T4 192.168.1.0/24','  2  ssh root@192.168.1.1 -p 22','  3  ifconfig','  4  netstat -tulpn','  5  ps aux','  6  whoami','  7  hack','  8  crawl http://192.168.1.1','  9  exploit CVE-2026-1337',' 10  payload'],
+exit:()=>['Closing terminal session...','Connection closed by remote host.']
+};
+function addTerminalLine(text,className='output'){const line=document.createElement('div');line.className='terminal-line '+className;line.innerHTML=text;terminalBody.appendChild(line);terminalBody.scrollTop=terminalBody.scrollHeight}
+function addLogEntry(type,msg){const now=new Date();const timeStr=now.toTimeString().split(' ')[0];const entry=document.createElement('div');entry.className='log-entry';entry.innerHTML=`<span class="log-time">[${timeStr}]</span> <span class="log-type">[${type}]</span> <span class="log-msg">${msg}</span>`;logContainer.appendChild(entry);logContainer.scrollTop=logContainer.scrollHeight;while(logContainer.children.length>60){logContainer.removeChild(logContainer.firstChild)}}
+terminalInput.addEventListener('keydown',(e)=>{if(e.key==='Enter'){const input=terminalInput.value.trim();if(input==='')return;const cmdLine=document.createElement('div');cmdLine.className='terminal-line prompt';cmdLine.textContent=input;terminalBody.appendChild(cmdLine);const cmd=input.split(' ')[0].toLowerCase();const handler=commands[cmd];if(handler){const result=handler();if(Array.isArray(result)){result.forEach(line=>addTerminalLine(line))}else if(result){addTerminalLine(result)}addLogEntry('CMD',`Executed: ${input}`)}else{addTerminalLine(`Command not found: ${cmd}. Type 'help' for available commands.`,'error');addLogEntry('ERR',`Unknown command: ${input}`)}addTerminalLine('&nbsp;');terminalInput.value=''}});
+terminalBody.addEventListener('click',()=>terminalInput.focus());
+document.addEventListener('keydown',(e)=>{if(e.ctrlKey&&e.key==='l'){e.preventDefault();terminalBody.innerHTML='';addLogEntry('SYS','Terminal cleared')}if(e.ctrlKey&&e.key==='h'){e.preventDefault();commands.help().forEach(line=>addTerminalLine(line));addLogEntry('SYS','Help displayed')}if(e.ctrlKey&&e.key==='m'){e.preventDefault();const canvas=document.getElementById('matrixCanvas');canvas.style.opacity=canvas.style.opacity==='0.15'?'0.3':'0.15';addLogEntry('SYS','Matrix effect toggled')}if(e.ctrlKey&&e.key==='r'){e.preventDefault();addLogEntry('SYS','Rebooting system...');setTimeout(()=>location.reload(),1500)}});
+function randomIP(){return`${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`}
+let uptimeSeconds=0;
+setInterval(()=>{uptimeSeconds++;const hours=String(Math.floor(uptimeSeconds/3600)).padStart(2,'0');const minutes=String(Math.floor((uptimeSeconds%3600)/60)).padStart(2,'0');const seconds=String(uptimeSeconds%60).padStart(2,'0');document.getElementById('headerUptime').textContent=`${hours}:${minutes}:${seconds}`;const load=(Math.random()*3).toFixed(2);document.getElementById('headerLoad').textContent=load;if(Math.random()>0.7){document.getElementById('headerIP').textContent=randomIP()}},1000);
+setInterval(()=>{const cpu=Math.floor(Math.random()*60)+20;const mem=Math.floor(Math.random()*40)+40;const disk=Math.floor(Math.random()*30)+30;const net=Math.floor(Math.random()*80)+10;const temp=Math.floor(Math.random()*40)+40;document.getElementById('cpuValue').textContent=cpu+'%';document.getElementById('cpuBar').style.width=cpu+'%';document.getElementById('memValue').textContent=mem+'%';document.getElementById('memBar').style.width=mem+'%';document.getElementById('diskValue').textContent=disk+'%';document.getElementById('diskBar').style.width=disk+'%';document.getElementById('netValue').textContent=net+' KB/s';document.getElementById('netBar').style.width=net+'%';document.getElementById('tempValue').textContent=temp+'°C';document.getElementById('tempBar').style.width=temp+'%'},2000);
+const processes=['systemd','sshd','nginx','mysql','squid','zsh','nmap','htop','python3','node','docker','redis','postgres','apache2','php-fpm','fail2ban','ufw','cron','rsyslog','snort','suricata','metasploit','burpsuite','wireshark','tcpdump','john','hashcat','hydra','sqlmap','nikto'];
+setInterval(()=>{const processList=document.getElementById('processList');processList.innerHTML='';const shuffled=processes.sort(()=>Math.random()-0.5).slice(0,7);shuffled.forEach(name=>{const cpu=(Math.random()*15).toFixed(1);const mem=(Math.random()*10).toFixed(1);const item=document.createElement('div');item.className='process-item';item.innerHTML=`<span class="process-name">${name}</span><span class="process-cpu">${cpu}%</span><span class="process-mem">${mem}%</span>`;processList.appendChild(item)})},3000);
+const logMessages=[['INFO','SSH connection established from 10.0.0.42'],['WARN','Failed login attempt from 203.0.113.42'],['INFO','Firewall rule updated: ALLOW 192.168.1.0/24'],['ERROR','Port scan detected from 198.51.100.7'],['INFO','Backup completed successfully'],['WARN','High memory usage detected: 87%'],['INFO','Package update available: openssl 3.0.12'],['ERROR','MySQL connection refused'],['INFO','VPN tunnel established to 10.0.0.1'],['WARN','SSL certificate expires in 7 days'],['INFO','User root logged in from 192.168.1.42'],['ERROR','Intrusion attempt blocked: CVE-2026-1337'],['INFO','DNS query: google.com -> 142.250.185.46'],['WARN','Unusual outbound traffic on port 4444'],['INFO','System scan completed: no threats found'],['ERROR','Failed to mount /dev/sdb1'],['INFO','Cron job executed: /etc/cron.daily/backup'],['WARN','CPU temperature: 78°C'],['INFO','New device connected: 00:1a:2b:3c:4d:5e'],['ERROR','Connection timeout to 8.8.8.8'],['INFO','Payload delivered to 192.168.1.1'],['WARN','Suspicious process detected: /tmp/.backdoor'],['ERROR','Authentication failure for user admin'],['INFO','Log rotation completed'],['WARN','Disk usage above 80%'],['INFO','Kernel module loaded: rootkit.ko'],['ERROR','Failed to establish reverse shell'],['INFO','Persistence installed: /etc/systemd/system/backdoor.service'],['WARN','Anomaly detected in network traffic'],['INFO','Decryption key recovered']];
+setInterval(()=>{const msg=logMessages[Math.floor(Math.random()*logMessages.length)];addLogEntry(msg[0],msg[1])},3500);
+let packetCount=0;
+setInterval(()=>{packetCount+=Math.floor(Math.random()*100)+10;document.getElementById('footerPackets').textContent=packetCount.toLocaleString();document.getElementById('footerPing').textContent=Math.floor(Math.random()*50)+5+'ms';document.getElementById('footerThroughput').textContent=(Math.random()*100).toFixed(1)+' Mbps'},1500);
+setInterval(()=>{const title=document.querySelector('.header h1');const originalText='H4CK3R_N3TW0RK';let glitched='';for(let i=0;i<originalText.length;i++){if(Math.random()>0.9){glitched+=String.fromCharCode(33+Math.floor(Math.random()*94))}else{glitched+=originalText[i]}}title.textContent=glitched;setTimeout(()=>{title.textContent=originalText},100)},3000);
+setInterval(()=>{const hexDump=document.getElementById('hexDump');if(hexDump){let newHex='';for(let i=0;i<6;i++){for(let j=0;j<16;j++){newHex+=(Math.floor(Math.random()*256).toString(16).padStart(2,'0'))+' '}newHex+='<br>'}hexDump.innerHTML=newHex}},2000);
+setInterval(()=>{const threat=document.getElementById('headerThreat');const levels=['LOW','MEDIUM','HIGH','CRITICAL'];const colors=['#00ff41','#ffaa00','#ff6600','#ff3333'];const idx=Math.floor(Math.random()*levels.length);threat.textContent=levels[idx];threat.style.color=colors[idx]},5000);
+(function(){const waveform=document.getElementById('waveform');for(let i=0;i<40;i++){const bar=document.createElement('div');bar.className='wave-bar';bar.style.animationDelay=(i*0.05)+'s';bar.style.animationDuration=(0.5+Math.random()*0.5)+'s';waveform.appendChild(bar)}})();
+(function(){const codeStream=document.getElementById('codeStream');const codes=['0x4a3b2c1d','0x5e6f7a8b','0x9c0d1e2f','0x3a4b5c6d','0x7e8f9a0b','0x1c2d3e4f','0x5a6b7c8d','0x9e0f1a2b','0x3c4d5e6f','0x7a8b9c0d','0x1e2f3a4b','0x5c6d7e8f','0x9a0b1c2d','0x3e4f5a6b','0x7c8d9e0f','0x1a2b3c4d'];let content='';for(let i=0;i<100;i++){content+=codes[Math.floor(Math.random()*codes.length)]+'  ';if(i%4===3)content+='<br>'}codeStream.innerHTML=content})();
+setInterval(()=>{const codeStream=document.getElementById('codeStream');const codes=['0x4a3b2c1d','0x5e6f7a8b','0x9c0d1e2f','0x3a4b5c6d','0x7e8f9a0b','0x1c2d3e4f','0x5a6b7c8d','0x9e0f1a2b','0x3c4d5e6f','0x7a8b9c0d','0x1e2f3a4b','0x5c6d7e8f','0x9a0b1c2d','0x3e4f5a6b','0x7c8d9e0f','0x1a2b3c4d'];let content='';for(let i=0;i<100;i++){content+=codes[Math.floor(Math.random()*codes.length)]+'  ';if(i%4===3)content+='<br>'}codeStream.innerHTML=content},5000);
+addLogEntry('SYS','System initialized');
+addLogEntry('SYS','Network interface eth0 up');
+addLogEntry('SYS','Firewall rules loaded');
+addLogEntry('INFO','SSH server started on port 22');
+addLogEntry('WARN','Default credentials detected');
+addLogEntry('INFO','Terminal session started');
+addLogEntry('INFO','Kernel module rootkit.ko loaded');
+addLogEntry('WARN','Anomaly detected in network traffic');
+addLogEntry('INFO','Persistence installed');
+addLogEntry('ERROR','Failed to establish reverse shell');
+terminalBody.scrollTop=terminalBody.scrollHeight;
+setTimeout(()=>terminalInput.focus(),100);
+console.log('%cH4CK3R_N3TW0RK v3.7.1','color:#00ff41;font-size:20px;font-weight:bold');
+console.log('%cAccess granted. Welcome, root.','color:#00ff41;font-size:14px');
+console.log('%cType "help" for available commands.','color:#00aa00;font-size:12px');
+</script>
+</body>
+</html>
