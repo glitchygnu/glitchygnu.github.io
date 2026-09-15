@@ -267,6 +267,48 @@ body.noglow{text-shadow:none}
 .dial .ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(0,255,65,.2)}
 .dial .fill{position:absolute;inset:0;border-radius:50%;border:3px solid transparent;border-top-color:var(--acc);border-right-color:var(--acc);transition:transform .3s}
 .dial .val{position:absolute;inset:0;display:grid;place-items:center;font-size:.9rem;color:var(--acc)}
+/* NEW UI STYLES */
+body.ui-terminal{
+  --acc:#7dff9b;
+  --mid:#4f9b62;
+  --dim:#2d5a38;
+  --bg:#050705;
+  --dark:#000;
+  --glow:rgba(125,255,155,.25);
+  background-image:none;
+  text-shadow:none;
+}
+body.ui-terminal::before{display:none}
+body.ui-terminal .panel,
+body.ui-terminal .terminal,
+body.ui-terminal .network-map,
+body.ui-terminal .header,
+body.ui-terminal .footer,
+body.ui-terminal .window,
+body.ui-terminal .notif,
+body.ui-terminal .shortcut{
+  background:rgba(0,0,0,.92);
+  border-color:#2d5a38;
+  box-shadow:none;
+  backdrop-filter:none;
+}
+body.ui-terminal .panel::after{display:none}
+body.ui-terminal .header h1{
+  animation:none;
+  color:#7dff9b;
+  text-shadow:none;
+}
+body.ui-terminal .crt{animation:none}
+body.ui-terminal .progress-fill,
+body.ui-terminal .meter>i{box-shadow:none}
+body.ui-terminal .win-bar{background:rgba(0,20,0,.95)}
+
+body.ui-glass .panel,
+body.ui-glass .terminal,
+body.ui-glass .window{
+  backdrop-filter:blur(10px);
+  background:rgba(10,20,10,.65);
+}
 </style>
 </head>
 <body>
@@ -971,34 +1013,85 @@ else if(e.key==='Escape')press('C');
 }});
 };
 APPS.monitor=function(){
-WM.create({id:'win-monitor',title:'RESOURCE_MONITOR // REALTIME',icon:'📊',w:560,h:400,build:w=>{
-w.body.innerHTML='<canvas class="win-canvas" id="mnCv" height="160"></canvas><div class="win-row" style="margin-top:8px"><span class="win-label">CPU</span><div class="meter" style="flex:1"><i id="mnCpu"></i></div><span id="mnCpuV" class="term-dim">0%</span></div><div class="win-row"><span class="win-label">MEM</span><div class="meter" style="flex:1"><i id="mnMem"></i></div><span id="mnMemV" class="term-dim">0%</span></div><div class="win-row"><span class="win-label">NET</span><div class="meter" style="flex:1"><i id="mnNet"></i></div><span id="mnNetV" class="term-dim">0%</span></div><div class="win-row" style="margin-top:6px"><span class="win-label">UPTIME</span><span id="mnUp" class="term-hl">0s</span><span class="win-label">FRAMES</span><span id="mnFr" class="term-dim">0</span></div><div class="win-pre term-dim" id="mnInfo" style="margin-top:6px"></div>';
+WM.create({id:'win-monitor',title:'RESOURCE_MONITOR // REAL',icon:'📊',w:640,h:520,build:w=>{
+w.body.innerHTML=`
+<div class="win-row"><span class="win-label">CPU CORES</span><span id="mnCores" class="term-hl">--</span><span class="win-label">JS HEAP</span><span id="mnHeap" class="term-hl">--</span></div>
+<canvas class="win-canvas" id="mnCv" height="160"></canvas>
+<div class="win-row"><span class="win-label">MAIN THREAD</span><div class="meter" style="flex:1"><i id="mnCpu"></i></div><span id="mnCpuV" class="term-dim">--</span></div>
+<div class="win-row"><span class="win-label">JS HEAP</span><div class="meter" style="flex:1"><i id="mnMem"></i></div><span id="mnMemV" class="term-dim">--</span></div>
+<div class="win-row"><span class="win-label">NET</span><div class="meter" style="flex:1"><i id="mnNet"></i></div><span id="mnNetV" class="term-dim">--</span></div>
+<div class="win-row"><span class="win-label">STORAGE</span><span id="mnStorage" class="term-dim">--</span></div>
+<div class="win-row"><span class="win-label">GPU</span><span id="mnGpu" class="term-dim">--</span></div>
+<div class="win-row"><span class="win-label">BATTERY</span><span id="mnBatt" class="term-dim">--</span></div>
+<div class="win-pre term-dim" id="mnInfo" style="margin-top:6px"></div>`;
 const cv=w.body.querySelector('#mnCv'),cx=cv.getContext('2d');
 const hist={cpu:[],mem:[],net:[]};
-const resize=()=>{cv.width=cv.clientWidth||480};resize();
+const resize=()=>{cv.width=cv.clientWidth||560};resize();
 window.addEventListener('resize',resize);
-let f=0;const t0=Date.now();
-const t=setInterval(()=>{
-if(!document.body.contains(cv)){clearInterval(t);return}
-const c=20+rnd(60),m=40+rnd(40),n=10+rnd(70);
-hist.cpu.push(c);hist.mem.push(m);hist.net.push(n);
-if(hist.cpu.length>120){hist.cpu.shift();hist.mem.shift();hist.net.shift()}
-w.body.querySelector('#mnCpu').style.width=c+'%';
-w.body.querySelector('#mnMem').style.width=m+'%';
-w.body.querySelector('#mnNet').style.width=n+'%';
-w.body.querySelector('#mnCpuV').textContent=c+'%';
-w.body.querySelector('#mnMemV').textContent=m+'%';
-w.body.querySelector('#mnNetV').textContent=n+'%';
-w.body.querySelector('#mnUp').textContent=Math.floor((Date.now()-t0)/1000)+'s';
-w.body.querySelector('#mnFr').textContent=(++f);
-cx.clearRect(0,0,cv.width,cv.height);
-cx.strokeStyle='rgba(0,255,65,0.15)';
-for(let i=0;i<4;i++){cx.beginPath();cx.moveTo(0,i*cv.height/3);cx.lineTo(cv.width,i*cv.height/3);cx.stroke()}
-function line(arr,color){cx.beginPath();arr.forEach((v,i)=>{const x=i*(cv.width/120),y=cv.height-(v/100)*cv.height;i?cx.lineTo(x,y):cx.moveTo(x,y)});cx.strokeStyle=color;cx.lineWidth=1.5;cx.stroke()}
-line(hist.cpu,'#00ff41');line(hist.mem,'#ffaa00');line(hist.net,'#00e5ff');
-const info=w.body.querySelector('#mnInfo');
-info.textContent='cores: '+(navigator.hardwareConcurrency||'n/a')+'  mem: '+(navigator.deviceMemory||'n/a')+'GB  '+(performance.memory?('heap:'+Math.round(performance.memory.usedJSHeapSize/1048576)+'MB'):'');
-},400);
+let lastFrame=performance.now();
+let cpuEst=0;
+function frame(){
+  const now=performance.now();
+  const delta=now-lastFrame;
+  lastFrame=now;
+  const ideal=16.67;
+  cpuEst=Math.min(100,Math.max(0,(delta-ideal)/ideal*100));
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+function update(){
+  if(!document.body.contains(cv))return;
+  const mem=performance.memory?performance.memory.usedJSHeapSize:0;
+  const memLimit=performance.memory?performance.memory.jsHeapSizeLimit:1;
+  const memPct=memLimit?Math.round(mem/memLimit*100):0;
+  const heapMB=performance.memory?(mem/1048576).toFixed(1):'n/a';
+  const cpu=Math.round(cpuEst);
+  let down=navigator.connection?navigator.connection.downlink:0;
+  let rtt=navigator.connection?navigator.connection.rtt:0;
+  let etype=navigator.connection?navigator.connection.effectiveType:'n/a';
+  let transfer=0;
+  try{
+    const entries=performance.getEntriesByType('resource');
+    const recent=entries.filter(e=>e.startTime>performance.now()-5000);
+    transfer=recent.reduce((s,e)=>s+(e.transferSize||0),0);
+  }catch(e){}
+  const netVal=transfer?(transfer/1024).toFixed(1)+' KB/5s':(down?down+' Mbps':'n/a');
+  const netPct=transfer?Math.min(100,transfer/50000*100):(down?Math.min(100,down*10):0);
+  hist.cpu.push(cpu);hist.mem.push(memPct);hist.net.push(netPct);
+  if(hist.cpu.length>120){hist.cpu.shift();hist.mem.shift();hist.net.shift()}
+  w.body.querySelector('#mnCpu').style.width=cpu+'%';
+  w.body.querySelector('#mnMem').style.width=memPct+'%';
+  w.body.querySelector('#mnNet').style.width=netPct+'%';
+  w.body.querySelector('#mnCpuV').textContent=cpu+'% est';
+  w.body.querySelector('#mnMemV').textContent=memPct+'% ('+heapMB+' MB)';
+  w.body.querySelector('#mnNetV').textContent=netVal;
+  w.body.querySelector('#mnCores').textContent=(navigator.hardwareConcurrency||'n/a');
+  w.body.querySelector('#mnHeap').textContent=heapMB+' MB';
+  w.body.querySelector('#mnInfo').textContent='Effective network: '+etype+'  RTT: '+rtt+'ms  Downlink: '+down+' Mbps\nNote: browsers cannot expose true CPU/GPU usage. CPU is main-thread load estimate; GPU is renderer string.';
+  cx.clearRect(0,0,cv.width,cv.height);
+  cx.strokeStyle='rgba(0,255,65,0.15)';
+  for(let i=0;i<4;i++){cx.beginPath();cx.moveTo(0,i*cv.height/3);cx.lineTo(cv.width,i*cv.height/3);cx.stroke()}
+  function line(arr,color){cx.beginPath();arr.forEach((v,i)=>{const x=i*(cv.width/120),y=cv.height-(v/100)*cv.height;i?cx.lineTo(x,y):cx.moveTo(x,y)});cx.strokeStyle=color;cx.lineWidth=1.5;cx.stroke()}
+  line(hist.cpu,'#00ff41');line(hist.mem,'#ffaa00');line(hist.net,'#00e5ff');
+}
+update();
+const t=setInterval(update,500);
+(async()=>{
+  try{
+    const gl=document.createElement('canvas').getContext('webgl');
+    const d=gl.getExtension('WEBGL_debug_renderer_info');
+    if(d)w.body.querySelector('#mnGpu').textContent=gl.getParameter(d.UNMASKED_RENDERER_WEBGL).slice(0,80);
+  }catch(e){}
+  try{
+    const est=await navigator.storage.estimate();
+    w.body.querySelector('#mnStorage').textContent=(est.usage/1048576).toFixed(1)+' MB / '+(est.quota/1048576).toFixed(0)+' MB';
+  }catch(e){}
+  try{
+    const b=await navigator.getBattery();
+    const upd=()=>w.body.querySelector('#mnBatt').textContent=Math.round(b.level*100)+'%'+(b.charging?' charging':'');
+    b.addEventListener('levelchange',upd);b.addEventListener('chargingchange',upd);upd();
+  }catch(e){}
+})();
 w.onClose=()=>clearInterval(t);
 }});
 };
@@ -1086,6 +1179,7 @@ w.body.innerHTML='<div class="win-form">'+
 '<div class="win-row"><span class="win-label" style="flex:1">GLITCH TITLE</span><button class="win-btn-lg" id="stGlitch">TOGGLE</button></div>'+
 '<div class="win-row"><span class="win-label" style="flex:1">TEXT GLOW</span><button class="win-btn-lg" id="stGlow">TOGGLE</button></div>'+
 '<div class="win-row"><span class="win-label" style="flex:1">MATRIX SPEED</span><input type="range" min="10" max="200" value="50" id="stSpeed" style="flex:1"></div>'+
+'<div class="win-row"><span class="win-label" style="flex:1">UI STYLE</span><select class="win-select" id="stStyle" style="flex:1"><option value="classic">CLASSIC</option><option value="terminal">TERMINAL_MINIMAL</option><option value="glass">GLASS</option></select></div>'+
 '<div class="win-row"><span class="win-label" style="flex:1">ACCENT</span><select class="win-select" id="stTheme" style="flex:1"><option value="green">GREEN</option><option value="amber">AMBER</option><option value="cyan">CYAN</option><option value="red">RED</option><option value="purple">PURPLE</option><option value="white">WHITE</option></select></div>'+
 '<div class="win-row"><span class="win-label" style="flex:1">VOLUME BEEP</span><button class="win-btn-lg" id="stBeep">TEST</button></div>'+
 '<div class="win-row"><span class="win-label" style="flex:1">SPEAK</span><button class="win-btn-lg" id="stSay">TEST</button></div>'+
@@ -1103,6 +1197,7 @@ w.body.querySelector('#stGlitch').onclick=()=>{const h=document.querySelector('.
 w.body.querySelector('#stGlow').onclick=()=>document.body.classList.toggle('noglow');
 w.body.querySelector('#stSpeed').oninput=e=>window.setMatrixSpeed(parseInt(e.target.value));
 w.body.querySelector('#stTheme').onchange=function(){window.applyTheme(this.value)};
+w.body.querySelector('#stStyle').onchange=function(){window.setUIStyle(this.value)};
 w.body.querySelector('#stBeep').onclick=()=>{beep(440,0.1);setTimeout(()=>beep(660,0.1),120);setTimeout(()=>beep(880,0.15),240)};
 w.body.querySelector('#stSay').onclick=()=>say('Access granted. Welcome, root.');
 w.body.querySelector('#stNotif').onclick=()=>notify('TEST','This is a notification from H4CK3R_N3TW0RK.','');
@@ -2006,6 +2101,30 @@ sample();
 APPS.terminal_extra=function(){
 APPS.shell();
 };
+/* ===== CHATBOT: ADD NEW RESPONSES HERE ===== */
+const BOT_RESPONSES = {
+  "hello": "Hello, root. Type help for commands.",
+  "hi": "Hi. How can I assist?",
+  "who are you": "I am H4CK3R_BOT, an automated response unit. type your command pls.",
+  "help": "Try: help, open, webcam, monitor, bot <message>",
+  "status": "All systems nominal.",
+  "hack": "Simulated hack sequence ready. Type hack to run it.",
+  "matrix": "Matrix rain toggled with command matrix.",
+  "settings": "Open settings with command settings.",
+  "time": "Use command time.",
+  "date": "Use command date.",
+  "joke": "There are 10 types of people: those who understand binary and those who don't.",
+  "bye": "Connection remains open. Type exit to close windows."
+};
+function chatbotReply(input){
+  const text = input.toLowerCase().trim();
+  if (BOT_RESPONSES[text]) return BOT_RESPONSES[text];
+  for (const key in BOT_RESPONSES) {
+    if (text.includes(key)) return BOT_RESPONSES[key];
+  }
+  return "I don't have a predefined response for that. Add one in BOT_RESPONSES.";
+}
+/* ===== END CHATBOT DATA ===== */
 const COMMANDS={};
 function def(name,desc,fn){COMMANDS[name]={desc,fn}}
 def('help','show all commands',()=>{
@@ -2019,6 +2138,8 @@ lines.push('WINDOW APPS: open <app>');
 lines.push('  '+Object.keys(APPS).join(' '));
 return lines;
 });
+def('bot','talk to predefined chatbot',a=>{ if(!a.length) return 'usage: bot <message>'; return chatbotReply(a.join(' ')); });
+def('ui','switch UI style (classic|terminal|glass)',a=>{ if(!a[0]) return 'usage: ui <classic|terminal|glass>'; window.setUIStyle(a[0]); return 'UI style set to '+a[0]; });
 def('man','show command description',a=>{if(!a[0])return 'usage: man <command>';const c=COMMANDS[a[0]];if(!c)return 'no manual entry for '+a[0];return a[0]+' — '+c.desc});
 def('clear','clear terminal',()=>{terminalBody.innerHTML='';return null});
 def('cls','clear terminal',()=>{terminalBody.innerHTML='';return null});
@@ -2322,8 +2443,9 @@ addLine('<span class="prompt" style="color:var(--acc)"></span>'+esc(line),'promp
 }
 const c=COMMANDS[cmd];
 if(!c){
-addLine('command not found: '+esc(cmd)+' — type \'help\' for the full list','error');
-addLogEntry('ERR','Unknown command: '+line);
+const bot = chatbotReply(line);
+addLine('<span class="term-hl">H4CK3R_BOT:</span> '+esc(bot),'output');
+addLogEntry('BOT','reply to: '+line);
 addLine('&nbsp;');
 return;
 }
@@ -2394,6 +2516,14 @@ red:['#ff3b30','#cc2f26','#8a1f19','rgba(255,59,48,.5)','#ff3b30'],
 purple:['#c77dff','#9d5fd6','#6b3f94','rgba(199,125,255,.5)','#c77dff'],
 white:['#e8ffe8','#b9d6b9','#7f9b7f','rgba(232,255,232,.5)','#e8ffe8']
 };
+window.setUIStyle=function(style){
+  document.body.classList.remove('ui-classic','ui-terminal','ui-glass');
+  if(style==='terminal') document.body.classList.add('ui-terminal');
+  else if(style==='glass') document.body.classList.add('ui-glass');
+  else document.body.classList.add('ui-classic');
+  localStorage.setItem('h4ck3r_ui_style', style);
+};
+window.setUIStyle(localStorage.getItem('h4ck3r_ui_style')||'classic');
 const t=themes[name]||themes.green;
 document.documentElement.style.setProperty('--acc',t[0]);
 document.documentElement.style.setProperty('--mid',t[1]);
