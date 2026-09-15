@@ -30,9 +30,9 @@ const CONFIG = {
         ],
         welcome: "session ready. type 'help' to list available commands.",
         delays: {
-            lineMin:     110,   // min ms between boot lines
-            lineJitter:  150,   // added random ms per line
-            beforeWelcome: 320, // pause before welcome message
+            lineMin:     110,
+            lineJitter:  150,
+            beforeWelcome: 320,
         },
     },
 
@@ -49,23 +49,39 @@ const CONFIG = {
             "verifying integrity",
             "flushing buffer",
         ],
-        frameInterval:   80,    // ms per spinner frame
-        messageInterval: 340,   // ms per status message
-        minWait:         500,   // min wait before response
-        maxWait:         1200,  // max wait before response
-        fadeOutMs:       140,   // fade-out duration on removal
+        frameInterval:   80,
+        messageInterval: 340,
+        minWait:         500,
+        maxWait:         1200,
+        fadeOutMs:       140,
     },
 
     /* ---------- typewriter ---------- */
     typing: {
-        normalSpeed:    8,    // ms per character (normal)
-        errorSpeed:     5,    // ms per character (errors)
-        pauseAfterUser: 180,  // ms pause after user submits
+        normalSpeed:    8,
+        errorSpeed:     5,
+        pauseAfterUser: 180,
+
+        /* ----- MID-TYPING MICRO-PAUSE -----
+           Every N characters (N is re-rolled each time), the
+           typewriter freezes and an inline spinner appears for
+           a random duration before typing resumes.
+
+           Set `enabled: false` to turn the feature off entirely.
+        */
+        microPause: {
+            enabled:       true,
+            minChars:      150,   // lower bound of the random gap
+            maxChars:      170,   // upper bound of the random gap
+            minWait:       1000,  // min pause duration (ms)
+            maxWait:       5000,  // max pause duration (ms)
+            frameInterval: 80,    // ms per spinner frame
+        },
     },
 
     /* ---------- telemetry ---------- */
     telemetry: {
-        enabled:  true,  // set to false to freeze mem/cpu values
-        interval: 380,   // ms between footer stat updates
+        enabled:  true,
+        interval: 380,
     },
 };
