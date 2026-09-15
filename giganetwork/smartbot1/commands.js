@@ -10,6 +10,143 @@
 
 const commands = [
 
+    // ── conversational ──────────────────────────────────────
+    { input: "how are you",    output: "operating within normal parameters.\nall daemons up, zero packet loss.\nhow are *you* holding up?" },
+    { input: "how are you?",   output: "operating within normal parameters.\nall daemons up, zero packet loss.\nhow are *you* holding up?" },
+    { input: "how r you",      output: "operating within normal parameters.\nall daemons up, zero packet loss.\nhow are *you* holding up?" },
+    { input: "how are u",      output: "operating within normal parameters.\nall daemons up, zero packet loss.\nhow are *you* holding up?" },
+    { input: "how r u",        output: "operating within normal parameters.\nall daemons up, zero packet loss.\nhow are *you* holding up?" },
+    { input: "how r u?",       output: "operating within normal parameters.\nall daemons up, zero packet loss.\nhow are *you* holding up?" },
+    { input: "how do you do",  output: "operating within normal parameters.\nall daemons up, zero packet loss.\nhow are *you* holding up?" },
+    { input: "how you doing",  output: "operating within normal parameters.\nall daemons up, zero packet loss.\nhow are *you* holding up?" },
+    { input: "how's it going", output: "operating within normal parameters.\nall daemons up, zero packet loss.\nhow are *you* holding up?" },
+
+    { input: "good morning", output: "morning. clearnet traffic is quiet.\ngood window to move data." },
+    { input: "gm",           output: "morning. clearnet traffic is quiet.\ngood window to move data." },
+    { input: "goodmorning",  output: "morning. clearnet traffic is quiet.\ngood window to move data." },
+    { input: "morning",      output: "morning. clearnet traffic is quiet.\ngood window to move data." },
+    { input: "gud morning",  output: "morning. clearnet traffic is quiet.\ngood window to move data." },
+
+    { input: "good night",  output: "signing off. remember to shred your logs.\nstay dark." },
+    { input: "goodnight",   output: "signing off. remember to shred your logs.\nstay dark." },
+    { input: "gn",          output: "signing off. remember to shred your logs.\nstay dark." },
+    { input: "gud night",   output: "signing off. remember to shred your logs.\nstay dark." },
+    { input: "night",       output: "signing off. remember to shred your logs.\nstay dark." },
+
+    { input: "good evening", output: "evening. prime time for traffic obfuscation.\nwhat's the job?" },
+    { input: "goodevening",  output: "evening. prime time for traffic obfuscation.\nwhat's the job?" },
+    { input: "evening",      output: "evening. prime time for traffic obfuscation.\nwhat's the job?" },
+    { input: "ge",           output: "evening. prime time for traffic obfuscation.\nwhat's the job?" },
+
+    { input: "thanks",    output: "acknowledged. no thanks needed — it's what the relay is for." },
+    { input: "thank you", output: "acknowledged. no thanks needed — it's what the relay is for." },
+    { input: "thx",       output: "acknowledged. no thanks needed — it's what the relay is for." },
+    { input: "ty",        output: "acknowledged. no thanks needed — it's what the relay is for." },
+    { input: "thanx",     output: "acknowledged. no thanks needed — it's what the relay is for." },
+    { input: "thankyou",  output: "acknowledged. no thanks needed — it's what the relay is for." },
+    { input: "thanks!",   output: "acknowledged. no thanks needed — it's what the relay is for." },
+
+    { input: "sorry",     output: "no apology required. errors are logged as warnings, not failures." },
+    { input: "my bad",    output: "no apology required. errors are logged as warnings, not failures." },
+    { input: "sry",       output: "no apology required. errors are logged as warnings, not failures." },
+    { input: "apologies", output: "no apology required. errors are logged as warnings, not failures." },
+
+    { input: "please", output: "please costs nothing. what do you need?" },
+    { input: "pls",    output: "please costs nothing. what do you need?" },
+    { input: "plz",    output: "please costs nothing. what do you need?" },
+
+    { input: "ok",       output: "standing by." },
+    { input: "okay",     output: "standing by." },
+    { input: "k",        output: "standing by." },
+    { input: "kk",       output: "standing by." },
+    { input: "alright",  output: "standing by." },
+    { input: "cool",     output: "standing by." },
+    { input: "nice",     output: "standing by." },
+    { input: "sure",     output: "standing by." },
+    { input: "yep",      output: "standing by." },
+    { input: "yes",      output: "standing by." },
+    { input: "yeah",     output: "standing by." },
+    { input: "no",       output: "understood. aborting nothing — no task was queued." },
+    { input: "nope",     output: "understood. aborting nothing — no task was queued." },
+    { input: "nah",      output: "understood. aborting nothing — no task was queued." },
+
+    { input: "lol",    output: "humor subroutines unavailable on hardened builds.\nlogging your amusement anyway." },
+    { input: "lmao",   output: "humor subroutines unavailable on hardened builds.\nlogging your amusement anyway." },
+    { input: "haha",   output: "humor subroutines unavailable on hardened builds.\nlogging your amusement anyway." },
+    { input: "hahaha", output: "humor subroutines unavailable on hardened builds.\nlogging your amusement anyway." },
+
+    { input: "i love you", output: "affection is not part of the protocol.\nbut the sentiment is noted." },
+    { input: "love you",   output: "affection is not part of the protocol.\nbut the sentiment is noted." },
+    { input: "ily",        output: "affection is not part of the protocol.\nbut the sentiment is noted." },
+
+    { input: "what can you do",  output: "type 'help' for the full command index.\nshort list: status · scan · connect · encrypt · leak · peers" },
+    { input: "what can you do?", output: "type 'help' for the full command index.\nshort list: status · scan · connect · encrypt · leak · peers" },
+    { input: "what do you do",   output: "type 'help' for the full command index.\nshort list: status · scan · connect · encrypt · leak · peers" },
+    { input: "what can u do",    output: "type 'help' for the full command index.\nshort list: status · scan · connect · encrypt · leak · peers" },
+    { input: "what can u do?",   output: "type 'help' for the full command index.\nshort list: status · scan · connect · encrypt · leak · peers" },
+    { input: "commands",         output: "type 'help' for the full command index.\nshort list: status · scan · connect · encrypt · leak · peers" },
+    { input: "cmds",             output: "type 'help' for the full command index.\nshort list: status · scan · connect · encrypt · leak · peers" },
+
+    { input: "are you human",  output: "negative. i am a rule-based relay agent.\nno thoughts, no feelings, no telemetry back to anyone." },
+    { input: "are you human?", output: "negative. i am a rule-based relay agent.\nno thoughts, no feelings, no telemetry back to anyone." },
+    { input: "are you real",   output: "negative. i am a rule-based relay agent.\nno thoughts, no feelings, no telemetry back to anyone." },
+    { input: "are you ai",     output: "negative. i am a rule-based relay agent.\nno thoughts, no feelings, no telemetry back to anyone." },
+    { input: "are you a bot",  output: "negative. i am a rule-based relay agent.\nno thoughts, no feelings, no telemetry back to anyone." },
+    { input: "r u human",      output: "negative. i am a rule-based relay agent.\nno thoughts, no feelings, no telemetry back to anyone." },
+    { input: "r u real",       output: "negative. i am a rule-based relay agent.\nno thoughts, no feelings, no telemetry back to anyone." },
+
+    { input: "what time is it",  output: "see 'date' for a hardened timestamp.\nlocal display clock is in the top-right corner." },
+    { input: "what time is it?", output: "see 'date' for a hardened timestamp.\nlocal display clock is in the top-right corner." },
+    { input: "whats the time",   output: "see 'date' for a hardened timestamp.\nlocal display clock is in the top-right corner." },
+    { input: "what is the time", output: "see 'date' for a hardened timestamp.\nlocal display clock is in the top-right corner." },
+
+    { input: "what day is it",  output: "see 'date'. spoiler: still 2026." },
+    { input: "what day is it?", output: "see 'date'. spoiler: still 2026." },
+    { input: "what date is it", output: "see 'date'. spoiler: still 2026." },
+
+    { input: "where are you",  output: "physically: nowhere you can subpoena.\nlogically: on your encrypted socket." },
+    { input: "where are you?", output: "physically: nowhere you can subpoena.\nlogically: on your encrypted socket." },
+    { input: "where r u",      output: "physically: nowhere you can subpoena.\nlogically: on your encrypted socket." },
+
+    { input: "what is this",  output: "a hardened shell front-end for a local relay daemon.\nno cloud, no analytics, no phone-home." },
+    { input: "what is this?", output: "a hardened shell front-end for a local relay daemon.\nno cloud, no analytics, no phone-home." },
+    { input: "whats this",    output: "a hardened shell front-end for a local relay daemon.\nno cloud, no analytics, no phone-home." },
+
+    { input: "thanks for the help",   output: "you're welcome. the index stays local — nothing left the machine." },
+    { input: "thank you for helping", output: "you're welcome. the index stays local — nothing left the machine." },
+
+    { input: "sorry to bother you", output: "no bother. idle cycles are free." },
+    { input: "sorry to bother",     output: "no bother. idle cycles are free." },
+
+    { input: "you there",    output: "affirmative. listening on the encrypted socket." },
+    { input: "you there?",   output: "affirmative. listening on the encrypted socket." },
+    { input: "u there",      output: "affirmative. listening on the encrypted socket." },
+    { input: "u there?",     output: "affirmative. listening on the encrypted socket." },
+    { input: "anyone there", output: "affirmative. listening on the encrypted socket." },
+
+    { input: "ping me", output: "no outbound identity to ping.\ntry 'ping' for a loopback latency test instead." },
+
+    { input: "who made you",  output: "built by an anonymous operator.\nsource code is not distributed." },
+    { input: "who made you?", output: "built by an anonymous operator.\nsource code is not distributed." },
+    { input: "who built you", output: "built by an anonymous operator.\nsource code is not distributed." },
+
+    { input: "are you safe",  output: "no outbound connections, no persistent storage.\n'safe' is relative — check your own OPSEC." },
+    { input: "are you safe?", output: "no outbound connections, no persistent storage.\n'safe' is relative — check your own OPSEC." },
+    { input: "is this safe",  output: "no outbound connections, no persistent storage.\n'safe' is relative — check your own OPSEC." },
+
+    { input: "help me",     output: "type 'help' for the command index.\nfor deep help, say what you're trying to do." },
+    { input: "help me!",    output: "type 'help' for the command index.\nfor deep help, say what you're trying to do." },
+    { input: "i need help", output: "type 'help' for the command index.\nfor deep help, say what you're trying to do." },
+
+    { input: "what is your purpose",  output: "to relay encrypted commands between you and the circuit.\nnothing more." },
+    { input: "whats your purpose",    output: "to relay encrypted commands between you and the circuit.\nnothing more." },
+    { input: "what is your function", output: "to relay encrypted commands between you and the circuit.\nnothing more." },
+
+    { input: "are you online",  output: "affirmative — 3/3 peers reachable.\nrun 'peers' for details." },
+    { input: "are you online?", output: "affirmative — 3/3 peers reachable.\nrun 'peers' for details." },
+    { input: "are you up",      output: "affirmative — 3/3 peers reachable.\nrun 'peers' for details." },
+    { input: "you up",          output: "affirmative — 3/3 peers reachable.\nrun 'peers' for details." },
+
     // ── greetings ───────────────────────────────────────────
     { input: "hello",  output: "hello. channel is clean — what do you need?" },
     { input: "helo",   output: "hello. channel is clean — what do you need?" },
@@ -308,12 +445,14 @@ const commands = [
     { input: "sherd",  output: "overwriting ~/logs/session.log ...\n pass 1/3  random   [ok]\n pass 2/3  zeros    [ok]\n pass 3/3  random   [ok]\nfile unlinked. no recovery possible." },
     { input: "wipe",   output: "overwriting ~/logs/session.log ...\n pass 1/3  random   [ok]\n pass 2/3  zeros    [ok]\n pass 3/3  random   [ok]\nfile unlinked. no recovery possible." },
 
+    // 1. Simplest form — "xyz" appears only in the input.
+    { input: "ok", output: "can you like... specify bro? thanks." },
+    { input: "nigger", output: "calm down, like... please. Wait. lemme actually... ...ok... you have now been reported to Europol for swearing. im serious." },
+    { input: "niger", output: "calm down, like... please. Wait. lemme actually... ...ok... you have now been reported to Europol for swearing. im serious." },
+    { input: "shut up", output: "you shut up bro" },
+
+
     /* =========================================================
-       ADD NEW COMMANDS BELOW
-       ---------------------------------------------------------
-       {
-           input:  "your command",
-           output: "Your response",
-       },
+       ADD YOUR REAL COMMANDS BELOW
        ========================================================= */
 ];
