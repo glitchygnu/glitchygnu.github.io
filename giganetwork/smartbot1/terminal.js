@@ -64,21 +64,72 @@ const Terminal = (() => {
         return txt;
     }
 
+    /* ---------- inline micro-pause ---------- */
+    // Freezes the current line, appends a pulsing spinner, waits for a
+    // random duration (or until the user skips), then removes the spinner.
+    async function inlinePause(txtEl, full, charsSoFar) {
+        const mp     = CONFIG.typing.microPause;
+        const frames = CONFIG.spinner.frames;
+        const waitMs = mp.minWait + Math.random() * (mp.maxWait - mp.minWait);
+
+        // Lock the visible text at what's typed so far.
+        txtEl.textContent = full.slice(0, charsSoFar);
+
+        // Append the pulsing spinner span.
+        const spin = document.createElement("span");
+        spin.className = "inline-spinner";
+        spin.textContent = "  " + frames[0];
+        txtEl.appendChild(spin);
+        scroll();
+
+        let frame = 0;
+        const interval = setInterval(() => {
+            frame = (frame + 1) % frames.length;
+            spin.textContent = "  " + frames[frame];
+        }, mp.frameInterval);
+
+        await waitWhileSkipping(waitMs);
+
+        clearInterval(interval);
+        spin.remove();
+        scroll();
+    }
+
     /* ---------- typewriter ---------- */
     async function typeOut(opts, speed = 9) {
         const txtEl = addLine({ ...opts, text: "" });
         const full  = opts.text;
+        const mp    = CONFIG.typing.microPause;
+
+        // Per-call override: pass { microPause: false } in opts to disable.
+        const usePause = mp.enabled && opts.microPause !== false;
+
+        const pickGap = () =>
+            mp.minChars + Math.floor(Math.random() * (mp.maxChars - mp.minChars + 1));
+
+        let nextPauseAt = usePause ? pickGap() : Infinity;
 
         for (let i = 1; i <= full.length; i++) {
             if (skipFlag) { txtEl.textContent = full; break; }
+
             txtEl.textContent = full.slice(0, i);
             scroll();
             await sleep(speed);
+
+            // Trigger a mid-typing pause when we cross the threshold,
+            // but never on the very last character.
+            if (usePause && i >= nextPauseAt && i < full.length) {
+                await inlinePause(txtEl, full, i);
+
+                if (skipFlag) { txtEl.textContent = full; break; }
+
+                nextPauseAt = i + pickGap();
+            }
         }
         scroll();
     }
 
-    /* ---------- spinner ---------- */
+    /* ---------- spinner (whole-line, used before responses) ---------- */
     function createSpinner(cfg) {
         const frames = cfg.frames;
         const msgs   = cfg.messages;
@@ -133,7 +184,6 @@ const Terminal = (() => {
     function resetSkip() { skipFlag = false; }
     function isSkipping() { return skipFlag; }
 
-    // Waits `ms`, but resolves early if skipFlag is set.
     function waitWhileSkipping(ms) {
         return new Promise(resolve => {
             const start = Date.now();
