@@ -450,6 +450,7 @@ const commands = [
     { input: "nigger", output: "calm down, like... please. Wait. lemme actually... ...ok... you have now been reported to Europol for swearing. im serious." },
     { input: "niger", output: "calm down, like... please. Wait. lemme actually... ...ok... you have now been reported to Europol for swearing. im serious." },
     { input: "shut up", output: "you shut up bro" },
+   { input: "blabber", output: "The tongue of a blue whale weighs more than an entire adult elephant. In another corner of the universe, scientists found a giant cloud of alcohol in space that contains enough ethyl alcohol to fill 400 trillion trillion pints of beer. Back on Earth, a bolt of lightning contains enough energy to toast over 100,000 slices of bread in an instant. If you ever feel like traveling, you could try visiting the small town in Norway named simply Å, which is the shortest town name in the entire world. Meanwhile, sloths can hold their breath underwater for up to 40 minutes, which is actually longer than dolphins can. Speaking of time, the total time spent by all humans playing the video game World of Warcraft adds up to well over six million years. Finally, Oxford University is older than the Aztec Empire, as teaching there started around the year 1096." },
 
 
     /* =========================================================
