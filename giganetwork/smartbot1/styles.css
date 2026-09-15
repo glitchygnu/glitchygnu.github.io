@@ -224,7 +224,7 @@ body {
 .line.err  .txt { color: var(--err); text-shadow: 0 0 9px rgba(255, 79, 102, .2); }
 
 /* =========================================================
-   LOADING SPINNER
+   LOADING SPINNER (whole-line, shown before a response prints)
    ========================================================= */
 .spinner-line {
     animation: lineIn .16s ease-out;
@@ -240,6 +240,23 @@ body {
 }
 @keyframes spinnerGlow { 0%,100% { opacity: 1; } 50% { opacity: .55; } }
 .spinner-line .txt { font-style: italic; letter-spacing: .02em; }
+
+/* =========================================================
+   INLINE SPINNER — appears mid-typing during micro-pauses
+   ========================================================= */
+.inline-spinner {
+    display: inline-block;
+    margin-left: .55em;
+    color: var(--accent);
+    text-shadow: 0 0 9px rgba(0, 255, 156, .65);
+    animation: inlineSpinnerPulse 1.4s ease-in-out infinite;
+    font-style: normal;
+}
+
+@keyframes inlineSpinnerPulse {
+    0%, 100% { opacity: 1;  }
+    50%      { opacity: .4; }
+}
 
 /* =========================================================
    PROMPT
