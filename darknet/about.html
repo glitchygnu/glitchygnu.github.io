@@ -1,1 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ableonion — About</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+/* ===== about-only styles (ergänzen styles.css, überschreiben nichts) ===== */
+:root{
+  --bg:#05070a;
+  --fg:#c9ffd4;
+  --dim:#5f8a72;
+  --accent:#39ff88;
+  --blue:#5fb4ff;
+  --yellow:#ffd479;
+  --pink:#ff6fd8;
+  --red:#ff5b5b;
+  --line:rgba(57,255,136,.25);
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0;padding:0;min-height:100%;
+  background:radial-gradient(ellipse at center,#0a1410 0%,#05070a 65%,#000 100%);
+  color:var(--fg);
+  font-family:'Courier New',ui-monospace,monospace;
+}
 
+/* ---------- loading screen ---------- */
+#loading-screen{
+  position:fixed;inset:0;z-index:9999;
+  background:#000;color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;overflow:hidden;
+  font-family:'Courier New',monospace;
+  transition:opacity .6s ease;
+}
+#loading-screen.hidden{opacity:0;pointer-events:none}
+#loading-text{
+  font-size:13px;line-height:1.45;white-space:pre-wrap;
+  text-shadow:0 0 6px rgba(57,255,136,.6);
+  max-width:900px;width:100%;
+  margin:0;
+}
+
+/* ---------- CRT overlays ---------- */
+.scanlines{position:fixed;inset:0;pointer-events:none;z-index:60;
+  background:repeating-linear-gradient(to bottom,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.22) 2px 3px);
+  mix-blend-mode:multiply;}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:61;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.75) 100%);}
+
+/* ---------- layout ---------- */
+.container{
+  position:relative;z-index:10;
+  max-width:960px;margin:0 auto;
+  padding:48px 24px 80px;
+}
+h1{
+  font-size:clamp(22px,4vw,36px);
+  margin:0 0 8px;
+  letter-spacing:2px;
+  text-transform:lowercase;
+  color:var(--accent);
+  text-shadow:0 0 12px rgba(57,255,136,.55);
+}
+h1::after{content:"_";animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+.tagline{
+  color:var(--dim);font-size:13px;margin:0 0 28px;
+  letter-spacing:1px;
+}
+
+nav ul{
+  list-style:none;padding:0;margin:0 0 36px;
+  display:flex;flex-wrap:wrap;gap:14px;
+}
+nav a{
+  text-decoration:none;font-size:13px;
+  padding:6px 12px;
+  border:1px solid currentColor;border-radius:3px;
+  transition:background .15s ease, box-shadow .15s ease;
+  letter-spacing:.5px;
+}
+nav a:hover{background:rgba(255,255,255,.06);box-shadow:0 0 10px currentColor}
+.link-blue{color:var(--blue)}
+.link-yellow{color:var(--yellow)}
+.link-pink{color:var(--pink)}
+.link-green{color:var(--accent)}
+.link-active{color:var(--accent);border-color:var(--accent);box-shadow:0 0 12px rgba(57,255,136,.4)}
+
+/* ---------- section card ---------- */
+section{
+  border:1px solid var(--line);border-radius:6px;
+  background:rgba(4,10,8,.75);
+  padding:20px 22px;margin-bottom:22px;
+  box-shadow:inset 0 0 30px rgba(57,255,136,.04);
+}
+section h2{
+  font-size:13px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--accent);margin:0 0 14px;
+  text-shadow:0 0 8px rgba(57,255,136,.4);
+}
+section h2::before{content:"> ";color:var(--dim)}
+p, li{font-size:14px;line-height:1.65;color:var(--fg)}
+p{margin:0 0 12px}
+ul.clean{list-style:none;padding:0;margin:0}
+ul.clean li{padding:6px 0;border-bottom:1px dashed rgba(57,255,136,.12)}
+ul.clean li:last-child{border-bottom:none}
+ul.clean li::before{content:"▸ ";color:var(--accent)}
+
+/* ---------- key/value grid ---------- */
+.kv{display:grid;grid-template-columns:180px 1fr;gap:6px 18px;font-size:13.5px}
+.kv dt{color:var(--dim);letter-spacing:.5px}
+.kv dd{margin:0;color:var(--fg);word-break:break-all}
+
+/* ---------- pgp block ---------- */
+pre.pgp{
+  background:#020604;border:1px solid var(--line);border-radius:4px;
+  padding:14px;font-size:11.5px;line-height:1.4;color:var(--accent);
+  overflow-x:auto;white-space:pre;margin:10px 0 0;
+  text-shadow:0 0 4px rgba(57,255,136,.35);
+}
+
+/* ---------- footer ---------- */
+footer{
+  margin-top:40px;padding-top:18px;
+  border-top:1px solid var(--line);
+  font-size:11.5px;color:var(--dim);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+footer .ok{color:var(--accent)}
+
+/* ---------- glitch title ---------- */
+.glitch{position:relative;display:inline-block}
+.glitch::before,.glitch::after{
+  content:attr(data-text);position:absolute;left:0;top:0;
+  width:100%;overflow:hidden;
+}
+.glitch::before{color:var(--red);animation:gl1 3s infinite linear alternate-reverse}
+.glitch::after {color:var(--blue);animation:gl2 2.4s infinite linear alternate-reverse}
+@keyframes gl1{
+  0%,90%,100%{clip-path:inset(0 0 100% 0)}
+  92%{clip-path:inset(20% 0 60% 0);transform:translate(-2px,0)}
+  94%{clip-path:inset(60% 0 20% 0);transform:translate(2px,0)}
+}
+@keyframes gl2{
+  0%,88%,100%{clip-path:inset(0 0 100% 0)}
+  91%{clip-path:inset(40% 0 40% 0);transform:translate(2px,0)}
+  93%{clip-path:inset(10% 0 80% 0);transform:translate(-2px,0)}
+}
+</style>
+</head>
+<body>
+
+<!-- Loading screen -->
+<div id="loading-screen">
+  <pre id="loading-text"></pre>
+</div>
+
+<!-- CRT overlays -->
+<div class="scanlines" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<div class="container">
+
+  <h1><span class="glitch" data-text="about ableonion">about ableonion</span></h1>
+  <p class="tagline">// anonymous marketplace &amp; encrypted chat system</p>
+
+  <nav>
+    <ul>
+      <li><a href="one-to-one-chat.html" class="link-blue">One-to-One Chat</a></li>
+      <li><a href="group-chat.html" class="link-yellow">Group Chat</a></li>
+      <li><a href="about.html" class="link-active">About Us</a></li>
+    </ul>
+  </nav>
+
+  <section>
+    <h2>what is ableonion</h2>
+    <p>
+      Ableonion is a privacy-first communication layer built for people who
+      don't want a paper trail. No accounts, no email verification, no
+      phone numbers. You connect, you talk, you leave — and nothing sticks
+      around after you close the tab.
+    </p>
+    <p>
+      Every message rides an onion circuit. We don't know who you are, and
+      we built the system so we <em>can't</em> know, even if someone asked us
+      nicely. Or un-nicely.
+    </p>
+  </section>
+
+  <section>
+    <h2>principles</h2>
+    <ul class="clean">
+      <li>no logs, no analytics, no third-party trackers</li>
+      <li>no email, no phone number, no KYC — ever</li>
+      <li>end-to-end encryption by default, not as a setting</li>
+      <li>metadata minimisation: we drop timestamps and IPs on receipt</li>
+      <li>client-side everything — the server is a dumb pipe</li>
+      <li>open protocol, auditable client</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>system status</h2>
+    <dl class="kv">
+      <dt>relay build</dt>       <dd>v3.1.7 / 20250914-a4f19c</dd>
+      <dt>cipher suite</dt>      <dd>AES-256-GCM · X25519 · ChaCha20-Poly1305</dd>
+      <dt>onion service</dt>     <dd class="ok">● online (3/3 hops)</dd>
+      <dt>uptime</dt>            <dd>14d 06h 41m 22s</dd>
+      <dt>logged data</dt>       <dd>none</dd>
+      <dt>jurisdiction</dt>      <dd>nowhere you can subpoena</dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2>opsec reminders</h2>
+    <ul class="clean">
+      <li>never reuse a username across clearnet and here</li>
+      <li>disable WebRTC in your browser before chatting</li>
+      <li>verify the PGP fingerprint out-of-band</li>
+      <li>shred local logs after every session</li>
+      <li>assume every screenshot is a leak</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>contact — pgp only</h2>
+    <p>
+      We don't answer plaintext. Encrypt your message with the key below
+      and drop it in the group chat tagged <code>#ops</code>.
+    </p>
+    <pre class="pgp">-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mQINBGXL9fQBEADQ7pK3aZ9xT2mZ0pL4vN7cA1dH6sW3jE5yB0uG2iO8nR9fT2xQ
+8mZ0pL4vN7cA1dH6sW3jE5yB0uG2iO8nR9fT2xQ8mZ0pL4vN7cA1dH6sW3jE5y
+B0uG2iO8nR9fT2xQ8mZ0pL4vN7cA1dH6sW3jE5yB0uG2iO8nR9fT2xQ8mZ0pL4v
+N7cA1dH6sW3jE5yB0uG2iO8nR9fT2xQ8mZ0pL4vN7cA1dH6sW3jE5yB0uG2iO8n
+R9fT2xQ8mZ0pL4vN7cA1dH6sW3jE5yB0uG2iO8nR9fT2xQ8mZ0pL4vN7cA1dH6
+=ABLE
+-----END PGP PUBLIC KEY BLOCK-----</pre>
+    <p style="margin-top:12px;color:var(--dim);font-size:12px">
+      fingerprint · <span style="color:var(--accent)">9F2C 71AB DE04 C8E1 A3B5 7D62 0F4E 98CC</span>
+    </p>
+  </section>
+
+  <footer>
+    <span>© ableonion — no rights reserved, no data collected</span>
+    <span class="ok">● encrypted · onion v3 · no logs</span>
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================
+   loading sequence — hacker-style boot log
+   ============================================================ */
+(function(){
+  const screen = document.getElementById("loading-screen");
+  const out    = document.getElementById("loading-text");
+
+  const lines = [
+    "[*] ableonion bootloader v3.1.7",
+    "[*] checking secure enclave ............ ok",
+    "[*] mounting /dev/onion ................ ok",
+    "[*] resolving guard nodes (3) .......... ok",
+    "[*] handshake guard 45.132.8.77 ........ verified",
+    "[*] handshake middle 91.204.13.5 ....... verified",
+    "[*] handshake exit 176.9.44.201 ........ verified",
+    "[*] deriving session key (X25519) ...... ok",
+    "[*] cipher: AES-256-GCM / ChaCha20 ..... armed",
+    "[*] leak audit: dns/ipv6/webrtc ........ clean",
+    "[*] telemetry, analytics, logging ...... disabled",
+    "[!] WARNING: unauthorized access is monitored",
+    "[+] channel encrypted. entering site ..."
+  ];
+
+  let li = 0;
+  function typeLine(){
+    if (li >= lines.length){
+      setTimeout(() => {
+        screen.classList.add("hidden");
+        document.body.style.overflow = "";
+      }, 450);
+      return;
+    }
+    const line = lines[li++] + "\n";
+    let i = 0;
+    (function tick(){
+      if (i < line.length){
+        out.textContent += line[i++];
+        setTimeout(tick, 6 + Math.random()*10);
+      } else {
+        setTimeout(typeLine, 90 + Math.random()*120);
+      }
+    })();
+  }
+
+  document.body.style.overflow = "hidden";
+  // kick off after a short beat so the page is painted first
+  setTimeout(typeLine, 200);
+
+  // allow users to skip with any key / click
+  const skip = () => {
+    out.textContent = lines.join("\n") + "\n";
+    screen.classList.add("hidden");
+    document.body.style.overflow = "";
+    document.removeEventListener("keydown", skip);
+    screen.removeEventListener("click", skip);
+  };
+  document.addEventListener("keydown", skip, {once:false});
+  screen.addEventListener("click", skip);
+})();
+</script>
+
+</body>
+</html>
