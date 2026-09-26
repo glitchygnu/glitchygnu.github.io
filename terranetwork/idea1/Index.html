@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEON//PULSE</title>
+<style>
+  :root{
+    --neon1:#00fff0;
+    --neon2:#ff00e0;
+    --neon3:#7a00ff;
+    --bg:#05010f;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow-x:hidden;}
+  body{
+    font-family:'Segoe UI',system-ui,sans-serif;
+    background:var(--bg);
+    color:#fff;
+    cursor:crosshair;
+  }
+
+  /* Animierter Hintergrund */
+  .bg-grid{
+    position:fixed;inset:0;z-index:0;
+    background-image:
+      linear-gradient(rgba(0,255,240,.08) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,0,224,.08) 1px,transparent 1px);
+    background-size:50px 50px;
+    animation:gridmove 8s linear infinite;
+  }
+  @keyframes gridmove{
+    from{background-position:0 0;}
+    to{background-position:50px 50px;}
+  }
+
+  #particles{position:fixed;inset:0;z-index:1;}
+
+  /* Glow-Orbs */
+  .orb{
+    position:fixed;border-radius:50%;filter:blur(90px);opacity:.5;z-index:0;
+    animation:float 12s ease-in-out infinite;
+  }
+  .orb.a{width:400px;height:400px;background:var(--neon1);top:-100px;left:-100px;}
+  .orb.b{width:350px;height:350px;background:var(--neon2);bottom:-120px;right:-80px;animation-delay:-4s;}
+  .orb.c{width:300px;height:300px;background:var(--neon3);top:40%;left:55%;animation-delay:-8s;}
+  @keyframes float{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(40px,-40px) scale(1.15);}
+  }
+
+  /* Hero */
+  .hero{
+    position:relative;z-index:2;
+    min-height:100vh;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    text-align:center;padding:2rem;
+  }
+  .tag{
+    font-size:.8rem;letter-spacing:.4em;text-transform:uppercase;
+    color:var(--neon1);margin-bottom:1.5rem;
+    border:1px solid var(--neon1);
+    padding:.5rem 1.2rem;border-radius:999px;
+    box-shadow:0 0 20px rgba(0,255,240,.4);
+    animation:pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{box-shadow:0 0 20px rgba(0,255,240,.4);}
+    50%{box-shadow:0 0 40px rgba(0,255,240,.9);}
+  }
+  h1{
+    font-size:clamp(3rem,12vw,10rem);
+    font-weight:900;
+    line-height:.9;
+    letter-spacing:-.03em;
+    background:linear-gradient(90deg,var(--neon1),var(--neon2),var(--neon3),var(--neon1));
+    background-size:300% 100%;
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:shine 4s linear infinite;
+    text-shadow:0 0 60px rgba(255,0,224,.3);
+  }
+  @keyframes shine{
+    to{background-position:300% 0;}
+  }
+  h1 span{display:inline-block;animation:bounce 2s ease-in-out infinite;}
+  h1 span:nth-child(2){animation-delay:.1s;}
+  h1 span:nth-child(3){animation-delay:.2s;}
+  h1 span:nth-child(4){animation-delay:.3s;}
+  h1 span:nth-child(5){animation-delay:.4s;}
+  h1 span:nth-child(6){animation-delay:.5s;}
+  h1 span:nth-child(7){animation-delay:.6s;}
+  h1 span:nth-child(8){animation-delay:.7s;}
+  h1 span:nth-child(9){animation-delay:.8s;}
+  @keyframes bounce{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-12px);}
+  }
+
+  .sub{
+    margin-top:2rem;max-width:600px;
+    font-size:1.1rem;color:#b8b0d0;line-height:1.7;
+  }
+
+  .cta{
+    margin-top:3rem;display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;
+  }
+  .btn{
+    position:relative;
+    padding:1rem 2.5rem;
+    font-size:1rem;font-weight:700;letter-spacing:.05em;
+    border:none;border-radius:999px;cursor:pointer;
+    text-transform:uppercase;
+    transition:transform .2s,box-shadow .3s;
+    overflow:hidden;
+  }
+  .btn-primary{
+    background:linear-gradient(90deg,var(--neon1),var(--neon2));
+    color:#05010f;
+    box-shadow:0 0 30px rgba(255,0,224,.6);
+  }
+  .btn-ghost{
+    background:transparent;color:#fff;
+    border:2px solid rgba(255,255,255,.25);
+  }
+  .btn:hover{transform:translateY(-4px) scale(1.05);}
+  .btn:active{transform:scale(.97);}
+  .btn-ghost:hover{border-color:var(--neon1);box-shadow:0 0 30px rgba(0,255,240,.4);}
+
+  /* Counter Cards */
+  .stats{
+    position:relative;z-index:2;
+    display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;
+    padding:5rem 2rem;
+  }
+  .card{
+    width:220px;padding:2rem 1.5rem;
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:20px;
+    backdrop-filter:blur(10px);
+    text-align:center;
+    transition:transform .3s,border-color .3s,box-shadow .3s;
+    cursor:pointer;
+  }
+  .card:hover{
+    transform:translateY(-10px) rotate(-2deg);
+    border-color:var(--neon1);
+    box-shadow:0 20px 60px rgba(0,255,240,.25);
+  }
+  .card .num{
+    font-size:3rem;font-weight:900;
+    background:linear-gradient(90deg,var(--neon1),var(--neon2));
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;
+  }
+  .card .label{
+    margin-top:.5rem;font-size:.8rem;letter-spacing:.2em;
+    text-transform:uppercase;color:#8a80a8;
+  }
+
+  /* Marquee */
+  .marquee{
+    position:relative;z-index:2;
+    overflow:hidden;white-space:nowrap;
+    border-top:1px solid rgba(255,255,255,.1);
+    border-bottom:1px solid rgba(255,255,255,.1);
+    padding:1.5rem 0;
+    background:rgba(0,0,0,.3);
+  }
+  .marquee-track{
+    display:inline-block;
+    animation:scroll 20s linear infinite;
+    font-size:2rem;font-weight:900;letter-spacing:.1em;
+  }
+  .marquee-track span{margin:0 2rem;color:transparent;-webkit-text-stroke:1px var(--neon2);}
+  @keyframes scroll{
+    from{transform:translateX(0);}
+    to{transform:translateX(-50%);}
+  }
+
+  footer{
+    position:relative;z-index:2;
+    text-align:center;padding:3rem 2rem;
+    color:#5a5275;font-size:.85rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="orb a"></div>
+<div class="orb b"></div>
+<div class="orb c"></div>
+<canvas id="particles"></canvas>
+
+<section class="hero">
+  <div class="tag">⚡ System Online ⚡</div>
+  <h1>
+    <span>N</span><span>E</span><span>O</span><span>N</span>
+    <span>//</span>
+    <span>P</span><span>U</span><span>L</span><span>S</span><span>E</span>
+  </h1>
+  <p class="sub">
+    Eine Website, die leuchtet, atmet und reagiert. Bewege die Maus,
+    klicke irgendwo – und schau, was passiert.
+  </p>
+  <div class="cta">
+    <button class="btn btn-primary" onclick="boom()">Klick mich 🚀</button>
+    <button class="btn btn-ghost" onclick="scrollTo({top:window.innerHeight,behavior:'smooth'})">Mehr ↓</button>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="card"><div class="num" data-target="1337">0</div><div class="label">Zeilen Code</div></div>
+  <div class="card"><div class="num" data-target="42">0</div><div class="label">Antworten</div></div>
+  <div class="card"><div class="num" data-target="99">0</div><div class="label">FPS</div></div>
+  <div class="card"><div class="num" data-target="7">0</div><div class="label">Neon-Farben</div></div>
+</section>
+
+<div class="marquee">
+  <div class="marquee-track">
+    <span>★ DESIGN</span><span>★ CODE</span><span>★ MOTION</span><span>★ GLOW</span>
+    <span>★ DESIGN</span><span>★ CODE</span><span>★ MOTION</span><span>★ GLOW</span>
+  </div>
+</div>
+
+<footer>Made with ⚡ und zu viel Koffein · NEON//PULSE © 2026</footer>
+
+<script>
+// ---------- Partikel-Canvas ----------
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W, H, parts = [], mouse = {x:0,y:0};
+
+function resize(){
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+for(let i=0;i<120;i++){
+  parts.push({
+    x:Math.random()*W,
+    y:Math.random()*H,
+    vx:(Math.random()-.5)*0.6,
+    vy:(Math.random()-.5)*0.6,
+    r:Math.random()*2+0.5,
+    hue:Math.random()*360
+  });
+}
+
+window.addEventListener('mousemove', e=>{
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+
+  // Linien zwischen nahen Partikeln
+  for(let i=0;i<parts.length;i++){
+    for(let j=i+1;j<parts.length;j++){
+      const dx = parts[i].x - parts[j].x;
+      const dy = parts[i].y - parts[j].y;
+      const d = Math.hypot(dx,dy);
+      if(d < 120){
+        ctx.strokeStyle = `hsla(${parts[i].hue},100%,60%,${1-d/120})`;
+        ctx.lineWidth = 0.6;
+        ctx.beginPath();
+        ctx.moveTo(parts[i].x, parts[i].y);
+        ctx.lineTo(parts[j].x, parts[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+
+  // Partikel zeichnen
+  parts.forEach(p=>{
+    // Maus-Anziehung
+    const dx = mouse.x - p.x;
+    const dy = mouse.y - p.y;
+    const dist = Math.hypot(dx,dy);
+    if(dist < 200){
+      p.vx += dx/dist * 0.05;
+      p.vy += dy/dist * 0.05;
+    }
+
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx *= 0.99;
+    p.vy *= 0.99;
+
+    if(p.x < 0 || p.x > W) p.vx *= -1;
+    if(p.y < 0 || p.y > H) p.vy *= -1;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = `hsl(${p.hue},100%,65%)`;
+    ctx.shadowColor = `hsl(${p.hue},100%,65%)`;
+    ctx.shadowBlur = 12;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  });
+
+  requestAnimationFrame(draw);
+}
+draw();
+
+// ---------- Klick-Explosion ----------
+function burst(x,y){
+  for(let i=0;i<30;i++){
+    const el = document.createElement('div');
+    const angle = Math.random()*Math.PI*2;
+    const dist = Math.random()*150+50;
+    Object.assign(el.style,{
+      position:'fixed',
+      left:x+'px', top:y+'px',
+      width:'8px', height:'8px',
+      borderRadius:'50%',
+      background:`hsl(${Math.random()*360},100%,60%)`,
+      pointerEvents:'none',
+      zIndex:9999,
+      transition:'transform .8s cubic-bezier(.2,.8,.3,1), opacity .8s'
+    });
+    document.body.appendChild(el);
+    requestAnimationFrame(()=>{
+      el.style.transform = `translate(${Math.cos(angle)*dist}px,${Math.sin(angle)*dist}px) scale(0)`;
+      el.style.opacity = '0';
+    });
+    setTimeout(()=>el.remove(), 900);
+  }
+}
+
+window.addEventListener('click', e=> burst(e.clientX, e.clientY));
+function boom(){ burst(window.innerWidth/2, window.innerHeight/2); }
+
+// ---------- Counter hochzählen ----------
+const cards = document.querySelectorAll('.card');
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const el = entry.target.querySelector('.num');
+      const target = +el.dataset.target;
+      let cur = 0;
+      const step = Math.max(1, target/60);
+      const t = setInterval(()=>{
+        cur += step;
+        if(cur >= target){ cur = target; clearInterval(t); }
+        el.textContent = Math.floor(cur);
+      }, 20);
+      io.unobserve(entry.target);
+    }
+  });
+},{threshold:.5});
+cards.forEach(c=>io.observe(c));
+</script>
+</body>
+</html>
