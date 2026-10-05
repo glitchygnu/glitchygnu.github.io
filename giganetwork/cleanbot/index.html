@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dynamic Glass Chatbot</title>
+<style>
+  :root {
+    --glass: rgba(255,255,255,.22);
+    --glass-strong: rgba(255,255,255,.38);
+    --line: rgba(90,90,90,.30);
+    --text: #171717;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    font-family: Georgia, "Times New Roman", serif;
+    color: var(--text);
+  }
+
+  body {
+    position: relative;
+    background: #eaf8f7;
+  }
+
+  /* Endless, soft vertical colour flow */
+  .background {
+    position: fixed;
+    inset: -12%;
+    overflow: hidden;
+    background:
+      linear-gradient(
+        180deg,
+        #dff2ff 0%,
+        #edf8ff 15%,
+        #fff9d9 38%,
+        #fff8df 49%,
+        #faeaf0 59%,
+        #fff8df 69%,
+        #fffbe8 82%,
+        #e5f5ff 100%
+      );
+    background-size: 100% 240%;
+    animation: colourFlow 28s ease-in-out infinite alternate;
+    will-change: background-position;
+  }
+
+  .blob {
+    position: absolute;
+    width: 65vw;
+    height: 65vw;
+    min-width: 520px;
+    min-height: 520px;
+    border-radius: 50%;
+    filter: blur(110px);
+    opacity: .28;
+    mix-blend-mode: soft-light;
+    will-change: transform;
+  }
+
+  .b1 {
+    left: -15vw;
+    top: -20vw;
+    background: rgba(135,195,245,.34);
+    animation: drift1 25s ease-in-out infinite alternate;
+  }
+
+  .b2 {
+    right: -20vw;
+    top: 20vh;
+    background: rgba(250,220,110,.30);
+    animation: drift2 31s ease-in-out infinite alternate;
+  }
+
+  .b3 {
+    left: 12vw;
+    bottom: -32vw;
+    background: rgba(245,175,205,.22);
+    animation: drift3 28s ease-in-out infinite alternate;
+  }
+
+  .b4 {
+    right: 0;
+    bottom: -28vw;
+    background: rgba(250,220,120,.24);
+    animation: drift4 35s ease-in-out infinite alternate;
+  }
+
+  .light {
+    position: absolute;
+    inset: -20%;
+    background:
+      radial-gradient(ellipse 35% 22% at 25% 22%, rgba(255,255,255,.68), transparent 72%),
+      radial-gradient(ellipse 42% 26% at 78% 67%, rgba(255,255,255,.42), transparent 72%);
+    filter: blur(35px);
+    animation: lightMove 22s ease-in-out infinite alternate;
+  }
+
+  .grain {
+    position: absolute;
+    inset: 0;
+    opacity: .025;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='%23n' opacity='.55'/%3E%3C/svg%3E");
+  }
+
+  @keyframes colourFlow {
+    0%   { background-position: 0% 0%; }
+    50%  { background-position: 0% 50%; }
+    100% { background-position: 0% 100%; }
+  }
+
+  @keyframes drift1 {
+    from { transform: translate3d(0,0,0) scale(1); }
+    to   { transform: translate3d(6vw,5vh,0) scale(1.12); }
+  }
+  @keyframes drift2 {
+    from { transform: translate3d(0,0,0) scale(1.06); }
+    to   { transform: translate3d(-7vw,-4vh,0) scale(.94); }
+  }
+  @keyframes drift3 {
+    from { transform: translate3d(0,0,0) scale(.96); }
+    to   { transform: translate3d(5vw,-6vh,0) scale(1.1); }
+  }
+  @keyframes drift4 {
+    from { transform: translate3d(0,0,0) scale(1.04); }
+    to   { transform: translate3d(-6vw,4vh,0) scale(.92); }
+  }
+  @keyframes lightMove {
+    from { transform: translate3d(-3%, -2%, 0); }
+    to   { transform: translate3d(3%, 2%, 0); }
+  }
+
+  .app {
+    position: relative;
+    z-index: 2;
+    width: min(920px, calc(100vw - 32px));
+    height: min(760px, calc(100vh - 32px));
+    margin: 16px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px;
+  }
+
+  .messages {
+    width: 100%;
+    height: min(72vh, 650px);
+    padding: 28px 28px 18px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    background: rgba(255,255,255,.16);
+    box-shadow:
+      0 24px 70px rgba(70,100,100,.09),
+      inset 0 1px 0 rgba(255,255,255,.48);
+    backdrop-filter: blur(28px) saturate(1.08);
+    -webkit-backdrop-filter: blur(28px) saturate(1.08);
+    overflow: hidden;
+    scroll-behavior: smooth;
+  }
+
+  #messageList {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .messages::-webkit-scrollbar { width: 7px; }
+  .messages::-webkit-scrollbar-thumb {
+    background: rgba(80,80,80,.20);
+    border-radius: 99px;
+  }
+
+  .empty {
+    height: 100%;
+    display: grid;
+    place-items: center;
+    color: rgba(30,30,30,.42);
+    font-size: 15px;
+    letter-spacing: .01em;
+    user-select: none;
+  }
+
+  .message {
+    width: fit-content;
+    max-width: min(78%, 680px);
+    margin: 9px 0;
+    align-self: flex-end;
+    padding: 11px 16px;
+    border: 1px solid rgba(100,100,100,.16);
+    border-radius: 21px;
+    background: rgba(255,255,255,.44);
+    box-shadow: 0 5px 18px rgba(70,90,90,.06);
+    font-size: 16px;
+    line-height: 1.42;
+    animation: appear .24s ease-out both;
+    overflow-wrap: anywhere;
+  }
+
+  /* Bot bubbles sit on the left and are a touch brighter */
+  .message.bot {
+    align-self: flex-start;
+    background: rgba(255,255,255,.66);
+    border-color: rgba(100,100,100,.22);
+    box-shadow: 0 5px 18px rgba(70,90,90,.08);
+  }
+
+  @keyframes appear {
+    from { opacity: 0; transform: translateY(8px) scale(.985); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .composer {
+    width: 100%;
+    min-height: 62px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 8px 7px 20px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    margin-top: 10px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .composer input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #151515;
+    font: inherit;
+    font-size: 16px;
+  }
+
+  .composer input::placeholder {
+    color: rgba(35,35,35,.43);
+  }
+
+  .send {
+    width: 46px;
+    height: 46px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,.52);
+    color: rgba(25,25,25,.68);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: transform .16s ease, background .16s ease;
+  }
+
+  .send:hover {
+    transform: scale(1.045);
+    background: rgba(255,255,255,.72);
+  }
+
+  .send:active { transform: scale(.96); }
+
+  .send svg {
+    width: 19px;
+    height: 19px;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .message.morphing {
+    animation: none;
+  }
+
+  .morph-clone {
+    position: fixed;
+    z-index: 20;
+    margin: 0;
+    pointer-events: none;
+    transform-origin: center right;
+    will-change: transform, width, height, border-radius, opacity;
+    background: rgba(255,255,255,.48);
+    border: 1px solid rgba(100,100,100,.16);
+    border-radius: 28px;
+    box-shadow: 0 8px 28px rgba(70,90,90,.10);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    overflow: hidden;
+  }
+
+  @media (max-width: 640px) {
+    .app {
+      width: calc(100vw - 20px);
+      height: calc(100vh - 20px);
+      margin: 10px;
+    }
+    .messages {
+      border-radius: 24px;
+      padding: 18px;
+    }
+    .message { max-width: 88%; }
+    .blob { filter: blur(65px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blob, .light, .background { animation: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="background" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="blob b4"></div>
+    <div class="light"></div>
+    <div class="grain"></div>
+  </div>
+
+  <main class="app">
+    <section class="messages" id="messages" aria-live="polite">
+      <div id="messageList">
+        <div class="empty" id="empty">Schreibe etwas unten …</div>
+      </div>
+
+      <form class="composer" id="composer">
+        <input id="input" autocomplete="off" placeholder="Nachricht" aria-label="Nachricht">
+        <button class="send" aria-label="Senden" type="submit">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 12h15"></path>
+            <path d="m13 6 6 6-6 6"></path>
+          </svg>
+        </button>
+      </form>
+    </section>
+  </main>
+
+<script>
+  /* =====================================================================
+     1) ANTWORTEN – hier einfach weitere Objekte ergänzen
+     ---------------------------------------------------------------------
+     keywords : Wörter, die in der Nachricht vorkommen dürfen
+                (Reihenfolge = Priorität: spezielle Treffer zuerst!)
+     reply    : die Antwort, die der Bot zurückschreibt
+     ===================================================================== */
+  const RESPONSES = [
+    {
+      keywords: ["hilfe", "help", "was kannst du", "was kann ich"],
+      reply: "Ich kenne mich mit Öffnungszeiten, Preisen, Lieferung und Kontakt aus. Frag mich einfach!"
+    },
+    {
+      keywords: ["hallo", "hi", "hey", "guten tag", "guten morgen", "servus", "moin"],
+      reply: "Hallo! Ich bin Glassy, dein kleiner Demo-Bot. Wie kann ich dir helfen?"
+    },
+    {
+      keywords: ["wie geht", "wie gehts", "wie geht es dir"],
+      reply: "Mir geht es gut, danke der Nachfrage! Und dir?"
+    },
+    {
+      keywords: ["wie heißt du", "dein name", "wer bist du"],
+      reply: "Ich heiße Glassy und bestehe aus Glas, Licht und ein paar Zeilen JavaScript."
+    },
+    {
+      keywords: ["öffnungszeit", "öffnungszeiten", "geöffnet", "offen", "wann habt ihr"],
+      reply: "Wir sind Montag bis Freitag von 9:00 bis 18:00 Uhr für dich da. Am Wochenende bleiben wir geschlossen."
+    },
+    {
+      keywords: ["preis", "preise", "kosten", "kostet", "teuer", "günstig"],
+      reply: "Die Basisversion ist kostenlos. Das Pro-Paket kostet 9 € pro Monat – jederzeit kündbar."
+    },
+    {
+      keywords: ["lieferung", "versand", "liefert", "dauer"],
+      reply: "Die Lieferung dauert in der Regel 2 bis 4 Werktage. Ab 50 € Bestellwert versenden wir kostenlos."
+    },
+    {
+      keywords: ["kontakt", "e-mail", "email", "telefon", "erreichen", "ansprechpartner"],
+      reply: "Du erreichst uns unter hallo@example.com oder telefonisch unter +49 30 1234567."
+    },
+    {
+      keywords: ["danke", "vielen dank", "dankeschön", "dankeschön"],
+      reply: "Sehr gerne! Wenn du noch etwas brauchst, sag einfach Bescheid."
+    },
+    {
+      keywords: ["tschüss", "tschuess", "bye", "auf wiedersehen", "ciao", "bis später"],
+      reply: "Bis bald! Es war schön, mit dir zu schreiben."
+    },
+    {
+      keywords: ["wetter"],
+      reply: "Ich habe leider kein Fenster nach draußen – aber ich hoffe, bei dir scheint die Sonne."
+    }
+  ];
+
+  /* Antwort, wenn nichts passt */
+  const FALLBACK = "Das habe ich leider nicht verstanden. Frag mich zum Beispiel nach „Öffnungszeiten“, „Preise“ oder „Kontakt“.";
+
+  /* =====================================================================
+     2) Treffer-Logik (muss normalerweise nicht angepasst werden)
+     ===================================================================== */
+  function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  /* Ganzes Wort bevorzugt, damit z. B. "hi" nicht in "hilfe" anschlägt */
+  function containsKeyword(text, keyword) {
+    const k = keyword.toLowerCase();
+    if (k.includes(" ")) return text.includes(k);
+    const pattern = new RegExp(`(^|[^a-zäöüß])${escapeRegex(k)}([^a-zäöüß]|$)`, "i");
+    return pattern.test(text);
+  }
+
+  function findReply(userText) {
+    const text = userText.toLowerCase().trim();
+    for (const entry of RESPONSES) {
+      if (entry.keywords.some(k => containsKeyword(text, k))) {
+        return entry.reply;
+      }
+    }
+    return FALLBACK;
+  }
+
+  /* =====================================================================
+     3) Chat-Mechanik + Morph-Animation
+     ===================================================================== */
+  const form = document.getElementById("composer");
+  const input = document.getElementById("input");
+  const messages = document.getElementById("messageList");
+  const empty = document.getElementById("empty");
+
+  /**
+   * Fügt eine Nachricht hinzu.
+   * @param {string} text
+   * @param {"user"|"bot"} sender
+   */
+  function addMessage(text, sender = "user") {
+    const value = text.trim();
+    if (!value) return;
+
+    if (empty) empty.remove();
+
+    // Endgültige Blase unsichtbar aufbauen und exakt vermessen.
+    const bubble = document.createElement("div");
+    bubble.className = "message " + sender;
+    bubble.textContent = value;
+    bubble.style.visibility = "hidden";
+    bubble.style.opacity = "0";
+    messages.appendChild(bubble);
+
+    // Damit die Blase im sichtbaren Bereich liegt, bevor wir sie messen.
+    messages.scrollTop = messages.scrollHeight;
+
+    const target = bubble.getBoundingClientRect();
+    const source = form.getBoundingClientRect();
+    const cs = getComputedStyle(bubble);
+
+    const clone = document.createElement("div");
+    clone.className = "morph-clone";
+    clone.textContent = value;
+    clone.style.font = cs.font;
+    clone.style.lineHeight = cs.lineHeight;
+    clone.style.color = cs.color;
+    clone.style.padding = cs.padding;
+    clone.style.whiteSpace = "nowrap";
+    clone.style.boxSizing = "border-box";
+    // Optik der Blase übernehmen (User = heller, Bot = etwas kräftiger)
+    clone.style.background = cs.backgroundColor;
+    clone.style.borderColor = cs.borderColor;
+
+    // Startpunkt: der Eingabe-/Sendebereich selbst, keine zweite Blase.
+    const startH = Math.min(44, source.height - 12);
+    const startW = Math.min(116, Math.max(76, source.width * 0.14));
+    const startX = source.right - startW - 4;
+    const startY = source.top + (source.height - startH) / 2;
+
+    Object.assign(clone.style, {
+      left: `${startX}px`,
+      top: `${startY}px`,
+      width: `${startW}px`,
+      height: `${startH}px`,
+      borderRadius: `${startH / 2}px`,
+      opacity: "0"
+    });
+    document.body.appendChild(clone);
+
+    // Geometrie-Animation statt Transform-Skalierung – so stimmt das
+    // Koordinatensystem jederzeit mit der finalen Blase überein.
+    const animation = clone.animate([
+      {
+        left: `${startX}px`,
+        top: `${startY}px`,
+        width: `${startW}px`,
+        height: `${startH}px`,
+        borderRadius: `${startH / 2}px`,
+        opacity: 0,
+        filter: "blur(2px)"
+      },
+      {
+        left: `${startX - 8}px`,
+        top: `${startY}px`,
+        width: `${startW + 32}px`,
+        height: `${startH}px`,
+        borderRadius: `${startH / 2}px`,
+        opacity: .82,
+        filter: "blur(.8px)",
+        offset: .12
+      },
+      {
+        // Erste Streckung: die Kapsel zieht sich auseinander, bevor sie reist.
+        left: `${startX - 48}px`,
+        top: `${startY + (startH - Math.min(40, startH)) / 2}px`,
+        width: `${Math.max(startW + 125, target.width * .62)}px`,
+        height: `${Math.min(40, startH)}px`,
+        borderRadius: "20px",
+        opacity: 1,
+        filter: "blur(0)",
+        offset: .30
+      },
+      {
+        // Die gestreckte Form folgt der Flugbahn und wächst dabei in die Höhe.
+        left: `${target.left + target.width * .24}px`,
+        top: `${target.top + target.height * .18}px`,
+        width: `${target.width * .76}px`,
+        height: `${Math.max(34, target.height * .82)}px`,
+        borderRadius: "20px",
+        opacity: 1,
+        filter: "blur(0)",
+        offset: .70
+      },
+      {
+        // Exakte Endgeometrie. Kein Scaling, keine Transform-Origin-Tricks.
+        left: `${target.left}px`,
+        top: `${target.top}px`,
+        width: `${target.width}px`,
+        height: `${target.height}px`,
+        borderRadius: "21px",
+        opacity: 1,
+        filter: "blur(0)"
+      }
+    ], {
+      duration: 820,
+      easing: "cubic-bezier(.16,1,.3,1)",
+      fill: "forwards"
+    });
+
+    animation.finished.then(() => {
+      // Der Klon wird erst ausgeblendet, wenn die echte Blase exakt
+      // deckungsgleich ist – so bleibt es ein durchgehendes Objekt.
+      bubble.style.visibility = "visible";
+      bubble.style.opacity = "1";
+      clone.animate(
+        [{ opacity: 1 }, { opacity: 0 }],
+        { duration: 90, easing: "ease-out", fill: "forwards" }
+      ).finished.then(() => clone.remove());
+      messages.scrollTop = messages.scrollHeight;
+    }).catch(() => {
+      clone.remove();
+      bubble.style.visibility = "visible";
+      bubble.style.opacity = "1";
+    });
+  }
+
+  /* Bot antwortet nach kurzer "Denkpause" */
+  function botReply(userText) {
+    const reply = findReply(userText);
+    window.setTimeout(() => {
+      addMessage(reply, "bot");
+      input.focus();
+    }, 620);
+  }
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const value = input.value.trim();
+    if (!value) return;
+
+    addMessage(value, "user");
+    input.value = "";
+    input.focus();
+
+    botReply(value);
+  });
+</script>
+</body>
+</html>
