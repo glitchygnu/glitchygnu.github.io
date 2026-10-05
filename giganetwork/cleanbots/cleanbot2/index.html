@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dynamic Glass Chatbot</title>
+<style>
+  :root {
+    --line: rgba(90,90,90,.30);
+    --text: #171717;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    margin: 0; overflow: hidden;
+    font-family: Georgia, "Times New Roman", serif;
+    color: var(--text);
+  }
+
+  body { position: relative; background: #eaf8f7; }
+
+  /* ---- Animated background -------------------------------------------- */
+  .background {
+    position: fixed; inset: -12%;
+    overflow: hidden;
+    background: linear-gradient(180deg,
+      #dff2ff 0%, #edf8ff 15%, #fff9d9 38%, #fff8df 49%,
+      #faeaf0 59%, #fff8df 69%, #fffbe8 82%, #e5f5ff 100%);
+    background-size: 100% 240%;
+    animation: colourFlow 28s ease-in-out infinite alternate;
+    will-change: background-position;
+  }
+  .blob {
+    position: absolute;
+    width: 65vw; height: 65vw;
+    min-width: 520px; min-height: 520px;
+    border-radius: 50%;
+    filter: blur(110px);
+    opacity: .28;
+    mix-blend-mode: soft-light;
+    will-change: transform;
+  }
+  .b1 { left: -15vw; top: -20vw; background: rgba(135,195,245,.34); animation: drift1 25s ease-in-out infinite alternate; }
+  .b2 { right: -20vw; top: 20vh; background: rgba(250,220,110,.30); animation: drift2 31s ease-in-out infinite alternate; }
+  .b3 { left: 12vw; bottom: -32vw; background: rgba(245,175,205,.22); animation: drift3 28s ease-in-out infinite alternate; }
+  .b4 { right: 0; bottom: -28vw; background: rgba(250,220,120,.24); animation: drift4 35s ease-in-out infinite alternate; }
+  .light {
+    position: absolute; inset: -20%;
+    background:
+      radial-gradient(ellipse 35% 22% at 25% 22%, rgba(255,255,255,.68), transparent 72%),
+      radial-gradient(ellipse 42% 26% at 78% 67%, rgba(255,255,255,.42), transparent 72%);
+    filter: blur(35px);
+    animation: lightMove 22s ease-in-out infinite alternate;
+  }
+  .grain {
+    position: absolute; inset: 0;
+    opacity: .025; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='%23n' opacity='.55'/%3E%3C/svg%3E");
+  }
+  @keyframes colourFlow { 0%{background-position:0% 0%} 50%{background-position:0% 50%} 100%{background-position:0% 100%} }
+  @keyframes drift1 { from{transform:translate3d(0,0,0) scale(1)}     to{transform:translate3d(6vw,5vh,0) scale(1.12)} }
+  @keyframes drift2 { from{transform:translate3d(0,0,0) scale(1.06)}  to{transform:translate3d(-7vw,-4vh,0) scale(.94)} }
+  @keyframes drift3 { from{transform:translate3d(0,0,0) scale(.96)}   to{transform:translate3d(5vw,-6vh,0) scale(1.1)} }
+  @keyframes drift4 { from{transform:translate3d(0,0,0) scale(1.04)}  to{transform:translate3d(-6vw,4vh,0) scale(.92)} }
+  @keyframes lightMove { from{transform:translate3d(-3%,-2%,0)} to{transform:translate3d(3%,2%,0)} }
+
+  /* ---- Layout --------------------------------------------------------- */
+  .app {
+    position: relative; z-index: 2;
+    width: min(920px, calc(100vw - 32px));
+    height: min(760px, calc(100vh - 32px));
+    margin: 16px auto;
+    display: flex; flex-direction: column; justify-content: center; gap: 18px;
+  }
+
+  .messages {
+    width: 100%;
+    height: min(72vh, 650px);
+    padding: 28px 28px 18px;
+    display: flex; flex-direction: column;
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    background: rgba(255,255,255,.16);
+    box-shadow: 0 24px 70px rgba(70,100,100,.09), inset 0 1px 0 rgba(255,255,255,.48);
+    backdrop-filter: blur(28px) saturate(1.08);
+    -webkit-backdrop-filter: blur(28px) saturate(1.08);
+    overflow: hidden;
+  }
+
+  #messageList {
+    flex: 1; min-height: 0;
+    overflow-y: auto;
+    padding-right: 4px;
+    display: flex; flex-direction: column; align-items: flex-end;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+  }
+  .messages::-webkit-scrollbar { width: 7px; }
+  .messages::-webkit-scrollbar-thumb { background: rgba(80,80,80,.20); border-radius: 99px; }
+
+  .empty {
+    height: 100%;
+    display: grid; place-items: center;
+    color: rgba(30,30,30,.42);
+    font-size: 15px; letter-spacing: .01em;
+    user-select: none;
+  }
+
+  /* ---- Bubbles -------------------------------------------------------- */
+  .message {
+    width: fit-content;
+    max-width: min(78%, 680px);
+    margin: 9px 0;
+    align-self: flex-end;
+    padding: 11px 16px;
+    border: 1px solid rgba(100,100,100,.16);
+    border-radius: 21px;
+    background: rgba(255,255,255,.44);
+    box-shadow: 0 5px 18px rgba(70,90,90,.06);
+    font-size: 16px; line-height: 1.42;
+    overflow-wrap: anywhere;
+    /* first paint handled by JS opacity fade */
+    opacity: 0;
+    animation: none;
+  }
+  .message.bot {
+    align-self: flex-start;
+    background: rgba(255,255,255,.68);
+    border-color: rgba(100,100,100,.22);
+    box-shadow: 0 5px 18px rgba(70,90,90,.08);
+  }
+  .message.reveal {
+    animation: bubbleReveal .28s ease-out forwards;
+  }
+  @keyframes bubbleReveal {
+    from { opacity: 0; transform: translateY(4px) scale(.99); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .message.instant { animation: none; opacity: 1; }
+
+  /* ---- Composer ------------------------------------------------------- */
+  .composer {
+    width: 100%; min-height: 62px;
+    display: flex; align-items: center; gap: 9px;
+    padding: 7px 4px 7px 4px;
+    border: 0; background: transparent;
+    margin-top: 10px;
+  }
+  .composer input {
+    flex: 1; min-width: 0;
+    border: 0; outline: 0; background: transparent;
+    color: #151515; font: inherit; font-size: 16px;
+  }
+  .composer input::placeholder { color: rgba(35,35,35,.43); }
+
+  .send {
+    position: relative;
+    width: 46px; height: 46px;
+    border: 0; border-radius: 50%;
+    background: rgba(255,255,255,.52);
+    color: rgba(25,25,25,.68);
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: transform .16s ease, background .16s ease;
+  }
+  .send:hover { transform: scale(1.045); background: rgba(255,255,255,.72); }
+  .send:active { transform: scale(.96); }
+  .send svg {
+    width: 19px; height: 19px;
+    stroke: currentColor; stroke-width: 1.8;
+    fill: none; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .send.pulse::after {
+    content: "";
+    position: absolute; inset: -2px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(150,200,255,.7);
+    animation: sendPulse .55s cubic-bezier(.22,1,.36,1) forwards;
+    pointer-events: none;
+  }
+  @keyframes sendPulse { 0%{transform:scale(.85);opacity:.9} 100%{transform:scale(1.9);opacity:0} }
+
+  /* ---- Flying clone ---------------------------------------------------
+     The clone is born AT the target rectangle. Every frame of motion is
+     applied through `transform`, so the GPU compositor handles it. The
+     transform-origin is the CENTER, and all translations are expressed
+     relative to the final centre → no accumulating rounding errors. */
+  .morph-clone {
+    position: fixed;
+    z-index: 20;
+    margin: 0;
+    pointer-events: none;
+    transform-origin: center center;
+    will-change: transform, opacity, filter;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: rgba(255,255,255,.48);
+    border: 1px solid rgba(100,100,100,.16);
+    border-radius: 21px;
+    box-shadow: 0 8px 28px rgba(70,90,90,.10);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    overflow: hidden;
+    display: flex; align-items: center;
+    /* No transition — everything is WAAPI-driven */
+  }
+  .morph-clone .morph-text {
+    display: inline-block;
+    will-change: opacity, filter, transform;
+  }
+
+  @media (max-width: 640px) {
+    .app { width: calc(100vw - 20px); height: calc(100vh - 20px); margin: 10px; }
+    .messages { border-radius: 24px; padding: 18px; }
+    .message { max-width: 88%; }
+    .blob { filter: blur(65px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .blob, .light, .background { animation: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="background" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+    <div class="blob b4"></div>
+    <div class="light"></div>
+    <div class="grain"></div>
+  </div>
+
+  <main class="app">
+    <section class="messages" id="messages" aria-live="polite">
+      <div id="messageList">
+        <div class="empty" id="empty">Schreibe etwas unten …</div>
+      </div>
+
+      <form class="composer" id="composer">
+        <input id="input" autocomplete="off" placeholder="Nachricht" aria-label="Nachricht">
+        <button class="send" aria-label="Senden" type="submit">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 12h15"></path>
+            <path d="m13 6 6 6-6 6"></path>
+          </svg>
+        </button>
+      </form>
+    </section>
+  </main>
+
+<script>
+  /* =====================================================================
+     1) WORD → RESPONSE  (one word = one unique answer)
+     ---------------------------------------------------------------------
+     • Each key is a SINGLE word.
+     • Each value is a unique reply.
+     • The user's input is tokenised; the FIRST matching word wins.
+     • Add a new line → new word, new output. No duplicates.
+     ===================================================================== */
+  const WORD_RESPONSES = {
+    /* Greetings */
+    "hallo":          "Hallo! Schön, dass du da bist.",
+    "hi":             "Hi! Was führt dich her?",
+    "hey":            "Hey! Wie läuft's bei dir?",
+    "moin":           "Moin! Alles frisch?",
+    "servus":         "Servus! Grüß dich.",
+    "tag":            "Guten Tag! Womit darf ich dienen?",
+
+    /* Politeness */
+    "danke":          "Sehr gerne! Immer wieder gern.",
+    "bitte":          "Kein Problem, dafür bin ich da.",
+    "tschüss":        "Tschüss! Bis zum nächsten Mal.",
+    "bye":            "Bye! Komm gut nach Hause.",
+    "ciao":           "Ciao! Wir sehen uns.",
+
+    /* Info */
+    "hilfe":          "Klar! Ich verstehe z. B. 'preis', 'kontakt', 'lieferung' oder 'öffnungszeiten'.",
+    "preis":          "Die Basisversion ist gratis, Pro kostet 9 € pro Monat.",
+    "preise":         "Alle Preise: Basis gratis, Pro 9 €/Monat.",
+    "kosten":         "Die Nutzung ist kostenlos. Erweiterungen ab 9 €.",
+    "kontakt":        "Schreib uns: hallo@example.com oder +49 30 1234567.",
+    "telefon":        "Du erreichst uns unter +49 30 1234567.",
+    "email":          "Unsere Adresse lautet hallo@example.com.",
+    "lieferung":      "Die Lieferung dauert 2–4 Werktage, ab 50 € versandkostenfrei.",
+    "versand":        "Wir versenden mit DHL, Lieferung in 2–4 Werktagen.",
+    "öffnungszeiten": "Mo–Fr von 9 bis 18 Uhr, am Wochenende geschlossen.",
+    "geöffnet":       "Ja, wir haben gerade geöffnet (Mo–Fr bis 18 Uhr).",
+    "offen":          "Wir sind Mo–Fr von 9 bis 18 Uhr für dich da.",
+
+    /* Small talk */
+    "wie":            "Mir geht's gut, danke! Und selbst?",
+    "name":           "Ich heiße Glassy – halb Glas, halb JavaScript.",
+    "wetter":         "Kein Fenster hier drin – aber ich hoffe, die Sonne scheint bei dir.",
+    "zeit":           "Die genaue Zeit kennt dein Gerät besser als ich.",
+    "uhr":            "Schau am besten kurz auf die Uhr – bei mir ist es immer 'jetzt'.",
+
+    /* Fun */
+    "witz":           "Warum können Geister so schlecht lügen? – Weil man durch sie hindurchsieht.",
+    "liebe":          "Ich bin nur aus Glas – aber ich hab dich auch lieb. 💙",
+    "musik":          "Mein Lieblingssong? 'Glass' von … ach, den gibt's noch nicht."
+  };
+
+  const FALLBACK = "Das habe ich nicht verstanden. Probier's mit 'hilfe' – dann zeige ich dir, was ich kann.";
+
+  /* Tokenise: keep unicode letters/numbers, drop everything else. */
+  function tokenize(text) {
+    return text
+      .toLowerCase()
+      .replace(/[^\p{L}\p{N}\s]/gu, " ")
+      .split(/\s+/)
+      .filter(Boolean);
+  }
+
+  /* First matching word in the user's input wins → one word, one answer. */
+  function findReply(text) {
+    for (const word of tokenize(text)) {
+      if (Object.prototype.hasOwnProperty.call(WORD_RESPONSES, word)) {
+        return WORD_RESPONSES[word];
+      }
+    }
+    return FALLBACK;
+  }
+
+  /* =====================================================================
+     2) DOM & FLAGS
+     ===================================================================== */
+  const form     = document.getElementById("composer");
+  const input    = document.getElementById("input");
+  const messages = document.getElementById("messageList");
+  const empty    = document.getElementById("empty");
+  const sendBtn  = document.querySelector(".send");
+
+  const prefersReducedMotion =
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* Promise helper: resolves on next double-rAF (paint guaranteed). */
+  function afterPaint() {
+    return new Promise(resolve =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve))
+    );
+  }
+
+  /* Safe animation runner: never throws, always resolves. */
+  function runAnimation(el, frames, options) {
+    try {
+      const a = el.animate(frames, options);
+      return a.finished.then(() => true).catch(() => false);
+    } catch (_) {
+      return Promise.resolve(false);
+    }
+  }
+
+  /* =====================================================================
+     3) PARTICLES
+     ===================================================================== */
+  function emitSparkles(cx, cy) {
+    const count = 8;
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.7;
+      const dist  = 24 + Math.random() * 36;
+      const dx = Math.cos(angle) * dist;
+      const dy = Math.sin(angle) * dist - 14;
+      const size = 3 + Math.random() * 4;
+      const hue = [200, 218, 46, 330][Math.floor(Math.random() * 4)];
+
+      const spark = document.createElement("div");
+      spark.style.cssText = `
+        position: fixed;
+        left:${cx}px; top:${cy}px;
+        width:${size}px; height:${size}px;
+        margin-left:-${size/2}px; margin-top:-${size/2}px;
+        border-radius:50%;
+        background: radial-gradient(circle,
+          hsla(${hue},100%,98%,1) 0%,
+          hsla(${hue},90%,78%,.65) 45%,
+          transparent 80%);
+        pointer-events:none; z-index:25;
+        will-change: transform, opacity;
+        filter: blur(.4px);
+      `;
+      document.body.appendChild(spark);
+
+      runAnimation(spark, [
+        { transform: "translate(0,0) scale(0)",   opacity: 0 },
+        { transform: `translate(${dx*.35}px, ${dy*.35}px) scale(1.25)`,
+          opacity: 1, offset: .25 },
+        { transform: `translate(${dx}px, ${dy}px) scale(.15)`, opacity: 0 }
+      ], {
+        duration: 680 + Math.random() * 260,
+        easing: "cubic-bezier(.16,1,.3,1)",
+        fill: "forwards"
+      }).then(() => spark.remove());
+    }
+  }
+
+  function emitBloom(cx, cy, size) {
+    const d = Math.max(size * 1.6, 120);
+    const bloom = document.createElement("div");
+    bloom.style.cssText = `
+      position: fixed;
+      left:${cx}px; top:${cy}px;
+      width:${d}px; height:${d}px;
+      margin-left:-${d/2}px; margin-top:-${d/2}px;
+      border-radius:50%;
+      background: radial-gradient(circle,
+        rgba(255,255,255,.55) 0%,
+        rgba(200,222,255,.28) 32%,
+        transparent 65%);
+      pointer-events:none; z-index:15;
+      will-change: transform, opacity;
+      mix-blend-mode: screen;
+    `;
+    document.body.appendChild(bloom);
+    runAnimation(bloom, [
+      { transform: "scale(.2)",  opacity: 0 },
+      { transform: "scale(.65)", opacity: .9, offset: .25 },
+      { transform: "scale(2.1)", opacity: 0 }
+    ], {
+      duration: 820, easing: "cubic-bezier(.22,1,.36,1)", fill: "forwards"
+    }).then(() => bloom.remove());
+  }
+
+  /* =====================================================================
+     4) MESSAGE + SOPHISTICATED, BUG-FREE MORPH
+     ---------------------------------------------------------------------
+     Correctness rules that make this version bug-free:
+
+     R1. Wait for a *double rAF* before measuring. This guarantees the
+         browser has already laid out the freshly appended bubble (and any
+         layout change from removing the empty state).
+
+     R2. The clone is born AT the final rectangle with `transform-origin:
+         center center`. Every motion step is expressed relative to the
+         final centre. This eliminates sub-pixel drift on long paths and
+         makes the last frame exactly equal to the target rect.
+
+     R3. The real bubble stays `visibility: hidden; opacity: 0` until the
+         clone's animation has *finished*. Then the bubble is revealed and
+         the clone faded out in a single frame — no window where both
+         appear, no window where neither appears.
+
+     R4. Every animation is wrapped in a try/catch + promise that always
+         resolves, so a browser hiccup can never leave an orphan clone
+         behind or an invisible bubble in the DOM.
+
+     R5. Reduced-motion users get an instant, animation-free reveal.
+     ===================================================================== */
+  async function addMessage(text, sender = "user") {
+    const value = text.trim();
+    if (!value) return;
+
+    /* ---- R5: reduced motion path ------------------------------------ */
+    if (prefersReducedMotion) {
+      if (empty) empty.remove();
+      const b = document.createElement("div");
+      b.className = "message " + sender + " instant";
+      b.textContent = value;
+      messages.appendChild(b);
+      messages.scrollTop = messages.scrollHeight;
+      return;
+    }
+
+    if (empty) empty.remove();
+
+    /* ---- Build the real bubble (invisible), then measure ------------ */
+    const bubble = document.createElement("div");
+    bubble.className = "message " + sender;
+    bubble.textContent = value;
+    bubble.style.visibility = "hidden";
+    bubble.style.opacity    = "0";
+    bubble.style.animation  = "none";
+    messages.appendChild(bubble);
+
+    /* R1: ensure layout is settled AND painted. */
+    await afterPaint();
+
+    /* Scroll AFTER layout is confirmed, then re-measure. */
+    messages.scrollTop = messages.scrollHeight;
+    await afterPaint();
+
+    const target = bubble.getBoundingClientRect();
+
+    /* Guard: zero-size target (e.g. display:none ancestor). */
+    if (target.width === 0 || target.height === 0) {
+      bubble.style.visibility = "visible";
+      bubble.style.opacity    = "1";
+      bubble.classList.add("reveal");
+      return;
+    }
+
+    const source = form.getBoundingClientRect();
+    const cs     = getComputedStyle(bubble);
+
+    /* Radius parsed as a single number (top-left corner is enough since
+       the bubble is a uniform pill). */
+    const targetRadius = parseFloat(cs.borderTopLeftRadius) || 21;
+
+    /* ---- Clone: born exactly at the final rectangle ----------------- */
+    const clone = document.createElement("div");
+    clone.className = "morph-clone";
+    clone.style.font         = cs.font;
+    clone.style.lineHeight   = cs.lineHeight;
+    clone.style.color        = cs.color;
+    clone.style.padding      = cs.padding;
+    clone.style.whiteSpace   = "nowrap";
+    clone.style.background   = cs.backgroundColor;
+    clone.style.borderColor  = cs.borderColor;
+    clone.style.borderWidth  = cs.borderWidth;
+    clone.style.borderStyle  = cs.borderStyle;
+    clone.style.borderRadius = targetRadius + "px";
+
+    /* Final geometry — clone is placed at the destination from frame 0. */
+    clone.style.left   = target.left   + "px";
+    clone.style.top    = target.top    + "px";
+    clone.style.width  = target.width  + "px";
+    clone.style.height = target.height + "px";
+
+    /* Text is wrapped so it can fade in independently. */
+    const textSpan = document.createElement("span");
+    textSpan.className = "morph-text";
+    textSpan.textContent = value;
+    textSpan.style.opacity = "0";
+    clone.appendChild(textSpan);
+
+    /* Hidden until the first animation frame; prevents a 1-frame flash. */
+    clone.style.opacity = "0";
+    document.body.appendChild(clone);
+
+    /* R2: transform-origin is centre; translations are relative to the
+       FINAL centre, so there is never any accumulated offset. */
+    const tcx = target.left + target.width  / 2;
+    const tcy = target.top  + target.height / 2;
+
+    const startH = Math.min(40, Math.max(28, source.height - 16));
+    const startW = Math.min(110, Math.max(72, source.width * 0.14));
+    const scx = source.right - startW - 6 + startW / 2;
+    const scy = source.top + (source.height - startH) / 2 + startH / 2;
+
+    const dx0 = scx - tcx;
+    const dy0 = scy - tcy;
+    const sx0 = startW / target.width;
+    const sy0 = startH / target.height;
+
+    /* Arc parameters — clipped so they never exceed the viewport. */
+    const arcLift = Math.min(56, window.innerHeight * 0.07);
+    const arcSide = Math.min(28, target.width * 0.15);
+
+    /* ---- Keyframes: anticipation → launch → arc → settle ------------ */
+    const frames = [
+      { /* 0%  – capsule at the composer */
+        transform: `translate(${dx0}px, ${dy0}px) scale(${sx0}, ${sy0})`,
+        opacity: 0, filter: "blur(2.6px) brightness(1)", offset: 0
+      },
+      { /* 6%  – anticipation: pulls back, "breathes in" */
+        transform: `translate(${dx0 - 8}px, ${dy0}px) scale(${sx0 * .92}, ${sy0 * 1.10})`,
+        opacity: .75, filter: "blur(1.2px) brightness(1.08)", offset: .06
+      },
+      { /* 20% – launch: stretched, rotated, blurred */
+        transform: `translate(${dx0 + arcSide * .6}px, ${dy0 * .82 - 14}px) scale(${Math.max(sx0 * 1.55, .42)}, ${sy0 * .85}) rotate(-2deg)`,
+        opacity: 1, filter: "blur(2.6px) brightness(1.15)", offset: .20
+      },
+      { /* 42% – apex: max motion-blur + lateral drift */
+        transform: `translate(${dx0 * .45 + arcSide}px, ${dy0 * .55 - arcLift * .6}px) scale(.72, .90) rotate(-1.2deg)`,
+        opacity: 1, filter: "blur(1.9px) brightness(1.10)", offset: .42
+      },
+      { /* 62% – decelerating */
+        transform: `translate(${dx0 * .18}px, ${dy0 * .22 - arcLift * .2}px) scale(.90, .94) rotate(-.4deg)`,
+        opacity: 1, filter: "blur(.9px) brightness(1.05)", offset: .62
+      },
+      { /* 78% – overshoot */
+        transform: `translate(-4px, -2px) scale(1.04, .96) rotate(.2deg)`,
+        opacity: 1, filter: "blur(.3px) brightness(1.02)", offset: .78
+      },
+      { /* 87% – squash on impact */
+        transform: `translate(0px, 2px) scale(1.03, .95)`,
+        opacity: 1, filter: "blur(0) brightness(1.03)", offset: .87
+      },
+      { /* 94% – micro rebound */
+        transform: `translate(0px, -1px) scale(.995, 1.015)`,
+        opacity: 1, filter: "blur(0) brightness(1.005)", offset: .94
+      },
+      { /* 100% – exact final geometry */
+        transform: `translate(0px, 0px) scale(1, 1) rotate(0deg)`,
+        opacity: 1, filter: "blur(0) brightness(1)"
+      }
+    ];
+
+    const DURATION = 980;
+
+    /* Main path animation. */
+    const pathDone = runAnimation(clone, frames, {
+      duration: DURATION,
+      easing: "cubic-bezier(.22, 1, .36, 1)",
+      fill: "forwards"
+    });
+
+    /* Text reveal — starts at 62% of the flight, same easing. */
+    runAnimation(textSpan, [
+      { opacity: 0, filter: "blur(3px)", transform: "translateY(3px)" },
+      { opacity: 1, filter: "blur(0)",   transform: "translateY(0)"   }
+    ], {
+      duration: 340,
+      delay: Math.round(DURATION * 0.62),
+      easing: "cubic-bezier(.22, 1, .36, 1)",
+      fill: "forwards"
+    });
+
+    /* Fire particles at the right moments. */
+    window.setTimeout(() => emitSparkles(scx, scy), 60);
+    window.setTimeout(
+      () => emitBloom(tcx, tcy, Math.max(target.width, target.height)),
+      Math.round(DURATION * 0.78)
+    );
+
+    /* R3 + R4: hand-off is a single atomic step.
+       The bubble becomes visible, the clone fades out, only after that is
+       the clone removed from the DOM. */
+    pathDone.then(ok => {
+      /* Reveal the real bubble (it has identical geometry). */
+      bubble.style.visibility = "visible";
+      bubble.style.opacity    = "1";
+
+      if (!ok) {
+        /* Animation failed → just drop the clone, no fade. */
+        clone.remove();
+        messages.scrollTop = messages.scrollHeight;
+        return;
+      }
+
+      /* Fade the clone out over 90 ms. During this window both elements
+         render at the same pixel rectangle, so the transition is
+         imperceptible. */
+      runAnimation(clone, [
+        { opacity: 1 }, { opacity: 0 }
+      ], {
+        duration: 90, easing: "ease-out", fill: "forwards"
+      }).then(() => {
+        clone.remove();
+        messages.scrollTop = messages.scrollHeight;
+      });
+    });
+  }
+
+  /* =====================================================================
+     5) BOT REPLY + SUBMIT
+     ===================================================================== */
+  function botReply(userText) {
+    const reply = findReply(userText);
+    window.setTimeout(() => {
+      addMessage(reply, "bot");
+      input.focus();
+    }, 620);
+  }
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const value = input.value.trim();
+    if (!value) return;
+
+    /* Send-button pulse. */
+    if (sendBtn && !prefersReducedMotion) {
+      sendBtn.classList.remove("pulse");
+      void sendBtn.offsetWidth;   /* restart animation */
+      sendBtn.classList.add("pulse");
+      window.setTimeout(() => sendBtn.classList.remove("pulse"), 600);
+    }
+
+    addMessage(value, "user");
+    input.value = "";
+    input.focus();
+    botReply(value);
+  });
+</script>
+</body>
+</html>
